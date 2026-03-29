@@ -1,39 +1,39 @@
 {% if pricing_summary_box %}
 <div class="radius-bundle__pricing{% if compact %} radius-bundle__pricing--compact{% endif %}" data-bundle-pricing>
-	{% unless compact %}
-		<div class="radius-bundle__pricing-row">
-			<div class="radius-bundle__pricing-label">{{ regular_price_label }}</div>
-			<div class="radius-bundle__price-original" data-regular-price>
-                <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
-            </div>
-		</div>
-	{% endunless %}
+{% unless compact %}
+<div class="radius-bundle__pricing-row">
+<div class="radius-bundle__pricing-label">{{ regular_price_label }}</div>
+<div class="radius-bundle__price-original" data-regular-price>
+<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+</div>
+</div>
+{% endunless %}
 
-	<div class="radius-bundle__pricing-row{% if compact %} radius-bundle__pricing-row--compact{% endif %}{% unless compact %} radius-bundle__pricing-row--highlight{% endunless %}">
-		<div class="radius-bundle__pricing-discounted-label">{{ bundle_price_label }}</div>
-		<div class="radius-bundle__price-discounted{% if compact %} radius-bundle__price-discounted--compact{% endif %}" data-bundle-price>
-            <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
-        </div>
-	</div>
+<div class="radius-bundle__pricing-row{% if compact %} radius-bundle__pricing-row--compact{% endif %}{% unless compact %} radius-bundle__pricing-row--highlight{% endunless %}">
+<div class="radius-bundle__pricing-discounted-label">{{ bundle_price_label }}</div>
+<div class="radius-bundle__price-discounted{% if compact %} radius-bundle__price-discounted--compact{% endif %}" data-bundle-price>
+<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+</div>
+</div>
 
-	{% if show_savings %}
-		<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
-			<div class="radius-bundle__savings-label">{{ you_save_label }}</div>
-			<div class="radius-bundle__savings-amount" data-savings-amount>
-                <div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
-            </div>
-		</div>
-	{% endif %}
+{% if show_savings %}
+<div class="radius-bundle__savings{% if compact %} radius-bundle__savings--compact{% endif %}" data-savings>
+<div class="radius-bundle__savings-label">{{ you_save_label }}</div>
+<div class="radius-bundle__savings-amount" data-savings-amount>
+<div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div>
+</div>
+</div>
+{% endif %}
 
-	{% if show_free_shipping %}
-		<div class="radius-bundle__free-shipping" data-free-shipping style="display: none;">
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1" />
-				<circle cx="7" cy="18" r="2" />
-				<circle cx="17" cy="18" r="2" />
-			</svg>
-			<div>{{ free_shipping_label }}</div>
-		</div>
-	{% endif %}
+{% if show_free_shipping %}
+<div class="radius-bundle__free-shipping" data-free-shipping style="display: none;">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H21a2 2 0 0 1 2 2v1" />
+<circle cx="7" cy="18" r="2" />
+<circle cx="17" cy="18" r="2" />
+</svg>
+<div>{{ free_shipping_label }}</div>
+</div>
+{% endif %}
 </div>
 {% endif %}

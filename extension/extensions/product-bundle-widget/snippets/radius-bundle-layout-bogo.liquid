@@ -1,52 +1,52 @@
 {% assign count = product_count | default: 2 %}
 {% unless trigger_count > 0 %}
-	{% assign trigger_count = count | divided_by: 2 %}
-	{% if trigger_count < 1 %}{% assign trigger_count = 1 %}{% endif %}
+{% assign trigger_count = count | divided_by: 2 %}
+{% if trigger_count < 1 %}{% assign trigger_count = 1 %}{% endif %}
 {% endunless %}
 
 <div class="radius-bundle__inner">
-	{% unless layout == 'classic_card' or layout == 'checklist' or layout == 'split_deal' or layout == 'compact_grid' or layout == 'sleek' or layout == 'minimalist' %}
-	<div class="radius-bundle__header" style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:12px;">
-		{% if show_savings_badge %}
-			{% if savings_badge_text != blank %}
-				<span class="radius-bundle__badge" data-bundle-badge>{{ savings_badge_text }}</span>
-			{% else %}
-				<span class="radius-bundle__badge radius-bundle__badge--skeleton" data-bundle-badge></span>
-			{% endif %}
-		{% endif %}
-		<h3 class="radius-bundle__title" data-bundle-title style="text-align:center;margin:0;">
-			{{ name }}
-		</h3>
-		{% if subtitle != blank %}
-			<p class="radius-bundle__subtitle" data-bundle-subtitle style="text-align:center;margin:0;font-size:14px;color:#6b7280;">
-				{{ subtitle }}
-			</p>
-		{% endif %}
-	</div>
-	{% endunless %}
+{% unless layout == 'classic_card' or layout == 'checklist' or layout == 'split_deal' or layout == 'compact_grid' or layout == 'sleek' or layout == 'minimalist' %}
+<div class="radius-bundle__header" style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:12px;">
+{% if show_savings_badge %}
+{% if savings_badge_text != blank %}
+<span class="radius-bundle__badge" data-bundle-badge>{{ savings_badge_text }}</span>
+{% else %}
+<span class="radius-bundle__badge radius-bundle__badge--skeleton" data-bundle-badge></span>
+{% endif %}
+{% endif %}
+<h3 class="radius-bundle__title" data-bundle-title style="text-align:center;margin:0;">
+{{ name }}
+</h3>
+{% if subtitle != blank %}
+<p class="radius-bundle__subtitle" data-bundle-subtitle style="text-align:center;margin:0;font-size:14px;color:#6b7280;">
+{{ subtitle }}
+</p>
+{% endif %}
+</div>
+{% endunless %}
 
-	<div class="radius-bundle__products radius-bundle__products--{{ layout }}" data-bundle-products>
-		{% render 'radius-bundle-skeleton',
-			layout: layout,
-			name: name,
-			subtitle: subtitle,
-			product_count: count,
-			trigger_count: trigger_count,
-			show_images: show_images,
-			show_savings: show_savings,
-			show_savings_badge: show_savings_badge,
-			show_product_prices: show_product_prices,
-			show_quantity: show_quantity,
-			image_position: image_position,
-			badge_style: badge_style,
-			bogo_trigger_badge_text: bogo_trigger_badge_text,
-			bogo_reward_badge_text: bogo_reward_badge_text,
-			bogo_you_pay_label: bogo_you_pay_label,
-			bogo_you_save_label: bogo_you_save_label,
-			bogo_total_label: bogo_total_label,
-			bogo_free_text: bogo_free_text,
-			bundle_id: bundle_id,
-			button_text: button_text
-		%}
-	</div>
+<div class="radius-bundle__products radius-bundle__products--{{ layout }}" data-bundle-products>
+{% render 'radius-bundle-skeleton',
+layout: layout,
+name: name,
+subtitle: subtitle,
+product_count: count,
+trigger_count: trigger_count,
+show_images: show_images,
+show_savings: show_savings,
+show_savings_badge: show_savings_badge,
+show_product_prices: show_product_prices,
+show_quantity: show_quantity,
+image_position: image_position,
+badge_style: badge_style,
+bogo_trigger_badge_text: bogo_trigger_badge_text,
+bogo_reward_badge_text: bogo_reward_badge_text,
+bogo_you_pay_label: bogo_you_pay_label,
+bogo_you_save_label: bogo_you_save_label,
+bogo_total_label: bogo_total_label,
+bogo_free_text: bogo_free_text,
+bundle_id: bundle_id,
+button_text: button_text
+%}
+</div>
 </div>

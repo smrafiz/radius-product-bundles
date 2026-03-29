@@ -1,39 +1,39 @@
 {%- if more_product_settings -%}{%- assign visible = more_product_count -%}{%- else -%}{%- assign visible = product_count -%}{%- endif -%}
 <div class="radius-bundle__inner{% if layout == 'compact' %} radius-bundle__inner--compact{% endif %}">
-	{% render 'radius-bundle-header', name: name, subtitle: subtitle, show_savings_badge: show_savings_badge %}
+{% render 'radius-bundle-header', name: name, subtitle: subtitle, show_savings_badge: show_savings_badge %}
 
-	{% if layout == 'carousel' %}
-		{%- assign show_arrows = false -%}{%- assign show_dots = false -%}
-		{%- if carousel_navigation == 'arrows' or carousel_navigation == 'both' -%}{%- assign show_arrows = true -%}{%- endif -%}
-		{%- if carousel_navigation == 'dots' or carousel_navigation == 'both' -%}{%- assign show_dots = true -%}{%- endif -%}
-		<div class="radius-bundle__slider-wrapper">
-			{% if show_arrows %}<button class="radius-bundle__slider-nav radius-bundle__slider-nav--prev" aria-label="Previous product" data-slider-prev disabled><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>{% endif %}
-			<div class="radius-bundle__slider-container">
-				<div class="radius-bundle__products radius-bundle__products--slider" data-bundle-products data-slider-track data-autoplay="{{ autoplay }}" data-autoplay-speed="{{ autoplay_speed | default: 5 }}" style="--slides-per-view:{{ slides_per_view | default: 3 }};">
-					{% render 'radius-bundle-skeleton', layout: 'carousel', product_count: product_count, show_images: show_images, show_quantity: show_quantity %}
-				</div>
-			</div>
-			{% if show_arrows %}<button class="radius-bundle__slider-nav radius-bundle__slider-nav--next" aria-label="Next product" data-slider-next><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>{% endif %}
-		</div>
-		{% if show_dots %}<div class="radius-bundle__slider-dots" data-slider-dots></div>{% endif %}
+{% if layout == 'carousel' %}
+{%- assign show_arrows = false -%}{%- assign show_dots = false -%}
+{%- if carousel_navigation == 'arrows' or carousel_navigation == 'both' -%}{%- assign show_arrows = true -%}{%- endif -%}
+{%- if carousel_navigation == 'dots' or carousel_navigation == 'both' -%}{%- assign show_dots = true -%}{%- endif -%}
+<div class="radius-bundle__slider-wrapper">
+{% if show_arrows %}<button class="radius-bundle__slider-nav radius-bundle__slider-nav--prev" aria-label="Previous product" data-slider-prev disabled><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>{% endif %}
+<div class="radius-bundle__slider-container">
+<div class="radius-bundle__products radius-bundle__products--slider" data-bundle-products data-slider-track data-autoplay="{{ autoplay }}" data-autoplay-speed="{{ autoplay_speed | default: 5 }}" style="--slides-per-view:{{ slides_per_view | default: 3 }};">
+{% render 'radius-bundle-skeleton', layout: 'carousel', product_count: product_count, show_images: show_images, show_quantity: show_quantity %}
+</div>
+</div>
+{% if show_arrows %}<button class="radius-bundle__slider-nav radius-bundle__slider-nav--next" aria-label="Next product" data-slider-next><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>{% endif %}
+</div>
+{% if show_dots %}<div class="radius-bundle__slider-dots" data-slider-dots></div>{% endif %}
 
-	{% elsif layout == 'grid' %}
-		<div class="radius-bundle__products radius-bundle__products--grid radius-bundle__skeleton--grid" data-bundle-products style="--rb-grid-columns:{{ grid_columns | default: 3 }};">
-			{% render 'radius-bundle-skeleton', layout: 'grid', product_count: product_count, visible: visible, show_images: show_images, show_quantity: show_quantity %}
-		</div>
+{% elsif layout == 'grid' %}
+<div class="radius-bundle__products radius-bundle__products--grid radius-bundle__skeleton--grid" data-bundle-products style="--rb-grid-columns:{{ grid_columns | default: 3 }};">
+{% render 'radius-bundle-skeleton', layout: 'grid', product_count: product_count, visible: visible, show_images: show_images, show_quantity: show_quantity %}
+</div>
 
-	{% elsif layout == 'compact' %}
-		<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>
-			{% render 'radius-bundle-skeleton', layout: 'compact', product_count: product_count, visible: visible, show_images: show_images, show_product_prices: show_product_prices, show_quantity: show_quantity %}
-		</div>
+{% elsif layout == 'compact' %}
+<div class="radius-bundle__products radius-bundle__products--compact" data-bundle-products>
+{% render 'radius-bundle-skeleton', layout: 'compact', product_count: product_count, visible: visible, show_images: show_images, show_product_prices: show_product_prices, show_quantity: show_quantity %}
+</div>
 
-	{% else %}
-		<div class="radius-bundle__products radius-bundle__products--list" data-bundle-products>
-			{% render 'radius-bundle-skeleton', layout: 'list', product_count: product_count, visible: visible, show_images: show_images, show_product_prices: show_product_prices, divider_style: divider_style %}
-		</div>
-	{% endif %}
+{% else %}
+<div class="radius-bundle__products radius-bundle__products--list" data-bundle-products>
+{% render 'radius-bundle-skeleton', layout: 'list', product_count: product_count, visible: visible, show_images: show_images, show_product_prices: show_product_prices, divider_style: divider_style %}
+</div>
+{% endif %}
 
-	{%- assign is_compact = false -%}{%- if layout == 'compact' -%}{%- assign is_compact = true -%}{%- endif -%}
-	{% render 'radius-bundle-pricing', show_savings: show_savings, show_free_shipping: show_free_shipping, regular_price_label: regular_price_label, bundle_price_label: bundle_price_label, you_save_label: you_save_label, free_shipping_label: free_shipping_label, pricing_summary_box: pricing_summary_box, compact: is_compact %}
-	{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text %}
+{%- assign is_compact = false -%}{%- if layout == 'compact' -%}{%- assign is_compact = true -%}{%- endif -%}
+{% render 'radius-bundle-pricing', show_savings: show_savings, show_free_shipping: show_free_shipping, regular_price_label: regular_price_label, bundle_price_label: bundle_price_label, you_save_label: you_save_label, free_shipping_label: free_shipping_label, pricing_summary_box: pricing_summary_box, compact: is_compact %}
+{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text %}
 </div>

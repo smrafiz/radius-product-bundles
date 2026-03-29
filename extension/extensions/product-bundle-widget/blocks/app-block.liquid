@@ -1,862 +1,862 @@
 {% assign bundle_ids = product.metafields['$app'].bundle_ids.value %}
 
 {% if bundle_ids != blank and bundle_ids.size > 0 %}
-	{% assign global = shop.metafields['$app'].global_settings.value %}
-	{% assign bundles = shop.metafields['$app'].active_bundles.value %}
-	{% assign customer_locale = request.locale.iso_code | downcase %}
-	{% assign customer_locale_base = customer_locale | split: '-' | first %}
-	{% assign primary_locale = global.primaryLocale | default: 'en' %}
-	{% if global.labels[customer_locale] %}
-		{% assign g_labels = global.labels[customer_locale] %}
-	{% elsif global.labels[customer_locale_base] %}
-		{% assign g_labels = global.labels[customer_locale_base] %}
-	{% elsif global.labels[primary_locale] %}
-		{% assign g_labels = global.labels[primary_locale] %}
-	{% elsif global.labels['en'] %}
-		{% assign g_labels = global.labels['en'] %}
-	{% else %}
-		{% assign g_labels = global.labels %}
-	{% endif %}
-	{% assign g_styles = global.styles %}
-	{% assign g_tablet = g_styles.tablet %}
-	{% assign g_mobile = g_styles.mobile %}
-	{% assign tablet_bp = g_styles.tabletBreakpoint | default: 1024 %}
-	{% assign mobile_bp = g_styles.mobileBreakpoint | default: 768 %}
-	{% assign g_custom = global.custom %}
-	{% assign custom_css_class = g_custom.cssClass | default: '' %}
-	{% assign custom_css = g_custom.css | default: '' %}
-	{% assign global_priority_type = global.cart.bundlePriorityType | default: 'index_based' %}
-	{% assign best_bundle_id = null %}
-	{% assign best_score = -1 %}
-	{% assign best_created = 0 %}
-	{% for bid in bundle_ids %}
-		{% assign b = bundles[bid] %}
-		{% if b and b.status == 'ACTIVE' %}
-			{% if global_priority_type == 'discount_based' %}
-				{% assign this_score = b.effectiveSavings | default: 0 | times: 1 %}
-			{% else %}
-				{% assign this_score = b.priority | default: 0 | times: 1 %}
-			{% endif %}
-			{% assign this_created = b.createdAtTs | default: 0 | times: 1 %}
-			{% if best_bundle_id == null or this_score > best_score or this_score == best_score and this_created > best_created %}
-				{% assign best_score = this_score %}
-				{% assign best_bundle_id = bid %}
-				{% assign best_created = this_created %}
-			{% endif %}
-		{% endif %}
-	{% endfor %}
-
-	{% assign rtl_locales = 'ar,he,fa,ur' | split: ',' %}
-	{% assign is_rtl = false %}
-	{% if rtl_locales contains customer_locale_base %}
-		{% assign is_rtl = true %}
-	{% endif %}
-
-	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
-
-	<div
-			class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}"
-			data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
-			data-shop="{{ shop.permanent_domain }}"
-			dir="{% if is_rtl %}rtl{% else %}ltr{% endif %}"
-			style="opacity: 0"
-	>
-		{% for bundle_id in bundle_ids %}
-			{% assign bundle = bundles[bundle_id] %}
-
-			{% if bundle_id == best_bundle_id %}
-				{% assign current_product_gid = product.id | prepend: 'gid://shopify/Product/' %}
-				{% assign is_standalone = false %}
-				{% if bundle.mainProductId and current_product_gid == bundle.mainProductId %}
-					{% assign is_standalone = true %}
-				{% endif %}
-
-				{% assign bundle_type_key = bundle.bundleType | default: 'FIXED_BUNDLE' %}
-				{% assign g_type_overrides = g_styles.bundleTypeOverrides[bundle_type_key] %}
-
-				{% assign style_preset = block.settings.style_preset %}
-				{% assign style_preset = block.settings.style_preset | default: '' %}
-				{% if style_preset == 'custom' %}
-					{% assign primary_color = block.settings.primary_color
-							| default: g_type_overrides.primaryColor
-							| default: g_styles.primaryColor
-							| default: '#303030' %}
-					{% assign text_color = block.settings.text_color
-							| default: g_type_overrides.textColor
-							| default: g_styles.textColor
-							| default: '#333333' %}
-					{% assign background_color = block.settings.background_color
-							| default: g_type_overrides.backgroundColor
-							| default: g_styles.backgroundColor
-							| default: '#ffffff' %}
-					{% assign border_color = block.settings.border_color
-							| default: g_type_overrides.borderColor
-							| default: g_styles.borderColor
-							| default: '#e5e7eb' %}
-					{% assign savings_color = block.settings.savings_color
-							| default: g_type_overrides.savingsColor
-							| default: g_styles.savingsColor
-							| default: '#16a34a' %}
-				{% else %}
-					{% case style_preset %}
-						{% when 'minimal' %}
-							{% assign primary_color = '#303030' %}
-							{% assign text_color = '#333333' %}
-							{% assign background_color = '#ffffff' %}
-							{% assign border_color = '#e5e7eb' %}
-							{% assign savings_color = '#16a34a' %}
-						{% when 'soft' %}
-							{% assign primary_color = '#6366f1' %}
-							{% assign text_color = '#374151' %}
-							{% assign background_color = '#f8fafc' %}
-							{% assign border_color = '#e2e8f0' %}
-							{% assign savings_color = '#10b981' %}
-						{% when 'bold' %}
-							{% assign primary_color = '#dc2626' %}
-							{% assign text_color = '#111827' %}
-							{% assign background_color = '#ffffff' %}
-							{% assign border_color = '#d1d5db' %}
-							{% assign savings_color = '#ea580c' %}
-						{% when 'elegant' %}
-							{% assign primary_color = '#78716c' %}
-							{% assign text_color = '#44403c' %}
-							{% assign background_color = '#fafaf9' %}
-							{% assign border_color = '#d6d3d1' %}
-							{% assign savings_color = '#059669' %}
-						{% when 'dark' %}
-							{% assign primary_color = '#f59e0b' %}
-							{% assign text_color = '#f3f4f6' %}
-							{% assign background_color = '#1f2937' %}
-							{% assign border_color = '#374151' %}
-							{% assign savings_color = '#34d399' %}
-							{% assign product_card_bg = '#4b5563' %}
-						{% when 'nature' %}
-							{% assign primary_color = '#059669' %}
-							{% assign text_color = '#1f2937' %}
-							{% assign background_color = '#f0fdf4' %}
-							{% assign border_color = '#bbf7d0' %}
-							{% assign savings_color = '#16a34a' %}
-						{% when 'warm' %}
-							{% assign primary_color = '#f97316' %}
-							{% assign text_color = '#431407' %}
-							{% assign background_color = '#fff7ed' %}
-							{% assign border_color = '#fed7aa' %}
-							{% assign savings_color = '#ea580c' %}
-						{% when 'professional' %}
-							{% assign primary_color = '#2563eb' %}
-							{% assign text_color = '#1f2937' %}
-							{% assign background_color = '#f8fafc' %}
-							{% assign border_color = '#d1d5db' %}
-							{% assign savings_color = '#2563eb' %}
-						{% else %}
-							{% assign primary_color = g_type_overrides.primaryColor | default: g_styles.primaryColor | default: '#303030' %}
-							{% assign text_color = g_type_overrides.textColor | default: g_styles.textColor | default: '#333333' %}
-							{% assign background_color = g_type_overrides.backgroundColor | default: g_styles.backgroundColor | default: '#ffffff' %}
-							{% assign border_color = g_type_overrides.borderColor | default: g_styles.borderColor | default: '#e5e7eb' %}
-							{% assign savings_color = g_type_overrides.savingsColor | default: g_styles.savingsColor | default: '#16a34a' %}
-					{% endcase %}
-				{% endif %}
-
-				{% if block.settings.style_preset != blank %}
-					{% assign style_preset = block.settings.style_preset %}
-				{% else %}
-					{% assign style_preset = g_type_overrides.stylePreset | default: g_styles.stylePreset | default: 'minimal' %}
-				{% endif %}
-				{% if style_preset == 'custom' %}
-				  {% assign corner_style = block.settings.corner_style %}
-				{% else %}
-				  {% assign corner_style = g_type_overrides.cornerStyle | default: g_styles.cornerStyle %}
-				{% endif %}
-
-				{% assign corner_style = corner_style | default: 'modern' %}
-				{% case corner_style %}
-					{% when 'sharp' %}
-						{% assign border_radius = 0 %}
-					{% when 'rounded' %}
-						{% assign border_radius = 20 %}
-					{% else %}
-						{% assign border_radius = 8 %}
-				{% endcase %}
-
-				{% assign shadow = block.settings.shadow | default: 'soft' %}
-				{% if style_preset == 'custom' and block.settings.shadow != blank %}
-				  {% assign shadow = block.settings.shadow %}
-				{% else %}
-				  {% assign shadow = g_type_overrides.shadow | default: g_styles.shadow %}
-				{% endif %}
-
-				{% assign spacing = block.settings.spacing | default: 'comfortable' %}
-				{% if style_preset == 'custom' and block.settings.spacing != blank %}
-				  {% assign spacing = block.settings.spacing %}
-				{% else %}
-				  {% assign spacing = g_type_overrides.spacing | default: g_styles.spacing %}
-				{% endif %}
-
-				{% case spacing %}
-					{% when 'compact' %}
-						{% assign box_spacing = 12 %}
-						{% assign gap_spacing = 8 %}
-					{% when 'spacious' %}
-						{% assign box_spacing = 28 %}
-						{% assign gap_spacing = 16 %}
-					{% else %}
-						{% assign box_spacing = 20 %}
-						{% assign gap_spacing = 12 %}
-				{% endcase %}
-
-				{% assign image_size = g_type_overrides.imageSize | default: g_styles.imageSize | default: 'medium' %}
-
-				{% case image_size %}
-				  {% when 'small' %}
-					{% assign image_size_px = 60 %}
-				  {% when 'large' %}
-					{% assign image_size_px = 120 %}
-				  {% else %}
-					{% assign image_size_px = 80 %}
-				{% endcase %}
-
-				{% assign image_fit = g_type_overrides.imageFit | default: g_styles.imageFit | default: 'contain' %}
-
-				{% assign image_position = g_type_overrides.imagePosition | default: g_styles.imagePosition | default: 'left' %}
-
-				{% if product_card_bg == blank %}
-					{% assign customize_card_style = g_type_overrides.customizeCardStyle | default: g_styles.customizeCardStyle %}
-					{% if customize_card_style == true or customize_card_style == 'true' %}
-						{% assign product_card_bg = g_type_overrides.productCardBg | default: g_styles.productCardBg | default: '#f9fafb' %}
-					{% else %}
-						{% assign product_card_bg = background_color %}
-					{% endif %}
-				{% endif %}
-
-				{% assign product_card_border = true %}
-				{% if g_type_overrides.productCardBorder == false or g_type_overrides.productCardBorder == 'false' %}
-					{% assign product_card_border = false %}
-				{% elsif g_styles.productCardBorder == false or g_styles.productCardBorder == 'false' %}
-					{% assign product_card_border = false %}
-				{% endif %}
-
-				{% assign product_card_shadow = false %}
-				{% if g_type_overrides.productCardShadow == true or g_type_overrides.productCardShadow == 'true' %}
-					{% assign product_card_shadow = true %}
-				{% elsif g_styles.productCardShadow == true or g_styles.productCardShadow == 'true' %}
-					{% assign product_card_shadow = true %}
-				{% endif %}
-				{% assign bogo_free_tag_color = g_type_overrides.bogoFreeTagColor | default: g_styles.bogoFreeTagColor | default: '#16a34a' %}
-				{% assign bogo_card_border_style = g_type_overrides.bogoCardBorderStyle | default: g_styles.bogoCardBorderStyle | default: 'solid' %}
-				{% assign button_style = 'filled' %}
-				{% if g_type_overrides.buttonStyle != blank %}
-				  {% assign button_style = g_type_overrides.buttonStyle %}
-				{% elsif g_styles.buttonStyle != blank %}
-				  {% assign button_style = g_styles.buttonStyle %}
-				{% endif %}
-
-				{% assign button_size = 'medium' %}
-				{% if g_type_overrides.buttonSize != blank %}
-				  {% assign button_size = g_type_overrides.buttonSize %}
-				{% elsif g_styles.buttonSize != blank %}
-				  {% assign button_size = g_styles.buttonSize %}
-				{% endif %}
-
-				{% assign button_width = 'full' %}
-				{% if g_type_overrides.buttonWidth != blank %}
-				  {% assign button_width = g_type_overrides.buttonWidth %}
-				{% elsif g_styles.buttonWidth != blank %}
-				  {% assign button_width = g_styles.buttonWidth %}
-				{% endif %}
-
-				{% assign button_bg_color = primary_color %}
-				{% if g_type_overrides.buttonBgColor != blank %}
-				  {% assign button_bg_color = g_type_overrides.buttonBgColor %}
-				{% elsif g_styles.buttonBgColor != blank %}
-				  {% assign button_bg_color = g_styles.buttonBgColor %}
-				{% endif %}
-
-				{% assign badge_position = 'top-right' %}
-				{% if g_type_overrides.badgePosition != blank %}
-				  {% assign badge_position = g_type_overrides.badgePosition %}
-				{% elsif g_styles.badgePosition != blank %}
-				  {% assign badge_position = g_styles.badgePosition %}
-				{% endif %}
-
-				{% assign badge_style = 'filled' %}
-				{% if g_type_overrides.badgeStyle != blank %}
-				  {% assign badge_style = g_type_overrides.badgeStyle %}
-				{% elsif g_styles.badgeStyle != blank %}
-				  {% assign badge_style = g_styles.badgeStyle %}
-				{% endif %}
-				{% assign pricing_summary_box = true %}
-				{% if g_type_overrides.pricingSummaryBox == false or g_type_overrides.pricingSummaryBox == 'false' %}
-				  {% assign pricing_summary_box = false %}
-				{% elsif g_styles.pricingSummaryBox == false or g_styles.pricingSummaryBox == 'false' %}
-				  {% assign pricing_summary_box = false %}
-				{% endif %}
-
-				{% assign pricing_summary_style = 'card' %}
-				{% if pricing_summary_box %}
-				  {% if g_type_overrides.pricingSummaryStyle != blank %}
-					{% assign pricing_summary_style = g_type_overrides.pricingSummaryStyle %}
-				  {% elsif g_styles.pricingSummaryStyle != blank %}
-					{% assign pricing_summary_style = g_styles.pricingSummaryStyle %}
-				  {% endif %}
-				{% endif %}
-
-				{% assign pricing_summary_bg = '#f9fafb' %}
-				{% if pricing_summary_box %}
-				  {% if g_type_overrides.pricingSummaryBg != blank %}
-					{% assign pricing_summary_bg = g_type_overrides.pricingSummaryBg %}
-				  {% elsif g_styles.pricingSummaryBg != blank %}
-					{% assign pricing_summary_bg = g_styles.pricingSummaryBg %}
-				  {% endif %}
-				{% endif %}
-				{% assign override_container_settings = block.settings.override_container_settings | default: false %}
-
-				{% assign box_max_width = 600 %}
-				{% if override_container_settings %}
-				  {% assign box_max_width = block.settings.box_max_width | default: box_max_width %}
-				{% elsif g_type_overrides.boxMaxWidth != blank %}
-				  {% assign box_max_width = g_type_overrides.boxMaxWidth %}
-				{% elsif g_styles.boxMaxWidth != blank %}
-				  {% assign box_max_width = g_styles.boxMaxWidth %}
-				{% endif %}
-
-				{% assign box_alignment = 'center' %}
-				{% if override_container_settings and block.settings.box_alignment != blank %}
-				  {% assign box_alignment = block.settings.box_alignment %}
-				{% elsif g_type_overrides.boxAlignment != blank %}
-				  {% assign box_alignment = g_type_overrides.boxAlignment %}
-				{% elsif g_styles.boxAlignment != blank %}
-				  {% assign box_alignment = g_styles.boxAlignment %}
-				{% endif %}
-
-				{% assign show_border = true %}
-				{% if g_type_overrides.showBorder == false or g_type_overrides.showBorder == 'false' %}
-				  {% assign show_border = false %}
-				{% elsif g_styles.showBorder == false or g_styles.showBorder == 'false' %}
-				  {% assign show_border = false %}
-				{% endif %}
-				{% assign override_typography_settings = block.settings.override_typography_settings | default: false %}
-
-				{% assign heading_size = 'medium' %}
-				{% if override_typography_settings and block.settings.heading_size != blank %}
-				  {% assign heading_size = block.settings.heading_size %}
-				{% elsif g_type_overrides.headingSize != blank %}
-				  {% assign heading_size = g_type_overrides.headingSize %}
-				{% elsif g_styles.headingSize != blank %}
-				  {% assign heading_size = g_styles.headingSize %}
-				{% endif %}
-
-				{% assign body_size = 'medium' %}
-				{% if override_typography_settings and block.settings.body_size != blank %}
-				  {% assign body_size = block.settings.body_size %}
-				{% elsif g_type_overrides.bodySize != blank %}
-				  {% assign body_size = g_type_overrides.bodySize %}
-				{% elsif g_styles.bodySize != blank %}
-				  {% assign body_size = g_styles.bodySize %}
-				{% endif %}
-
-				{% assign more_product_settings = block.settings.more_product_settings %}
-				{% assign more_product_count = block.settings.more_product_count %}
-				{% assign product_count = bundle.productCount %}
-				{% unless more_product_settings %}
-					{% assign more_product_count = product_count %}
-				{% endunless %}
-
-
-				{% assign layout = 'list' %}
-				{% if g_styles.layout != blank %}
-				  {% assign layout = g_styles.layout %}
-				{% endif %}
-
-				{% assign divider_style = 'plus' %}
-				{% if layout == 'list' %}
-				  {% if g_type_overrides.dividerStyle != blank %}
-					{% assign divider_style = g_type_overrides.dividerStyle %}
-				  {% elsif g_styles.dividerStyle != blank %}
-					{% assign divider_style = g_styles.dividerStyle %}
-				  {% endif %}
-				{% endif %}
-
-				{% assign layout = bundle.layout
-						| default: 'LIST' %}
-
-				{% assign grid_columns = g_type_overrides.gridColumns
-						| default: g_styles.gridColumns
-						| default: 3 %}
-
-				{% assign slides_per_view = g_type_overrides.slidesPerView
-						| default: g_styles.slidesPerView
-						| default: 3 %}
-
-				{% assign carousel_navigation = g_type_overrides.carouselNavigation
-						| default: g_styles.carouselNavigation
-						| default: 'both' %}
-
-				{% assign autoplay = g_type_overrides.autoplay | default: g_styles.autoplay | default: false %}
-
-				{% assign autoplay_speed = g_type_overrides.autoplaySpeed
-						| default: g_styles.autoplaySpeed
-						| default: 5 %}
-
-				{% assign show_images = bundle.showImages %}
-				{% assign show_savings = bundle.showSavings %}
-				{% assign show_product_prices = bundle.showPrices %}
-				{% assign show_compare_at_price = bundle.showComparePrices %}
-				{% assign show_quantity = bundle.showQuantity %}
-				{% assign show_free_shipping = bundle.showFreeShipping %}
-				{% assign show_savings_badge = bundle.showSavingsBadge %}
-				{% assign enable_hyperlink = bundle.enableHyperLink %}
-				{% assign enable_stock_validation = global.cart.enableStockValidation %}
-				{% assign enable_analytics = global.privacy.enableAnalytics %}
-				{% assign lazy_load_images = global.cart.lazyLoadImages %}
-
-				{% if show_images == null %}{% assign show_images = true %}{% endif %}
-				{% if show_savings == null %}{% assign show_savings = true %}{% endif %}
-				{% if show_product_prices == null %}{% assign show_product_prices = true %}{% endif %}
-				{% if show_compare_at_price == null %}{% assign show_compare_at_price = true %}{% endif %}
-				{% if show_quantity == null %}{% assign show_quantity = true %}{% endif %}
-				{% if show_free_shipping == null %}{% assign show_free_shipping = true %}{% endif %}
-				{% if show_savings_badge == null %}{% assign show_savings_badge = true %}{% endif %}
-				{% unless enable_hyperlink == true or enable_hyperlink == false %}
-					{% assign enable_hyperlink = false %}
-				{% endunless %}
-				{% unless enable_stock_validation == true or enable_stock_validation == false %}
-					{% assign enable_stock_validation = true %}
-				{% endunless %}
-				{% unless enable_analytics == true or enable_analytics == false %}
-					{% assign enable_analytics = true %}
-				{% endunless %}
-				{% unless lazy_load_images == true or lazy_load_images == false %}
-					{% assign lazy_load_images = true %}
-				{% endunless %}
-				{% if bundle.title != blank %}
-					{% assign bundle_heading = bundle.title | strip %}
-				{% elsif g_labels.headingLabel != blank %}
-					{% assign bundle_heading = g_labels.headingLabel | strip %}
-				{% else %}
-					{% assign bundle_heading = 'bundle.headingLabel' | t | strip %}
-				{% endif %}
-
-				{% assign bundle_subtitle = bundle.subtitle | default: '' | strip %}
-
-				{% if g_labels.savingsBadgeText != blank %}
-					{% assign savings_badge_text = g_labels.savingsBadgeText %}
-				{% else %}
-					{% assign savings_badge_text = 'bundle.savingsBadgeText' | t %}
-				{% endif %}
-
-				{% if bundle.buttonText != blank %}
-					{% assign button_text = bundle.buttonText | strip %}
-				{% elsif g_labels.addToCartText != blank %}
-					{% assign button_text = g_labels.addToCartText | strip %}
-				{% else %}
-					{% assign button_text = 'bundle.addToCartText' | t | strip %}
-				{% endif %}
-
-				{% if g_labels.regularPriceLabel != blank %}
-					{% assign regular_price_label = g_labels.regularPriceLabel %}
-				{% else %}
-					{% assign regular_price_label = 'bundle.regularPriceLabel' | t %}
-				{% endif %}
-
-				{% if g_labels.bundlePriceLabel != blank %}
-					{% assign bundle_price_label = g_labels.bundlePriceLabel %}
-				{% else %}
-					{% assign bundle_price_label = 'bundle.bundlePriceLabel' | t %}
-				{% endif %}
-
-				{% if g_labels.youSaveLabel != blank %}
-					{% assign you_save_label = g_labels.youSaveLabel %}
-				{% else %}
-					{% assign you_save_label = 'bundle.youSaveLabel' | t %}
-				{% endif %}
-
-				{% if g_labels.freeShippingLabel != blank %}
-					{% assign free_shipping_label = g_labels.freeShippingLabel %}
-				{% else %}
-					{% assign free_shipping_label = 'bundle.freeShippingLabel' | t %}
-				{% endif %}
-
-				{% if g_labels.quantityLabel != blank %}
-					{% assign quantity_label = g_labels.quantityLabel %}
-				{% else %}
-					{% assign quantity_label = 'bundle.quantityLabel' | t %}
-				{% endif %}
-
-				{% if g_labels.addingText != blank %}
-					{% assign adding_text = g_labels.addingText %}
-				{% else %}
-					{% assign adding_text = 'bundle.addingText' | t %}
-				{% endif %}
-
-				{% if g_labels.addedText != blank %}
-					{% assign added_text = g_labels.addedText %}
-				{% else %}
-					{% assign added_text = 'bundle.addedText' | t %}
-				{% endif %}
-
-				{% if g_labels.outOfStockText != blank %}
-					{% assign out_of_stock_text = g_labels.outOfStockText %}
-				{% else %}
-					{% assign out_of_stock_text = 'bundle.outOfStockText' | t %}
-				{% endif %}
-
-				{% if g_labels.maxBundlesReachedText != blank %}
-					{% assign max_bundles_reached_text = g_labels.maxBundlesReachedText %}
-				{% else %}
-					{% assign max_bundles_reached_text = 'bundle.maxBundlesReachedText' | t %}
-				{% endif %}
-
-				{% if g_labels.bogoYouPayLabel != blank %}
-					{% assign bogo_you_pay_label = g_labels.bogoYouPayLabel %}
-				{% else %}
-					{% assign bogo_you_pay_label = 'bundle.bogoYouPayLabel' | t %}
-				{% endif %}
-				{% if g_labels.bogoYouSaveLabel != blank %}
-					{% assign bogo_you_save_label = g_labels.bogoYouSaveLabel %}
-				{% else %}
-					{% assign bogo_you_save_label = 'bundle.bogoYouSaveLabel' | t %}
-				{% endif %}
-				{% if g_labels.bogoTriggerBadgeText != blank %}
-					{% assign bogo_trigger_badge_text = g_labels.bogoTriggerBadgeText %}
-				{% else %}
-					{% assign bogo_trigger_badge_text = 'bundle.bogoTriggerBadgeText' | t %}
-				{% endif %}
-				{% if g_labels.bogoRewardBadgeText != blank %}
-					{% assign bogo_reward_badge_text = g_labels.bogoRewardBadgeText %}
-				{% else %}
-					{% assign bogo_reward_badge_text = 'bundle.bogoRewardBadgeText' | t %}
-				{% endif %}
-				{% if g_labels.bogoBadgeText != blank %}
-					{% assign bogo_badge_text = g_labels.bogoBadgeText %}
-				{% else %}
-					{% assign bogo_badge_text = 'bundle.bogoBadgeText' | t %}
-				{% endif %}
-				{% if g_labels.bogoFreeText != blank %}
-					{% assign bogo_free_text = g_labels.bogoFreeText %}
-				{% else %}
-					{% assign bogo_free_text = 'bundle.bogoFreeText' | t %}
-				{% endif %}
-				{% if g_labels.bogoTotalLabel != blank %}
-					{% assign bogo_total_label = g_labels.bogoTotalLabel %}
-				{% else %}
-					{% assign bogo_total_label = 'bundle.bogoTotalLabel' | t %}
-				{% endif %}
-				{% if g_labels.bogoSaveText != blank %}
-					{% assign bogo_save_text = g_labels.bogoSaveText %}
-				{% else %}
-					{% assign bogo_save_text = 'bundle.bogoSaveText' | t %}
-				{% endif %}
-
-				{% if block.settings.more_products_text != blank %}
-					{% assign more_products_text = block.settings.more_products_text %}
-				{% else %}
-					{% assign more_products_text = 'bundle.moreProductsText' | t %}
-				{% endif %}
-				{% if block.settings.show_less_text != blank %}
-					{% assign show_less_text = block.settings.show_less_text %}
-				{% else %}
-					{% assign show_less_text = 'bundle.showLessText' | t %}
-				{% endif %}
-
-				{% assign pv_ids = 'null' %}
-				{% if bundle.productVariantIds %}
-					{% assign pv_ids = bundle.productVariantIds | json %}
-				{% endif %}
-
-				{% capture bundle_structure_json %}{"id": "{{ bundle_id }}","name": "{{ bundle_heading }}","subtitle": "{{ bundle_subtitle }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"productVariantIds": {{ pv_ids }},"productQuantities": {{ bundle.productQuantities | default: '[]' | json }},"mainProductId": "{{ bundle.mainProductId | default: '' }}","bundleType": "{{ bundle.bundleType | default: 'FIXED_BUNDLE' }}","buyQuantity": {{ bundle.buyQuantity | default: 1 }},"getQuantity": {{ bundle.getQuantity | default: 1 }},"usesPerOrderLimit": {{ bundle.usesPerOrderLimit | default: 0 }},"productRoles": {{ bundle.productRoles | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}","quantityLabel": "{{ quantity_label | escape }}","addingText": "{{ adding_text | escape }}","addedText": "{{ added_text | escape }}","outOfStockText": "{{ out_of_stock_text | escape }}","maxBundlesReachedText": "{{ max_bundles_reached_text | escape }}","bogoYouPayLabel": "{{ bogo_you_pay_label | escape }}","bogoYouSaveLabel": "{{ bogo_you_save_label | escape }}","bogoTriggerBadgeText": "{{ bogo_trigger_badge_text | escape }}","bogoRewardBadgeText": "{{ bogo_reward_badge_text | escape }}","bogoBadgeText": "{{ bogo_badge_text | escape }}","bogoFreeText": "{{ bogo_free_text | escape }}","bogoTotalLabel": "{{ bogo_total_label | escape }}","bogoSaveText": "{{ bogo_save_text | escape }}"}}{% endcapture %}
-
-				{% capture responsive_json %}{"tablet": { {% if g_tablet.boxAlignment %}"boxAlignment": "{{ g_tablet.boxAlignment }}",{% endif %}{% if g_tablet.imagePosition %}"imagePosition": "{{ g_tablet.imagePosition }}",{% endif %}{% if g_tablet.imageFit %}"imageFit": "{{ g_tablet.imageFit }}",{% endif %}{% if g_tablet.imageSize %}"imageSize": "{{ g_tablet.imageSize }}",{% endif %}{% if g_tablet.dividerStyle %}"dividerStyle": "{{ g_tablet.dividerStyle }}",{% endif %}{% if g_tablet.carouselNavigation %}"carouselNavigation": "{{ g_tablet.carouselNavigation }}",{% endif %}{% if g_tablet.shadow %}"shadow": "{{ g_tablet.shadow }}",{% endif %}{% if g_tablet.spacing %}"spacing": "{{ g_tablet.spacing }}",{% endif %}{% if g_tablet.boxMaxWidth %}"boxMaxWidth": {{ g_tablet.boxMaxWidth }},{% endif %}{% if g_tablet.headingSize %}"headingSize": "{{ g_tablet.headingSize }}",{% endif %}{% if g_tablet.bodySize %}"bodySize": "{{ g_tablet.bodySize }}",{% endif %}{% if g_tablet.gridColumns %}"gridColumns": {{ g_tablet.gridColumns }},{% endif %}{% if g_tablet.slidesPerView %}"slidesPerView": {{ g_tablet.slidesPerView }},{% endif %}"_end": true},"mobile": { {% if g_mobile.boxAlignment %}"boxAlignment": "{{ g_mobile.boxAlignment }}",{% endif %}{% if g_mobile.imagePosition %}"imagePosition": "{{ g_mobile.imagePosition }}",{% endif %}{% if g_mobile.imageFit %}"imageFit": "{{ g_mobile.imageFit }}",{% endif %}{% if g_mobile.imageSize %}"imageSize": "{{ g_mobile.imageSize }}",{% endif %}{% if g_mobile.dividerStyle %}"dividerStyle": "{{ g_mobile.dividerStyle }}",{% endif %}{% if g_mobile.carouselNavigation %}"carouselNavigation": "{{ g_mobile.carouselNavigation }}",{% endif %}{% if g_mobile.shadow %}"shadow": "{{ g_mobile.shadow }}",{% endif %}{% if g_mobile.spacing %}"spacing": "{{ g_mobile.spacing }}",{% endif %}{% if g_mobile.boxMaxWidth %}"boxMaxWidth": {{ g_mobile.boxMaxWidth }},{% endif %}{% if g_mobile.headingSize %}"headingSize": "{{ g_mobile.headingSize }}",{% endif %}{% if g_mobile.bodySize %}"bodySize": "{{ g_mobile.bodySize }}",{% endif %}{% if g_mobile.gridColumns %}"gridColumns": {{ g_mobile.gridColumns }},{% endif %}{% if g_mobile.slidesPerView %}"slidesPerView": {{ g_mobile.slidesPerView }},{% endif %}"_end": true},"breakpoints": {"tablet": {{ tablet_bp }},"mobile": {{ mobile_bp }}}}{% endcapture %}
-				{% if g_tablet.spacing %}
-					{% case g_tablet.spacing %}
-						{% when 'compact' %}{% assign tablet_box_spacing = 12 %}{% assign tablet_gap_spacing = 8 %}
-						{% when 'spacious' %}{% assign tablet_box_spacing = 28 %}{% assign tablet_gap_spacing = 16 %}
-						{% else %}{% assign tablet_box_spacing = 20 %}{% assign tablet_gap_spacing = 12 %}
-					{% endcase %}
-				{% endif %}
-				{% if g_tablet.imageSize %}
-					{% case g_tablet.imageSize %}
-						{% when 'small' %}{% assign tablet_image_size_px = 60 %}
-						{% when 'large' %}{% assign tablet_image_size_px = 120 %}
-						{% else %}{% assign tablet_image_size_px = 80 %}
-					{% endcase %}
-				{% endif %}
-				{% if g_tablet.headingSize %}
-					{% case g_tablet.headingSize %}
-						{% when 'small' %}{% assign tablet_heading_font_size = 16 %}
-						{% when 'large' %}{% assign tablet_heading_font_size = 24 %}
-						{% else %}{% assign tablet_heading_font_size = 20 %}
-					{% endcase %}
-				{% endif %}
-				{% if g_tablet.bodySize %}
-					{% case g_tablet.bodySize %}
-						{% when 'small' %}{% assign tablet_body_font_size = 13 %}
-						{% when 'large' %}{% assign tablet_body_font_size = 16 %}
-						{% else %}{% assign tablet_body_font_size = 14 %}
-					{% endcase %}
-				{% endif %}
-				{% if g_mobile.spacing %}
-					{% case g_mobile.spacing %}
-						{% when 'compact' %}{% assign mobile_box_spacing = 12 %}{% assign mobile_gap_spacing = 8 %}
-						{% when 'spacious' %}{% assign mobile_box_spacing = 28 %}{% assign mobile_gap_spacing = 16 %}
-						{% else %}{% assign mobile_box_spacing = 20 %}{% assign mobile_gap_spacing = 12 %}
-					{% endcase %}
-				{% endif %}
-				{% if g_mobile.imageSize %}
-					{% case g_mobile.imageSize %}
-						{% when 'small' %}{% assign mobile_image_size_px = 60 %}
-						{% when 'large' %}{% assign mobile_image_size_px = 120 %}
-						{% else %}{% assign mobile_image_size_px = 80 %}
-					{% endcase %}
-				{% endif %}
-				{% if g_mobile.headingSize %}
-					{% case g_mobile.headingSize %}
-						{% when 'small' %}{% assign mobile_heading_font_size = 16 %}
-						{% when 'large' %}{% assign mobile_heading_font_size = 24 %}
-						{% else %}{% assign mobile_heading_font_size = 20 %}
-					{% endcase %}
-				{% endif %}
-				{% if g_mobile.bodySize %}
-					{% case g_mobile.bodySize %}
-						{% when 'small' %}{% assign mobile_body_font_size = 13 %}
-						{% when 'large' %}{% assign mobile_body_font_size = 16 %}
-						{% else %}{% assign mobile_body_font_size = 14 %}
-					{% endcase %}
-				{% endif %}
-				<style>
-					#radius-bundle-{{ bundle_id }} {
-						--rb-primary-color: {{ primary_color }};
-						--rb-text-color: {{ text_color }};
-						--rb-background-color: {{ background_color }};
-						--rb-border-color: {{ border_color }};
-						--rb-savings-color: {{ savings_color }};
-						--rb-product-bg-color: {{ product_card_bg }};
-						--rb-button-color: {{ button_bg_color }};
-						--rb-pricing-summary-bg: {{ pricing_summary_bg }};
-						--rb-border-radius: {{ border_radius }}px;
-						--rb-box-spacing: {{ box_spacing }}px;
-						--rb-gap-spacing: {{ gap_spacing }}px;
-						--rb-bundle-max-width: {{ box_max_width }}px;
-						--rb-box-border-width: {% if show_border %}1px{% else %}0{% endif %};
-						--rb-image-size: {{ image_size_px }}px;
-						--rb-image-fit: {{ image_fit }};
-						--rb-bogo-free-tag-color: {{ bogo_free_tag_color }};
-						--rb-bogo-card-border-style: {{ bogo_card_border_style }};
-
-					{% case shadow %}
-					{% when 'none' %}
-						--rb-shadow: none;
-						--rb-shadow-hover: none;
-					{% when 'strong' %}
-						--rb-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-						--rb-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
-					{% else %}
-						--rb-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-						--rb-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
-					{% endcase %}
-
-					{% if product_card_shadow %}
-						--rb-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-						--rb-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
-					{% else %}
-						--rb-card-shadow: none;
-						--rb-card-shadow-hover: none;
-					{% endif %}
-
-					{% if product_card_border %}
-						--rb-card-border: 1px solid var(--rb-border-color);
-					{% else %}
-						--rb-card-border: none;
-					{% endif %}
-
-					{% case heading_size %}
-					{% when 'small' %}
-						--rb-heading-font-size: 16px;
-					{% when 'large' %}
-						--rb-heading-font-size: 24px;
-					{% else %}
-						--rb-heading-font-size: 20px;
-					{% endcase %}
-
-					{% case body_size %}
-					{% when 'small' %}
-						--rb-body-font-size: 14px;
-					{% when 'large' %}
-						--rb-body-font-size: 18px;
-					{% else %}
-						--rb-body-font-size: 16px;
-					{% endcase %}
-
-					{% case button_size %}
-					{% when 'small' %}
-						--rb-button-padding: 8px 16px;
-						--rb-button-font-size: 14px;
-					{% when 'large' %}
-						--rb-button-padding: 16px 32px;
-						--rb-button-font-size: 18px;
-					{% else %}
-						--rb-button-padding: 12px 24px;
-						--rb-button-font-size: 16px;
-					{% endcase %}
-
-					{% if button_style == 'outline' %}
-						--rb-button-bg: transparent;
-						--rb-button-text: var(--rb-button-color);
-						--rb-button-border: 2px solid var(--rb-button-color);
-					{% else %}
-						--rb-button-bg: var(--rb-button-color);
-						--rb-button-text: var(--rb-button-text-color);
-						--rb-button-border: none;
-					{% endif %}
-
-					{% if button_width == 'full' %}
-						--rb-button-width: 100%;
-					{% else %}
-						--rb-button-width: auto;
-					{% endif %}
-
-					{% if badge_style == 'outline' %}
-						--rb-badge-bg: transparent;
-						--rb-badge-text: var(--rb-primary-color);
-						--rb-badge-border: 2px solid var(--rb-primary-color);
-					{% else %}
-						--rb-badge-bg: var(--rb-primary-color);
-						--rb-badge-text: #ffffff;
-						--rb-badge-border: none;
-					{% endif %}
-
-
-					{% if style_preset == 'dark' %}
-						--rb-skeleton-text: #2f3b4c;
-					{% endif %}
-
-					{% if pricing_summary_box %}
-					{% case pricing_summary_style %}
-					{% when 'minimal' %}
-						--rb-pricing-padding: 0;
-						--rb-pricing-bg: transparent;
-						--rb-pricing-border: none;
-						--rb-pricing-border-top: 1px solid var(--rb-border-color);
-					{% when 'highlight' %}
-						--rb-pricing-padding: 16px;
-						--rb-pricing-bg: var(--rb-pricing-summary-bg);
-						--rb-pricing-border: none;
-						--rb-pricing-border-left: 4px solid var(--rb-primary-color);
-					{% else %}
-						--rb-pricing-padding: 16px;
-						--rb-pricing-bg: var(--rb-pricing-summary-bg);
-						--rb-pricing-border: 1px solid var(--rb-border-color);
-					{% endcase %}
-					{% else %}
-						--rb-pricing-padding: 8px 0;
-						--rb-pricing-bg: transparent;
-						--rb-pricing-border: none;
-					{% endif %}
-						--rb-grid-columns: {{ grid_columns }};
-						--rb-slides-per-view: {{ slides_per_view }};
-					}
-
-					{% if g_tablet %}
-					@media (max-width: {{ tablet_bp }}px) {
-						#radius-bundle-{{ bundle_id }} {
-							{% if tablet_box_spacing %}--rb-box-spacing: {{ tablet_box_spacing }}px;{% endif %}
-							{% if tablet_gap_spacing %}--rb-gap-spacing: {{ tablet_gap_spacing }}px;{% endif %}
-							{% if tablet_image_size_px %}--rb-image-size: {{ tablet_image_size_px }}px;{% endif %}
-							{% if g_tablet.imageFit %}--rb-image-fit: {{ g_tablet.imageFit }};{% endif %}
-							{% if g_tablet.boxMaxWidth %}--rb-bundle-max-width: {{ g_tablet.boxMaxWidth }}px;{% endif %}
-							{% if tablet_heading_font_size %}--rb-heading-font-size: {{ tablet_heading_font_size }}px;{% endif %}
-							{% if tablet_body_font_size %}--rb-body-font-size: {{ tablet_body_font_size }}px;{% endif %}
-							{% if g_tablet.gridColumns %}--rb-grid-columns: {{ g_tablet.gridColumns }};{% endif %}
-							{% if g_tablet.slidesPerView %}--rb-slides-per-view: {{ g_tablet.slidesPerView }};{% endif %}
-						}
-					}
-					{% endif %}
-					{% if g_mobile %}
-					@media (max-width: {{ mobile_bp }}px) {
-						#radius-bundle-{{ bundle_id }} {
-							{% if mobile_box_spacing %}--rb-box-spacing: {{ mobile_box_spacing }}px;{% endif %}
-							{% if mobile_gap_spacing %}--rb-gap-spacing: {{ mobile_gap_spacing }}px;{% endif %}
-							{% if mobile_image_size_px %}--rb-image-size: {{ mobile_image_size_px }}px;{% endif %}
-							{% if g_mobile.imageFit %}--rb-image-fit: {{ g_mobile.imageFit }};{% endif %}
-							{% if g_mobile.boxMaxWidth %}--rb-bundle-max-width: {{ g_mobile.boxMaxWidth }}px;{% endif %}
-							{% if mobile_heading_font_size %}--rb-heading-font-size: {{ mobile_heading_font_size }}px;{% endif %}
-							{% if mobile_body_font_size %}--rb-body-font-size: {{ mobile_body_font_size }}px;{% endif %}
-							{% if g_mobile.gridColumns %}--rb-grid-columns: {{ g_mobile.gridColumns }};{% endif %}
-							{% if g_mobile.slidesPerView %}--rb-slides-per-view: {{ g_mobile.slidesPerView }};{% endif %}
-						}
-					}
-					{% endif %}
-				</style>
-
-				<div
-						id="radius-bundle-{{ bundle_id }}"
-						class="radius-bundle radius-bundle--{{ layout | downcase }}"
-						{% if is_standalone %}style="display: none;"{% endif %}
-						data-bundle-id="{{ bundle_id }}"
-						data-style-preset="{{ style_preset }}"
-						data-box-align="{{ box_alignment }}"
-						data-badge-position="{{ badge_position }}"
-						data-divider-style="{{ divider_style }}"
-						data-carousel-navigation="{{ carousel_navigation }}"
-						data-autoplay="{{ autoplay }}"
-						data-autoplay-speed="{{ autoplay_speed }}"
-						data-image-position="{{ image_position }}"
-						data-badge-style="{{ badge_style }}"
-						data-image-size="{{ image_size }}"
-						data-pricing-summary="{{ pricing_summary_style }}"
-						data-responsive='{{ responsive_json | strip_newlines | strip }}'
-						data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
-						data-is-standalone="{{ is_standalone }}"
-						data-show-images="{{ show_images }}"
-						data-show-savings="{{ show_savings }}"
-						data-show-prices="{{ show_product_prices }}"
-						data-show-compare-prices="{{ show_compare_at_price }}"
-						data-show-quantity="{{ show_quantity }}"
-						data-show-free-shipping="{{ show_free_shipping }}"
-						data-show-savings-badge="{{ show_savings_badge }}"
-						data-enable-hyperlink="{{ enable_hyperlink }}"
-						data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}"
-						data-enable-stock-validation="{{ enable_stock_validation }}"
-						data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}"
-						data-enable-analytics="{{ enable_analytics }}"
-						data-lazy-load-images="{{ lazy_load_images }}"
-						data-more-product-settings="{{ more_product_settings }}"
-						data-more-product-count="{{ more_product_count }}"
-						data-more-products-text="{{ more_products_text }}"
-						data-show-less-text="{{ show_less_text }}"
-				>
-					{% unless is_standalone %}
-					{% assign layout = layout | default: 'list' | downcase %}
-					{% assign product_count = bundle.productCount | default: 0 %}
-					{% if product_count == 0 %}
-						{% assign product_ids = bundle.productIds | default: empty %}
-						{% assign product_count = product_ids | size %}
-					{% endif %}
-					{% if product_count == 0 %}
-						{% assign product_count = 3 %}
-					{% endif %}
-
-					{% assign layout = layout | downcase %}
-					{% if layout == 'classic_card' or layout == 'compact_grid' or layout == 'minimalist' or layout == 'sleek' or layout == 'checklist' or layout == 'split_deal' %}
-						{% render 'radius-bundle-layout-bogo', bundle_id: bundle_id, layout: layout, name: bundle_heading, subtitle: bundle_subtitle, savings_badge_text: savings_badge_text, product_count: product_count, show_images: show_images, show_savings: show_savings, show_savings_badge: show_savings_badge, show_product_prices: show_product_prices, show_quantity: show_quantity, bogo_you_pay_label: bogo_you_pay_label, bogo_you_save_label: bogo_you_save_label, bogo_trigger_badge_text: bogo_trigger_badge_text, bogo_reward_badge_text: bogo_reward_badge_text, bogo_free_text: bogo_free_text, bogo_total_label: bogo_total_label, button_text: button_text, image_position: image_position, image_size: image_size, badge_style: badge_style %}
-					{% else %}
-						{% render 'radius-bundle-layout-fixed', layout: layout, bundle_id: bundle_id, name: bundle_heading, subtitle: bundle_subtitle, savings_badge_text: savings_badge_text, product_count: product_count, show_images: show_images, show_savings: show_savings, show_savings_badge: show_savings_badge, show_product_prices: show_product_prices, show_compare_at_price: show_compare_at_price, show_quantity: show_quantity, show_free_shipping: show_free_shipping, enable_hyperlink: enable_hyperlink, button_text: button_text, regular_price_label: regular_price_label, bundle_price_label: bundle_price_label, you_save_label: you_save_label, free_shipping_label: free_shipping_label, quantity_label: quantity_label, divider_style: divider_style, grid_columns: grid_columns, slides_per_view: slides_per_view, carousel_navigation: carousel_navigation, autoplay: autoplay, autoplay_speed: autoplay_speed, pricing_summary_box: pricing_summary_box, more_product_settings: more_product_settings, more_product_count: more_product_count %}
-					{% endif %}
-					{% endunless %}
-				</div>
-				{% break %}
-			{% endif %}
-		{% endfor %}
-	</div>
-
-	{% if custom_css != blank %}
-		<style>{{ custom_css }}</style>
-	{% endif %}
-
-	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
+{% assign global = shop.metafields['$app'].global_settings.value %}
+{% assign bundles = shop.metafields['$app'].active_bundles.value %}
+{% assign customer_locale = request.locale.iso_code | downcase %}
+{% assign customer_locale_base = customer_locale | split: '-' | first %}
+{% assign primary_locale = global.primaryLocale | default: 'en' %}
+{% if global.labels[customer_locale] %}
+{% assign g_labels = global.labels[customer_locale] %}
+{% elsif global.labels[customer_locale_base] %}
+{% assign g_labels = global.labels[customer_locale_base] %}
+{% elsif global.labels[primary_locale] %}
+{% assign g_labels = global.labels[primary_locale] %}
+{% elsif global.labels['en'] %}
+{% assign g_labels = global.labels['en'] %}
+{% else %}
+{% assign g_labels = global.labels %}
+{% endif %}
+{% assign g_styles = global.styles %}
+{% assign g_tablet = g_styles.tablet %}
+{% assign g_mobile = g_styles.mobile %}
+{% assign tablet_bp = g_styles.tabletBreakpoint | default: 1024 %}
+{% assign mobile_bp = g_styles.mobileBreakpoint | default: 768 %}
+{% assign g_custom = global.custom %}
+{% assign custom_css_class = g_custom.cssClass | default: '' %}
+{% assign custom_css = g_custom.css | default: '' %}
+{% assign global_priority_type = global.cart.bundlePriorityType | default: 'index_based' %}
+{% assign best_bundle_id = null %}
+{% assign best_score = -1 %}
+{% assign best_created = 0 %}
+{% for bid in bundle_ids %}
+{% assign b = bundles[bid] %}
+{% if b and b.status == 'ACTIVE' %}
+{% if global_priority_type == 'discount_based' %}
+{% assign this_score = b.effectiveSavings | default: 0 | times: 1 %}
+{% else %}
+{% assign this_score = b.priority | default: 0 | times: 1 %}
+{% endif %}
+{% assign this_created = b.createdAtTs | default: 0 | times: 1 %}
+{% if best_bundle_id == null or this_score > best_score or this_score == best_score and this_created > best_created %}
+{% assign best_score = this_score %}
+{% assign best_bundle_id = bid %}
+{% assign best_created = this_created %}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% assign rtl_locales = 'ar,he,fa,ur' | split: ',' %}
+{% assign is_rtl = false %}
+{% if rtl_locales contains customer_locale_base %}
+{% assign is_rtl = true %}
+{% endif %}
+
+{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
+
+<div
+class="radius-bundle-widget{% if custom_css_class != blank %} {{ custom_css_class }}{% endif %}"
+data-product-id="{{ product.id | prepend: 'gid://shopify/Product/' }}"
+data-shop="{{ shop.permanent_domain }}"
+dir="{% if is_rtl %}rtl{% else %}ltr{% endif %}"
+style="opacity: 0"
+>
+{% for bundle_id in bundle_ids %}
+{% assign bundle = bundles[bundle_id] %}
+
+{% if bundle_id == best_bundle_id %}
+{% assign current_product_gid = product.id | prepend: 'gid://shopify/Product/' %}
+{% assign is_standalone = false %}
+{% if bundle.mainProductId and current_product_gid == bundle.mainProductId %}
+{% assign is_standalone = true %}
+{% endif %}
+
+{% assign bundle_type_key = bundle.bundleType | default: 'FIXED_BUNDLE' %}
+{% assign g_type_overrides = g_styles.bundleTypeOverrides[bundle_type_key] %}
+
+{% assign style_preset = block.settings.style_preset %}
+{% assign style_preset = block.settings.style_preset | default: '' %}
+{% if style_preset == 'custom' %}
+{% assign primary_color = block.settings.primary_color
+| default: g_type_overrides.primaryColor
+| default: g_styles.primaryColor
+| default: '#303030' %}
+{% assign text_color = block.settings.text_color
+| default: g_type_overrides.textColor
+| default: g_styles.textColor
+| default: '#333333' %}
+{% assign background_color = block.settings.background_color
+| default: g_type_overrides.backgroundColor
+| default: g_styles.backgroundColor
+| default: '#ffffff' %}
+{% assign border_color = block.settings.border_color
+| default: g_type_overrides.borderColor
+| default: g_styles.borderColor
+| default: '#e5e7eb' %}
+{% assign savings_color = block.settings.savings_color
+| default: g_type_overrides.savingsColor
+| default: g_styles.savingsColor
+| default: '#16a34a' %}
+{% else %}
+{% case style_preset %}
+{% when 'minimal' %}
+{% assign primary_color = '#303030' %}
+{% assign text_color = '#333333' %}
+{% assign background_color = '#ffffff' %}
+{% assign border_color = '#e5e7eb' %}
+{% assign savings_color = '#16a34a' %}
+{% when 'soft' %}
+{% assign primary_color = '#6366f1' %}
+{% assign text_color = '#374151' %}
+{% assign background_color = '#f8fafc' %}
+{% assign border_color = '#e2e8f0' %}
+{% assign savings_color = '#10b981' %}
+{% when 'bold' %}
+{% assign primary_color = '#dc2626' %}
+{% assign text_color = '#111827' %}
+{% assign background_color = '#ffffff' %}
+{% assign border_color = '#d1d5db' %}
+{% assign savings_color = '#ea580c' %}
+{% when 'elegant' %}
+{% assign primary_color = '#78716c' %}
+{% assign text_color = '#44403c' %}
+{% assign background_color = '#fafaf9' %}
+{% assign border_color = '#d6d3d1' %}
+{% assign savings_color = '#059669' %}
+{% when 'dark' %}
+{% assign primary_color = '#f59e0b' %}
+{% assign text_color = '#f3f4f6' %}
+{% assign background_color = '#1f2937' %}
+{% assign border_color = '#374151' %}
+{% assign savings_color = '#34d399' %}
+{% assign product_card_bg = '#4b5563' %}
+{% when 'nature' %}
+{% assign primary_color = '#059669' %}
+{% assign text_color = '#1f2937' %}
+{% assign background_color = '#f0fdf4' %}
+{% assign border_color = '#bbf7d0' %}
+{% assign savings_color = '#16a34a' %}
+{% when 'warm' %}
+{% assign primary_color = '#f97316' %}
+{% assign text_color = '#431407' %}
+{% assign background_color = '#fff7ed' %}
+{% assign border_color = '#fed7aa' %}
+{% assign savings_color = '#ea580c' %}
+{% when 'professional' %}
+{% assign primary_color = '#2563eb' %}
+{% assign text_color = '#1f2937' %}
+{% assign background_color = '#f8fafc' %}
+{% assign border_color = '#d1d5db' %}
+{% assign savings_color = '#2563eb' %}
+{% else %}
+{% assign primary_color = g_type_overrides.primaryColor | default: g_styles.primaryColor | default: '#303030' %}
+{% assign text_color = g_type_overrides.textColor | default: g_styles.textColor | default: '#333333' %}
+{% assign background_color = g_type_overrides.backgroundColor | default: g_styles.backgroundColor | default: '#ffffff' %}
+{% assign border_color = g_type_overrides.borderColor | default: g_styles.borderColor | default: '#e5e7eb' %}
+{% assign savings_color = g_type_overrides.savingsColor | default: g_styles.savingsColor | default: '#16a34a' %}
+{% endcase %}
+{% endif %}
+
+{% if block.settings.style_preset != blank %}
+{% assign style_preset = block.settings.style_preset %}
+{% else %}
+{% assign style_preset = g_type_overrides.stylePreset | default: g_styles.stylePreset | default: 'minimal' %}
+{% endif %}
+{% if style_preset == 'custom' %}
+{% assign corner_style = block.settings.corner_style %}
+{% else %}
+{% assign corner_style = g_type_overrides.cornerStyle | default: g_styles.cornerStyle %}
+{% endif %}
+
+{% assign corner_style = corner_style | default: 'modern' %}
+{% case corner_style %}
+{% when 'sharp' %}
+{% assign border_radius = 0 %}
+{% when 'rounded' %}
+{% assign border_radius = 20 %}
+{% else %}
+{% assign border_radius = 8 %}
+{% endcase %}
+
+{% assign shadow = block.settings.shadow | default: 'soft' %}
+{% if style_preset == 'custom' and block.settings.shadow != blank %}
+{% assign shadow = block.settings.shadow %}
+{% else %}
+{% assign shadow = g_type_overrides.shadow | default: g_styles.shadow %}
+{% endif %}
+
+{% assign spacing = block.settings.spacing | default: 'comfortable' %}
+{% if style_preset == 'custom' and block.settings.spacing != blank %}
+{% assign spacing = block.settings.spacing %}
+{% else %}
+{% assign spacing = g_type_overrides.spacing | default: g_styles.spacing %}
+{% endif %}
+
+{% case spacing %}
+{% when 'compact' %}
+{% assign box_spacing = 12 %}
+{% assign gap_spacing = 8 %}
+{% when 'spacious' %}
+{% assign box_spacing = 28 %}
+{% assign gap_spacing = 16 %}
+{% else %}
+{% assign box_spacing = 20 %}
+{% assign gap_spacing = 12 %}
+{% endcase %}
+
+{% assign image_size = g_type_overrides.imageSize | default: g_styles.imageSize | default: 'medium' %}
+
+{% case image_size %}
+{% when 'small' %}
+{% assign image_size_px = 60 %}
+{% when 'large' %}
+{% assign image_size_px = 120 %}
+{% else %}
+{% assign image_size_px = 80 %}
+{% endcase %}
+
+{% assign image_fit = g_type_overrides.imageFit | default: g_styles.imageFit | default: 'contain' %}
+
+{% assign image_position = g_type_overrides.imagePosition | default: g_styles.imagePosition | default: 'left' %}
+
+{% if product_card_bg == blank %}
+{% assign customize_card_style = g_type_overrides.customizeCardStyle | default: g_styles.customizeCardStyle %}
+{% if customize_card_style == true or customize_card_style == 'true' %}
+{% assign product_card_bg = g_type_overrides.productCardBg | default: g_styles.productCardBg | default: '#f9fafb' %}
+{% else %}
+{% assign product_card_bg = background_color %}
+{% endif %}
+{% endif %}
+
+{% assign product_card_border = true %}
+{% if g_type_overrides.productCardBorder == false or g_type_overrides.productCardBorder == 'false' %}
+{% assign product_card_border = false %}
+{% elsif g_styles.productCardBorder == false or g_styles.productCardBorder == 'false' %}
+{% assign product_card_border = false %}
+{% endif %}
+
+{% assign product_card_shadow = false %}
+{% if g_type_overrides.productCardShadow == true or g_type_overrides.productCardShadow == 'true' %}
+{% assign product_card_shadow = true %}
+{% elsif g_styles.productCardShadow == true or g_styles.productCardShadow == 'true' %}
+{% assign product_card_shadow = true %}
+{% endif %}
+{% assign bogo_free_tag_color = g_type_overrides.bogoFreeTagColor | default: g_styles.bogoFreeTagColor | default: '#16a34a' %}
+{% assign bogo_card_border_style = g_type_overrides.bogoCardBorderStyle | default: g_styles.bogoCardBorderStyle | default: 'solid' %}
+{% assign button_style = 'filled' %}
+{% if g_type_overrides.buttonStyle != blank %}
+{% assign button_style = g_type_overrides.buttonStyle %}
+{% elsif g_styles.buttonStyle != blank %}
+{% assign button_style = g_styles.buttonStyle %}
+{% endif %}
+
+{% assign button_size = 'medium' %}
+{% if g_type_overrides.buttonSize != blank %}
+{% assign button_size = g_type_overrides.buttonSize %}
+{% elsif g_styles.buttonSize != blank %}
+{% assign button_size = g_styles.buttonSize %}
+{% endif %}
+
+{% assign button_width = 'full' %}
+{% if g_type_overrides.buttonWidth != blank %}
+{% assign button_width = g_type_overrides.buttonWidth %}
+{% elsif g_styles.buttonWidth != blank %}
+{% assign button_width = g_styles.buttonWidth %}
+{% endif %}
+
+{% assign button_bg_color = primary_color %}
+{% if g_type_overrides.buttonBgColor != blank %}
+{% assign button_bg_color = g_type_overrides.buttonBgColor %}
+{% elsif g_styles.buttonBgColor != blank %}
+{% assign button_bg_color = g_styles.buttonBgColor %}
+{% endif %}
+
+{% assign badge_position = 'top-right' %}
+{% if g_type_overrides.badgePosition != blank %}
+{% assign badge_position = g_type_overrides.badgePosition %}
+{% elsif g_styles.badgePosition != blank %}
+{% assign badge_position = g_styles.badgePosition %}
+{% endif %}
+
+{% assign badge_style = 'filled' %}
+{% if g_type_overrides.badgeStyle != blank %}
+{% assign badge_style = g_type_overrides.badgeStyle %}
+{% elsif g_styles.badgeStyle != blank %}
+{% assign badge_style = g_styles.badgeStyle %}
+{% endif %}
+{% assign pricing_summary_box = true %}
+{% if g_type_overrides.pricingSummaryBox == false or g_type_overrides.pricingSummaryBox == 'false' %}
+{% assign pricing_summary_box = false %}
+{% elsif g_styles.pricingSummaryBox == false or g_styles.pricingSummaryBox == 'false' %}
+{% assign pricing_summary_box = false %}
+{% endif %}
+
+{% assign pricing_summary_style = 'card' %}
+{% if pricing_summary_box %}
+{% if g_type_overrides.pricingSummaryStyle != blank %}
+{% assign pricing_summary_style = g_type_overrides.pricingSummaryStyle %}
+{% elsif g_styles.pricingSummaryStyle != blank %}
+{% assign pricing_summary_style = g_styles.pricingSummaryStyle %}
+{% endif %}
+{% endif %}
+
+{% assign pricing_summary_bg = '#f9fafb' %}
+{% if pricing_summary_box %}
+{% if g_type_overrides.pricingSummaryBg != blank %}
+{% assign pricing_summary_bg = g_type_overrides.pricingSummaryBg %}
+{% elsif g_styles.pricingSummaryBg != blank %}
+{% assign pricing_summary_bg = g_styles.pricingSummaryBg %}
+{% endif %}
+{% endif %}
+{% assign override_container_settings = block.settings.override_container_settings | default: false %}
+
+{% assign box_max_width = 600 %}
+{% if override_container_settings %}
+{% assign box_max_width = block.settings.box_max_width | default: box_max_width %}
+{% elsif g_type_overrides.boxMaxWidth != blank %}
+{% assign box_max_width = g_type_overrides.boxMaxWidth %}
+{% elsif g_styles.boxMaxWidth != blank %}
+{% assign box_max_width = g_styles.boxMaxWidth %}
+{% endif %}
+
+{% assign box_alignment = 'center' %}
+{% if override_container_settings and block.settings.box_alignment != blank %}
+{% assign box_alignment = block.settings.box_alignment %}
+{% elsif g_type_overrides.boxAlignment != blank %}
+{% assign box_alignment = g_type_overrides.boxAlignment %}
+{% elsif g_styles.boxAlignment != blank %}
+{% assign box_alignment = g_styles.boxAlignment %}
+{% endif %}
+
+{% assign show_border = true %}
+{% if g_type_overrides.showBorder == false or g_type_overrides.showBorder == 'false' %}
+{% assign show_border = false %}
+{% elsif g_styles.showBorder == false or g_styles.showBorder == 'false' %}
+{% assign show_border = false %}
+{% endif %}
+{% assign override_typography_settings = block.settings.override_typography_settings | default: false %}
+
+{% assign heading_size = 'medium' %}
+{% if override_typography_settings and block.settings.heading_size != blank %}
+{% assign heading_size = block.settings.heading_size %}
+{% elsif g_type_overrides.headingSize != blank %}
+{% assign heading_size = g_type_overrides.headingSize %}
+{% elsif g_styles.headingSize != blank %}
+{% assign heading_size = g_styles.headingSize %}
+{% endif %}
+
+{% assign body_size = 'medium' %}
+{% if override_typography_settings and block.settings.body_size != blank %}
+{% assign body_size = block.settings.body_size %}
+{% elsif g_type_overrides.bodySize != blank %}
+{% assign body_size = g_type_overrides.bodySize %}
+{% elsif g_styles.bodySize != blank %}
+{% assign body_size = g_styles.bodySize %}
+{% endif %}
+
+{% assign more_product_settings = block.settings.more_product_settings %}
+{% assign more_product_count = block.settings.more_product_count %}
+{% assign product_count = bundle.productCount %}
+{% unless more_product_settings %}
+{% assign more_product_count = product_count %}
+{% endunless %}
+
+
+{% assign layout = 'list' %}
+{% if g_styles.layout != blank %}
+{% assign layout = g_styles.layout %}
+{% endif %}
+
+{% assign divider_style = 'plus' %}
+{% if layout == 'list' %}
+{% if g_type_overrides.dividerStyle != blank %}
+{% assign divider_style = g_type_overrides.dividerStyle %}
+{% elsif g_styles.dividerStyle != blank %}
+{% assign divider_style = g_styles.dividerStyle %}
+{% endif %}
+{% endif %}
+
+{% assign layout = bundle.layout
+| default: 'LIST' %}
+
+{% assign grid_columns = g_type_overrides.gridColumns
+| default: g_styles.gridColumns
+| default: 3 %}
+
+{% assign slides_per_view = g_type_overrides.slidesPerView
+| default: g_styles.slidesPerView
+| default: 3 %}
+
+{% assign carousel_navigation = g_type_overrides.carouselNavigation
+| default: g_styles.carouselNavigation
+| default: 'both' %}
+
+{% assign autoplay = g_type_overrides.autoplay | default: g_styles.autoplay | default: false %}
+
+{% assign autoplay_speed = g_type_overrides.autoplaySpeed
+| default: g_styles.autoplaySpeed
+| default: 5 %}
+
+{% assign show_images = bundle.showImages %}
+{% assign show_savings = bundle.showSavings %}
+{% assign show_product_prices = bundle.showPrices %}
+{% assign show_compare_at_price = bundle.showComparePrices %}
+{% assign show_quantity = bundle.showQuantity %}
+{% assign show_free_shipping = bundle.showFreeShipping %}
+{% assign show_savings_badge = bundle.showSavingsBadge %}
+{% assign enable_hyperlink = bundle.enableHyperLink %}
+{% assign enable_stock_validation = global.cart.enableStockValidation %}
+{% assign enable_analytics = global.privacy.enableAnalytics %}
+{% assign lazy_load_images = global.cart.lazyLoadImages %}
+
+{% if show_images == null %}{% assign show_images = true %}{% endif %}
+{% if show_savings == null %}{% assign show_savings = true %}{% endif %}
+{% if show_product_prices == null %}{% assign show_product_prices = true %}{% endif %}
+{% if show_compare_at_price == null %}{% assign show_compare_at_price = true %}{% endif %}
+{% if show_quantity == null %}{% assign show_quantity = true %}{% endif %}
+{% if show_free_shipping == null %}{% assign show_free_shipping = true %}{% endif %}
+{% if show_savings_badge == null %}{% assign show_savings_badge = true %}{% endif %}
+{% unless enable_hyperlink == true or enable_hyperlink == false %}
+{% assign enable_hyperlink = false %}
+{% endunless %}
+{% unless enable_stock_validation == true or enable_stock_validation == false %}
+{% assign enable_stock_validation = true %}
+{% endunless %}
+{% unless enable_analytics == true or enable_analytics == false %}
+{% assign enable_analytics = true %}
+{% endunless %}
+{% unless lazy_load_images == true or lazy_load_images == false %}
+{% assign lazy_load_images = true %}
+{% endunless %}
+{% if bundle.title != blank %}
+{% assign bundle_heading = bundle.title | strip %}
+{% elsif g_labels.headingLabel != blank %}
+{% assign bundle_heading = g_labels.headingLabel | strip %}
+{% else %}
+{% assign bundle_heading = 'bundle.headingLabel' | t | strip %}
+{% endif %}
+
+{% assign bundle_subtitle = bundle.subtitle | default: '' | strip %}
+
+{% if g_labels.savingsBadgeText != blank %}
+{% assign savings_badge_text = g_labels.savingsBadgeText %}
+{% else %}
+{% assign savings_badge_text = 'bundle.savingsBadgeText' | t %}
+{% endif %}
+
+{% if bundle.buttonText != blank %}
+{% assign button_text = bundle.buttonText | strip %}
+{% elsif g_labels.addToCartText != blank %}
+{% assign button_text = g_labels.addToCartText | strip %}
+{% else %}
+{% assign button_text = 'bundle.addToCartText' | t | strip %}
+{% endif %}
+
+{% if g_labels.regularPriceLabel != blank %}
+{% assign regular_price_label = g_labels.regularPriceLabel %}
+{% else %}
+{% assign regular_price_label = 'bundle.regularPriceLabel' | t %}
+{% endif %}
+
+{% if g_labels.bundlePriceLabel != blank %}
+{% assign bundle_price_label = g_labels.bundlePriceLabel %}
+{% else %}
+{% assign bundle_price_label = 'bundle.bundlePriceLabel' | t %}
+{% endif %}
+
+{% if g_labels.youSaveLabel != blank %}
+{% assign you_save_label = g_labels.youSaveLabel %}
+{% else %}
+{% assign you_save_label = 'bundle.youSaveLabel' | t %}
+{% endif %}
+
+{% if g_labels.freeShippingLabel != blank %}
+{% assign free_shipping_label = g_labels.freeShippingLabel %}
+{% else %}
+{% assign free_shipping_label = 'bundle.freeShippingLabel' | t %}
+{% endif %}
+
+{% if g_labels.quantityLabel != blank %}
+{% assign quantity_label = g_labels.quantityLabel %}
+{% else %}
+{% assign quantity_label = 'bundle.quantityLabel' | t %}
+{% endif %}
+
+{% if g_labels.addingText != blank %}
+{% assign adding_text = g_labels.addingText %}
+{% else %}
+{% assign adding_text = 'bundle.addingText' | t %}
+{% endif %}
+
+{% if g_labels.addedText != blank %}
+{% assign added_text = g_labels.addedText %}
+{% else %}
+{% assign added_text = 'bundle.addedText' | t %}
+{% endif %}
+
+{% if g_labels.outOfStockText != blank %}
+{% assign out_of_stock_text = g_labels.outOfStockText %}
+{% else %}
+{% assign out_of_stock_text = 'bundle.outOfStockText' | t %}
+{% endif %}
+
+{% if g_labels.maxBundlesReachedText != blank %}
+{% assign max_bundles_reached_text = g_labels.maxBundlesReachedText %}
+{% else %}
+{% assign max_bundles_reached_text = 'bundle.maxBundlesReachedText' | t %}
+{% endif %}
+
+{% if g_labels.bogoYouPayLabel != blank %}
+{% assign bogo_you_pay_label = g_labels.bogoYouPayLabel %}
+{% else %}
+{% assign bogo_you_pay_label = 'bundle.bogoYouPayLabel' | t %}
+{% endif %}
+{% if g_labels.bogoYouSaveLabel != blank %}
+{% assign bogo_you_save_label = g_labels.bogoYouSaveLabel %}
+{% else %}
+{% assign bogo_you_save_label = 'bundle.bogoYouSaveLabel' | t %}
+{% endif %}
+{% if g_labels.bogoTriggerBadgeText != blank %}
+{% assign bogo_trigger_badge_text = g_labels.bogoTriggerBadgeText %}
+{% else %}
+{% assign bogo_trigger_badge_text = 'bundle.bogoTriggerBadgeText' | t %}
+{% endif %}
+{% if g_labels.bogoRewardBadgeText != blank %}
+{% assign bogo_reward_badge_text = g_labels.bogoRewardBadgeText %}
+{% else %}
+{% assign bogo_reward_badge_text = 'bundle.bogoRewardBadgeText' | t %}
+{% endif %}
+{% if g_labels.bogoBadgeText != blank %}
+{% assign bogo_badge_text = g_labels.bogoBadgeText %}
+{% else %}
+{% assign bogo_badge_text = 'bundle.bogoBadgeText' | t %}
+{% endif %}
+{% if g_labels.bogoFreeText != blank %}
+{% assign bogo_free_text = g_labels.bogoFreeText %}
+{% else %}
+{% assign bogo_free_text = 'bundle.bogoFreeText' | t %}
+{% endif %}
+{% if g_labels.bogoTotalLabel != blank %}
+{% assign bogo_total_label = g_labels.bogoTotalLabel %}
+{% else %}
+{% assign bogo_total_label = 'bundle.bogoTotalLabel' | t %}
+{% endif %}
+{% if g_labels.bogoSaveText != blank %}
+{% assign bogo_save_text = g_labels.bogoSaveText %}
+{% else %}
+{% assign bogo_save_text = 'bundle.bogoSaveText' | t %}
+{% endif %}
+
+{% if block.settings.more_products_text != blank %}
+{% assign more_products_text = block.settings.more_products_text %}
+{% else %}
+{% assign more_products_text = 'bundle.moreProductsText' | t %}
+{% endif %}
+{% if block.settings.show_less_text != blank %}
+{% assign show_less_text = block.settings.show_less_text %}
+{% else %}
+{% assign show_less_text = 'bundle.showLessText' | t %}
+{% endif %}
+
+{% assign pv_ids = 'null' %}
+{% if bundle.productVariantIds %}
+{% assign pv_ids = bundle.productVariantIds | json %}
+{% endif %}
+
+{% capture bundle_structure_json %}{"id": "{{ bundle_id }}","name": "{{ bundle_heading }}","subtitle": "{{ bundle_subtitle }}","status": "{{ bundle.status }}","discountType": "{{ bundle.discountType }}","discountValue": {{ bundle.discountValue | default: 0 }},"freeShipping": {{ bundle.freeShipping | default: false }},"minOrderValue": {{ bundle.minOrderValue | default: 0 }},"maxDiscountAmount": {{ bundle.maxDiscountAmount | default: 0 }},"discountApplication": "{{ bundle.discountApplication | default: 'bundle' }}","discountedProductIds": {{ bundle.discountedProductIds | default: '[]' | json }},"productCount": {{ bundle.productCount | default: 0 }},"productIds": {{ bundle.productIds | default: '[]' | json }},"productVariantIds": {{ pv_ids }},"productQuantities": {{ bundle.productQuantities | default: '[]' | json }},"mainProductId": "{{ bundle.mainProductId | default: '' }}","bundleType": "{{ bundle.bundleType | default: 'FIXED_BUNDLE' }}","buyQuantity": {{ bundle.buyQuantity | default: 1 }},"getQuantity": {{ bundle.getQuantity | default: 1 }},"usesPerOrderLimit": {{ bundle.usesPerOrderLimit | default: 0 }},"productRoles": {{ bundle.productRoles | default: '[]' | json }},"layout": "{{ layout }}","labels": {"headingLabel": "{{ bundle_heading | escape }}","savingsBadgeText": "{{ savings_badge_text | escape }}","addToCartText": "{{ button_text | escape }}","regularPriceLabel": "{{ regular_price_label | escape }}","bundlePriceLabel": "{{ bundle_price_label | escape }}","youSaveLabel": "{{ you_save_label | escape }}","freeShippingLabel": "{{ free_shipping_label | escape }}","quantityLabel": "{{ quantity_label | escape }}","addingText": "{{ adding_text | escape }}","addedText": "{{ added_text | escape }}","outOfStockText": "{{ out_of_stock_text | escape }}","maxBundlesReachedText": "{{ max_bundles_reached_text | escape }}","bogoYouPayLabel": "{{ bogo_you_pay_label | escape }}","bogoYouSaveLabel": "{{ bogo_you_save_label | escape }}","bogoTriggerBadgeText": "{{ bogo_trigger_badge_text | escape }}","bogoRewardBadgeText": "{{ bogo_reward_badge_text | escape }}","bogoBadgeText": "{{ bogo_badge_text | escape }}","bogoFreeText": "{{ bogo_free_text | escape }}","bogoTotalLabel": "{{ bogo_total_label | escape }}","bogoSaveText": "{{ bogo_save_text | escape }}"}}{% endcapture %}
+
+{% capture responsive_json %}{"tablet": { {% if g_tablet.boxAlignment %}"boxAlignment": "{{ g_tablet.boxAlignment }}",{% endif %}{% if g_tablet.imagePosition %}"imagePosition": "{{ g_tablet.imagePosition }}",{% endif %}{% if g_tablet.imageFit %}"imageFit": "{{ g_tablet.imageFit }}",{% endif %}{% if g_tablet.imageSize %}"imageSize": "{{ g_tablet.imageSize }}",{% endif %}{% if g_tablet.dividerStyle %}"dividerStyle": "{{ g_tablet.dividerStyle }}",{% endif %}{% if g_tablet.carouselNavigation %}"carouselNavigation": "{{ g_tablet.carouselNavigation }}",{% endif %}{% if g_tablet.shadow %}"shadow": "{{ g_tablet.shadow }}",{% endif %}{% if g_tablet.spacing %}"spacing": "{{ g_tablet.spacing }}",{% endif %}{% if g_tablet.boxMaxWidth %}"boxMaxWidth": {{ g_tablet.boxMaxWidth }},{% endif %}{% if g_tablet.headingSize %}"headingSize": "{{ g_tablet.headingSize }}",{% endif %}{% if g_tablet.bodySize %}"bodySize": "{{ g_tablet.bodySize }}",{% endif %}{% if g_tablet.gridColumns %}"gridColumns": {{ g_tablet.gridColumns }},{% endif %}{% if g_tablet.slidesPerView %}"slidesPerView": {{ g_tablet.slidesPerView }},{% endif %}"_end": true},"mobile": { {% if g_mobile.boxAlignment %}"boxAlignment": "{{ g_mobile.boxAlignment }}",{% endif %}{% if g_mobile.imagePosition %}"imagePosition": "{{ g_mobile.imagePosition }}",{% endif %}{% if g_mobile.imageFit %}"imageFit": "{{ g_mobile.imageFit }}",{% endif %}{% if g_mobile.imageSize %}"imageSize": "{{ g_mobile.imageSize }}",{% endif %}{% if g_mobile.dividerStyle %}"dividerStyle": "{{ g_mobile.dividerStyle }}",{% endif %}{% if g_mobile.carouselNavigation %}"carouselNavigation": "{{ g_mobile.carouselNavigation }}",{% endif %}{% if g_mobile.shadow %}"shadow": "{{ g_mobile.shadow }}",{% endif %}{% if g_mobile.spacing %}"spacing": "{{ g_mobile.spacing }}",{% endif %}{% if g_mobile.boxMaxWidth %}"boxMaxWidth": {{ g_mobile.boxMaxWidth }},{% endif %}{% if g_mobile.headingSize %}"headingSize": "{{ g_mobile.headingSize }}",{% endif %}{% if g_mobile.bodySize %}"bodySize": "{{ g_mobile.bodySize }}",{% endif %}{% if g_mobile.gridColumns %}"gridColumns": {{ g_mobile.gridColumns }},{% endif %}{% if g_mobile.slidesPerView %}"slidesPerView": {{ g_mobile.slidesPerView }},{% endif %}"_end": true},"breakpoints": {"tablet": {{ tablet_bp }},"mobile": {{ mobile_bp }}}}{% endcapture %}
+{% if g_tablet.spacing %}
+{% case g_tablet.spacing %}
+{% when 'compact' %}{% assign tablet_box_spacing = 12 %}{% assign tablet_gap_spacing = 8 %}
+{% when 'spacious' %}{% assign tablet_box_spacing = 28 %}{% assign tablet_gap_spacing = 16 %}
+{% else %}{% assign tablet_box_spacing = 20 %}{% assign tablet_gap_spacing = 12 %}
+{% endcase %}
+{% endif %}
+{% if g_tablet.imageSize %}
+{% case g_tablet.imageSize %}
+{% when 'small' %}{% assign tablet_image_size_px = 60 %}
+{% when 'large' %}{% assign tablet_image_size_px = 120 %}
+{% else %}{% assign tablet_image_size_px = 80 %}
+{% endcase %}
+{% endif %}
+{% if g_tablet.headingSize %}
+{% case g_tablet.headingSize %}
+{% when 'small' %}{% assign tablet_heading_font_size = 16 %}
+{% when 'large' %}{% assign tablet_heading_font_size = 24 %}
+{% else %}{% assign tablet_heading_font_size = 20 %}
+{% endcase %}
+{% endif %}
+{% if g_tablet.bodySize %}
+{% case g_tablet.bodySize %}
+{% when 'small' %}{% assign tablet_body_font_size = 13 %}
+{% when 'large' %}{% assign tablet_body_font_size = 16 %}
+{% else %}{% assign tablet_body_font_size = 14 %}
+{% endcase %}
+{% endif %}
+{% if g_mobile.spacing %}
+{% case g_mobile.spacing %}
+{% when 'compact' %}{% assign mobile_box_spacing = 12 %}{% assign mobile_gap_spacing = 8 %}
+{% when 'spacious' %}{% assign mobile_box_spacing = 28 %}{% assign mobile_gap_spacing = 16 %}
+{% else %}{% assign mobile_box_spacing = 20 %}{% assign mobile_gap_spacing = 12 %}
+{% endcase %}
+{% endif %}
+{% if g_mobile.imageSize %}
+{% case g_mobile.imageSize %}
+{% when 'small' %}{% assign mobile_image_size_px = 60 %}
+{% when 'large' %}{% assign mobile_image_size_px = 120 %}
+{% else %}{% assign mobile_image_size_px = 80 %}
+{% endcase %}
+{% endif %}
+{% if g_mobile.headingSize %}
+{% case g_mobile.headingSize %}
+{% when 'small' %}{% assign mobile_heading_font_size = 16 %}
+{% when 'large' %}{% assign mobile_heading_font_size = 24 %}
+{% else %}{% assign mobile_heading_font_size = 20 %}
+{% endcase %}
+{% endif %}
+{% if g_mobile.bodySize %}
+{% case g_mobile.bodySize %}
+{% when 'small' %}{% assign mobile_body_font_size = 13 %}
+{% when 'large' %}{% assign mobile_body_font_size = 16 %}
+{% else %}{% assign mobile_body_font_size = 14 %}
+{% endcase %}
+{% endif %}
+<style>
+#radius-bundle-{{ bundle_id }} {
+--rb-primary-color: {{ primary_color }};
+--rb-text-color: {{ text_color }};
+--rb-background-color: {{ background_color }};
+--rb-border-color: {{ border_color }};
+--rb-savings-color: {{ savings_color }};
+--rb-product-bg-color: {{ product_card_bg }};
+--rb-button-color: {{ button_bg_color }};
+--rb-pricing-summary-bg: {{ pricing_summary_bg }};
+--rb-border-radius: {{ border_radius }}px;
+--rb-box-spacing: {{ box_spacing }}px;
+--rb-gap-spacing: {{ gap_spacing }}px;
+--rb-bundle-max-width: {{ box_max_width }}px;
+--rb-box-border-width: {% if show_border %}1px{% else %}0{% endif %};
+--rb-image-size: {{ image_size_px }}px;
+--rb-image-fit: {{ image_fit }};
+--rb-bogo-free-tag-color: {{ bogo_free_tag_color }};
+--rb-bogo-card-border-style: {{ bogo_card_border_style }};
+
+{% case shadow %}
+{% when 'none' %}
+--rb-shadow: none;
+--rb-shadow-hover: none;
+{% when 'strong' %}
+--rb-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+--rb-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
+{% else %}
+--rb-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+--rb-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+{% endcase %}
+
+{% if product_card_shadow %}
+--rb-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+--rb-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+{% else %}
+--rb-card-shadow: none;
+--rb-card-shadow-hover: none;
+{% endif %}
+
+{% if product_card_border %}
+--rb-card-border: 1px solid var(--rb-border-color);
+{% else %}
+--rb-card-border: none;
+{% endif %}
+
+{% case heading_size %}
+{% when 'small' %}
+--rb-heading-font-size: 16px;
+{% when 'large' %}
+--rb-heading-font-size: 24px;
+{% else %}
+--rb-heading-font-size: 20px;
+{% endcase %}
+
+{% case body_size %}
+{% when 'small' %}
+--rb-body-font-size: 14px;
+{% when 'large' %}
+--rb-body-font-size: 18px;
+{% else %}
+--rb-body-font-size: 16px;
+{% endcase %}
+
+{% case button_size %}
+{% when 'small' %}
+--rb-button-padding: 8px 16px;
+--rb-button-font-size: 14px;
+{% when 'large' %}
+--rb-button-padding: 16px 32px;
+--rb-button-font-size: 18px;
+{% else %}
+--rb-button-padding: 12px 24px;
+--rb-button-font-size: 16px;
+{% endcase %}
+
+{% if button_style == 'outline' %}
+--rb-button-bg: transparent;
+--rb-button-text: var(--rb-button-color);
+--rb-button-border: 2px solid var(--rb-button-color);
+{% else %}
+--rb-button-bg: var(--rb-button-color);
+--rb-button-text: var(--rb-button-text-color);
+--rb-button-border: none;
+{% endif %}
+
+{% if button_width == 'full' %}
+--rb-button-width: 100%;
+{% else %}
+--rb-button-width: auto;
+{% endif %}
+
+{% if badge_style == 'outline' %}
+--rb-badge-bg: transparent;
+--rb-badge-text: var(--rb-primary-color);
+--rb-badge-border: 2px solid var(--rb-primary-color);
+{% else %}
+--rb-badge-bg: var(--rb-primary-color);
+--rb-badge-text: #ffffff;
+--rb-badge-border: none;
+{% endif %}
+
+
+{% if style_preset == 'dark' %}
+--rb-skeleton-text: #2f3b4c;
+{% endif %}
+
+{% if pricing_summary_box %}
+{% case pricing_summary_style %}
+{% when 'minimal' %}
+--rb-pricing-padding: 0;
+--rb-pricing-bg: transparent;
+--rb-pricing-border: none;
+--rb-pricing-border-top: 1px solid var(--rb-border-color);
+{% when 'highlight' %}
+--rb-pricing-padding: 16px;
+--rb-pricing-bg: var(--rb-pricing-summary-bg);
+--rb-pricing-border: none;
+--rb-pricing-border-left: 4px solid var(--rb-primary-color);
+{% else %}
+--rb-pricing-padding: 16px;
+--rb-pricing-bg: var(--rb-pricing-summary-bg);
+--rb-pricing-border: 1px solid var(--rb-border-color);
+{% endcase %}
+{% else %}
+--rb-pricing-padding: 8px 0;
+--rb-pricing-bg: transparent;
+--rb-pricing-border: none;
+{% endif %}
+--rb-grid-columns: {{ grid_columns }};
+--rb-slides-per-view: {{ slides_per_view }};
+}
+
+{% if g_tablet %}
+@media (max-width: {{ tablet_bp }}px) {
+#radius-bundle-{{ bundle_id }} {
+{% if tablet_box_spacing %}--rb-box-spacing: {{ tablet_box_spacing }}px;{% endif %}
+{% if tablet_gap_spacing %}--rb-gap-spacing: {{ tablet_gap_spacing }}px;{% endif %}
+{% if tablet_image_size_px %}--rb-image-size: {{ tablet_image_size_px }}px;{% endif %}
+{% if g_tablet.imageFit %}--rb-image-fit: {{ g_tablet.imageFit }};{% endif %}
+{% if g_tablet.boxMaxWidth %}--rb-bundle-max-width: {{ g_tablet.boxMaxWidth }}px;{% endif %}
+{% if tablet_heading_font_size %}--rb-heading-font-size: {{ tablet_heading_font_size }}px;{% endif %}
+{% if tablet_body_font_size %}--rb-body-font-size: {{ tablet_body_font_size }}px;{% endif %}
+{% if g_tablet.gridColumns %}--rb-grid-columns: {{ g_tablet.gridColumns }};{% endif %}
+{% if g_tablet.slidesPerView %}--rb-slides-per-view: {{ g_tablet.slidesPerView }};{% endif %}
+}
+}
+{% endif %}
+{% if g_mobile %}
+@media (max-width: {{ mobile_bp }}px) {
+#radius-bundle-{{ bundle_id }} {
+{% if mobile_box_spacing %}--rb-box-spacing: {{ mobile_box_spacing }}px;{% endif %}
+{% if mobile_gap_spacing %}--rb-gap-spacing: {{ mobile_gap_spacing }}px;{% endif %}
+{% if mobile_image_size_px %}--rb-image-size: {{ mobile_image_size_px }}px;{% endif %}
+{% if g_mobile.imageFit %}--rb-image-fit: {{ g_mobile.imageFit }};{% endif %}
+{% if g_mobile.boxMaxWidth %}--rb-bundle-max-width: {{ g_mobile.boxMaxWidth }}px;{% endif %}
+{% if mobile_heading_font_size %}--rb-heading-font-size: {{ mobile_heading_font_size }}px;{% endif %}
+{% if mobile_body_font_size %}--rb-body-font-size: {{ mobile_body_font_size }}px;{% endif %}
+{% if g_mobile.gridColumns %}--rb-grid-columns: {{ g_mobile.gridColumns }};{% endif %}
+{% if g_mobile.slidesPerView %}--rb-slides-per-view: {{ g_mobile.slidesPerView }};{% endif %}
+}
+}
+{% endif %}
+</style>
+
+<div
+id="radius-bundle-{{ bundle_id }}"
+class="radius-bundle radius-bundle--{{ layout | downcase }}"
+{% if is_standalone %}style="display: none;"{% endif %}
+data-bundle-id="{{ bundle_id }}"
+data-style-preset="{{ style_preset }}"
+data-box-align="{{ box_alignment }}"
+data-badge-position="{{ badge_position }}"
+data-divider-style="{{ divider_style }}"
+data-carousel-navigation="{{ carousel_navigation }}"
+data-autoplay="{{ autoplay }}"
+data-autoplay-speed="{{ autoplay_speed }}"
+data-image-position="{{ image_position }}"
+data-badge-style="{{ badge_style }}"
+data-image-size="{{ image_size }}"
+data-pricing-summary="{{ pricing_summary_style }}"
+data-responsive='{{ responsive_json | strip_newlines | strip }}'
+data-bundle-structure='{{ bundle_structure_json | strip_newlines | strip }}'
+data-is-standalone="{{ is_standalone }}"
+data-show-images="{{ show_images }}"
+data-show-savings="{{ show_savings }}"
+data-show-prices="{{ show_product_prices }}"
+data-show-compare-prices="{{ show_compare_at_price }}"
+data-show-quantity="{{ show_quantity }}"
+data-show-free-shipping="{{ show_free_shipping }}"
+data-show-savings-badge="{{ show_savings_badge }}"
+data-enable-hyperlink="{{ enable_hyperlink }}"
+data-redirect-after-cart="{{ global.cart.redirectAfterCart | default: 'default' }}"
+data-enable-stock-validation="{{ enable_stock_validation }}"
+data-max-bundles-per-order="{{ global.cart.maxBundlesPerOrder | default: 0 }}"
+data-enable-analytics="{{ enable_analytics }}"
+data-lazy-load-images="{{ lazy_load_images }}"
+data-more-product-settings="{{ more_product_settings }}"
+data-more-product-count="{{ more_product_count }}"
+data-more-products-text="{{ more_products_text }}"
+data-show-less-text="{{ show_less_text }}"
+>
+{% unless is_standalone %}
+{% assign layout = layout | default: 'list' | downcase %}
+{% assign product_count = bundle.productCount | default: 0 %}
+{% if product_count == 0 %}
+{% assign product_ids = bundle.productIds | default: empty %}
+{% assign product_count = product_ids | size %}
+{% endif %}
+{% if product_count == 0 %}
+{% assign product_count = 3 %}
+{% endif %}
+
+{% assign layout = layout | downcase %}
+{% if layout == 'classic_card' or layout == 'compact_grid' or layout == 'minimalist' or layout == 'sleek' or layout == 'checklist' or layout == 'split_deal' %}
+{% render 'radius-bundle-layout-bogo', bundle_id: bundle_id, layout: layout, name: bundle_heading, subtitle: bundle_subtitle, savings_badge_text: savings_badge_text, product_count: product_count, show_images: show_images, show_savings: show_savings, show_savings_badge: show_savings_badge, show_product_prices: show_product_prices, show_quantity: show_quantity, bogo_you_pay_label: bogo_you_pay_label, bogo_you_save_label: bogo_you_save_label, bogo_trigger_badge_text: bogo_trigger_badge_text, bogo_reward_badge_text: bogo_reward_badge_text, bogo_free_text: bogo_free_text, bogo_total_label: bogo_total_label, button_text: button_text, image_position: image_position, image_size: image_size, badge_style: badge_style %}
+{% else %}
+{% render 'radius-bundle-layout-fixed', layout: layout, bundle_id: bundle_id, name: bundle_heading, subtitle: bundle_subtitle, savings_badge_text: savings_badge_text, product_count: product_count, show_images: show_images, show_savings: show_savings, show_savings_badge: show_savings_badge, show_product_prices: show_product_prices, show_compare_at_price: show_compare_at_price, show_quantity: show_quantity, show_free_shipping: show_free_shipping, enable_hyperlink: enable_hyperlink, button_text: button_text, regular_price_label: regular_price_label, bundle_price_label: bundle_price_label, you_save_label: you_save_label, free_shipping_label: free_shipping_label, quantity_label: quantity_label, divider_style: divider_style, grid_columns: grid_columns, slides_per_view: slides_per_view, carousel_navigation: carousel_navigation, autoplay: autoplay, autoplay_speed: autoplay_speed, pricing_summary_box: pricing_summary_box, more_product_settings: more_product_settings, more_product_count: more_product_count %}
+{% endif %}
+{% endunless %}
+</div>
+{% break %}
+{% endif %}
+{% endfor %}
+</div>
+
+{% if custom_css != blank %}
+<style>{{ custom_css }}</style>
+{% endif %}
+
+<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% elsif request.design_mode %}
-	{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
-	<div class="radius-bundle-placeholder"></div>
-	<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
+{{ 'bundle-widget.css' | asset_url | stylesheet_tag }}
+<div class="radius-bundle-placeholder"></div>
+<script src="{{ 'bundle-widget.js' | asset_url }}" defer></script>
 {% endif %}
 
 {% schema %}
