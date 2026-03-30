@@ -117,3 +117,21 @@ export async function checkBundleQuota(
         limit: limits.maxBundles,
     };
 }
+
+export async function getFullPlanData(domain: string) {
+    const [plan, currentBundles] = await Promise.all([
+        resolveShopPlan(domain),
+        countBundlesByShop(domain),
+    ]);
+
+    const bundleQuota: QuotaResult =
+        plan.limits.maxBundles === -1
+            ? { allowed: true, current: currentBundles, limit: -1 }
+            : {
+                  allowed: currentBundles < plan.limits.maxBundles,
+                  current: currentBundles,
+                  limit: plan.limits.maxBundles,
+              };
+
+    return { plan, bundleQuota };
+}

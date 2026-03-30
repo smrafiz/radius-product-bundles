@@ -1,12 +1,8 @@
 "use server";
 
-import {
-    checkBundleQuota,
-    getEffectiveLimits,
-    resolveShopPlan,
-} from "@/shared/services/plan.service";
 import { handleSessionToken } from "@/lib/shopify";
-import { type ApiResponse, type ClientPlanData } from "@/shared";
+import type { ApiResponse, ClientPlanData } from "@/shared";
+import { getFullPlanData } from "@/shared/services/plan.service";
 
 export async function fetchPlanData(
     sessionToken: string,
@@ -16,23 +12,21 @@ export async function fetchPlanData(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const plan = await resolveShopPlan(shop);
-        const limits = await getEffectiveLimits(shop);
-        const bundleQuota = await checkBundleQuota(shop);
+        const { plan, bundleQuota } = await getFullPlanData(shop);
 
         return {
             status: "success",
             data: {
                 planId: plan.id,
                 planName: plan.name,
-                limits,
+                limits: plan.limits,
                 features: plan.features,
                 quota: {
                     bundles: bundleQuota,
                     products: {
                         allowed: true,
                         current: 0,
-                        limit: limits.maxProductsPerBundle,
+                        limit: plan.limits.maxProductsPerBundle,
                     },
                 },
             },

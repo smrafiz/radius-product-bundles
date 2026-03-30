@@ -1,109 +1,71 @@
 "use client";
 
-import {
-    createContext,
-    type ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+import { createContext, type ReactNode, useMemo } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
     ClientPlanData,
     FeatureId,
     GateMode,
     PlanContextValue,
 } from "@/shared/types/plan";
-import { fetchPlanData } from "@/shared/actions/plan.actions";
+import { planKeys, planQueries } from "@/shared/api";
 import { DEFAULT_PLAN_ID, PLAN_CONFIGS } from "@/shared/constants";
 
-const PlanContext = createContext<PlanContextValue | null>(null);
+const DEFAULT_PLAN_DATA: ClientPlanData = {
+    planId: DEFAULT_PLAN_ID,
+    planName: "Free",
+    limits: PLAN_CONFIGS[DEFAULT_PLAN_ID].limits,
+    features: PLAN_CONFIGS[DEFAULT_PLAN_ID].features,
+    quota: {
+        bundles: { allowed: true, current: 0, limit: 5 },
+        products: { allowed: true, current: 0, limit: 10 },
+    },
+};
 
-function buildContextValue(
-    data: ClientPlanData,
-    refreshPlan: () => Promise<void>,
-): PlanContextValue {
-    const planConfig =
-        PLAN_CONFIGS[data.planId] ?? PLAN_CONFIGS[DEFAULT_PLAN_ID];
-
-    return {
-        plan: { ...planConfig, limits: data.limits },
-        canUse: (feature: FeatureId) => {
-            const f = data.features.find((fc) => fc.feature === feature);
-            return f?.gateMode === "enabled";
-        },
-        getGateMode: (feature: FeatureId): GateMode => {
-            const f = data.features.find((fc) => fc.feature === feature);
-            return f?.gateMode ?? "hidden";
-        },
-        isWithinQuota: (resource: "bundles" | "products") => {
-            const q = data.quota[resource];
-            return q.limit === -1 || q.current < q.limit;
-        },
-        quota: data.quota,
-        refreshPlan,
-    };
-}
+export const PlanContext = createContext<PlanContextValue | null>(null);
 
 export function PlanProvider({ children }: { children: ReactNode }) {
     const app = useAppBridge();
+    const queryClient = useQueryClient();
 
-    const loadPlanData = useCallback(async () => {
-        if (!app) {
-            return;
-        }
+    const { data: planData } = useQuery({
+        ...planQueries(app).data(),
+        enabled: !!app,
+    });
 
-        try {
-            const token = await app.idToken();
-            if (!token) {
-                return;
-            }
+    const data = planData ?? DEFAULT_PLAN_DATA;
 
-            const result = await fetchPlanData(token);
+    const contextValue = useMemo((): PlanContextValue => {
+        const planConfig =
+            PLAN_CONFIGS[data.planId] ?? PLAN_CONFIGS[DEFAULT_PLAN_ID];
 
-            if (result.status === "success" && result.data) {
-                setPlanData(buildContextValue(result.data, loadPlanData));
-            } else {
-                console.warn(
-                    "[PlanProvider] Failed to fetch plan data:",
-                    result.message,
-                );
-            }
-        } catch (err) {
-            console.warn("[PlanProvider] Error fetching plan data:", err);
-        }
-    }, [app]);
-
-    const [planData, setPlanData] = useState<PlanContextValue>(() =>
-        buildContextValue(
-            {
-                planId: DEFAULT_PLAN_ID,
-                planName: "Free",
-                limits: PLAN_CONFIGS[DEFAULT_PLAN_ID].limits,
-                features: PLAN_CONFIGS[DEFAULT_PLAN_ID].features,
-                quota: {
-                    bundles: { allowed: true, current: 0, limit: 5 },
-                    products: { allowed: true, current: 0, limit: 10 },
-                },
+        return {
+            plan: { ...planConfig, limits: data.limits },
+            canUse: (feature: FeatureId) => {
+                const f = data.features.find((fc) => fc.feature === feature);
+                return f?.gateMode === "enabled";
             },
-            loadPlanData,
-        ),
-    );
-
-    useEffect(() => {
-        void loadPlanData();
-    }, [loadPlanData]);
+            getGateMode: (feature: FeatureId): GateMode => {
+                const f = data.features.find((fc) => fc.feature === feature);
+                return f?.gateMode ?? "hidden";
+            },
+            isWithinQuota: (resource: "bundles" | "products") => {
+                const q = data.quota[resource];
+                return q.limit === -1 || q.current < q.limit;
+            },
+            quota: data.quota,
+            refreshPlan: async () => {
+                await queryClient.invalidateQueries({
+                    queryKey: planKeys.data(),
+                });
+            },
+        };
+    }, [data, queryClient]);
 
     return (
-        <PlanContext.Provider value={planData}>{children}</PlanContext.Provider>
+        <PlanContext.Provider value={contextValue}>
+            {children}
+        </PlanContext.Provider>
     );
-}
-
-export function usePlanContext(): PlanContextValue {
-    const ctx = useContext(PlanContext);
-    if (!ctx) {
-        throw new Error("usePlanContext must be used within PlanProvider");
-    }
-    return ctx;
 }
