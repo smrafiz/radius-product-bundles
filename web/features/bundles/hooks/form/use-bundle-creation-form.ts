@@ -5,8 +5,10 @@ import {
     submitForm,
     useAppNavigation,
     useModalStore,
+    usePlan,
     useShopSettingsStore,
 } from "@/shared";
+import { openQuotaExceededModal } from "@/shared/utils/helpers/modal";
 import {
     invalidateBundleCache,
     useBundleFormManager,
@@ -38,8 +40,10 @@ export function useBundleCreationForm({
     const tEmbed = useTranslations("Dashboard.AppEmbed");
     const tWidget = useTranslations("Dashboard.WidgetBlock");
     const tBoth = useTranslations("Dashboard.Integration");
+    const tQuota = useTranslations("Modals.quotaExceeded");
 
     const { bundleData } = useAppNavigation();
+    const { refreshPlan, isWithinQuota, quota } = usePlan();
     const { pageProps, isEditMode } = useBundleFormManager({
         bundleType,
         bundleName,
@@ -104,6 +108,15 @@ export function useBundleCreationForm({
             return;
         }
 
+        if (!isWithinQuota("bundles")) {
+            openQuotaExceededModal(quota.bundles, {
+                title: tQuota("heading"),
+                message: tQuota("message", { current: quota.bundles.current, limit: quota.bundles.limit }),
+                confirmText: tQuota("confirm"),
+            });
+            return;
+        }
+
         openModal({
             type: "duplicate",
             title: tc("duplicateTitle"),
@@ -124,6 +137,7 @@ export function useBundleCreationForm({
                         result.data?.bundle?.id
                     ) {
                         await invalidateBundleCache(queryClient);
+                        void refreshPlan();
                         shopify?.toast?.show(
                             result.message ?? tc("duplicateSuccess"),
                         );
@@ -153,7 +167,11 @@ export function useBundleCreationForm({
         app,
         queryClient,
         bundleData,
+        isWithinQuota,
+        quota.bundles,
         resetDirty,
+        refreshPlan,
+        tQuota,
     ]);
 
     const handleDelete = useCallback(() => {
@@ -178,6 +196,7 @@ export function useBundleCreationForm({
                         resetBundle();
                         dismissSaveBar();
                         await invalidateBundleCache(queryClient);
+                        void refreshPlan();
                         if (
                             typeof shopify !== "undefined" &&
                             shopify.toast?.show
@@ -218,6 +237,7 @@ export function useBundleCreationForm({
         queryClient,
         bundleData,
         resetBundle,
+        refreshPlan,
     ]);
 
     const handleSubmit = useCallback(() => submitForm(), []);

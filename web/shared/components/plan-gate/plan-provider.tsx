@@ -2,6 +2,7 @@
 
 import {
     createContext,
+    useCallback,
     useContext,
     useEffect,
     useState,
@@ -20,7 +21,10 @@ import { fetchPlanData } from "@/shared/actions/plan.actions";
 
 const PlanContext = createContext<PlanContextValue | null>(null);
 
-function buildContextValue(data: ClientPlanData): PlanContextValue {
+function buildContextValue(
+    data: ClientPlanData,
+    refreshPlan: () => Promise<void>,
+): PlanContextValue {
     const planConfig = PLAN_CONFIGS[data.planId] ?? PLAN_CONFIGS[DEFAULT_PLAN_ID];
 
     return {
@@ -38,46 +42,56 @@ function buildContextValue(data: ClientPlanData): PlanContextValue {
             return q.limit === -1 || q.current < q.limit;
         },
         quota: data.quota,
+        refreshPlan,
     };
 }
 
-const DEFAULT_CONTEXT: PlanContextValue = buildContextValue({
-    planId: DEFAULT_PLAN_ID,
-    planName: "Free",
-    limits: PLAN_CONFIGS[DEFAULT_PLAN_ID].limits,
-    features: PLAN_CONFIGS[DEFAULT_PLAN_ID].features,
-    quota: {
-        bundles: { allowed: true, current: 0, limit: 5 },
-        products: { allowed: true, current: 0, limit: 10 },
-    },
-});
-
 export function PlanProvider({ children }: { children: ReactNode }) {
-    const [planData, setPlanData] = useState<PlanContextValue>(DEFAULT_CONTEXT);
     const app = useAppBridge();
 
-    useEffect(() => {
-        if (!app) return;
+    const loadPlanData = useCallback(async () => {
+        if (!app) {
+            return;
+        }
 
-        const loadPlanData = async () => {
-            try {
-                const token = await app.idToken();
-                if (!token) return;
-
-                const result = await fetchPlanData(token);
-
-                if (result.status === "success" && result.data) {
-                    setPlanData(buildContextValue(result.data));
-                } else {
-                    console.warn("[PlanProvider] Failed to fetch plan data:", result.message);
-                }
-            } catch (err) {
-                console.warn("[PlanProvider] Error fetching plan data:", err);
+        try {
+            const token = await app.idToken();
+            if (!token) {
+                return;
             }
-        };
 
-        void loadPlanData();
+            const result = await fetchPlanData(token);
+
+            if (result.status === "success" && result.data) {
+                setPlanData(buildContextValue(result.data, loadPlanData));
+            } else {
+                console.warn("[PlanProvider] Failed to fetch plan data:", result.message);
+            }
+        } catch (err) {
+            console.warn("[PlanProvider] Error fetching plan data:", err);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [app]);
+
+    const [planData, setPlanData] = useState<PlanContextValue>(() =>
+        buildContextValue(
+            {
+                planId: DEFAULT_PLAN_ID,
+                planName: "Free",
+                limits: PLAN_CONFIGS[DEFAULT_PLAN_ID].limits,
+                features: PLAN_CONFIGS[DEFAULT_PLAN_ID].features,
+                quota: {
+                    bundles: { allowed: true, current: 0, limit: 5 },
+                    products: { allowed: true, current: 0, limit: 10 },
+                },
+            },
+            loadPlanData,
+        ),
+    );
+
+    useEffect(() => {
+        void loadPlanData();
+    }, [loadPlanData]);
 
     return (
         <PlanContext.Provider value={planData}>{children}</PlanContext.Provider>

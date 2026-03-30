@@ -28,6 +28,7 @@ export type ModalType =
     | "delete-product"
     | "restore-defaults"
     | "import-settings"
+    | "quota-exceeded"
     | null;
 
 export interface ModalPayload {
@@ -38,6 +39,7 @@ export interface ModalPayload {
     productTitle?: string;
     newStatus?: BundleStatus;
     confirmText?: string;
+    cancelText?: string;
     onConfirm?: (data?: Record<string, any>) => Promise<void> | void;
     onError?: (error: string) => void;
     loading?: boolean;

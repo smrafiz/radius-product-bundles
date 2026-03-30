@@ -1,12 +1,9 @@
 "use client";
 
-import { useModalStore, useShopSettingsStore } from "@/shared";
-import {
-    BUNDLE_LISTING_ACTIONS,
-    BundleActionsGroupProps,
-    BundleListItem,
-} from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
+import { useModalStore, usePlan, useShopSettingsStore, } from "@/shared";
+import { openQuotaExceededModal } from "@/shared/utils/helpers/modal";
+import { BUNDLE_LISTING_ACTIONS, BundleActionsGroupProps, } from "@/features/bundles";
 
 /**
  * Bundle actions group
@@ -16,7 +13,9 @@ export function BundleActionsGroup({
     onAction,
 }: BundleActionsGroupProps) {
     const { openModal } = useModalStore();
+    const { isWithinQuota, quota } = usePlan();
     const t = useTranslations("Bundles.Actions");
+    const tQuota = useTranslations("Modals.quotaExceeded");
     const popoverId = `bundle-view-popover-${bundle.id}`;
     const { settings } = useShopSettingsStore();
     const shopDomain = settings?.myshopifyDomain;
@@ -32,17 +31,24 @@ export function BundleActionsGroup({
                 break;
 
             case "duplicate":
-                openModal({
-                    type: "duplicate",
-                    bundle,
-                    onConfirm: async () => {
-                        await onAction.duplicate();
-                    },
-                });
+                if (!isWithinQuota("bundles")) {
+                    openQuotaExceededModal(quota.bundles, {
+                        title: tQuota("heading"),
+                        message: tQuota("message", { current: quota.bundles.current, limit: quota.bundles.limit }),
+                        confirmText: tQuota("confirm"),
+                    });
+                } else {
+                    openModal({
+                        type: "duplicate",
+                        bundle,
+                        onConfirm: async () => {
+                            await onAction.duplicate();
+                        },
+                    });
+                }
                 break;
 
             case "delete":
-                // Set modal data BEFORE it opens
                 openModal({
                     type: "delete",
                     bundle,

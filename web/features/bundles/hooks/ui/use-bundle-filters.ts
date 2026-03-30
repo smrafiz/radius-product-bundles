@@ -14,16 +14,14 @@ import { useTranslations } from "@/lib/i18n/provider";
  */
 export function useBundleFilters() {
     const t = useTranslations("Bundles.Listing.Filters");
-    const {
-        filters,
-        setSearch,
-        setStatusFilter,
-        setSelectedTab,
-        setSortSelected,
-        clearFilters,
-        queryValue,
-        setQueryValue,
-    } = useBundleListingStore();
+    const filters = useBundleListingStore((s) => s.filters);
+    const queryValue = useBundleListingStore((s) => s.queryValue);
+    const setSearch = useBundleListingStore((s) => s.setSearch);
+    const setStatusFilter = useBundleListingStore((s) => s.setStatusFilter);
+    const setSelectedTab = useBundleListingStore((s) => s.setSelectedTab);
+    const setSortSelected = useBundleListingStore((s) => s.setSortSelected);
+    const clearFilters = useBundleListingStore((s) => s.clearFilters);
+    const setQueryValue = useBundleListingStore((s) => s.setQueryValue);
 
     const translatedSortOptions = useMemo(() => getBundleSortOptions(t), [t]);
 

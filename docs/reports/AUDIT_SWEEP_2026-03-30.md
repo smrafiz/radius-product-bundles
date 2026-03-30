@@ -20,6 +20,7 @@
 | Dead code | Removed stale `// export * from "./webhook.action"` from `shared/actions/index.ts` | ✅ Done |
 | **H-3** `bundle-security.service.ts` zero tests | 31 tests added — all 7 functions covered, all pass | ✅ Done |
 | **H-4** Rust discount function zero tests | 17 `#[cfg(test)]` tests added — `safe_mul` + `is_product_in_bundle`, all pass | ✅ Done |
+| **Task 16** Per-feature error boundaries | `FeatureError` shared component + 6 `error.tsx` files (analytics, bundles, dashboard, pricing, settings, support). Uses `s-page` + `s-banner tone="critical"` Polaris pattern. Nav stays intact on crash. | ✅ Done |
 
 ---
 

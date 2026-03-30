@@ -22,7 +22,9 @@ export function useBundlesPage() {
     const { metrics: analyticsMetrics, isMetricsFetching } = useAnalytics();
     const { bundleData } = useAppNavigation();
     const { create } = useCreateBundleNav();
-    const { bundles, toast, hideToast } = useBundleListingStore();
+    const bundles = useBundleListingStore((s) => s.bundles);
+    const toast = useBundleListingStore((s) => s.toast);
+    const hideToast = useBundleListingStore((s) => s.hideToast);
     const { showSkeleton } = useInitialBundleState({
         hasData: bundles.length > 0,
         isLoading,

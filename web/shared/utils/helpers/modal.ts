@@ -1,3 +1,20 @@
+import { useModalStore } from "@/shared/stores/modal.store";
+
+/*
+ * Open quota-exceeded modal with upgrade CTA
+ */
+export function openQuotaExceededModal(
+    quota: { current: number; limit: number },
+    texts: { title: string; message: string; confirmText: string },
+) {
+    useModalStore.getState().openModal({
+        type: "quota-exceeded",
+        title: texts.title,
+        message: texts.message,
+        confirmText: texts.confirmText,
+    });
+}
+
 /*
  * Show modal element
  */

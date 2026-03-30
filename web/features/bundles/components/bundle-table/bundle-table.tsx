@@ -16,7 +16,9 @@ import {
  * Bundle table components
  */
 export function BundleTable() {
-    const { bundles, pagination, filters } = useBundleListingStore();
+    const bundles = useBundleListingStore((s) => s.bundles);
+    const pagination = useBundleListingStore((s) => s.pagination);
+    const filters = useBundleListingStore((s) => s.filters);
     const { isFetching } = useBundlesData();
     const safeBundles = Array.isArray(bundles) ? bundles : [];
 

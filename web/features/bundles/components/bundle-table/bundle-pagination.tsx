@@ -8,8 +8,10 @@ import { TablePagination } from "@/shared";
  * Bundle pagination
  */
 export function BundlePagination() {
-    const { pagination, setCurrentPage, getPaginationInfo, loading } =
-        useBundleListingStore();
+    const pagination = useBundleListingStore((s) => s.pagination);
+    const loading = useBundleListingStore((s) => s.loading);
+    const setCurrentPage = useBundleListingStore((s) => s.setCurrentPage);
+    const getPaginationInfo = useBundleListingStore((s) => s.getPaginationInfo);
 
     const { hasNext, hasPrevious, label } = getPaginationInfo();
 

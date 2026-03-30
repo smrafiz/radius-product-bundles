@@ -86,6 +86,11 @@
             "heading": "Confirm Status Change",
             "message": "Change the status of {name} to {status}?"
         },
+        "quotaExceeded": {
+            "heading": "Bundle limit reached",
+            "message": "You have reached your plan's bundle limit ({current}/{limit}).",
+            "confirm": "Okay"
+        },
         "deleteProduct": {
             "heading": "Delete bundle product?",
             "message": "Turning off this switch will permanently delete {product} from your store when you save. This action cannot be undone.",

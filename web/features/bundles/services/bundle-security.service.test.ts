@@ -133,19 +133,19 @@ describe("checkShopStatus", () => {
 
 describe("detectAbusiveBehavior", () => {
     it("returns not abusive for normal activity", async () => {
-        mockGetBundleActivity.mockResolvedValue({ created: 5, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 5, deleted: 0, since: new Date() });
         const result = await detectAbusiveBehavior(SHOP);
         expect(result.isAbusive).toBe(false);
     });
 
     it("returns not abusive at threshold boundary (exactly 50)", async () => {
-        mockGetBundleActivity.mockResolvedValue({ created: 50, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 50, deleted: 0, since: new Date() });
         const result = await detectAbusiveBehavior(SHOP);
         expect(result.isAbusive).toBe(false);
     });
 
     it("flags excessive creation above 50", async () => {
-        mockGetBundleActivity.mockResolvedValue({ created: 51, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 51, deleted: 0, since: new Date() });
         const result = await detectAbusiveBehavior(SHOP);
         expect(result.isAbusive).toBe(true);
         expect(result.reason).toContain("51");
@@ -153,13 +153,13 @@ describe("detectAbusiveBehavior", () => {
     });
 
     it("flags large creation count", async () => {
-        mockGetBundleActivity.mockResolvedValue({ created: 200, deleted: 10 });
+        mockGetBundleActivity.mockResolvedValue({ created: 200, deleted: 10, since: new Date() });
         const result = await detectAbusiveBehavior(SHOP);
         expect(result.isAbusive).toBe(true);
     });
 
     it("passes zero activity", async () => {
-        mockGetBundleActivity.mockResolvedValue({ created: 0, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 0, deleted: 0, since: new Date() });
         const result = await detectAbusiveBehavior(SHOP);
         expect(result.isAbusive).toBe(false);
     });
@@ -169,13 +169,13 @@ describe("detectAbusiveBehavior", () => {
 
 describe("checkAbusivePatterns", () => {
     it("passes for clean activity", async () => {
-        mockGetBundleActivity.mockResolvedValue({ created: 3, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 3, deleted: 0, since: new Date() });
         const result = await checkAbusivePatterns(SHOP);
         expect(result.passed).toBe(true);
     });
 
     it("fails when abuse is detected", async () => {
-        mockGetBundleActivity.mockResolvedValue({ created: 100, deleted: 5 });
+        mockGetBundleActivity.mockResolvedValue({ created: 100, deleted: 5, since: new Date() });
         const result = await checkAbusivePatterns(SHOP);
         expect(result.passed).toBe(false);
         expect(result.reason).toBeTruthy();
@@ -188,7 +188,7 @@ describe("performSecurityChecks", () => {
     it("passes all checks for a healthy shop", async () => {
         mockCountRecentBundles.mockResolvedValue(0);
         mockGetShopStatus.mockResolvedValue("ACTIVE");
-        mockGetBundleActivity.mockResolvedValue({ created: 1, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 1, deleted: 0, since: new Date() });
 
         const result = await performSecurityChecks(SHOP);
         expect(result.passed).toBe(true);
@@ -197,7 +197,7 @@ describe("performSecurityChecks", () => {
     it("short-circuits on rate limit failure — does not call shop status", async () => {
         mockCountRecentBundles.mockResolvedValue(99);
         mockGetShopStatus.mockResolvedValue("ACTIVE");
-        mockGetBundleActivity.mockResolvedValue({ created: 1, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 1, deleted: 0, since: new Date() });
 
         const result = await performSecurityChecks(SHOP);
         expect(result.passed).toBe(false);
@@ -208,7 +208,7 @@ describe("performSecurityChecks", () => {
     it("short-circuits on shop status failure — does not check abuse", async () => {
         mockCountRecentBundles.mockResolvedValue(0);
         mockGetShopStatus.mockResolvedValue("SUSPENDED");
-        mockGetBundleActivity.mockResolvedValue({ created: 1, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 1, deleted: 0, since: new Date() });
 
         const result = await performSecurityChecks(SHOP);
         expect(result.passed).toBe(false);
@@ -219,7 +219,7 @@ describe("performSecurityChecks", () => {
     it("fails on abuse detection after passing earlier checks", async () => {
         mockCountRecentBundles.mockResolvedValue(0);
         mockGetShopStatus.mockResolvedValue("ACTIVE");
-        mockGetBundleActivity.mockResolvedValue({ created: 99, deleted: 0 });
+        mockGetBundleActivity.mockResolvedValue({ created: 99, deleted: 0, since: new Date() });
 
         const result = await performSecurityChecks(SHOP);
         expect(result.passed).toBe(false);
@@ -274,7 +274,7 @@ describe("validateShopPermissions", () => {
     });
 
     it("checks bundle type on create", async () => {
-        mockCheckBundleTypeAllowed.mockResolvedValue({ allowed: true });
+        mockCheckBundleTypeAllowed.mockResolvedValue({ allowed: true, gated: false, feature: "bundle_types", gateMode: "enabled", message: "" });
 
         const result = await validateShopPermissions(SHOP, "create", "FIXED_BUNDLE");
         expect(result.passed).toBe(true);
@@ -284,6 +284,9 @@ describe("validateShopPermissions", () => {
     it("blocks create when bundle type is not allowed", async () => {
         mockCheckBundleTypeAllowed.mockResolvedValue({
             allowed: false,
+            gated: true,
+            feature: "bundle_types",
+            gateMode: "lock-overlay",
             message: "Bundle type not available on FREE plan",
         });
 
@@ -293,8 +296,8 @@ describe("validateShopPermissions", () => {
     });
 
     it("checks bundle status on create", async () => {
-        mockCheckBundleTypeAllowed.mockResolvedValue({ allowed: true });
-        mockCheckBundleStatusAllowed.mockResolvedValue({ allowed: true });
+        mockCheckBundleTypeAllowed.mockResolvedValue({ allowed: true, gated: false, feature: "bundle_types", gateMode: "enabled", message: "" });
+        mockCheckBundleStatusAllowed.mockResolvedValue({ allowed: true, gated: false, feature: "bundle_status", gateMode: "enabled", message: "" });
 
         const result = await validateShopPermissions(SHOP, "create", "FIXED_BUNDLE", "ACTIVE");
         expect(result.passed).toBe(true);
@@ -302,9 +305,12 @@ describe("validateShopPermissions", () => {
     });
 
     it("blocks create when status is not allowed (e.g. PAUSED on free plan)", async () => {
-        mockCheckBundleTypeAllowed.mockResolvedValue({ allowed: true });
+        mockCheckBundleTypeAllowed.mockResolvedValue({ allowed: true, gated: false, feature: "bundle_types", gateMode: "enabled", message: "" });
         mockCheckBundleStatusAllowed.mockResolvedValue({
             allowed: false,
+            gated: true,
+            feature: "bundle_status",
+            gateMode: "lock-overlay",
             message: "PAUSED status requires a Pro plan",
         });
 
@@ -314,7 +320,7 @@ describe("validateShopPermissions", () => {
     });
 
     it("checks status on update without checking type", async () => {
-        mockCheckBundleStatusAllowed.mockResolvedValue({ allowed: true });
+        mockCheckBundleStatusAllowed.mockResolvedValue({ allowed: true, gated: false, feature: "bundle_status", gateMode: "enabled", message: "" });
 
         const result = await validateShopPermissions(SHOP, "update", undefined, "SCHEDULED");
         expect(result.passed).toBe(true);

@@ -86,6 +86,11 @@
             "heading": "Confirmer le changement de statut",
             "message": "Souhaitez-vous faire passer le statut de {name} à {status} ?"
         },
+        "quotaExceeded": {
+            "heading": "Limite d'actions groupées atteinte",
+            "message": "Vous avez atteint la limite d'actions groupées de votre formule ({current}/{limit}).",
+            "confirm": "D'accord"
+        },
         "deleteProduct": {
             "heading": "Supprimer l'offre groupée ?",
             "message": "Si vous désactivez ce bouton, {product} sera définitivement supprimé de votre boutique lorsque vous enregistrerez. Cette action est irréversible.",

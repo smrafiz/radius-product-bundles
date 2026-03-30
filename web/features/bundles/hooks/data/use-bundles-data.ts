@@ -16,15 +16,13 @@ import { useAppBridge } from "@shopify/app-bridge-react";
  */
 export const useBundlesData = () => {
     const app = useAppBridge();
-    const {
-        setBundles,
-        setLoading,
-        setError,
-        showToast,
-        pagination,
-        filters,
-        setPaginationMetadata,
-    } = useBundleListingStore();
+    const setBundles = useBundleListingStore((s) => s.setBundles);
+    const setLoading = useBundleListingStore((s) => s.setLoading);
+    const setError = useBundleListingStore((s) => s.setError);
+    const showToast = useBundleListingStore((s) => s.showToast);
+    const pagination = useBundleListingStore((s) => s.pagination);
+    const filters = useBundleListingStore((s) => s.filters);
+    const setPaginationMetadata = useBundleListingStore((s) => s.setPaginationMetadata);
 
     const sortValue = filters.sortSelected || "createdAt desc";
     const [sortBy, sortDirection] = sortValue.trim().split(" ");

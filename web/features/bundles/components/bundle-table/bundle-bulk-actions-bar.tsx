@@ -19,7 +19,7 @@ export const BundleBulkActionsBar = memo(function BundleBulkActionsBar({
     toggleAllSelection,
     clearSelection,
 }: BundleBulkActionsBarProps) {
-    const { showToast } = useBundleListingStore();
+    const showToast = useBundleListingStore((s) => s.showToast);
     const t = useTranslations("Bundles.Listing.BulkActions");
 
     const { actions: selectedBundleActions } = useBundleActions(

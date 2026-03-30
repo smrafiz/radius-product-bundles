@@ -76,6 +76,7 @@ export function ModalHost() {
 
     const { heading, message, destructive } = MODAL_CONTENT(modal, t, ts);
     const hasActiveModal = modal && modal.type !== null;
+    const isQuotaModal = hasActiveModal && modal.type === "quota-exceeded";
 
     const renderMessage = (message: ReactNode) => {
         if (typeof message !== "string") {
@@ -159,27 +160,32 @@ export function ModalHost() {
                 </s-box>
             )}
 
-            {/* Secondary Action (Close) */}
-            <s-button
-                slot="secondary-actions"
-                variant="secondary"
-                commandFor="radius-bundles-app-modal"
-                command="--hide"
-                onClick={closeModal}
-                disabled={hasActiveModal && modal.loading}
-            >
-                {tc("cancel", undefined, "Cancel")}
-            </s-button>
+            {/* Secondary Action (Close) — hidden for quota modal */}
+            {!isQuotaModal && (
+                <s-button
+                    slot="secondary-actions"
+                    variant="secondary"
+                    commandFor="radius-bundles-app-modal"
+                    command="--hide"
+                    onClick={closeModal}
+                    disabled={hasActiveModal && modal.loading}
+                >
+                    {(hasActiveModal && "cancelText" in modal && modal.cancelText) ||
+                        tc("cancel", undefined, "Cancel")}
+                </s-button>
+            )}
 
             {/* Primary Action (Confirm) */}
             <s-button
                 slot="primary-action"
                 variant="primary"
                 tone={destructive ? "critical" : undefined}
-                onClick={handleConfirm}
-                loading={hasActiveModal && modal.loading}
+                commandFor={isQuotaModal ? "radius-bundles-app-modal" : undefined}
+                command={isQuotaModal ? "--hide" : undefined}
+                onClick={isQuotaModal ? closeModal : handleConfirm}
+                loading={!isQuotaModal && hasActiveModal && modal.loading}
                 disabled={
-                    (hasActiveModal && modal.loading) ||
+                    (!isQuotaModal && hasActiveModal && modal.loading) ||
                     (isScheduledModal && !hasValidDates)
                 }
             >

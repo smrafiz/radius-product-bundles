@@ -57,6 +57,7 @@ export interface PlanContextValue {
         bundles: QuotaResult;
         products: QuotaResult;
     };
+    refreshPlan: () => Promise<void>;
 }
 
 export interface ClientPlanData {

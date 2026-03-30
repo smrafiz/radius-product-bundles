@@ -6,7 +6,7 @@ import {
     SetupStepKey,
     useWidgetStatusStore,
 } from "@/features/dashboard";
-import { useAppNavigation } from "@/shared";
+import { useAppNavigation, useCreateBundleNav, ROUTES } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 import {
     dismissSetupGuideAction,
@@ -34,6 +34,7 @@ export function useSetupGuide() {
     const queryClient = useQueryClient();
     const queries = setupGuideQueries(app);
     const { goTo } = useAppNavigation();
+    const { create: createBundle } = useCreateBundleNav();
     const widgetStatusStore = useWidgetStatusStore();
 
     const { data, isLoading } = useQuery(queries.progress());
@@ -251,10 +252,14 @@ export function useSetupGuide() {
                 setButtonLoading(null);
             } else if (item.primaryButton?.internalUrl) {
                 setButtonLoading(null);
-                goTo(item.primaryButton.internalUrl)();
+                if (item.primaryButton.internalUrl === ROUTES.BUNDLE_CREATE) {
+                    createBundle()();
+                } else {
+                    goTo(item.primaryButton.internalUrl)();
+                }
             }
         },
-        [items, shopDomain, apiKey, completeStepMutation, goTo],
+        [items, shopDomain, apiKey, completeStepMutation, goTo, createBundle],
     );
 
     const handleSecondaryClick = useCallback(

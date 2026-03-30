@@ -122,6 +122,15 @@ export const MODAL_CONTENT = (
                 destructive: true,
             };
 
+        case "quota-exceeded":
+            return {
+                heading: modal.title || "Bundle limit reached",
+                message:
+                    modal.message ||
+                    "You have reached your plan's bundle limit. Upgrade to create unlimited bundles.",
+                destructive: false,
+            };
+
         default:
             return {
                 heading: t?.("confirmAction") ?? "Confirm Action",

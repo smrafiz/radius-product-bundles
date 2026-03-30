@@ -26,6 +26,7 @@ import {
     mediaMutations,
     useAppNavigation,
     useGlobalBanner,
+    usePlan,
     withAsyncLoader,
 } from "@/shared";
 
@@ -48,6 +49,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
     } = useBundleStore();
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
+    const { refreshPlan } = usePlan();
     const { createProduct, isCreating: isCreatingProduct } =
         useCreateBundleProduct();
     const { uploadFilesOnly } = useMediaUpload();
@@ -602,6 +604,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     window.scrollTo({ top: 0, behavior: "smooth" });
 
                     if (mode === "create") {
+                        void refreshPlan();
                         showSuccess("Bundle created successfully!", {
                             content: "Your bundle has been created.",
                             autoHide: true,

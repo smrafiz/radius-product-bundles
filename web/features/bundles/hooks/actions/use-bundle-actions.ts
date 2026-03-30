@@ -15,7 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { useAppNavigation, useGlobalBanner } from "@/shared";
+import { useAppNavigation, useGlobalBanner, usePlan } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 
 /**
@@ -30,6 +30,7 @@ export function useBundleActions(
     const router = useRouter();
     const queryClient = useQueryClient();
     const { showError } = useGlobalBanner();
+    const { refreshPlan } = usePlan();
     const t = useTranslations("Bundles.Actions");
     const tc = useTranslations("Bundles.Common");
 
@@ -76,6 +77,7 @@ export function useBundleActions(
                     if (result.status === "success") {
                         if (result.data?.bundle?.id) {
                             await invalidateBundleCache(queryClient);
+                            void refreshPlan();
                             if (clearSelection) {
                                 clearSelection();
                             }
@@ -103,6 +105,7 @@ export function useBundleActions(
 
                     if (result.status === "success") {
                         await invalidateBundleCache(queryClient);
+                        void refreshPlan();
                         if (clearSelection) {
                             clearSelection();
                         }
@@ -161,6 +164,7 @@ export function useBundleActions(
             queryClient,
             pagination.currentPage,
             pagination.itemsPerPage,
+            refreshPlan,
         ],
     );
 

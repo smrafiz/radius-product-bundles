@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import {
     BundleActionsGroup,
     bundleCurrencyFormatter,
@@ -13,10 +14,7 @@ import {
 } from "@/features/bundles";
 import { useShopSettings } from "@/shared";
 
-/**
- * Bundle table row with web components
- */
-export function BundleTableRow({
+export const BundleTableRow = memo(function BundleTableRow({
     bundle,
     isSelected,
     onToggleSelection,
@@ -114,4 +112,4 @@ export function BundleTableRow({
             </s-table-cell>
         </s-table-row>
     );
-}
+});

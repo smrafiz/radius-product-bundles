@@ -9,12 +9,10 @@ import { useBundleListingStore } from "@/features/bundles";
  * Uses store state so selection clears automatically when pagination/filters change.
  */
 export function useBundleSelection<T extends { id: string }>(bundles: T[]) {
-    const {
-        selectedResources,
-        toggleSelection: storeToggleSelection,
-        toggleAllSelection: storeToggleAllSelection,
-        clearSelection: storeClearSelection,
-    } = useBundleListingStore();
+    const selectedResources = useBundleListingStore((s) => s.selectedResources);
+    const storeToggleSelection = useBundleListingStore((s) => s.toggleSelection);
+    const storeToggleAllSelection = useBundleListingStore((s) => s.toggleAllSelection);
+    const storeClearSelection = useBundleListingStore((s) => s.clearSelection);
 
     const safeBundles = Array.isArray(bundles) ? bundles : [];
     const allIds = safeBundles.map((b) => b.id);
