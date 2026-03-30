@@ -57,13 +57,9 @@
 
     &__grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(var(--rb-split-deal-grid-cols, 2), 1fr);
         gap: var(--rb-gap-spacing, 12px);
         margin-top: calc(var(--rb-gap-spacing, 12px) * 2);
-
-        &--column {
-            grid-template-columns: repeat(1, 1fr);
-        }
     }
 
     // ── Card ──────────────────────────────────────────────────────────
@@ -319,9 +315,3 @@
     }
 }
 
-// Responsive: stack columns vertically on narrow containers
-@media (max-width: 767px) {
-    .rb-classic__grid {
-        grid-template-columns: repeat(1, 1fr);
-    }
-}

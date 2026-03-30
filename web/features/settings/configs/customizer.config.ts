@@ -670,6 +670,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "splitDealStyle",
                     label: "Direction",
+                    responsive: true,
                     options: [
                         { value: "column", label: "Column" },
                         { value: "row", label: "Row" },

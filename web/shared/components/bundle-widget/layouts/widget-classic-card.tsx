@@ -275,10 +275,13 @@ export function WidgetClassicCard({
 
             <div
                 style={{
-                    display: "flex",
+                    display: "grid",
+                    gridTemplateColumns:
+                        (activeDevice === "mobile" ? "column" : (styles.splitDealStyle ?? "row")) === "column"
+                            ? "1fr"
+                            : "1fr 1fr",
                     gap: spacingValues.gap + 2,
                     marginTop: 10,
-                    flexDirection: activeDevice === "mobile" ? "column" : (styles.splitDealStyle ?? "row"),
                 }}
             >
                 {[
@@ -305,7 +308,6 @@ export function WidgetClassicCard({
                             padding: spacingValues.padding,
                             position: "relative",
                             backgroundColor: cardBg,
-                            flex: 1,
                             minWidth: 0,
                         }}
                     >

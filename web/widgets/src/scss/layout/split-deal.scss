@@ -54,10 +54,7 @@
         display: flex;
         align-items: stretch;
         gap: 4px;
-
-        &--column {
-            flex-direction: column;
-        }
+        flex-direction: var(--rb-split-deal-direction, row);
     }
 
     // ── Column (Buy / Get) ──────────────────────────────────────────
@@ -295,12 +292,6 @@
     }
 }
 
-// Responsive: stack columns vertically on narrow containers
-@media (max-width: 767px) {
-    .rb-split__equation {
-        flex-direction: column;
-    }
-}
 @container (max-width: 380px) {
     .rb-split__equation {
         flex-direction: column;
