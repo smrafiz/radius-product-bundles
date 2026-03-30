@@ -1,4 +1,4 @@
-import type { PlanConfig, PlanId } from "@/shared/types/plan";
+import type { PlanConfig, PlanId } from "@/shared";
 
 export const DEFAULT_PLAN_ID: PlanId = "FREE";
 
@@ -7,13 +7,13 @@ export const PLAN_CONFIGS: Record<PlanId, PlanConfig> = {
         id: "FREE",
         name: "Free",
         limits: {
-            maxBundles: 5,
+            maxBundles: 4,
             maxProductsPerBundle: 10,
             allowedBundleTypes: ["FIXED_BUNDLE"],
             allowedStatuses: ["DRAFT", "ACTIVE", "ARCHIVED"],
         },
         features: [
-            { feature: "analytics_full", gateMode: "hidden" },
+            { feature: "analytics_full", gateMode: "enabled" },
             { feature: "ab_testing", gateMode: "hidden" },
             { feature: "automation", gateMode: "hidden" },
             { feature: "ai_insights", gateMode: "hidden" },

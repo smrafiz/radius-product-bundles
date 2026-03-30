@@ -1,13 +1,12 @@
 "use server";
 
-import type { ClientPlanData } from "@/shared/types/plan";
-import type { ApiResponse } from "@/shared";
-import { handleSessionToken } from "@/lib/shopify";
 import {
-    resolveShopPlan,
-    getEffectiveLimits,
     checkBundleQuota,
+    getEffectiveLimits,
+    resolveShopPlan,
 } from "@/shared/services/plan.service";
+import { handleSessionToken } from "@/lib/shopify";
+import { type ApiResponse, type ClientPlanData } from "@/shared";
 
 export async function fetchPlanData(
     sessionToken: string,
