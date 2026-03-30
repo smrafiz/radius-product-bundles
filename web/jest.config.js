@@ -34,5 +34,5 @@ export default {
     },
     moduleFileExtensions: ["ts", "tsx", "js", "json"],
     setupFilesAfterEnv: ["<rootDir>/tests/setup/jest.setup.ts"],
-    testMatch: ["**/string.test.ts", "**/bundle-calculations.test.ts"],
+    testMatch: ["**/*.test.ts", "**/*.test.tsx"],
 };

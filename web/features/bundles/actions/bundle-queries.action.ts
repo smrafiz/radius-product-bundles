@@ -55,46 +55,6 @@ export async function getBundlesAction(
 }
 
 /**
- * Get bundle metrics for a shop
- */
-// export async function getBundleMetricsAction(
-//     sessionToken: string,
-// ): Promise<ApiResponse> {
-//     try {
-//         const {
-//             session: { shop },
-//         } = await handleSessionToken(sessionToken);
-//
-//         const thirtyDaysAgo = getThirtyDaysAgo();
-//         const sixtyDaysAgo = getSixtyDaysAgo();
-//
-//         const rawMetrics = await aggregateBundleMetrics(
-//             shop,
-//             thirtyDaysAgo,
-//             sixtyDaysAgo,
-//         );
-//
-//         const metrics = transformBundleMetrics(rawMetrics);
-//
-//         return {
-//             status: "success",
-//             data: metrics,
-//         };
-//     } catch (error) {
-//         console.error("[getBundleMetrics] Error:", error);
-//
-//         return {
-//             status: "error",
-//             message:
-//                 error instanceof Error
-//                     ? error.message
-//                     : "Failed to fetch metrics",
-//             data: null,
-//         };
-//     }
-// }
-
-/**
  * Get a single bundle with details
  */
 export async function getBundleAction(

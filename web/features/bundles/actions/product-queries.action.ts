@@ -1,24 +1,19 @@
 "use server";
 
-/**
- * Shopify Product Queries - Auth Layer
- * Handles product queries via GraphQL
- */
-
 import {
     GetProductByIdDocument,
     GetProductByIdQuery,
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLQuery } from "@/lib";
+import { handleSessionToken } from "@/lib/shopify";
 import { sanitizeRichText } from "@/shared";
 
-/**
- * Fetch product data for bundle edit mode
- */
 export async function fetchProductByIdAction(
     sessionToken: string,
     productId: string,
 ) {
+    await handleSessionToken(sessionToken);
+
     const result = await executeGraphQLQuery<GetProductByIdQuery>({
         query: GetProductByIdDocument,
         variables: { id: productId },

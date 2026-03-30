@@ -6,3 +6,4 @@ export * from "./shopify";
 export * from "./components";
 export * from "./hooks/hooks.types";
 export * from "./models/product.types";
+export * from "./plan";

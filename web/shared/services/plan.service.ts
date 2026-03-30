@@ -116,9 +116,7 @@ export async function checkBundleQuota(
     domain: string,
 ): Promise<QuotaResult> {
     const limits = await getEffectiveLimits(domain);
-    const current = await countBundlesByShop(domain, {
-        status: limits.allowedStatuses,
-    });
+    const current = await countBundlesByShop(domain);
 
     if (limits.maxBundles === -1) {
         return { allowed: true, current, limit: -1 };

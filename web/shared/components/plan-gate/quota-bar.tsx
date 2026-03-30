@@ -1,6 +1,7 @@
 "use client";
 
 import { usePlan } from "@/shared/hooks/plan";
+import { useAppNavigation, ROUTES } from "@/shared";
 
 interface QuotaBarProps {
     resource: "bundles" | "products";
@@ -9,6 +10,7 @@ interface QuotaBarProps {
 
 export function QuotaBar({ resource, label }: QuotaBarProps) {
     const { quota } = usePlan();
+    const { goTo } = useAppNavigation();
     const q = quota[resource];
 
     if (q.limit === -1) return null;
@@ -21,30 +23,29 @@ export function QuotaBar({ resource, label }: QuotaBarProps) {
         label ?? (resource === "bundles" ? "Bundles" : "Products");
 
     const barColor = isAtLimit
-        ? "#DC2626"
+        ? "var(--p-color-text-critical, #DC2626)"
         : isNearLimit
-          ? "#F59E0B"
-          : "#2563EB";
+          ? "var(--p-color-text-caution, #F59E0B)"
+          : "var(--p-color-text-info, #2563EB)";
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+        <s-stack gap="small-200">
             <div
                 style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    fontSize: "13px",
-                    color: "#374151",
+                    alignItems: "center",
                 }}
             >
-                <span style={{ fontWeight: 500 }}>{displayLabel}</span>
-                <span>
+                <s-text>{displayLabel}</s-text>
+                <s-text tone="neutral">
                     {q.current}/{q.limit} used
-                </span>
+                </s-text>
             </div>
             <div
                 style={{
                     height: "6px",
-                    background: "#E5E7EB",
+                    background: "var(--p-color-bg-fill-secondary, #E5E7EB)",
                     borderRadius: "3px",
                     overflow: "hidden",
                 }}
@@ -60,35 +61,13 @@ export function QuotaBar({ resource, label }: QuotaBarProps) {
                 />
             </div>
             {isAtLimit && (
-                <div
-                    style={{
-                        fontSize: "12px",
-                        color: "#DC2626",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <span>
-                        {displayLabel} limit reached
-                    </span>
-                    <button
-                        onClick={() => {
-                            // No-op for now. Wire to billing/pricing route later.
-                        }}
-                        style={{
-                            fontSize: "12px",
-                            color: "#2563EB",
-                            background: "none",
-                            border: "none",
-                            cursor: "pointer",
-                            textDecoration: "underline",
-                        }}
-                    >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <s-text tone="critical">{displayLabel} limit reached</s-text>
+                    <s-button variant="tertiary" onClick={goTo(ROUTES.PRICING)}>
                         Upgrade for more
-                    </button>
+                    </s-button>
                 </div>
             )}
-        </div>
+        </s-stack>
     );
 }

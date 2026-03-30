@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import type { FeatureId } from "@/shared/types/plan";
+import { useAppNavigation, ROUTES } from "@/shared";
 
 const FEATURE_LABELS: Record<FeatureId, string> = {
     analytics_full: "Advanced Analytics",
@@ -22,6 +23,7 @@ interface LockOverlayProps {
 
 export function LockOverlay({ feature, children }: LockOverlayProps) {
     const label = FEATURE_LABELS[feature] ?? feature;
+    const { goTo } = useAppNavigation();
 
     return (
         <div style={{ position: "relative" }}>
@@ -40,61 +42,34 @@ export function LockOverlay({ feature, children }: LockOverlayProps) {
                     position: "absolute",
                     inset: 0,
                     display: "flex",
-                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: "12px",
-                    background: "rgba(255, 255, 255, 0.6)",
+                    background: "rgba(255, 255, 255, 0.7)",
                     borderRadius: "12px",
                     zIndex: 10,
                 }}
             >
-                <svg
-                    width="32"
-                    height="32"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        d="M14 8V6a4 4 0 0 0-8 0v2H5a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-1Zm-5-2a1 1 0 1 1 2 0v2H9V6Z"
-                        fill="#6B7280"
-                    />
-                </svg>
-                <span
-                    style={{
-                        fontSize: "14px",
-                        fontWeight: 600,
-                        color: "#374151",
-                    }}
-                >
-                    {label}
-                </span>
-                <span
-                    style={{
-                        fontSize: "12px",
-                        color: "#6B7280",
-                    }}
-                >
-                    Available on paid plans
-                </span>
-                <button
-                    onClick={() => {
-                        // No-op for now. Wire to billing/pricing route later.
-                    }}
-                    style={{
-                        padding: "6px 16px",
-                        fontSize: "13px",
-                        fontWeight: 500,
-                        color: "#fff",
-                        background: "#2563EB",
-                        border: "none",
-                        borderRadius: "6px",
-                        cursor: "pointer",
-                    }}
-                >
-                    Upgrade
-                </button>
+                <s-stack gap="base" align-items="center">
+                    <svg
+                        width="28"
+                        height="28"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M14 8V6a4 4 0 0 0-8 0v2H5a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-1Zm-5-2a1 1 0 1 1 2 0v2H9V6Z"
+                            fill="var(--p-color-icon-secondary, #6B7280)"
+                        />
+                    </svg>
+                    <s-stack gap="small-200" align-items="center">
+                        <s-heading>{label}</s-heading>
+                        <s-text tone="neutral">Available on paid plans</s-text>
+                    </s-stack>
+                    <s-button variant="primary" onClick={goTo(ROUTES.PRICING)}>
+                        Upgrade
+                    </s-button>
+                </s-stack>
             </div>
         </div>
     );

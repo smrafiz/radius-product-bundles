@@ -44,6 +44,7 @@ export function setupGDPRWebHooks(path: string) {
                     // Compile customer data summary
                     const customerData = {
                         customer_id: customerId,
+                        customer_email: customerEmail,
                         shop,
                         data_request_id: dataRequestId,
                         data: {
@@ -55,6 +56,18 @@ export function setupGDPRWebHooks(path: string) {
                         },
                         note: "This app stores bundle view tracking data only. No personal information (name, email, address) is stored by this app.",
                     };
+
+                    // Log the compiled data for the merchant to fulfill the request.
+                    // Per GDPR / Shopify requirements, the merchant must provide this
+                    // data to the customer within 30 days of the request.
+                    console.log(
+                        "[GDPR] customers/data_request — compiled customer data for merchant review.",
+                        "shop:", shop,
+                        "| data_request_id:", dataRequestId,
+                        "| customer_id:", customerId,
+                        "| bundle_views_count:", customerViews.length,
+                        "| payload:", JSON.stringify(customerData),
+                    );
 
                 } catch (error) {
                     console.error("[GDPR] Data request error:", error);

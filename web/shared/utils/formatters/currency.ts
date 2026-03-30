@@ -3,7 +3,7 @@
  * Generic utilities for currency formatting and locale handling
  */
 
-import { CURRENCY_LOCALES, CURRENCY_SYMBOLS } from "@/shared";
+import { CURRENCY_LOCALES, CURRENCY_SYMBOLS } from "@/shared/constants/currency.constants";
 
 /**
  * Get currency symbol for a given currency code
