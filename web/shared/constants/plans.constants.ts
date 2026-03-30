@@ -9,7 +9,12 @@ export const PLAN_CONFIGS: Record<PlanId, PlanConfig> = {
         limits: {
             maxBundles: 5,
             maxProductsPerBundle: 10,
-            allowedBundleTypes: ["FIXED_BUNDLE"],
+            allowedLayouts: {
+                FIXED_BUNDLE: ["GRID", "LIST"],
+                BOGO: ["CLASSIC_CARD", "COMPACT_GRID"],
+                BUY_X_GET_Y: ["COMPACT_GRID", "MINIMALIST"],
+            },
+            allowedBundleTypes: ["FIXED_BUNDLE", "BOGO", "BUY_X_GET_Y"],
             allowedStatuses: ["DRAFT", "ACTIVE", "ARCHIVED"],
         },
         features: [

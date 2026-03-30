@@ -1,23 +1,31 @@
 "use client";
 
 import { useMemo } from "react";
+import { usePlan } from "@/shared";
 import { useBundleStore } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 import {
     WIDGET_LAYOUTS,
     LAYOUTS_BY_BUNDLE_TYPE,
 } from "@/features/bundles/constants/bundle-details.constants";
-import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetLayout() {
     const t = useTranslations("Bundles.Creation.Appearance");
     const tl = useTranslations("Bundles.DetailsConstants.layouts");
     const { displaySettings, updateDisplaySettings, bundleData } =
         useBundleStore();
-    const layouts = useMemo(
-        () =>
-            LAYOUTS_BY_BUNDLE_TYPE[bundleData.type as string] ?? WIDGET_LAYOUTS,
-        [bundleData.type],
-    );
+    const { plan } = usePlan();
+    const layouts = useMemo(() => {
+        const all =
+            LAYOUTS_BY_BUNDLE_TYPE[bundleData.type as string] ?? WIDGET_LAYOUTS;
+        const allowed =
+            plan.limits.allowedLayouts[bundleData.type as keyof typeof plan.limits.allowedLayouts];
+        if (!allowed) {
+            return all;
+        }
+
+        return all.filter((l) => allowed.includes(l.value));
+    }, [bundleData.type, plan.limits.allowedLayouts]);
 
     return (
         <s-section>

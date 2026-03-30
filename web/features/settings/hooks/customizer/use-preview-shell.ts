@@ -11,13 +11,21 @@ import type { BundleType } from "@/features/bundles";
 import { TEMPLATE_REGISTRY } from "@/features/settings/constants/template.constants";
 import { CUSTOMIZER_LAYOUTS_MAPPING } from "@/features/settings/constants/customizer.constants";
 import { useTranslations } from "@/lib/i18n/provider";
+import { usePlan } from "@/shared";
 
 export function usePreviewShell(bundleType: PreviewTemplateId) {
     const { activeLayout, activeDevice, setActiveLayout } =
         useCustomizerStore();
     const styles = useEffectiveStyles();
+    const { plan } = usePlan();
 
-    const layouts = CUSTOMIZER_LAYOUTS_MAPPING[bundleType];
+    const allLayouts = CUSTOMIZER_LAYOUTS_MAPPING[bundleType];
+    const allowedLayoutValues =
+        plan.limits.allowedLayouts[bundleType as BundleType];
+    const layouts = allowedLayoutValues
+        ? allLayouts.filter((l) => allowedLayoutValues.includes(l.value))
+        : allLayouts;
+
     const Template = TEMPLATE_REGISTRY[bundleType];
 
     const t = useTranslations("Settings.Customizer");

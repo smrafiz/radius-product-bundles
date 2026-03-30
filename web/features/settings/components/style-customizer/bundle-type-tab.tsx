@@ -22,7 +22,7 @@ export function BundleTypeTab({
               availableTypes.includes(opt.id),
           )
         : PREVIEW_TEMPLATE_OPTIONS;
-    const isRestricted = !!availableTypes;
+    const isRestricted = !!availableTypes && availableTypes.length === 1;
 
     return (
         <s-section>

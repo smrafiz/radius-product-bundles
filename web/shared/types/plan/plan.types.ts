@@ -24,6 +24,7 @@ export interface PlanFeatureConfig {
 export interface PlanLimits {
     maxBundles: number;
     maxProductsPerBundle: number;
+    allowedLayouts: Partial<Record<BundleType, string[]>>;
     allowedBundleTypes: BundleType[];
     allowedStatuses: BundleStatus[];
 }

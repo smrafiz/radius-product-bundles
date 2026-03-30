@@ -1,22 +1,22 @@
 "use client";
 
 import {
+    type CustomizerPanelConfig,
+    type PreviewTemplateId,
+    CustomizerSkeleton,
+    DynamicCustomizerPanel,
+    PreviewShell,
     useScrollBlur,
-    PreviewTemplateId,
     useCustomizerPage,
     useCustomizerStore,
+    CustomizerHeader,
 } from "@/features/settings";
-import { useSearchParams } from "next/navigation";
-import { CustomizerHeader } from "./customizer-header";
-import { CustomizerSkeleton } from "./customizer-skeletons";
-import { DynamicCustomizerPanel } from "./dynamic-customizer-panel";
-import { PreviewShell } from "./bundle-preview/preview-shell";
-import { GlobalBanner } from "@/shared";
-import { FormProvider } from "react-hook-form";
-import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
-import { useTranslations } from "@/lib/i18n/provider";
 import { useMemo } from "react";
-import { CustomizerPanelConfig } from "@/features/settings";
+import { FormProvider } from "react-hook-form";
+import { GlobalBanner, usePlan } from "@/shared";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/provider";
+import { CUSTOMIZER_CONFIG } from "@/features/settings/configs/customizer.config";
 
 function translateConfig(
     config: CustomizerPanelConfig,
@@ -91,14 +91,18 @@ export function CustomizerBundleType() {
 
     const { activeLayout, customizerSource } = useCustomizerStore();
     const activeBundleType = (activeId || "FIXED_BUNDLE") as PreviewTemplateId;
+    const { plan } = usePlan();
 
     const searchParams = useSearchParams();
     const bundleTypeParam = searchParams.get("bundleType");
 
-    const availableTypes =
+    const availableTypes: PreviewTemplateId[] =
         customizerSource === "bundle-preview" && bundleTypeParam
             ? [bundleTypeParam as PreviewTemplateId]
-            : undefined;
+            : [
+                  ...(plan.limits.allowedBundleTypes as PreviewTemplateId[]),
+                  "CART_BANNER",
+              ];
 
     const t = useTranslations("Settings.Customizer");
     const tConfig = useTranslations("Settings.Customizer.Config");
