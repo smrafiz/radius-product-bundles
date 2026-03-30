@@ -7,7 +7,7 @@ import {
     useBundleActions,
 } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
-import { useModalStore } from "@/shared";
+import { useModalStore, usePlan } from "@/shared";
 
 /**
  * Bundle status popover
@@ -16,6 +16,7 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
     const ts = useTranslations("Bundles.Statuses");
     const { openModal } = useModalStore();
     const { actions } = useBundleActions(bundle);
+    const { plan } = usePlan();
     const popoverId = `bundle-status-popover-${bundle.id}`;
 
     /**
@@ -65,8 +66,14 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                 <s-box padding="small-300">
                     <s-stack gap="small-400">
                         {Object.entries(BUNDLE_STATUSES)
-                            .filter(([key]) => key !== "DELETED")
-                            .map(([statusKey, status]) => {
+                            .filter(
+                                ([key]) =>
+                                    key !== "DELETED" &&
+                                    plan.limits.allowedStatuses.includes(
+                                        key as BundleStatus,
+                                    ),
+                            )
+                            .map(([statusKey]) => {
                                 const isCurrentStatus =
                                     statusKey === bundle.status;
 

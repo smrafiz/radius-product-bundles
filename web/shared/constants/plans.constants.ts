@@ -7,7 +7,7 @@ export const PLAN_CONFIGS: Record<PlanId, PlanConfig> = {
         id: "FREE",
         name: "Free",
         limits: {
-            maxBundles: 4,
+            maxBundles: 5,
             maxProductsPerBundle: 10,
             allowedBundleTypes: ["FIXED_BUNDLE"],
             allowedStatuses: ["DRAFT", "ACTIVE", "ARCHIVED"],

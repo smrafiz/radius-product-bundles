@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import type { BundleStatus } from "@/features/bundles";
-import { formatDateLong, getDisallowPastDates } from "@/shared";
+import { formatDateLong, getDisallowPastDates, usePlan } from "@/shared";
 import {
     BUNDLE_STATUSES,
     getAvailableStatuses,
@@ -14,8 +14,11 @@ export function BundlePreviewStatus() {
     const t = useTranslations("Bundles.Schedule");
     const ts = useTranslations("Bundles.Statuses");
     const { bundleData, updateBundleField } = useBundleStore();
+    const { plan } = usePlan();
     const mode = bundleData.id ? "edit" : "create";
-    const availableStatuses = getAvailableStatuses(mode);
+    const availableStatuses = getAvailableStatuses(mode).filter((s) =>
+        plan.limits.allowedStatuses.includes(s),
+    );
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
