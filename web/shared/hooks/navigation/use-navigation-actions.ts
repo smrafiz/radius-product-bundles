@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
-export function useNavigationActions<T extends Record<string, () => void>>(
+export function useNavigationActions<T extends Record<string, () => void | false>>(
     actions: T,
 ) {
     const [loadingKey, setLoadingKey] = useState<string | null>(null);
@@ -17,7 +17,10 @@ export function useNavigationActions<T extends Record<string, () => void>>(
         (acc, [key, fn]) => {
             acc[key as keyof T] = () => {
                 setLoadingKey(key);
-                fn();
+                const result = fn();
+                if (result === false) {
+                    setLoadingKey(null);
+                }
             };
             return acc;
         },

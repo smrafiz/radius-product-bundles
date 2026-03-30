@@ -963,3 +963,157 @@ fn cart_lines_discounts_generate_run(
         )],
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+
+    fn make_settings(product_quantities: Option<HashMap<String, i32>>) -> MetafieldBundleConfig {
+        MetafieldBundleConfig {
+            status: Some("ACTIVE".into()),
+            discount_type: "PERCENTAGE".into(),
+            discount_value: 10.0,
+            free_shipping: None,
+            min_order_value: None,
+            max_discount_amount: None,
+            discount_application: None,
+            discounted_product_ids: None,
+            product_quantities,
+            product_variant_ids: None,
+            main_product_id: None,
+            bundle_type: None,
+            buy_quantity: None,
+            get_quantity: None,
+            product_roles: None,
+            variant_roles: None,
+        }
+    }
+
+    fn qty_map(pairs: &[(&str, i32)]) -> HashMap<String, i32> {
+        pairs.iter().map(|(k, v)| (k.to_string(), *v)).collect()
+    }
+
+    fn variant_map(pairs: &[(&str, &str)]) -> HashMap<String, String> {
+        pairs.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect()
+    }
+
+    // ── safe_mul ─────────────────────────────────────────────────────────────
+
+    #[test]
+    fn safe_mul_normal_values() {
+        assert_eq!(safe_mul(3, 4), Some(12));
+    }
+
+    #[test]
+    fn safe_mul_zero() {
+        assert_eq!(safe_mul(0, 999), Some(0));
+        assert_eq!(safe_mul(999, 0), Some(0));
+    }
+
+    #[test]
+    fn safe_mul_exactly_max_quantity() {
+        // 100 * 100 = 10_000 — at boundary, should pass
+        assert_eq!(safe_mul(100, 100), Some(10_000));
+    }
+
+    #[test]
+    fn safe_mul_one_above_max_quantity() {
+        // 101 * 100 = 10_100 — above MAX_QUANTITY, should return None
+        assert_eq!(safe_mul(101, 100), None);
+    }
+
+    #[test]
+    fn safe_mul_i32_overflow() {
+        assert_eq!(safe_mul(i32::MAX, 2), None);
+    }
+
+    #[test]
+    fn safe_mul_large_product() {
+        assert_eq!(safe_mul(10_000, 10_000), None);
+    }
+
+    #[test]
+    fn safe_mul_one_factor() {
+        assert_eq!(safe_mul(1, 10_000), Some(10_000));
+    }
+
+    // ── is_product_in_bundle ─────────────────────────────────────────────────
+
+    #[test]
+    fn product_in_qty_map_no_variant_restriction() {
+        let settings = make_settings(Some(qty_map(&[("gid://shopify/Product/1", 2)])));
+        assert!(is_product_in_bundle("gid://shopify/Product/1", None, &settings));
+    }
+
+    #[test]
+    fn product_not_in_qty_map() {
+        let settings = make_settings(Some(qty_map(&[("gid://shopify/Product/1", 2)])));
+        assert!(!is_product_in_bundle("gid://shopify/Product/99", None, &settings));
+    }
+
+    #[test]
+    fn product_matched_via_main_product_id() {
+        let mut settings = make_settings(None);
+        settings.main_product_id = Some("gid://shopify/Product/MAIN".into());
+        assert!(is_product_in_bundle("gid://shopify/Product/MAIN", None, &settings));
+    }
+
+    #[test]
+    fn main_product_id_does_not_match_other_product() {
+        let mut settings = make_settings(None);
+        settings.main_product_id = Some("gid://shopify/Product/MAIN".into());
+        assert!(!is_product_in_bundle("gid://shopify/Product/OTHER", None, &settings));
+    }
+
+    #[test]
+    fn product_in_qty_map_with_matching_variant() {
+        let pid = "gid://shopify/Product/1";
+        let vid = "gid://shopify/ProductVariant/42";
+        let mut settings = make_settings(Some(qty_map(&[(pid, 1)])));
+        settings.product_variant_ids = Some(variant_map(&[(pid, vid)]));
+        assert!(is_product_in_bundle(pid, Some(vid), &settings));
+    }
+
+    #[test]
+    fn product_in_qty_map_with_wrong_variant() {
+        let pid = "gid://shopify/Product/1";
+        let mut settings = make_settings(Some(qty_map(&[(pid, 1)])));
+        settings.product_variant_ids = Some(variant_map(&[(pid, "gid://shopify/ProductVariant/42")]));
+        // different variant in cart
+        assert!(!is_product_in_bundle(pid, Some("gid://shopify/ProductVariant/99"), &settings));
+    }
+
+    #[test]
+    fn product_in_qty_map_variant_required_but_none_provided() {
+        let pid = "gid://shopify/Product/1";
+        let mut settings = make_settings(Some(qty_map(&[(pid, 1)])));
+        settings.product_variant_ids = Some(variant_map(&[(pid, "gid://shopify/ProductVariant/42")]));
+        assert!(!is_product_in_bundle(pid, None, &settings));
+    }
+
+    #[test]
+    fn product_in_qty_map_no_variant_restriction_ignores_variant_arg() {
+        // variant_ids map exists but doesn't include this product → no variant restriction
+        let pid = "gid://shopify/Product/1";
+        let other = "gid://shopify/Product/2";
+        let mut settings = make_settings(Some(qty_map(&[(pid, 1)])));
+        settings.product_variant_ids = Some(variant_map(&[(other, "gid://shopify/ProductVariant/99")]));
+        // pid is in qty map, not in variant_ids map → passes without variant check
+        assert!(is_product_in_bundle(pid, None, &settings));
+    }
+
+    #[test]
+    fn empty_qty_map_returns_false() {
+        let settings = make_settings(Some(HashMap::new()));
+        assert!(!is_product_in_bundle("gid://shopify/Product/1", None, &settings));
+    }
+
+    #[test]
+    fn no_qty_map_no_main_id_returns_false() {
+        let settings = make_settings(None);
+        assert!(!is_product_in_bundle("gid://shopify/Product/1", None, &settings));
+    }
+}

@@ -1,11 +1,10 @@
 "use client";
 
-import { useAppNavigation } from "@/shared";
-import { ROUTES } from "@/shared/constants";
+import { useCreateBundleNav } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardFeatures() {
-    const { goTo } = useAppNavigation();
+    const { create } = useCreateBundleNav();
     const t = useTranslations("Dashboard.Features");
 
     return (
@@ -37,7 +36,7 @@ export function DashboardFeatures() {
                         </s-unordered-list>
                         <s-button
                             variant="primary"
-                            onClick={goTo(ROUTES.BUNDLE_CREATE)}
+                            onClick={create()}
                         >
                             {t("createBundle")}
                         </s-button>

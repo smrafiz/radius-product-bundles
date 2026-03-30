@@ -6,7 +6,7 @@ import {
     useBundlesData,
     useInitialBundleState,
 } from "@/features/bundles";
-import { useAppNavigation } from "@/shared";
+import { useAppNavigation, useCreateBundleNav } from "@/shared";
 import { useEffect, useMemo, useState } from "react";
 import { useAnalytics } from "@/features/analytics";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -21,6 +21,7 @@ export function useBundlesPage() {
     const { isLoading } = useBundlesData();
     const { metrics: analyticsMetrics, isMetricsFetching } = useAnalytics();
     const { bundleData } = useAppNavigation();
+    const { create } = useCreateBundleNav();
     const { bundles, toast, hideToast } = useBundleListingStore();
     const { showSkeleton } = useInitialBundleState({
         hasData: bundles.length > 0,
@@ -62,7 +63,7 @@ export function useBundlesPage() {
         showTableSkeleton: showSkeleton,
         toast,
         isLoading,
-        onCreateBundle: bundleData.create(),
+        onCreateBundle: create(),
         onBundleStudio: bundleData.studio(),
         onDismissToast: hideToast,
     };

@@ -52,35 +52,6 @@ export const GENERAL_TAB: SettingsTabConfig = {
                         },
                     },
                 },
-                {
-                    type: "number",
-                    name: "maxBundleProducts",
-                    label: "Max products per bundle",
-                    details: "Maximum products allowed in a single bundle",
-                    defaultValue: 10,
-                    min: 2,
-                    max: 50,
-                    validation: {
-                        min: {
-                            value: 2,
-                            message: "Minimum 2 products per bundle",
-                        },
-                        max: {
-                            value: 50,
-                            message: "Maximum 50 products per bundle",
-                        },
-                    },
-                },
-                {
-                    type: "number",
-                    name: "maxBundlesPerShop",
-                    label: "Max bundles per shop",
-                    details: "Total bundles limit (based on your plan)",
-                    defaultValue: 5,
-                    min: 1,
-                    max: 500,
-                    readOnly: true,
-                },
             ],
         },
 

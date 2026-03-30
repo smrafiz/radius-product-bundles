@@ -18,30 +18,28 @@
 | **M-3** REST Admin API usage | Only REST call is Theme Asset API in setup guide (no GraphQL equivalent) — accepted exception | ✅ Accepted |
 | Dead code | Removed 35-line commented metrics function from `bundle-queries.action.ts` | ✅ Done |
 | Dead code | Removed stale `// export * from "./webhook.action"` from `shared/actions/index.ts` | ✅ Done |
+| **H-3** `bundle-security.service.ts` zero tests | 31 tests added — all 7 functions covered, all pass | ✅ Done |
+| **H-4** Rust discount function zero tests | 17 `#[cfg(test)]` tests added — `safe_mul` + `is_product_in_bundle`, all pass | ✅ Done |
 
 ---
 
-## PENDING — HIGH
+## RESOLVED — HIGH (this session)
 
-### H-3 — `bundle-security.service.ts` zero tests
-**File:** `web/features/bundles/services/bundle-security.service.ts` (8KB)
+### H-3 — `bundle-security.service.ts` tests
+**File:** `web/features/bundles/services/bundle-security.service.test.ts`
 
-Enforces plan quotas, bundle type access, permission checks — completely untested. A silent regression here is high-impact. All 51.9KB of bundle services are untested — this is the highest-risk file.
+31 tests added covering all 7 exported functions: `checkRateLimit` (6), `checkShopStatus` (5), `detectAbusiveBehavior` (5), `checkAbusivePatterns` (2), `performSecurityChecks` (4), `canCreateBundle` (2), `validateShopPermissions` (7). All 31 pass. ✅
 
 ---
 
-### H-4 — Rust discount function zero tests
-**Files:** `extension/extensions/radius-discount-function/src/`
+### H-4 — Rust discount function tests
+**File:** `extension/extensions/radius-discount-function/src/cart_lines_discounts_generate_run.rs`
 
-1,273 LOC of BOGO/BXGY deal count logic. No `#[cfg(test)]` modules, no test files, no dev-dependencies in Cargo.toml. A discount calculation bug directly affects merchant revenue.
+17 `#[cfg(test)]` unit tests added covering:
+- `safe_mul`: normal values, zero, exact MAX_QUANTITY boundary (10,000), one-above boundary, i32 overflow, large product
+- `is_product_in_bundle`: qty map hit/miss, `main_product_id` path, variant match/mismatch, variant required but None, no restriction with variant_ids present, empty map, no map at all
 
-Critical untested paths:
-- BOGO deal count (variant-role handling, lines 256, 347-380)
-- BXGY same-product path (lines 227-297)
-- `safe_mul` MAX_QUANTITY=10K boundary
-- Discount value capping (`max_discount_amount`, lines 180-196)
-- CUSTOM_PRICE deal count multiplier (lines 160-174)
-- Empty cart / empty reward_lines edge cases
+All 17 pass (`cargo test`). ✅
 
 ---
 
@@ -107,10 +105,8 @@ Currently logs compiled customer data to server console. Upgrade to in-app Notif
 ## Remaining Priority Order
 
 1. **Task 16** — Per-feature error boundaries (needed for App Store — no 500 pages)
-2. **H-3** — Tests for `bundle-security.service.ts`
-3. **H-4** — Rust discount function tests
-4. **Task 14+15** — Memoize BundleTableRow + Zustand selectors (performance)
-5. **M-1** — Type safety cleanup (analytics + bundles)
-6. **Task 17** — Fix `any` in analytics repository
-7. **L-1** — Settings store TODO
-8. **L-2** — GDPR notification upgrade (post-launch)
+2. **Task 14+15** — Memoize BundleTableRow + Zustand selectors (performance)
+3. **M-1** — Type safety cleanup (analytics + bundles)
+4. **Task 17** — Fix `any` in analytics repository
+5. **L-1** — Settings store TODO
+6. **L-2** — GDPR notification upgrade (post-launch)

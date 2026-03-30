@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppNavigation } from "@/shared";
+import { useCreateBundleNav } from "@/shared";
 import { BundleTableEmptyStatesProps } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -11,7 +11,7 @@ export function BundleTableEmptyStates({
     totalBundles,
     filteredBundlesCount,
 }: BundleTableEmptyStatesProps) {
-    const { bundleData } = useAppNavigation();
+    const { create } = useCreateBundleNav();
     const t = useTranslations("Bundles.Listing.EmptyState");
     const tListing = useTranslations("Bundles.Listing");
 
@@ -43,7 +43,7 @@ export function BundleTableEmptyStates({
                             icon="plus"
                             variant="primary"
                             accessibilityLabel={tListing("createBundle")}
-                            onClick={bundleData.create()}
+                            onClick={create()}
                         >
                             {tListing("createBundle")}
                         </s-button>

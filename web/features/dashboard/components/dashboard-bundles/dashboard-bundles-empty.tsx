@@ -1,9 +1,9 @@
 "use client";
-import { useAppNavigation } from "@/shared";
+import { useCreateBundleNav } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function DashboardBundlesEmpty({ error }: { error?: string | null }) {
-    const { bundleData } = useAppNavigation();
+    const { create } = useCreateBundleNav();
     const t = useTranslations("Dashboard.Bundles");
 
     const heading = error ? t("unableToLoad") : t("noActive");
@@ -36,7 +36,7 @@ export function DashboardBundlesEmpty({ error }: { error?: string | null }) {
                             icon="plus"
                             variant="primary"
                             accessibilityLabel={t("createBundle")}
-                            onClick={bundleData.create()}
+                            onClick={create()}
                         >
                             {t("createBundle")}
                         </s-button>

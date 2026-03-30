@@ -9,7 +9,6 @@ import type {
     QuotaResult,
 } from "@/shared/types/plan";
 import { getShopPlan } from "@/shared/repositories";
-import { getShop } from "@/shared/repositories";
 import { countBundlesByShop } from "@/features/bundles/repositories";
 
 export function getPlanConfig(planId: PlanId): PlanConfig {
@@ -30,17 +29,7 @@ export async function getEffectiveLimits(
     domain: string,
 ): Promise<PlanLimits> {
     const plan = await resolveShopPlan(domain);
-    const shop = await getShop(domain);
-    const appSettings = shop?.appSettings;
-
-    return {
-        maxBundles:
-            appSettings?.maxBundlesPerShop ?? plan.limits.maxBundles,
-        maxProductsPerBundle:
-            appSettings?.maxBundleProducts ?? plan.limits.maxProductsPerBundle,
-        allowedBundleTypes: plan.limits.allowedBundleTypes,
-        allowedStatuses: plan.limits.allowedStatuses,
-    };
+    return plan.limits;
 }
 
 export function getFeatureGateMode(
