@@ -7,9 +7,10 @@ import {
     useModalStore,
     usePlan,
     useShopSettingsStore,
+    openQuotaExceededModal,
 } from "@/shared";
-import { openQuotaExceededModal } from "@/shared/utils/helpers/modal";
 import {
+    type BundleType,
     invalidateBundleCache,
     useBundleFormManager,
     useBundleStore,
@@ -18,11 +19,10 @@ import {
     deleteBundleAction,
     duplicateBundleAction,
 } from "@/features/bundles/actions";
-import { useAppBridge } from "@shopify/app-bridge-react";
+import { useCallback, useState } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 import { useQueryClient } from "@tanstack/react-query";
-import type { BundleType } from "@/features/bundles/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useAppBridge } from "@shopify/app-bridge-react";
 import { useSetupGuide, useWidgetStatusStore } from "@/features/dashboard";
 import { checkWidgetBlockStatusAction } from "@/features/dashboard/actions/widget-block-status.action";
 
@@ -37,9 +37,6 @@ export function useBundleCreationForm({
 }) {
     const tc = useTranslations("Bundles.Common");
     const tActions = useTranslations("Bundles.Actions");
-    const tEmbed = useTranslations("Dashboard.AppEmbed");
-    const tWidget = useTranslations("Dashboard.WidgetBlock");
-    const tBoth = useTranslations("Dashboard.Integration");
     const tQuota = useTranslations("Modals.quotaExceeded");
 
     const { bundleData } = useAppNavigation();
@@ -66,34 +63,31 @@ export function useBundleCreationForm({
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDuplicating, setIsDuplicating] = useState(false);
     const [isCheckingStatus, setIsCheckingStatus] = useState(false);
-    const [statusIssue, setStatusIssue] = useState<{
-        embedMissing: boolean;
-        blockMissing: boolean;
-    } | null>(null);
-    const statusBannerRef = useRef<React.ComponentRef<"s-banner">>(null);
-
-    useEffect(() => {
-        const el = statusBannerRef.current;
-        if (!el) return;
-        const handleDismiss = () => setStatusIssue(null);
-        el.addEventListener("dismiss", handleDismiss);
-        return () => el.removeEventListener("dismiss", handleDismiss);
-    }, [statusIssue]);
 
     const handleCheckStatus = useCallback(async () => {
         setIsCheckingStatus(true);
-        setStatusIssue(null);
         try {
             const token = await app.idToken();
-            const result = await checkWidgetBlockStatusAction(token);
+
+            // Run both server-side and client-side checks in parallel
+            const [result, embedActive] = await Promise.all([
+                checkWidgetBlockStatusAction(token),
+                detectAppEmbed(),
+            ]);
+
             if (result.status === "success" && result.data) {
-                useWidgetStatusStore.getState().setWidgetStatus(result.data);
-                const embedMissing = !result.data.hasAppEmbed;
-                const blockMissing = !result.data.hasWidgetBlock;
+                // Combine both checks (same logic as useWidgetStatus hook)
+                const combinedStatus = {
+                    ...result.data,
+                    hasAppEmbed: embedActive || result.data.hasAppEmbed,
+                };
+
+                useWidgetStatusStore.getState().setWidgetStatus(combinedStatus);
+
+                const embedMissing = !combinedStatus.hasAppEmbed;
+                const blockMissing = !combinedStatus.hasWidgetBlock;
                 if (!embedMissing && !blockMissing) {
                     shopify?.toast?.show(tc("themeReady"));
-                } else {
-                    setStatusIssue({ embedMissing, blockMissing });
                 }
             }
         } catch {
@@ -111,7 +105,10 @@ export function useBundleCreationForm({
         if (!isWithinQuota("bundles")) {
             openQuotaExceededModal(quota.bundles, {
                 title: tQuota("heading"),
-                message: tQuota("message", { current: quota.bundles.current, limit: quota.bundles.limit }),
+                message: tQuota("message", {
+                    current: quota.bundles.current,
+                    limit: quota.bundles.limit,
+                }),
                 confirmText: tQuota("confirm"),
             });
             return;
@@ -247,11 +244,7 @@ export function useBundleCreationForm({
         : undefined;
 
     const uniqueProducts = selectedItems.length
-        ? [
-              ...new Map(
-                  selectedItems.map((p) => [p.productId, p]),
-              ).values(),
-          ]
+        ? [...new Map(selectedItems.map((p) => [p.productId, p])).values()]
         : [];
 
     const hasMainProduct =
@@ -266,9 +259,6 @@ export function useBundleCreationForm({
         // Translations
         tc,
         tActions,
-        tEmbed,
-        tWidget,
-        tBoth,
 
         // Navigation & page
         bundleData,
@@ -283,8 +273,6 @@ export function useBundleCreationForm({
         isDeleting,
         isDuplicating,
         isCheckingStatus,
-        statusIssue,
-        statusBannerRef,
 
         // View bundle
         viewPopoverId,
@@ -303,4 +291,33 @@ export function useBundleCreationForm({
         handleDelete,
         handleSubmit,
     };
+}
+
+/**
+ * Detects app embed status via App Bridge shopify.app.extensions().
+ * This is the same reliable method used by the dashboard.
+ */
+async function detectAppEmbed(): Promise<boolean> {
+    try {
+        const extensions = await shopify.app.extensions();
+        const themeExt = extensions.find(
+            (e) => e.type === "theme_app_extension",
+        );
+        if (!themeExt) return false;
+
+        const activations = themeExt.activations as Array<{
+            handle: string;
+            target: string;
+            status: string;
+        }>;
+
+        return activations.some(
+            (a) =>
+                a.handle === "app-embed" &&
+                a.target !== "section" &&
+                a.status === "active",
+        );
+    } catch {
+        return false;
+    }
 }

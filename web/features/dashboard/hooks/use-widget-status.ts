@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useWidgetStatusStore } from "@/features/dashboard";
 import { checkWidgetBlockStatusAction } from "@/features/dashboard/actions/widget-block-status.action";
@@ -21,6 +21,28 @@ export function useWidgetStatus({
     const app = useAppBridge();
     const { widgetStatus, isChecked, setWidgetStatus, markChecked } =
         useWidgetStatusStore();
+
+    // Function to manually trigger a recheck
+    const recheck = useCallback(async () => {
+        if (!app || !shopDomain) return;
+
+        try {
+            const token = await app.idToken();
+            const [blockResult, embedActive] = await Promise.all([
+                checkWidgetBlockStatusAction(token),
+                detectAppEmbed(),
+            ]);
+
+            if (blockResult.status === "success" && blockResult.data) {
+                setWidgetStatus({
+                    ...blockResult.data,
+                    hasAppEmbed: embedActive || blockResult.data.hasAppEmbed,
+                });
+            }
+        } catch {
+            // Silent fail
+        }
+    }, [app, shopDomain, setWidgetStatus]);
 
     // Initial check — runs once per session
     useEffect(() => {
@@ -119,6 +141,7 @@ export function useWidgetStatus({
         hasAppEmbed: widgetStatus?.hasAppEmbed ?? false,
         isChecking: !isChecked,
         themeEditorUrl,
+        recheck,
     };
 }
 

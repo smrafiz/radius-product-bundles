@@ -9,6 +9,7 @@ import {
 } from "@/features/bundles";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { GlobalBanner } from "@/shared";
+import { WidgetStatusBanner } from "@/features/dashboard";
 
 /**
  * Bundle Creation Form
@@ -21,9 +22,6 @@ export function BundleCreationForm({
     const {
         tc,
         tActions,
-        tEmbed,
-        tWidget,
-        tBoth,
         bundleData,
         pageProps,
         isEditMode,
@@ -32,8 +30,6 @@ export function BundleCreationForm({
         isDeleting,
         isDuplicating,
         isCheckingStatus,
-        statusIssue,
-        statusBannerRef,
         viewPopoverId,
         uniqueProducts,
         mainProductUrl,
@@ -137,7 +133,6 @@ export function BundleCreationForm({
                                     icon="info"
                                     onClick={handleCheckStatus}
                                     loading={isCheckingStatus}
-                                    disabled={!!statusIssue}
                                     accessibilityLabel={tc("checkStatus")}
                                 >
                                     {tc("checkStatus")}
@@ -212,60 +207,12 @@ export function BundleCreationForm({
                 )}
 
                 {/* Integration status banner */}
-                {statusIssue && (
-                    <s-banner
-                        ref={statusBannerRef}
-                        tone="warning"
-                        heading={
-                            statusIssue.embedMissing && statusIssue.blockMissing
-                                ? tBoth("setupIncomplete")
-                                : statusIssue.embedMissing
-                                  ? tEmbed("notEnabled")
-                                  : tWidget("notAdded")
-                        }
-                        dismissible
-                    >
-                        <s-paragraph>
-                            {statusIssue.embedMissing && statusIssue.blockMissing
-                                ? tBoth("bothMissingDesc")
-                                : statusIssue.embedMissing
-                                  ? tEmbed("notEnabledDesc")
-                                  : tWidget("notAddedDesc")}
-                        </s-paragraph>
-                        {statusIssue.embedMissing && (
-                            <s-button
-                                slot="secondary-actions"
-                                variant="secondary"
-                                onClick={() =>
-                                    window.open(
-                                        `https://${shopDomain}/admin/themes/current/editor?context=apps&activateAppId=${apiKey}/app-embed`,
-                                        "_blank",
-                                    )
-                                }
-                            >
-                                {statusIssue.blockMissing
-                                    ? tBoth("enableEmbed")
-                                    : tEmbed("enableButton")}
-                            </s-button>
-                        )}
-                        {statusIssue.blockMissing && (
-                            <s-button
-                                slot="secondary-actions"
-                                variant="secondary"
-                                onClick={() =>
-                                    window.open(
-                                        `https://${shopDomain}/admin/themes/current/editor?template=product&addAppBlockId=${apiKey}/app-block&target=newAppsSection`,
-                                        "_blank",
-                                    )
-                                }
-                            >
-                                {statusIssue.embedMissing
-                                    ? tBoth("addWidget")
-                                    : tWidget("addButton")}
-                            </s-button>
-                        )}
-                    </s-banner>
-                )}
+                <WidgetStatusBanner
+                    shopDomain={shopDomain}
+                    apiKey={apiKey}
+                    setupGuideVisible={false}
+                    forceRecheck={true}
+                />
 
                 {/* Content */}
                 <s-stack gap="base">

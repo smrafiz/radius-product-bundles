@@ -2,6 +2,7 @@
 
 import { useTranslations } from "@/lib/i18n/provider";
 import { useWidgetStatus } from "@/features/dashboard";
+import { useEffect } from "react";
 
 /**
  * Unified integration status banner.
@@ -10,17 +11,26 @@ export function WidgetStatusBanner({
     shopDomain,
     apiKey,
     setupGuideVisible,
+    forceRecheck = false,
 }: {
     shopDomain: string;
     apiKey: string;
     setupGuideVisible: boolean;
+    forceRecheck?: boolean;
 }) {
     const tEmbed = useTranslations("Dashboard.AppEmbed");
     const tWidget = useTranslations("Dashboard.WidgetBlock");
     const tBoth = useTranslations("Dashboard.Integration");
 
-    const { hasAppEmbed, hasWidgetBlock, isChecking, themeEditorUrl } =
+    const { hasAppEmbed, hasWidgetBlock, isChecking, themeEditorUrl, recheck } =
         useWidgetStatus({ shopDomain, apiKey });
+
+    // Force recheck on mount if requested (for bundle creation page)
+    useEffect(() => {
+        if (forceRecheck) {
+            recheck();
+        }
+    }, [forceRecheck, recheck]);
 
     if (setupGuideVisible || isChecking) {
         return null;
