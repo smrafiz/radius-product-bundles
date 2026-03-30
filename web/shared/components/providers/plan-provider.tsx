@@ -2,22 +2,21 @@
 
 import {
     createContext,
+    type ReactNode,
     useCallback,
     useContext,
     useEffect,
     useState,
-    type ReactNode,
 } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import type {
     ClientPlanData,
     FeatureId,
     GateMode,
-    PlanConfig,
     PlanContextValue,
 } from "@/shared/types/plan";
-import { PLAN_CONFIGS, DEFAULT_PLAN_ID } from "@/shared/constants";
 import { fetchPlanData } from "@/shared/actions/plan.actions";
+import { DEFAULT_PLAN_ID, PLAN_CONFIGS } from "@/shared/constants";
 
 const PlanContext = createContext<PlanContextValue | null>(null);
 
@@ -25,7 +24,8 @@ function buildContextValue(
     data: ClientPlanData,
     refreshPlan: () => Promise<void>,
 ): PlanContextValue {
-    const planConfig = PLAN_CONFIGS[data.planId] ?? PLAN_CONFIGS[DEFAULT_PLAN_ID];
+    const planConfig =
+        PLAN_CONFIGS[data.planId] ?? PLAN_CONFIGS[DEFAULT_PLAN_ID];
 
     return {
         plan: { ...planConfig, limits: data.limits },
@@ -65,12 +65,14 @@ export function PlanProvider({ children }: { children: ReactNode }) {
             if (result.status === "success" && result.data) {
                 setPlanData(buildContextValue(result.data, loadPlanData));
             } else {
-                console.warn("[PlanProvider] Failed to fetch plan data:", result.message);
+                console.warn(
+                    "[PlanProvider] Failed to fetch plan data:",
+                    result.message,
+                );
             }
         } catch (err) {
             console.warn("[PlanProvider] Error fetching plan data:", err);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [app]);
 
     const [planData, setPlanData] = useState<PlanContextValue>(() =>

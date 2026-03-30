@@ -1695,5 +1695,29 @@
     "ABTesting": {
         "title": "A/B Testing",
         "comingSoon": "Fonctionnalités de tests A/B : bientôt disponibles…"
+    },
+    "PlanGate": {
+        "features" : {
+            "analytics_full" : "Analyses avancées",
+            "ab_testing" : "Tests A/B",
+            "automation" : "Automatisation",
+            "ai_insights" : "Insights de l'IA",
+            "custom_css" : "CSS personnalisé",
+            "responsive_overrides" : "Remplacements réactifs",
+            "templates" : "Modèles",
+            "export_data" : "Exportation de données",
+            "remove_branding" : "Supprimer la marque"
+        },
+        "lockOverlay" : {
+            "availableOnPaidPlans" : "Disponible avec les formules payantes",
+            "upgrade" : "Mettre à niveau"
+        },
+        "quotaBar" : {
+            "bundles" : "Offres groupées",
+            "products" : "Produits",
+            "used" : "{current}/{limit} utilisé(s)",
+            "limitReached" : "Limite de {label} atteinte",
+            "upgradeForMore" : "Mettre à niveau pour en obtenir plus"
+        }
     }
 }

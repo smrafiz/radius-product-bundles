@@ -1,28 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
-import type { FeatureId } from "@/shared/types/plan";
-import { useAppNavigation, ROUTES } from "@/shared";
-
-const FEATURE_LABELS: Record<FeatureId, string> = {
-    analytics_full: "Advanced Analytics",
-    ab_testing: "A/B Testing",
-    automation: "Automation",
-    ai_insights: "AI Insights",
-    custom_css: "Custom CSS",
-    responsive_overrides: "Responsive Overrides",
-    templates: "Templates",
-    export_data: "Data Export",
-    remove_branding: "Remove Branding",
-};
-
-interface LockOverlayProps {
-    feature: FeatureId;
-    children: ReactNode;
-}
+import { useTranslations } from "@/lib/i18n/provider";
+import { ROUTES } from "@/shared/constants/routes.constants";
+import { type LockOverlayProps, useAppNavigation } from "@/shared";
 
 export function LockOverlay({ feature, children }: LockOverlayProps) {
-    const label = FEATURE_LABELS[feature] ?? feature;
+    const t = useTranslations("PlanGate");
+    const label = t(`features.${feature}`, undefined, feature);
     const { goTo } = useAppNavigation();
 
     return (
@@ -64,10 +48,12 @@ export function LockOverlay({ feature, children }: LockOverlayProps) {
                     </svg>
                     <s-stack gap="small-200" align-items="center">
                         <s-heading>{label}</s-heading>
-                        <s-text tone="neutral">Available on paid plans</s-text>
+                        <s-text tone="neutral">
+                            {t("lockOverlay.availableOnPaidPlans")}
+                        </s-text>
                     </s-stack>
                     <s-button variant="primary" onClick={goTo(ROUTES.PRICING)}>
-                        Upgrade
+                        {t("lockOverlay.upgrade")}
                     </s-button>
                 </s-stack>
             </div>

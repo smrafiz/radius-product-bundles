@@ -1,10 +1,9 @@
 "use client";
 
 import { DehydratedState } from "@tanstack/react-query";
-import { AppSettingsProvider } from "@/features/settings/components/app-settings-provider";
 import { ReactNode, Suspense, useEffect, useState } from "react";
-import { ProtectedRoute, SessionProvider, TanstackProvider } from "@/shared";
-import { PlanProvider } from "@/shared/components/plan-gate/plan-provider";
+import { PlanProvider, ProtectedRoute, SessionProvider, TanstackProvider } from "@/shared";
+import { AppSettingsProvider } from "@/features/settings/components/app-settings-provider";
 
 /**
  * Root Providers Component

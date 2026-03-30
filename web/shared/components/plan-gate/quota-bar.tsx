@@ -1,26 +1,29 @@
 "use client";
 
-import { usePlan } from "@/shared/hooks/plan";
-import { useAppNavigation, ROUTES } from "@/shared";
-
-interface QuotaBarProps {
-    resource: "bundles" | "products";
-    label?: string;
-}
+import {
+    type QuotaBarProps,
+    ROUTES,
+    useAppNavigation,
+    usePlan,
+} from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function QuotaBar({ resource, label }: QuotaBarProps) {
+    const t = useTranslations("PlanGate.quotaBar");
     const { quota } = usePlan();
     const { goTo } = useAppNavigation();
     const q = quota[resource];
 
-    if (q.limit === -1) return null;
+    if (q.limit === -1) {
+        return null;
+    }
 
     const percentage = Math.round((q.current / q.limit) * 100);
     const isNearLimit = percentage >= 80;
     const isAtLimit = q.current >= q.limit;
 
     const displayLabel =
-        label ?? (resource === "bundles" ? "Bundles" : "Products");
+        label ?? (resource === "bundles" ? t("bundles") : t("products"));
 
     const barColor = isAtLimit
         ? "var(--p-color-text-critical, #DC2626)"
@@ -39,7 +42,7 @@ export function QuotaBar({ resource, label }: QuotaBarProps) {
             >
                 <s-text>{displayLabel}</s-text>
                 <s-text tone="neutral">
-                    {q.current}/{q.limit} used
+                    {t("used", { current: q.current, limit: q.limit })}
                 </s-text>
             </div>
             <div
@@ -61,10 +64,18 @@ export function QuotaBar({ resource, label }: QuotaBarProps) {
                 />
             </div>
             {isAtLimit && (
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <s-text tone="critical">{displayLabel} limit reached</s-text>
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}
+                >
+                    <s-text tone="critical">
+                        {t("limitReached", { label: displayLabel })}
+                    </s-text>
                     <s-button variant="tertiary" onClick={goTo(ROUTES.PRICING)}>
-                        Upgrade for more
+                        {t("upgradeForMore")}
                     </s-button>
                 </div>
             )}

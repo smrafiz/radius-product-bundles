@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { BundleType, BundleStatus } from "@/features/bundles";
 
 export type PlanId = "FREE" | (string & {});
@@ -69,4 +70,20 @@ export interface ClientPlanData {
         bundles: QuotaResult;
         products: QuotaResult;
     };
+}
+
+export interface PlanGateProps {
+    feature: FeatureId;
+    children: ReactNode;
+    fallbackMode?: GateMode;
+}
+
+export interface LockOverlayProps {
+    feature: FeatureId;
+    children: ReactNode;
+}
+
+export interface QuotaBarProps {
+    resource: "bundles" | "products";
+    label?: string;
 }

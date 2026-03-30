@@ -1,7 +1,7 @@
 "use client";
 
-import { usePlanContext } from "@/shared/components/plan-gate/plan-provider";
 import type { PlanContextValue } from "@/shared/types/plan";
+import { usePlanContext } from "@/shared/components/providers/plan-provider";
 
 export function usePlan(): PlanContextValue {
     return usePlanContext();
