@@ -316,7 +316,7 @@ export function WidgetClassicCard({
                                     top: -10,
                                     left: 12,
                                     backgroundColor: color,
-                                    color: "#fff",
+                                    color: "#ffffff",
                                     fontSize: parseInt(bodyFontSize) - 4,
                                     fontWeight: 600,
                                     padding: "2px 10px",

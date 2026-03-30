@@ -633,6 +633,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 {
                     type: "heading",
                     label: "BOGO Settings",
+                    layouts: ["CLASSIC_CARD"],
                     bundleTypes: ["BOGO"],
                 },
                 {
@@ -641,6 +642,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     label: "FREE tag color",
                     details: "Color of the FREE label",
                     defaultValue: "#16a34a",
+                    layouts: ["CLASSIC_CARD"],
                     bundleTypes: ["BOGO"],
                 },
                 {
@@ -653,6 +655,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "dotted", label: "Dotted" },
                     ],
                     defaultValue: "solid",
+                    layouts: ["CLASSIC_CARD"],
                     bundleTypes: ["BOGO"],
                 },
 
@@ -661,11 +664,12 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "heading",
                     label: "Buy X Get Y Settings",
                     bundleTypes: ["BUY_X_GET_Y"],
+                    layouts: ["SPLIT_DEAL"],
                 },
                 {
                     type: "buttonGroup",
                     name: "splitDealStyle",
-                    label: "Direction style",
+                    label: "Direction",
                     options: [
                         { value: "column", label: "Column" },
                         { value: "row", label: "Row" },
@@ -673,6 +677,13 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     defaultValue: "row",
                     layouts: ["SPLIT_DEAL", "CLASSIC_CARD"],
                     bundleTypes: ["BUY_X_GET_Y", "BOGO"],
+                },
+
+                // Volume Discount Specific
+                {
+                    type: "heading",
+                    label: "Volume Discount Settings",
+                    bundleTypes: ["VOLUME_DISCOUNT"],
                 },
                 {
                     type: "buttonGroup",
@@ -684,12 +695,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "tabs", label: "Tabs" },
                     ],
                     defaultValue: "cards",
-                    bundleTypes: ["BUY_X_GET_Y"],
-                },
-                // Volume Discount Specific
-                {
-                    type: "heading",
-                    label: "Volume Discount Settings",
                     bundleTypes: ["VOLUME_DISCOUNT"],
                 },
                 {

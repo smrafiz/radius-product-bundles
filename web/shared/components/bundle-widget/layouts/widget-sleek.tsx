@@ -166,7 +166,7 @@ function SleekProductCard({
                             fontSize: bodyFontSize,
                             fontWeight: 600,
                             color: hasDiscount
-                                ? freeTagColor
+                                ? savingsColor
                                 : styles.textColor,
                         }}
                     >
