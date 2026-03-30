@@ -293,10 +293,6 @@
 }
 
 @container (max-width: 380px) {
-    .rb-split__equation {
-        flex-direction: column;
-    }
-
     .rb-split__connector {
         width: auto;
         height: 28px;

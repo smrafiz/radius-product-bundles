@@ -244,7 +244,7 @@ export function WidgetSplitDeal({
                     display: "flex",
                     alignItems: "stretch",
                     gap: 4,
-                    flexDirection: activeDevice === "mobile" ? "column" : (styles.splitDealStyle ?? "row"),
+                    flexDirection: styles.splitDealStyle ?? "row",
                 }}
             >
                 {/* Trigger Column */}
