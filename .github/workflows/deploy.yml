@@ -16,10 +16,11 @@ jobs:
                   key: ${{ secrets.EC2_SSH_KEY }}
                   script: |
                       export PATH="$HOME/.bun/bin:$PATH"
+                      cd /var/www/shopify
+                      git pull origin main
                       cd /var/www/shopify/web
                       rm -rf .next
                       rm -rf node_modules/.cache
-                      git pull origin main
                       bun install
                       export NODE_OPTIONS="--max-old-space-size=3072"
                       bun prepare
