@@ -586,16 +586,18 @@ import {
                 }
             } else if (structure.discountValue && structure.discountValue > 0) {
                 switch (structure.discountType) {
-                    case "PERCENTAGE":
+                    case "PERCENTAGE": {
+                        const pct = Math.round(structure.discountValue);
                         badgeText = formatLabel(
                             structure.labels?.savingsBadgeText ??
                                 "Save {percent}%",
                             {
-                                percent: structure.discountValue,
-                                amount: `${structure.discountValue}%`,
+                                percent: pct,
+                                amount: `${pct}%`,
                             },
                         );
                         break;
+                    }
 
                     case "FIXED_AMOUNT":
                         badgeText = formatLabel("Save {amount}", {
