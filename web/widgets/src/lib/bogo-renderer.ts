@@ -1419,12 +1419,16 @@ export function renderSplitDealProducts(
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-split__product-title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
             : `<h3 class="rb-split__product-title">${escapeHtml(product.title)}${variantPart}</h3>`;
+        const quantityHtml = ctx.showQuantity
+            ? `<div class="radius-bundle__product-quantity">${ctx.quantityLabel} ${product.quantity}</div>`
+            : "";
 
         return `
             <div class="rb-split__product" data-product-id="${product.id}" data-variant-id="${product.variantId}">
                 ${imageBlock}
                 <div class="rb-split__product-info">
                     ${titleHtml}
+                    ${quantityHtml}
                     ${priceHtml}
                 </div>
             </div>
