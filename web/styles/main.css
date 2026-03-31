@@ -190,3 +190,83 @@
         transition: none !important;
     }
 }
+
+/* Pro Badge */
+.rtpb-pro-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow:
+        0 1px 3px rgba(245, 158, 11, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.15s;
+    white-space: nowrap;
+    line-height: 1.4;
+    z-index: 1;
+}
+
+.rtpb-pro-badge:hover {
+    box-shadow:
+        0 2px 8px rgba(245, 158, 11, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transform: scale(1.08);
+}
+
+.rtpb-pro-badge-icon {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.4));
+}
+
+.rtpb-pro-badge-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.35) 45%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 55%
+    );
+    animation: rtpb-shine 3s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes rtpb-shine {
+    0%,
+    100% {
+        transform: translateX(-120%);
+    }
+    50% {
+        transform: translateX(120%);
+    }
+}
+
+/* Pro-locked items — opacity via ::before so badge stays crisp */
+.rtpb-pro-locked {
+    position: relative;
+}
+
+.rtpb-pro-locked::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: inherit;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Inline pro-lock for button groups — dims without breaking layout */
+.rtpb-pro-locked-inline {
+    display: contents;
+    opacity: 0.4;
+}

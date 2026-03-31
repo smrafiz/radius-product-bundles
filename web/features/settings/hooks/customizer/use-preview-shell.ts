@@ -22,9 +22,9 @@ export function usePreviewShell(bundleType: PreviewTemplateId) {
     const allLayouts = CUSTOMIZER_LAYOUTS_MAPPING[bundleType];
     const allowedLayoutValues =
         plan.limits.allowedLayouts[bundleType as BundleType];
-    const layouts = allowedLayoutValues
-        ? allLayouts.filter((l) => allowedLayoutValues.includes(l.value))
-        : allLayouts;
+    const layouts = allLayouts;
+    const isLayoutLocked = (value: string) =>
+        allowedLayoutValues ? !allowedLayoutValues.includes(value) : false;
 
     const Template = TEMPLATE_REGISTRY[bundleType];
 
@@ -56,6 +56,7 @@ export function usePreviewShell(bundleType: PreviewTemplateId) {
         heading,
         Template,
         isCartBanner,
+        isLayoutLocked,
         setActiveLayout,
     };
 }

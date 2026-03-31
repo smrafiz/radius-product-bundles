@@ -1,16 +1,20 @@
 "use client";
 
 import { useTranslations } from "@/lib/i18n/provider";
-import { ROUTES } from "@/shared/constants/routes.constants";
-import { type LockOverlayProps, useAppNavigation } from "@/shared";
+import { type LockOverlayProps } from "@/shared";
+import { useCrossSellStore } from "./cross-sell-modal";
+import { ProBadge } from "./pro-badge";
 
 export function LockOverlay({ feature, children }: LockOverlayProps) {
     const t = useTranslations("PlanGate");
     const label = t(`features.${feature}`, undefined, feature);
-    const { goTo } = useAppNavigation();
+    const { open } = useCrossSellStore();
 
     return (
-        <div style={{ position: "relative" }}>
+        <div
+            style={{ position: "relative", cursor: "pointer" }}
+            onClick={() => open(label)}
+        >
             <div
                 style={{
                     filter: "blur(2px)",
@@ -34,27 +38,13 @@ export function LockOverlay({ feature, children }: LockOverlayProps) {
                 }}
             >
                 <s-stack gap="base" align-items="center">
-                    <svg
-                        width="28"
-                        height="28"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="M14 8V6a4 4 0 0 0-8 0v2H5a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-1Zm-5-2a1 1 0 1 1 2 0v2H9V6Z"
-                            fill="var(--p-color-icon-secondary, #6B7280)"
-                        />
-                    </svg>
+                    <ProBadge label={label} />
                     <s-stack gap="small-200" align-items="center">
                         <s-heading>{label}</s-heading>
                         <s-text tone="neutral">
                             {t("lockOverlay.availableOnPaidPlans")}
                         </s-text>
                     </s-stack>
-                    <s-button variant="primary" onClick={goTo(ROUTES.PRICING)}>
-                        {t("lockOverlay.upgrade")}
-                    </s-button>
                 </s-stack>
             </div>
         </div>

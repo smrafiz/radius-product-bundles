@@ -14,7 +14,8 @@ export type FeatureId =
     | "responsive_overrides"
     | "templates"
     | "export_data"
-    | "remove_branding";
+    | "remove_branding"
+    | "duplicate_bundle";
 
 export interface PlanFeatureConfig {
     feature: FeatureId;

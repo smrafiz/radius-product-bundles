@@ -4,7 +4,13 @@ import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { I18nLoader } from "./i18n-loader";
 import { ReactNode, Suspense } from "react";
-import { AppLayoutWrapper, GlobalLoader, ModalHost, Providers } from "@/shared";
+import {
+    AppLayoutWrapper,
+    CrossSellModal,
+    GlobalLoader,
+    ModalHost,
+    Providers,
+} from "@/shared";
 
 export const metadata: Metadata = {
     title: "Radius Product Bundles App for Shopify",
@@ -49,6 +55,7 @@ export default async function RootLayout({
                                     {children}
                                 </main>
                                 <ModalHost />
+                                <CrossSellModal />
                             </AppLayoutWrapper>
                         </I18nLoader>
                     </Suspense>

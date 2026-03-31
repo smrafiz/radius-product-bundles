@@ -1,8 +1,7 @@
 "use client";
 
 import { useTranslations } from "@/lib/i18n/provider";
-import { useModalStore, usePlan, useShopSettingsStore, } from "@/shared";
-import { openQuotaExceededModal } from "@/shared/utils/helpers/modal";
+import { useModalStore, useCrossSellStore, usePlan, useShopSettingsStore } from "@/shared";
 import { BUNDLE_LISTING_ACTIONS, BundleActionsGroupProps, } from "@/features/bundles";
 
 /**
@@ -13,9 +12,10 @@ export function BundleActionsGroup({
     onAction,
 }: BundleActionsGroupProps) {
     const { openModal } = useModalStore();
-    const { isWithinQuota, quota } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
+    const { canUse } = usePlan();
     const t = useTranslations("Bundles.Actions");
-    const tQuota = useTranslations("Modals.quotaExceeded");
+    const canDuplicate = canUse("duplicate_bundle");
     const popoverId = `bundle-view-popover-${bundle.id}`;
     const { settings } = useShopSettingsStore();
     const shopDomain = settings?.myshopifyDomain;
@@ -31,13 +31,7 @@ export function BundleActionsGroup({
                 break;
 
             case "duplicate":
-                if (!isWithinQuota("bundles")) {
-                    openQuotaExceededModal(quota.bundles, {
-                        title: tQuota("heading"),
-                        message: tQuota("message", { current: quota.bundles.current, limit: quota.bundles.limit }),
-                        confirmText: tQuota("confirm"),
-                    });
-                } else {
+                if (canDuplicate) {
                     openModal({
                         type: "duplicate",
                         bundle,
@@ -45,6 +39,8 @@ export function BundleActionsGroup({
                             await onAction.duplicate();
                         },
                     });
+                } else {
+                    openCrossSell(t("duplicate"));
                 }
                 break;
 
@@ -67,47 +63,73 @@ export function BundleActionsGroup({
                 const tooltipId = `${action.key}-${bundle.id}`;
                 return (
                     <s-tooltip key={`tooltip-${action.key}`} id={tooltipId}>
-                        <s-text>{t(action.key)}</s-text>
+                        <s-text>
+                            {action.key === "duplicate" && !canDuplicate
+                                ? `${t(action.key)} (Pro)`
+                                : t(action.key)}
+                        </s-text>
                     </s-tooltip>
                 );
             })}
 
             {/* Segmented button group */}
-            <s-button-group gap="none">
-                {BUNDLE_LISTING_ACTIONS.map((action) => {
-                    const tooltipId = `${action.key}-${bundle.id}`;
-                    const isModalAction =
-                        action.key === "delete" || action.key === "duplicate";
+            <s-stack direction="inline" gap="small-200" alignItems="center">
+                <s-button-group gap="none">
+                    {BUNDLE_LISTING_ACTIONS.filter(
+                        (a) => a.key !== "duplicate" || canDuplicate,
+                    ).map((action) => {
+                        const tooltipId = `${action.key}-${bundle.id}`;
+                        const isModalAction =
+                            action.key === "delete" ||
+                            (action.key === "duplicate" && canDuplicate);
 
-                    return action.key === "view" ? (
+                        if (action.key === "view") {
+                            return (
+                                <s-button
+                                    key={action.key}
+                                    slot="secondary-actions"
+                                    interestFor={tooltipId}
+                                    commandFor={popoverId}
+                                    accessibilityLabel={t(action.key)}
+                                    icon={action.icon}
+                                    tone={action.tone}
+                                />
+                            );
+                        }
+
+                        return (
+                            <s-button
+                                key={action.key}
+                                slot="secondary-actions"
+                                interestFor={tooltipId}
+                                accessibilityLabel={t(action.key)}
+                                icon={action.icon}
+                                tone={action.tone}
+                                {...(isModalAction
+                                    ? {
+                                          commandFor:
+                                              "radius-bundles-app-modal",
+                                          command: "--show",
+                                      }
+                                    : {})}
+                                onClick={() => handleActionClick(action.key)}
+                            />
+                        );
+                    })}
+                </s-button-group>
+
+                {!canDuplicate && (
+                    <span className="opacity-40">
                         <s-button
-                            key={action.key}
                             slot="secondary-actions"
-                            interestFor={tooltipId}
-                            commandFor={popoverId}
-                            accessibilityLabel={t(action.key)}
-                            icon={action.icon}
-                            tone={action.tone}
+                            interestFor={`duplicate-${bundle.id}`}
+                            accessibilityLabel={`${t("duplicate")} (Pro)`}
+                            icon="duplicate"
+                            onClick={() => handleActionClick("duplicate")}
                         />
-                    ) : (
-                        <s-button
-                            key={action.key}
-                            slot="secondary-actions"
-                            interestFor={tooltipId}
-                            accessibilityLabel={t(action.key)}
-                            icon={action.icon}
-                            tone={action.tone}
-                            {...(isModalAction
-                                ? {
-                                      commandFor: "radius-bundles-app-modal",
-                                      command: "--show",
-                                  }
-                                : {})}
-                            onClick={() => handleActionClick(action.key)}
-                        />
-                    );
-                })}
-            </s-button-group>
+                    </span>
+                )}
+            </s-stack>
             {/* Popover */}
             <s-popover id={popoverId}>
                 <s-box padding="small">

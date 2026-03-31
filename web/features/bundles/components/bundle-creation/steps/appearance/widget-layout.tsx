@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { usePlan } from "@/shared";
+import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
 import { useBundleStore } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 import {
@@ -15,17 +15,16 @@ export function WidgetLayout() {
     const { displaySettings, updateDisplaySettings, bundleData } =
         useBundleStore();
     const { plan } = usePlan();
-    const layouts = useMemo(() => {
-        const all =
-            LAYOUTS_BY_BUNDLE_TYPE[bundleData.type as string] ?? WIDGET_LAYOUTS;
-        const allowed =
-            plan.limits.allowedLayouts[bundleData.type as keyof typeof plan.limits.allowedLayouts];
-        if (!allowed) {
-            return all;
-        }
-
-        return all.filter((l) => allowed.includes(l.value));
-    }, [bundleData.type, plan.limits.allowedLayouts]);
+    const { open: openCrossSell } = useCrossSellStore();
+    const allLayouts = useMemo(
+        () =>
+            LAYOUTS_BY_BUNDLE_TYPE[bundleData.type as string] ?? WIDGET_LAYOUTS,
+        [bundleData.type],
+    );
+    const allowedValues =
+        plan.limits.allowedLayouts[
+            bundleData.type as keyof typeof plan.limits.allowedLayouts
+        ];
 
     return (
         <s-section>
@@ -51,9 +50,12 @@ export function WidgetLayout() {
                         gridTemplateColumns="repeat(4, minmax(110px, 1fr))"
                         gap="base"
                     >
-                        {layouts.map(({ widgetLayout, value }) => {
+                        {allLayouts.map(({ widgetLayout, value }) => {
                             const tooltipId = `layout-tooltip-${value}`;
                             const translatedLabel = tl(value);
+                            const isLocked =
+                                allowedValues &&
+                                !allowedValues.includes(value);
 
                             return (
                                 <s-grid-item key={value} gridColumn="auto">
@@ -62,13 +64,21 @@ export function WidgetLayout() {
                                             <s-text>{translatedLabel}</s-text>
                                         </s-tooltip>
                                         <div
-                                            className={`flex items-center justify-between border rounded-xl w-full h-25 p-2.5 transition duration-200 cursor-pointer ${displaySettings.layout === value ? "border-blue-600 bg-[#f1f1f1]" : "border-[#e3e3e3] bg-[#f1f1f1] hover:border-blue-600"}`}
-                                            onClick={() =>
-                                                updateDisplaySettings(
-                                                    "layout",
-                                                    value,
-                                                )
-                                            }
+                                            className={`relative flex items-center justify-between border rounded-xl w-full h-25 p-2.5 transition duration-200 ${
+                                                isLocked
+                                                    ? "rtpb-pro-locked cursor-default border-[#e3e3e3] bg-[#f1f1f1]"
+                                                    : `cursor-pointer ${displaySettings.layout === value ? "border-blue-600 bg-[#f1f1f1]" : "border-[#e3e3e3] bg-[#f1f1f1] hover:border-blue-600 hover:-translate-y-1"}`
+                                            }`}
+                                            onClick={() => {
+                                                if (isLocked) {
+                                                    openCrossSell(translatedLabel);
+                                                } else {
+                                                    updateDisplaySettings(
+                                                        "layout",
+                                                        value,
+                                                    );
+                                                }
+                                            }}
                                         >
                                             <s-link
                                                 accessibilityLabel={
@@ -81,6 +91,13 @@ export function WidgetLayout() {
                                                     alt={translatedLabel}
                                                 />
                                             </s-link>
+                                            {isLocked && (
+                                                <div className="absolute top-1 right-1">
+                                                    <ProBadge
+                                                        label={translatedLabel}
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     </s-stack>
                                 </s-grid-item>

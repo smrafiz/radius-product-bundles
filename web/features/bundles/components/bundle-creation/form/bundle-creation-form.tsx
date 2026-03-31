@@ -8,7 +8,7 @@ import {
     useBundleCreationForm,
 } from "@/features/bundles";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { GlobalBanner } from "@/shared";
+import { GlobalBanner, usePlan } from "@/shared";
 import { WidgetStatusBanner } from "@/features/dashboard";
 
 /**
@@ -42,6 +42,11 @@ export function BundleCreationForm({
         handleDelete,
         handleSubmit,
     } = useBundleCreationForm({ bundleType, bundleName, bundleId });
+    const { canUse } = usePlan();
+    const canDuplicate = canUse("duplicate_bundle");
+    const duplicateLabel = canDuplicate
+        ? tc("duplicate")
+        : `${tc("duplicate")} (Pro)`;
 
     return (
         <s-page heading={isEditMode ? tc("edit") : tc("create")}>
@@ -64,7 +69,7 @@ export function BundleCreationForm({
                                 disabled={isDuplicating}
                                 loading={isDuplicating}
                             >
-                                {tc("duplicate")}
+                                {duplicateLabel}
                             </s-button>
                         )}
                     </>
@@ -79,7 +84,7 @@ export function BundleCreationForm({
                         </button>
                         {isEditMode && bundleId && (
                             <button onClick={handleDuplicate}>
-                                {tc("duplicate")}
+                                {duplicateLabel}
                             </button>
                         )}
                     </>

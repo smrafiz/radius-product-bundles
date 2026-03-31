@@ -5,9 +5,9 @@ import {
     submitForm,
     useAppNavigation,
     useModalStore,
+    useCrossSellStore,
     usePlan,
     useShopSettingsStore,
-    openQuotaExceededModal,
 } from "@/shared";
 import {
     type BundleType,
@@ -40,12 +40,13 @@ export function useBundleCreationForm({
     const tQuota = useTranslations("Modals.quotaExceeded");
 
     const { bundleData } = useAppNavigation();
-    const { refreshPlan, isWithinQuota, quota } = usePlan();
+    const { refreshPlan, isWithinQuota, quota, canUse } = usePlan();
     const { pageProps, isEditMode } = useBundleFormManager({
         bundleType,
         bundleName,
     });
     const { openModal } = useModalStore();
+    const { open: openCrossSell } = useCrossSellStore();
     const {
         isSaving,
         isDirty,
@@ -98,19 +99,10 @@ export function useBundleCreationForm({
     }, [app, tc]);
 
     const handleDuplicate = useCallback(() => {
-        if (!bundleId) {
-            return;
-        }
+        if (!bundleId) return;
 
-        if (!isWithinQuota("bundles")) {
-            openQuotaExceededModal(quota.bundles, {
-                title: tQuota("heading"),
-                message: tQuota("message", {
-                    current: quota.bundles.current,
-                    limit: quota.bundles.limit,
-                }),
-                confirmText: tQuota("confirm"),
-            });
+        if (!canUse("duplicate_bundle")) {
+            openCrossSell(tc("duplicate"));
             return;
         }
 
@@ -158,17 +150,16 @@ export function useBundleCreationForm({
         });
     }, [
         bundleId,
-        bundleName,
+        canUse,
         isDirty,
         openModal,
+        openCrossSell,
         app,
         queryClient,
         bundleData,
-        isWithinQuota,
-        quota.bundles,
         resetDirty,
         refreshPlan,
-        tQuota,
+        tc,
     ]);
 
     const handleDelete = useCallback(() => {

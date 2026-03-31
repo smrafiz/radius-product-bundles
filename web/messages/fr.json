@@ -1697,27 +1697,39 @@
         "comingSoon": "Fonctionnalités de tests A/B : bientôt disponibles…"
     },
     "PlanGate": {
-        "features" : {
-            "analytics_full" : "Analyses avancées",
-            "ab_testing" : "Tests A/B",
-            "automation" : "Automatisation",
-            "ai_insights" : "Insights de l'IA",
-            "custom_css" : "CSS personnalisé",
-            "responsive_overrides" : "Remplacements réactifs",
-            "templates" : "Modèles",
-            "export_data" : "Exportation de données",
-            "remove_branding" : "Supprimer la marque"
+        "features": {
+            "analytics_full": "Analyses avancées",
+            "ab_testing": "Tests A/B",
+            "automation": "Automatisation",
+            "ai_insights": "Insights de l'IA",
+            "custom_css": "CSS personnalisé",
+            "responsive_overrides": "Remplacements réactifs",
+            "templates": "Modèles",
+            "export_data": "Exportation de données",
+            "remove_branding": "Supprimer la marque"
         },
-        "lockOverlay" : {
-            "availableOnPaidPlans" : "Disponible avec les formules payantes",
-            "upgrade" : "Mettre à niveau"
+        "lockOverlay": {
+            "availableOnPaidPlans": "Disponible avec les formules payantes",
+            "upgrade": "Mettre à niveau"
         },
-        "quotaBar" : {
-            "bundles" : "Offres groupées",
-            "products" : "Produits",
-            "used" : "{current}/{limit} utilisé(s)",
-            "limitReached" : "Limite de {label} atteinte",
-            "upgradeForMore" : "Mettre à niveau pour en obtenir plus"
+        "quotaBar": {
+            "bundles": "Offres groupées",
+            "products": "Produits",
+            "used": "{current}/{limit} utilisé(s)",
+            "limitReached": "Limite de {label} atteinte",
+            "upgradeForMore": "Mettre à niveau pour en obtenir plus"
+        },
+        "crossSell": {
+            "heading": "Débloquez les fonctionnalités Pro",
+            "description": "{feature} est disponible avec la formule Pro. Passez à la version Pro pour bénéficier d'outils performants conçus pour augmenter le chiffre d'affaires de votre boutique et optimiser les performances de vos offres groupées.",
+            "benefits": {
+                "feature1": "Offres groupées illimitées sans restriction",
+                "feature2": "Contrôles avancés de la personnalisation et de la mise en page",
+                "feature3": "Analyses détaillées et informations sur les performances",
+                "feature4": "Outils d'automatisation et assistance prioritaire"
+            },
+            "maybeLater": "Peut-être plus tard",
+            "viewPlans": "Voir les formules"
         }
     }
 }

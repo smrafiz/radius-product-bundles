@@ -22,6 +22,7 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
         heading,
         Template,
         isCartBanner,
+        isLayoutLocked,
         setActiveLayout,
     } = usePreviewShell(bundleType);
 
@@ -45,6 +46,7 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                 primaryColor={styles.primaryColor}
                 bundleType={bundleType}
                 heading={heading}
+                isLayoutLocked={isLayoutLocked}
             />
 
             <div ref={scrollRef} className="rtpb-preview-scroll">

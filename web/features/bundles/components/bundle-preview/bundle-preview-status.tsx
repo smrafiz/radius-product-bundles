@@ -2,7 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import type { BundleStatus } from "@/features/bundles";
-import { formatDateLong, getDisallowPastDates, usePlan } from "@/shared";
+import {
+    formatDateLong,
+    getDisallowPastDates,
+    ProBadge,
+    useCrossSellStore,
+    usePlan,
+} from "@/shared";
 import {
     BUNDLE_STATUSES,
     getAvailableStatuses,
@@ -15,10 +21,9 @@ export function BundlePreviewStatus() {
     const ts = useTranslations("Bundles.Statuses");
     const { bundleData, updateBundleField } = useBundleStore();
     const { plan } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
     const mode = bundleData.id ? "edit" : "create";
-    const availableStatuses = getAvailableStatuses(mode).filter((s) =>
-        plan.limits.allowedStatuses.includes(s),
-    );
+    const availableStatuses = getAvailableStatuses(mode);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
@@ -158,30 +163,64 @@ export function BundlePreviewStatus() {
                 <s-popover id="status-popover">
                     <div className="p-2 w-88.75">
                         <s-stack gap="small-400">
-                            {availableStatuses.map((key) => (
-                                <s-clickable
-                                    key={key}
-                                    command="--hide"
-                                    commandFor="status-popover"
-                                    borderRadius="base"
-                                    onClick={() => {
-                                        handleStatusChange(key);
-                                        setIsOpen(false);
-                                    }}
-                                >
-                                    <div
-                                        className={`py-1 px-2 rounded-md transition-colors
-                                            ${bundleData.status === key ? "bg-[#ebebeb]" : "hover:bg-[#f7f7f7]"}`}
+                            {availableStatuses.map((key) => {
+                                const isLocked =
+                                    !plan.limits.allowedStatuses.includes(key);
+
+                                return (
+                                    <s-clickable
+                                        key={key}
+                                        command={
+                                            isLocked ? undefined : "--hide"
+                                        }
+                                        commandFor={
+                                            isLocked
+                                                ? undefined
+                                                : "status-popover"
+                                        }
+                                        borderRadius="base"
+                                        onClick={() => {
+                                            if (isLocked) {
+                                                openCrossSell(ts(key));
+                                            } else {
+                                                handleStatusChange(key);
+                                                setIsOpen(false);
+                                            }
+                                        }}
                                     >
-                                        <s-stack gap="none">
-                                            <s-heading>{ts(key)}</s-heading>
-                                            <s-paragraph color="subdued">
-                                                {ts(`${key}_desc`)}
-                                            </s-paragraph>
-                                        </s-stack>
-                                    </div>
-                                </s-clickable>
-                            ))}
+                                        <div
+                                            className={`py-1 px-2 rounded-md transition-colors ${
+                                                isLocked
+                                                    ? "rtpb-pro-locked"
+                                                    : bundleData.status === key
+                                                      ? "bg-[#ebebeb]"
+                                                      : "hover:bg-[#f7f7f7]"
+                                            }`}
+                                        >
+                                            <s-stack
+                                                gap="none"
+                                                direction="inline"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                            >
+                                                <s-stack gap="none">
+                                                    <s-heading>
+                                                        {ts(key)}
+                                                    </s-heading>
+                                                    <s-paragraph color="subdued">
+                                                        {ts(`${key}_desc`)}
+                                                    </s-paragraph>
+                                                </s-stack>
+                                                {isLocked && (
+                                                    <ProBadge
+                                                        label={ts(key)}
+                                                    />
+                                                )}
+                                            </s-stack>
+                                        </div>
+                                    </s-clickable>
+                                );
+                            })}
                         </s-stack>
                     </div>
                 </s-popover>

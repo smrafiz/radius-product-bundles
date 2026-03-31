@@ -7,7 +7,7 @@ import {
     useBundleActions,
 } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
-import { useModalStore, usePlan } from "@/shared";
+import { ProBadge, useCrossSellStore, useModalStore, usePlan } from "@/shared";
 
 /**
  * Bundle status popover
@@ -17,6 +17,7 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
     const { openModal } = useModalStore();
     const { actions } = useBundleActions(bundle);
     const { plan } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
     const popoverId = `bundle-status-popover-${bundle.id}`;
 
     /**
@@ -66,27 +67,27 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                 <s-box padding="small-300">
                     <s-stack gap="small-400">
                         {Object.entries(BUNDLE_STATUSES)
-                            .filter(
-                                ([key]) =>
-                                    key !== "DELETED" &&
-                                    plan.limits.allowedStatuses.includes(
-                                        key as BundleStatus,
-                                    ),
-                            )
+                            .filter(([key]) => key !== "DELETED")
                             .map(([statusKey]) => {
                                 const isCurrentStatus =
                                     statusKey === bundle.status;
+                                const isLocked =
+                                    !plan.limits.allowedStatuses.includes(
+                                        statusKey as BundleStatus,
+                                    );
 
                                 return (
                                     <div
                                         className={
-                                            isCurrentStatus
+                                            isCurrentStatus || isLocked
                                                 ? "cursor-default"
                                                 : "cursor-pointer"
                                         }
                                         key={statusKey}
                                         onClick={() => {
-                                            if (!isCurrentStatus) {
+                                            if (isLocked) {
+                                                openCrossSell(ts(statusKey));
+                                            } else if (!isCurrentStatus) {
                                                 handleStatusClick(
                                                     statusKey as BundleStatus,
                                                 );
@@ -95,7 +96,9 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                     >
                                         <s-clickable
                                             disabled={
-                                                isCurrentStatus || undefined
+                                                isCurrentStatus ||
+                                                isLocked ||
+                                                undefined
                                             }
                                             background={
                                                 isCurrentStatus
@@ -105,15 +108,26 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                             padding="small-300"
                                             borderRadius="base"
                                         >
-                                            {isCurrentStatus ? (
-                                                <s-stack direction="inline">
+                                            <s-stack
+                                                direction="inline"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                            >
+                                                {isCurrentStatus ? (
                                                     <span className="font-semibold">
                                                         {ts(statusKey)}
                                                     </span>
-                                                </s-stack>
-                                            ) : (
-                                                <s-text>{ts(statusKey)}</s-text>
-                                            )}
+                                                ) : (
+                                                    <s-text>
+                                                        {ts(statusKey)}
+                                                    </s-text>
+                                                )}
+                                                {isLocked && (
+                                                    <ProBadge
+                                                        label={ts(statusKey)}
+                                                    />
+                                                )}
+                                            </s-stack>
                                         </s-clickable>
                                     </div>
                                 );
