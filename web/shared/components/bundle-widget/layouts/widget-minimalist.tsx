@@ -95,8 +95,8 @@ function MinimalistItem({
                 {displayOptions.showSavingsBadge && (
                     <span
                         style={{
-                            fontSize: parseInt(bodyFontSize) - 3,
-                            fontWeight: 500,
+                            fontSize: parseInt(bodyFontSize) - 4,
+                            fontWeight: 600,
                             textTransform: "uppercase",
                             letterSpacing: 0.6,
                             padding: "2px 8px",

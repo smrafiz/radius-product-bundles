@@ -10,7 +10,7 @@ export const PLAN_CONFIGS: Record<PlanId, PlanConfig> = {
             maxBundles: 5,
             maxProductsPerBundle: 10,
             allowedLayouts: {
-                FIXED_BUNDLE: ["GRID", "LIST"],
+                FIXED_BUNDLE: ["GRID", "LIST", "CAROUSEL"],
                 BOGO: ["CLASSIC_CARD", "COMPACT_GRID"],
                 BUY_X_GET_Y: ["COMPACT_GRID", "MINIMALIST"],
             },

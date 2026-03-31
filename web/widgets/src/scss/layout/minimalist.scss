@@ -130,7 +130,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 15px 10px;
+        padding: 25px 10px 10px;
         border-radius: var(--rb-border-radius, 8px);
         position: relative;
 
@@ -187,8 +187,8 @@
     }
 
     &__item-role {
-        font-size: calc(var(--rb-body-font-size) - 3px);
-        font-weight: 500;
+        font-size: calc(var(--rb-body-font-size) - 4px);
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.6px;
         padding: 2px 8px;

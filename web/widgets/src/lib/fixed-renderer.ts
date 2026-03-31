@@ -175,6 +175,9 @@ export function renderProductCard(
     if (layout === "grid") {
         const initialVisibleCount = getInitialVisibleCount(ctx);
         const isHidden = index >= initialVisibleCount;
+        const quantityHtml = ctx.showQuantity
+            ? `<div class="radius-bundle__product-quantity">${ctx.quantityLabel} ${product.quantity}</div>`
+            : "";
         return `
             <div class="radius-bundle__product radius-bundle__product--grid${isHidden ? " radius-bundle__product--hidden" : ""}"
                  data-product-id="${product.id}"
@@ -183,8 +186,8 @@ export function renderProductCard(
                  ${isHidden ? 'style="display: none;"' : ""}>
                 ${imageWrapper}
                 ${productTitleHtml}
+                ${quantityHtml}
                 ${ctx.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
-                ${ctx.showQuantity ? `<div class="radius-bundle__product-quantity">${ctx.quantityLabel} ${product.quantity}</div>` : ""}
             </div>
         `;
     }
@@ -215,8 +218,8 @@ export function renderProductCard(
              data-variant-id="${product.variantId}">
             ${imageWrapper}
             ${productTitleHtml}
-            ${ctx.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
             ${ctx.showQuantity ? `<div class="radius-bundle__product-quantity">${ctx.quantityLabel} ${product.quantity}</div>` : ""}
+            ${ctx.showPrices ? `<div class="radius-bundle__product-price">${priceHtml}</div>` : ""}
         </div>
     `;
 }

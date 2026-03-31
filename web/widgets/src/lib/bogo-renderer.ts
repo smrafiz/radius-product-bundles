@@ -673,6 +673,9 @@ export function renderBogoMinimalistProducts(
         const roleLabelHtml = ctx.showSavingsBadge
             ? `<span class="rb-minimalist__item-role rb-minimalist__item-role--${roleClass}">${escapeHtml(roleBadge)}</span>`
             : "";
+        const quantityHtml = ctx.showQuantity
+            ? `<div class="radius-bundle__product-quantity">${ctx.quantityLabel} ${p.quantity}</div>`
+            : "";
 
         return `<div class="rb-minimalist__item rb-minimalist__item--${roleClass}">
             ${img}
@@ -680,6 +683,7 @@ export function renderBogoMinimalistProducts(
                 ${roleLabelHtml}
                 ${titleHtml}
                 ${priceHtml}
+                ${quantityHtml}
             </div>
         </div>`;
     };
@@ -908,12 +912,17 @@ export function renderBogoCompactGridProducts(
             ? `<span class="rb-cg__tile-role rb-cg__tile-role--${isReward ? "reward" : "trigger"}">${roleLabel}</span>`
             : "";
 
+        const quantityHtml = ctx.showQuantity
+            ? `<div class="radius-bundle__product-quantity">${ctx.quantityLabel} ${product.quantity}</div>`
+            : "";
+
         return `
             <div class="${tileClass}">
                 ${imageHtml}
                 ${roleLabelHtml}
                 ${titleHtml}
                 ${priceHtml}
+                ${quantityHtml}
             </div>
         `;
     };

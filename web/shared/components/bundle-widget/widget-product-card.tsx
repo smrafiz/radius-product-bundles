@@ -197,9 +197,10 @@ export function WidgetProductCard({
                     {titleEl}
                 </div>
 
-                <div style={{ marginBottom: "8px" }}>{priceEl}</div>
+                <div style={{ marginBottom: "8px" }}>{quantityEl}</div>
 
-                {quantityEl}
+                <div>{priceEl}</div>
+
             </div>
         );
     }
