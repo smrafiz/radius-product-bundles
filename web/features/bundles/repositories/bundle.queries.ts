@@ -11,13 +11,12 @@ import {
     INCLUDE_BUNDLE_PRODUCTS,
     INCLUDE_SETTINGS,
 } from "./bundle.fragments";
-import { AppSettings, Prisma } from "@/prisma/generated/client";
-import { prisma } from "@/shared/repositories/prisma-connect";
-import {
-    BundleWithSettings,
+import type {
     FindByShopFilters,
     FindByShopOptions,
 } from "@/features/bundles";
+import { prisma } from "@/shared/repositories/prisma-connect";
+import { type AppSettings, Prisma } from "@/prisma/generated/client";
 
 // ==========================================
 // FIND Operations
@@ -391,20 +390,6 @@ export async function getBundleActivity(
         deleted: deletedCount,
         since,
     };
-}
-
-/**
- * Finds all active bundles with their settings for a shop.
- */
-export async function findActiveBundlesWithSettings(
-    shop: string,
-): Promise<BundleWithSettings[]> {
-    return prisma.bundle.findMany({
-        where: { shop, status: "ACTIVE" },
-        include: {
-            settings: true,
-        },
-    });
 }
 
 /**

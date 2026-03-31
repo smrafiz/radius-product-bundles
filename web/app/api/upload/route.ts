@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleSessionToken } from "@/lib/shopify";
 import { extractBearerToken } from "@/shared";
+import { createRateLimiter, RATE_LIMIT_RESPONSE } from "@/lib/rate-limit";
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
+const checkUploadRateLimit = createRateLimiter({
+    windowMs: 60_000,
+    maxRequests: 10,
+});
 
 const ALLOWED_UPLOAD_HOSTS = [
     "storage.googleapis.com",
@@ -36,6 +42,18 @@ function isAllowedUploadUrl(url: string): boolean {
     }
 }
 
+export async function OPTIONS(request: NextRequest) {
+    const origin = request.headers.get("origin") ?? "";
+    return new NextResponse(null, {
+        status: 204,
+        headers: {
+            ...getCorsHeaders(origin),
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+    });
+}
+
 export async function POST(request: NextRequest) {
     const origin = request.headers.get("origin") ?? "";
     const corsHeaders = getCorsHeaders(origin);
@@ -51,7 +69,11 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        await handleSessionToken(sessionToken);
+        const session = await handleSessionToken(sessionToken);
+
+        if (!checkUploadRateLimit(session.shop)) {
+            return RATE_LIMIT_RESPONSE;
+        }
 
         const formData = await request.formData();
         const file = formData.get("file") as File | null;

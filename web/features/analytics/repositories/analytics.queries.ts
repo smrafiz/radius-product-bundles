@@ -4,27 +4,13 @@
  * Analytics and metrics queries for tracking and reporting.
  */
 
+import type {
+    AnalyticsMetricsRepository,
+    RawAnalyticsRow,
+    RawBundleCountRow,
+} from "@/features/analytics";
 import { format, startOfDay } from "date-fns";
 import { prisma } from "@/shared/repositories/prisma-connect";
-import { AnalyticsMetricsRepository } from "@/features/analytics";
-
-/** Raw SQL result shape for aggregated analytics */
-interface RawAnalyticsRow {
-    currentViews: bigint;
-    currentPurchases: bigint;
-    currentRevenue: number;
-    currentAddToCarts: bigint;
-    prevViews: bigint;
-    prevPurchases: bigint;
-    prevRevenue: number;
-    alltimeRevenue: number;
-}
-
-/** Raw SQL result shape for bundle counts */
-interface RawBundleCountRow {
-    totalBundles: bigint;
-    activeBundles: bigint;
-}
 
 /**
  * Track bundle view event
@@ -323,54 +309,6 @@ export async function aggregateBundleMetricsByRange(
         totalBundles: Number(c.totalBundles),
         activeBundles: Number(c.activeBundles),
     };
-}
-
-/**
- * Get analytics for a specific bundle
- */
-export async function getBundleAnalytics(
-    bundleId: string,
-    startDate: Date,
-    endDate?: Date,
-) {
-    const where: any = {
-        bundleId,
-        date: { gte: startDate },
-    };
-
-    if (endDate) {
-        where.date.lte = endDate;
-    }
-
-    return prisma.bundleAnalytics.findMany({
-        where,
-        orderBy: { date: "asc" },
-    });
-}
-
-/**
- * Get an analytics summary for a specific bundle
- */
-export async function getBundleAnalyticsSummary(
-    bundleId: string,
-    startDate: Date,
-) {
-    return prisma.bundleAnalytics.aggregate({
-        where: {
-            bundleId,
-            date: { gte: startDate },
-        },
-        _sum: {
-            bundleViews: true,
-            bundlePurchases: true,
-            bundleRevenue: true,
-            bundleAddToCarts: true,
-        },
-        _avg: {
-            bundleRevenue: true,
-        },
-        _count: true,
-    });
 }
 
 /**

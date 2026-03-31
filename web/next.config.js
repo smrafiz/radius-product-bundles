@@ -39,21 +39,6 @@ const nextConfig = {
     async headers() {
         return [
             {
-                // Add CORS for upload API
-                source: "/api/upload",
-                headers: [
-                    { key: "Access-Control-Allow-Origin", value: "*" },
-                    {
-                        key: "Access-Control-Allow-Methods",
-                        value: "POST, OPTIONS",
-                    },
-                    {
-                        key: "Access-Control-Allow-Headers",
-                        value: "Content-Type, Authorization",
-                    },
-                ],
-            },
-            {
                 source: "/(.*)",
                 headers: [
                     { key: "X-Content-Type-Options", value: "nosniff" },

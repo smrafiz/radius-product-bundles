@@ -151,3 +151,26 @@ export interface CoreBundleFetchResult {
     bundles: BundleWithAnalytics[];
     totalCount: number;
 }
+
+
+/*
+ * Raw SQL result shape for aggregated analytics
+ */
+export interface RawAnalyticsRow {
+    currentViews: bigint;
+    currentPurchases: bigint;
+    currentRevenue: number;
+    currentAddToCarts: bigint;
+    prevViews: bigint;
+    prevPurchases: bigint;
+    prevRevenue: number;
+    alltimeRevenue: number;
+}
+
+/*
+ * Raw SQL result shape for bundle counts
+ */
+export interface RawBundleCountRow {
+    totalBundles: bigint;
+    activeBundles: bigint;
+}
