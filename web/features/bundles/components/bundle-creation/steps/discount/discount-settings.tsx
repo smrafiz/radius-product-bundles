@@ -2,7 +2,8 @@
 
 import { useDiscountSettings } from "@/features/bundles/hooks/ui/use-discount-settings";
 import { useTranslations } from "@/lib/i18n/provider";
-import { useCrossSellStore } from "@/shared";
+import { ProBadge, useCrossSellStore } from "@/shared";
+import { useState } from "react";
 
 /**
  * Discount settings configuration component
@@ -30,6 +31,11 @@ export function DiscountSettings() {
         showMaxDiscountAmount,
     } = useDiscountSettings();
     const { open: openCrossSell } = useCrossSellStore();
+    const [isOpen, setIsOpen] = useState(false);
+    const popoverId = "discount-type-popover";
+    const selectedLabel =
+        availableDiscountTypes.find((c) => c.id === discountType)?.label ??
+        t("selectType");
 
     return (
         <s-stack gap="base">
@@ -49,34 +55,111 @@ export function DiscountSettings() {
                 />
             </s-stack>
 
-            <s-select
-                label={t("discountType")}
-                placeholder={t("selectType")}
-                value={discountType || ""}
-                error={getFieldError("discountType")}
-                onChange={(event: Event) => {
-                    const target = event.target as HTMLSelectElement;
-                    if (isDiscountTypeLocked(target.value)) {
-                        openCrossSell(
-                            availableDiscountTypes.find(
-                                (c) => c.id === target.value,
-                            )?.label ?? target.value,
-                        );
-                        target.value = discountType || "";
-                        return;
-                    }
-                    handleDiscountTypeChange(target.value);
-                }}
-                onBlur={createBlurHandler("discountType")}
-            >
-                {availableDiscountTypes.map((config) => (
-                    <s-option key={config.id} value={config.id}>
-                        {isDiscountTypeLocked(config.id)
-                            ? `${config.label} (Pro)`
-                            : config.label}
-                    </s-option>
-                ))}
-            </s-select>
+            <s-stack gap="small-200">
+                <s-text>{t("discountType")}</s-text>
+                <div
+                    className={`relative ${isOpen ? "rtpb-active-shadow" : "rtpb-normal-shadow"}`}
+                >
+                    <s-clickable
+                        command="--toggle"
+                        commandFor={popoverId}
+                        borderWidth="small"
+                        borderColor="strong"
+                        borderRadius="base"
+                        padding="small-300"
+                        paddingInline="small"
+                        type="submit"
+                        onClick={() => setIsOpen((prev) => !prev)}
+                    >
+                        <div className="w-full flex justify-between items-center">
+                            <s-text>
+                                <div className="font-[550]">
+                                    {selectedLabel}
+                                </div>
+                            </s-text>
+                            <div className="flex flex-col relative">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 16 16"
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 fill-[rgba(97,97,97,1)]"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <path d="M8.884 2.323a1.25 1.25 0 0 0-1.768 0l-2.646 2.647a.749.749 0 1 0 1.06 1.06l2.47-2.47 2.47 2.47a.749.749 0 1 0 1.06-1.06z" />
+                                    <path d="m11.53 11.03-2.646 2.647a1.25 1.25 0 0 1-1.768 0l-2.646-2.647a.749.749 0 1 1 1.06-1.06l2.47 2.47 2.47-2.47a.749.749 0 1 1 1.06 1.06" />
+                                </svg>
+                            </div>
+                        </div>
+                    </s-clickable>
+                </div>
+
+                <s-popover id={popoverId}>
+                    <div className="p-2 w-100">
+                        <s-stack gap="small-400">
+                            {availableDiscountTypes.map((config) => {
+                                const isSelected = config.id === discountType;
+                                const isLocked = isDiscountTypeLocked(
+                                    config.id,
+                                );
+
+                                return (
+                                    <s-clickable
+                                        key={config.id}
+                                        command={
+                                            isLocked ? undefined : "--hide"
+                                        }
+                                        commandFor={
+                                            isLocked ? undefined : popoverId
+                                        }
+                                        borderRadius="base"
+                                        onClick={() => {
+                                            if (isLocked) {
+                                                openCrossSell(config.label);
+                                            } else {
+                                                handleDiscountTypeChange(
+                                                    config.id,
+                                                );
+                                                setIsOpen(false);
+                                            }
+                                        }}
+                                    >
+                                        <div
+                                            className={`py-1 px-2 rounded-md transition-colors ${
+                                                isLocked
+                                                    ? "rtpb-pro-locked"
+                                                    : isSelected
+                                                      ? "bg-[#ebebeb]"
+                                                      : "hover:bg-[#f7f7f7]"
+                                            }`}
+                                        >
+                                            <s-stack
+                                                gap="none"
+                                                direction="inline"
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                            >
+                                                <s-stack gap="none">
+                                                    <s-heading>
+                                                        {config.label}
+                                                    </s-heading>
+                                                    <s-paragraph color="subdued">
+                                                        {config.description}
+                                                    </s-paragraph>
+                                                </s-stack>
+                                                {isLocked && (
+                                                    <ProBadge
+                                                        label={config.label}
+                                                    />
+                                                )}
+                                            </s-stack>
+                                        </div>
+                                    </s-clickable>
+                                );
+                            })}
+                        </s-stack>
+                    </div>
+                </s-popover>
+            </s-stack>
 
             {showDiscountValue && (
                 <s-number-field
