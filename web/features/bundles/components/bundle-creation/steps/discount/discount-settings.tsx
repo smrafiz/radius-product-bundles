@@ -92,7 +92,7 @@ export function DiscountSettings() {
                                 handleDiscountValueChange(truncated);
                             }
                         }
-                        createBlurHandler("discountValue")(event);
+                        createBlurHandler("discountValue")();
                     }}
                     error={getFieldError("discountValue")}
                 />
