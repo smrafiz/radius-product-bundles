@@ -490,12 +490,16 @@ export function renderBogoSleekProducts(
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-sleek__title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
             : `<h3 class="rb-sleek__title">${escapeHtml(product.title)}${variantPart}</h3>`;
+        const quantityHtml = ctx.showQuantity
+            ? `<div class="rb-sleek__quantity">${ctx.quantityLabel} ${product.quantity}</div>`
+            : "";
 
         return `
             <div class="${cardClass}">
                 ${imageBlock}
                 <div class="rb-sleek__info">
                     ${titleHtml}
+                    ${quantityHtml}
                     ${labelHtml}${badgeHtml}
                 </div>
                 ${priceHtml}
@@ -682,8 +686,8 @@ export function renderBogoMinimalistProducts(
             <div class="rb-minimalist__item-info">
                 ${roleLabelHtml}
                 ${titleHtml}
-                ${priceHtml}
                 ${quantityHtml}
+                ${priceHtml}
             </div>
         </div>`;
     };
@@ -921,8 +925,8 @@ export function renderBogoCompactGridProducts(
                 ${imageHtml}
                 ${roleLabelHtml}
                 ${titleHtml}
-                ${priceHtml}
                 ${quantityHtml}
+                ${priceHtml}
             </div>
         `;
     };
