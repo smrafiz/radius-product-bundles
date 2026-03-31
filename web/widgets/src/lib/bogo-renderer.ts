@@ -204,7 +204,7 @@ export function renderClassicCardProducts(
         structure.discountType === "PERCENTAGE" &&
         structure.discountValue > 0
     ) {
-        rewardBadge = `${structure.discountValue}% Off`;
+        rewardBadge = `${Math.round(structure.discountValue)}% Off`;
     } else if (
         structure.discountType === "FIXED_AMOUNT" &&
         structure.discountValue > 0
@@ -297,7 +297,7 @@ export function renderClassicCardProducts(
             structure.discountType === "PERCENTAGE" &&
             structure.discountValue > 0
         ) {
-            headerBadge = `Buy ${buyQty} Get ${getQty} at ${structure.discountValue}% Off`;
+            headerBadge = `Buy ${buyQty} Get ${getQty} at ${Math.round(structure.discountValue)}% Off`;
         } else if (
             structure.discountType === "FIXED_AMOUNT" &&
             structure.discountValue > 0
@@ -445,7 +445,7 @@ export function renderBogoSleekProducts(
             if (isFree) {
                 rewardLabel = freeText;
             } else if (structure.discountType === "PERCENTAGE") {
-                rewardLabel = `${structure.discountValue}% Off`;
+                rewardLabel = `${Math.round(structure.discountValue)}% Off`;
             } else if (structure.discountType === "FIXED_AMOUNT") {
                 rewardLabel = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
             }
@@ -578,7 +578,7 @@ export function renderBogoMinimalistProducts(
                 structure.discountType === "PERCENTAGE" &&
                 structure.discountValue > 0
             ) {
-                badgeText = `Save ${structure.discountValue}%`;
+                badgeText = `Save ${Math.round(structure.discountValue)}%`;
             } else if (
                 structure.discountType === "FIXED_AMOUNT" &&
                 structure.discountValue > 0
@@ -615,7 +615,7 @@ export function renderBogoMinimalistProducts(
         structure.discountType === "PERCENTAGE" &&
         structure.discountValue > 0
     ) {
-        rewardBadge = `${structure.discountValue}% Off`;
+        rewardBadge = `${Math.round(structure.discountValue)}% Off`;
     } else if (
         structure.discountType === "FIXED_AMOUNT" &&
         structure.discountValue > 0
@@ -832,7 +832,7 @@ export function renderBogoCompactGridProducts(
                 structure.discountType === "PERCENTAGE" &&
                 structure.discountValue > 0
             ) {
-                badgeText = `Save ${structure.discountValue}%`;
+                badgeText = `Save ${Math.round(structure.discountValue)}%`;
             } else if (
                 structure.discountType === "FIXED_AMOUNT" &&
                 structure.discountValue > 0
@@ -880,7 +880,7 @@ export function renderBogoCompactGridProducts(
             if (isFree) {
                 roleLabel = cgFreeText;
             } else if (structure.discountType === "PERCENTAGE") {
-                roleLabel = `${structure.discountValue}% Off`;
+                roleLabel = `${Math.round(structure.discountValue)}% Off`;
             } else if (structure.discountType === "FIXED_AMOUNT") {
                 roleLabel = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
             } else {
@@ -1047,7 +1047,7 @@ export function renderBogoChecklistProducts(
         structure.discountType === "PERCENTAGE" &&
         structure.discountValue > 0
     ) {
-        rewardBadgeText = `${structure.discountValue}% Off`;
+        rewardBadgeText = `${Math.round(structure.discountValue)}% Off`;
     } else if (
         structure.discountType === "FIXED_AMOUNT" &&
         structure.discountValue > 0
@@ -1321,7 +1321,7 @@ export function renderSplitDealProducts(
         structure.discountType === "PERCENTAGE" &&
         structure.discountValue > 0
     ) {
-        rewardLabel = `Get at ${structure.discountValue}% Off`;
+        rewardLabel = `Get at ${Math.round(structure.discountValue)}% Off`;
     } else if (
         structure.discountType === "FIXED_AMOUNT" &&
         structure.discountValue > 0
@@ -1344,7 +1344,7 @@ export function renderSplitDealProducts(
             structure.discountType === "PERCENTAGE" &&
             structure.discountValue > 0
         ) {
-            badgeText = `Buy ${buyQty} Get ${getQty} at ${structure.discountValue}% Off`;
+            badgeText = `Buy ${buyQty} Get ${getQty} at ${Math.round(structure.discountValue)}% Off`;
         } else if (
             structure.discountType === "FIXED_AMOUNT" &&
             structure.discountValue > 0
