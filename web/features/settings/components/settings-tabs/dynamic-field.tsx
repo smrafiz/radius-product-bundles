@@ -82,6 +82,7 @@ export function DynamicField({
                     placeholder={placeholder}
                     details={details}
                     error={error}
+                    maxLength={config.validation?.maxLength?.value}
                 />
             );
 
