@@ -17,6 +17,7 @@ const FREE_CONFIG: PlanConfig = {
         },
         allowedBundleTypes: ["FIXED_BUNDLE", "BOGO", "BUY_X_GET_Y"],
         allowedStatuses: ["DRAFT", "ACTIVE", "ARCHIVED"],
+        allowedDiscountTypes: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
     },
     features: [
         { feature: "analytics_full", gateMode: "enabled" },
@@ -42,6 +43,7 @@ function unlockAll(config: PlanConfig): PlanConfig {
             maxProductsPerBundle: -1,
             allowedLayouts: {},
             allowedStatuses: ["DRAFT", "ACTIVE", "PAUSED", "SCHEDULED", "ARCHIVED"],
+            allowedDiscountTypes: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT"],
         },
         features: config.features.map((f) => ({
             ...f,

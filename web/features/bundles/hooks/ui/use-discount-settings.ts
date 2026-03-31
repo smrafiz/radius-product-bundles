@@ -11,7 +11,7 @@ import {
 } from "@/features/bundles";
 import { useCallback, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { getCurrencySymbol, triggerSaveBar, useShopSettings } from "@/shared";
+import { getCurrencySymbol, triggerSaveBar, usePlan, useShopSettings } from "@/shared";
 
 /**
  * Hook for managing discount settings state and actions.
@@ -21,6 +21,7 @@ export function useDiscountSettings() {
     const { markDirty, bundleData, setBundleData, markFieldTouched } =
         useBundleStore();
     const { isLoading, currencyCode } = useShopSettings();
+    const { plan } = usePlan();
     const { watch, setValue } = useBundleFormMethods();
     const { trigger } = useFormContext();
 
@@ -42,6 +43,12 @@ export function useDiscountSettings() {
             ? getDiscountTypesForBundle(bundleType)
             : Object.values(DISCOUNT_TYPES);
     }, [bundleType]);
+
+    const isDiscountTypeLocked = useCallback(
+        (typeId: string) =>
+            !plan.limits.allowedDiscountTypes.includes(typeId as DiscountType),
+        [plan.limits.allowedDiscountTypes],
+    );
 
     /**
      * Handle discount type change.
@@ -175,6 +182,7 @@ export function useDiscountSettings() {
 
         // Options
         availableDiscountTypes,
+        isDiscountTypeLocked,
 
         // Handlers
         handleDiscountTypeChange,

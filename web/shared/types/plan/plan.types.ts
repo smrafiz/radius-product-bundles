@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { BundleType, BundleStatus } from "@/features/bundles";
+import type { BundleType, BundleStatus, DiscountType } from "@/features/bundles";
 
 export type PlanId = "FREE" | (string & {});
 
@@ -28,6 +28,7 @@ export interface PlanLimits {
     allowedLayouts: Partial<Record<BundleType, string[]>>;
     allowedBundleTypes: BundleType[];
     allowedStatuses: BundleStatus[];
+    allowedDiscountTypes: DiscountType[];
 }
 
 export interface PlanConfig {

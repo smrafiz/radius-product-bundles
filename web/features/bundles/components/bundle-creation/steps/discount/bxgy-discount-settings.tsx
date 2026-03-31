@@ -2,6 +2,7 @@
 
 import { useDiscountSettings } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
+import { useCrossSellStore } from "@/shared";
 
 export function BxgyDiscountSettings() {
     const t = useTranslations("Bundles.Creation.Discount");
@@ -9,6 +10,7 @@ export function BxgyDiscountSettings() {
         discountType,
         discountValue,
         availableDiscountTypes,
+        isDiscountTypeLocked,
         handleDiscountTypeChange,
         handleDiscountValueChange,
         createBlurHandler,
@@ -18,6 +20,7 @@ export function BxgyDiscountSettings() {
         getFieldError,
         showDiscountValue,
     } = useDiscountSettings();
+    const { open: openCrossSell } = useCrossSellStore();
 
     return (
         <s-stack gap="base">
@@ -46,17 +49,31 @@ export function BxgyDiscountSettings() {
                 error={getFieldError("discountType")}
                 onChange={(event: Event) => {
                     const target = event.target as HTMLSelectElement;
+                    if (isDiscountTypeLocked(target.value)) {
+                        openCrossSell(
+                            availableDiscountTypes.find(
+                                (c) => c.id === target.value,
+                            )?.label ?? target.value,
+                        );
+                        target.value = discountType || "";
+                        return;
+                    }
                     handleDiscountTypeChange(target.value);
                 }}
                 onBlur={createBlurHandler("discountType")}
             >
-                {availableDiscountTypes.map((config) => (
-                    <s-option key={config.id} value={config.id}>
-                        {config.id === "CUSTOM_PRICE"
+                {availableDiscountTypes.map((config) => {
+                    const locked = isDiscountTypeLocked(config.id);
+                    const label =
+                        config.id === "CUSTOM_PRICE"
                             ? t("rewardPrice")
-                            : config.label}
-                    </s-option>
-                ))}
+                            : config.label;
+                    return (
+                        <s-option key={config.id} value={config.id}>
+                            {locked ? `${label} (Pro)` : label}
+                        </s-option>
+                    );
+                })}
             </s-select>
 
             {discountType === "PERCENTAGE" && (

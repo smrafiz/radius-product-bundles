@@ -2,6 +2,7 @@
 
 import { useDiscountSettings } from "@/features/bundles/hooks/ui/use-discount-settings";
 import { useTranslations } from "@/lib/i18n/provider";
+import { useCrossSellStore } from "@/shared";
 
 /**
  * Discount settings configuration component
@@ -14,6 +15,7 @@ export function DiscountSettings() {
         minOrderValue,
         maxDiscountAmount,
         availableDiscountTypes,
+        isDiscountTypeLocked,
         handleDiscountTypeChange,
         handleDiscountValueChange,
         handleMinOrderValueChange,
@@ -27,6 +29,7 @@ export function DiscountSettings() {
         showDiscountValue,
         showMaxDiscountAmount,
     } = useDiscountSettings();
+    const { open: openCrossSell } = useCrossSellStore();
 
     return (
         <s-stack gap="base">
@@ -53,13 +56,24 @@ export function DiscountSettings() {
                 error={getFieldError("discountType")}
                 onChange={(event: Event) => {
                     const target = event.target as HTMLSelectElement;
+                    if (isDiscountTypeLocked(target.value)) {
+                        openCrossSell(
+                            availableDiscountTypes.find(
+                                (c) => c.id === target.value,
+                            )?.label ?? target.value,
+                        );
+                        target.value = discountType || "";
+                        return;
+                    }
                     handleDiscountTypeChange(target.value);
                 }}
                 onBlur={createBlurHandler("discountType")}
             >
                 {availableDiscountTypes.map((config) => (
                     <s-option key={config.id} value={config.id}>
-                        {config.label}
+                        {isDiscountTypeLocked(config.id)
+                            ? `${config.label} (Pro)`
+                            : config.label}
                     </s-option>
                 ))}
             </s-select>
