@@ -490,7 +490,7 @@ export function renderBogoSleekProducts(
         const titleHtml = ctx.enableHyperLink
             ? `<h3 class="rb-sleek__title"><a href="${productUrl}">${escapeHtml(product.title)}${variantPart}</a></h3>`
             : `<h3 class="rb-sleek__title">${escapeHtml(product.title)}${variantPart}</h3>`;
-        const quantityHtml = ctx.showQuantity
+        const quantityHtml = ctx.showQuantity && structure.bundleType !== "BOGO"
             ? `<div class="rb-sleek__quantity">${ctx.quantityLabel} ${product.quantity}</div>`
             : "";
 
@@ -677,7 +677,7 @@ export function renderBogoMinimalistProducts(
         const roleLabelHtml = ctx.showSavingsBadge
             ? `<span class="rb-minimalist__item-role rb-minimalist__item-role--${roleClass}">${escapeHtml(roleBadge)}</span>`
             : "";
-        const quantityHtml = ctx.showQuantity
+        const quantityHtml = ctx.showQuantity && structure.bundleType !== "BOGO"
             ? `<div class="radius-bundle__product-quantity">${ctx.quantityLabel} ${p.quantity}</div>`
             : "";
 
@@ -916,7 +916,7 @@ export function renderBogoCompactGridProducts(
             ? `<span class="rb-cg__tile-role rb-cg__tile-role--${isReward ? "reward" : "trigger"}">${roleLabel}</span>`
             : "";
 
-        const quantityHtml = ctx.showQuantity
+        const quantityHtml = ctx.showQuantity && structure.bundleType !== "BOGO"
             ? `<div class="radius-bundle__product-quantity">${ctx.quantityLabel} ${product.quantity}</div>`
             : "";
 

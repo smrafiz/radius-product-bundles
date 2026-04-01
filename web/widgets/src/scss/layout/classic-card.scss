@@ -133,8 +133,7 @@
     &__product {
         &--horizontal {
             display: flex;
-            gap: var(--rb-gap-spacing, 12px);
-            align-items: center;
+            gap: 12px;
 
             .rb-classic__image {
                 width: calc(var(--rb-image-size) - 10px);
