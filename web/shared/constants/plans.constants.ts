@@ -30,6 +30,8 @@ const FREE_CONFIG: PlanConfig = {
         { feature: "export_data", gateMode: "lock-overlay" },
         { feature: "remove_branding", gateMode: "lock-overlay" },
         { feature: "duplicate_bundle", gateMode: "lock-overlay" },
+        { feature: "bundle_behavior", gateMode: "lock-overlay" },
+        { feature: "advanced_discount_controls", gateMode: "lock-overlay" },
     ],
 };
 

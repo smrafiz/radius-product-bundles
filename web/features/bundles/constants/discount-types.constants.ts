@@ -47,7 +47,7 @@ export const DISCOUNT_TYPES = {
         label: "Discount Percentage",
         id: "PERCENTAGE",
         slug: "percentage",
-        description: "Discount as a percentage of the original price",
+        description: "Reduce the bundle price by a percentage.",
         symbol: "%",
         suffix: "Off",
         format: (
@@ -60,7 +60,7 @@ export const DISCOUNT_TYPES = {
         label: "Discount Amount",
         id: "FIXED_AMOUNT",
         slug: "fixed-amount",
-        description: "Fixed dollar amount discount",
+        description: "Reduce the bundle price by a fixed amount.",
         symbol: "$",
         suffix: "Off",
         format: (value = 0, formatCurrencyFn, includeLabel = true) => {
@@ -74,7 +74,7 @@ export const DISCOUNT_TYPES = {
         label: "Bundle Price",
         id: "CUSTOM_PRICE",
         slug: "custom-price",
-        description: "Set a specific price for the bundle",
+        description: "Set a specific final price for the entire bundle.",
         symbol: "$",
         suffix: "",
         format: (value = 0, formatCurrencyFn, includeLabel = true) => {
@@ -88,7 +88,7 @@ export const DISCOUNT_TYPES = {
         label: "No Discount",
         id: "NO_DISCOUNT",
         slug: "no-discount",
-        description: "Bundle with no discount applied",
+        description: "Create bundles without applying a discount.",
         symbol: "",
         suffix: "",
         format: (value = 0, formatCurrency, includeLabel = true) =>
@@ -98,10 +98,13 @@ export const DISCOUNT_TYPES = {
         label: "Quantity Breaks",
         id: "QUANTITY_BREAKS",
         slug: "quantity-breaks",
-        description: "Volume-based pricing with quantity tiers",
+        description:
+            "Set different prices based on how many items customers buy",
         symbol: "",
         suffix: "",
         format: (value = 0, formatCurrency, includeLabel = true) =>
             `Volume Discount (${value}% Off)`,
     },
+    // Frequently Bought Together: Show products that customers often purchase together.
+    // Mix & Match: Let customers select items to build their own bundle.
 } as const satisfies Record<DiscountType, DiscountConfig>;

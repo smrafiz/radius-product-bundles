@@ -2,7 +2,7 @@
 
 import { useDiscountSettings } from "@/features/bundles/hooks/ui/use-discount-settings";
 import { useTranslations } from "@/lib/i18n/provider";
-import { ProBadge, useCrossSellStore } from "@/shared";
+import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
 import { useState } from "react";
 
 /**
@@ -31,6 +31,8 @@ export function DiscountSettings() {
         showMaxDiscountAmount,
     } = useDiscountSettings();
     const { open: openCrossSell } = useCrossSellStore();
+    const { canUse } = usePlan();
+    const canAdvancedControls = canUse("advanced_discount_controls");
     const [isOpen, setIsOpen] = useState(false);
     const popoverId = "discount-type-popover";
     const selectedLabel =
@@ -162,76 +164,149 @@ export function DiscountSettings() {
             </s-stack>
 
             {showDiscountValue && (
-                <s-number-field
-                    label={getDiscountValueLabel()}
-                    value={discountValue?.toString() || ""}
-                    step={discountType === "PERCENTAGE" ? 0.01 : 1}
-                    min={0}
-                    placeholder="0"
-                    prefix={getPrefix()}
-                    suffix={getSuffix()}
-                    max={discountType === "PERCENTAGE" ? 99.99 : undefined}
-                    onChange={(event: Event) => {
-                        const target = event.target as HTMLInputElement;
-                        const raw = target.value;
-                        const value =
-                            discountType === "PERCENTAGE" && raw !== ""
-                                ? String(Math.trunc(parseFloat(raw) * 100) / 100)
-                                : raw;
-                        handleDiscountValueChange(value);
-                    }}
-                    onBlur={(event: Event) => {
-                        if (discountType === "PERCENTAGE") {
-                            const target = event.target as HTMLInputElement;
-                            const raw = target.value;
-                            if (raw !== "") {
-                                const truncated = String(Math.trunc(parseFloat(raw) * 100) / 100);
-                                handleDiscountValueChange(truncated);
-                            }
-                        }
-                        createBlurHandler("discountValue")();
-                    }}
-                    error={getFieldError("discountValue")}
-                />
-            )}
-
-            <s-stack gap="base">
-                <div className="flex-1">
+                <s-stack gap="small-200">
                     <s-number-field
-                        label={t("minOrderValue")}
-                        value={minOrderValue?.toString() || ""}
-                        step={1}
+                        label={getDiscountValueLabel()}
+                        value={discountValue?.toString() || ""}
+                        step={discountType === "PERCENTAGE" ? 0.01 : 1}
                         min={0}
-                        placeholder="0.00"
-                        prefix={getCurrency()}
+                        placeholder="0"
+                        prefix={getPrefix()}
+                        suffix={getSuffix()}
+                        max={discountType === "PERCENTAGE" ? 99.99 : undefined}
                         onChange={(event: Event) => {
                             const target = event.target as HTMLInputElement;
-                            handleMinOrderValueChange(target.value);
+                            const raw = target.value;
+                            const value =
+                                discountType === "PERCENTAGE" && raw !== ""
+                                    ? String(
+                                          Math.trunc(parseFloat(raw) * 100) /
+                                              100,
+                                      )
+                                    : raw;
+                            handleDiscountValueChange(value);
                         }}
-                        onBlur={createBlurHandler("minOrderValue")}
-                        error={getFieldError("minOrderValue")}
+                        onBlur={(event: Event) => {
+                            if (discountType === "PERCENTAGE") {
+                                const target =
+                                    event.target as HTMLInputElement;
+                                const raw = target.value;
+                                if (raw !== "") {
+                                    const truncated = String(
+                                        Math.trunc(parseFloat(raw) * 100) /
+                                            100,
+                                    );
+                                    handleDiscountValueChange(truncated);
+                                }
+                            }
+                            createBlurHandler("discountValue")();
+                        }}
+                        error={getFieldError("discountValue")}
                     />
-                </div>
+                    <s-text tone="neutral">{t("discountValueDesc")}</s-text>
+                </s-stack>
+            )}
 
-                {showMaxDiscountAmount && (
-                    <div className="flex-1">
+            {canAdvancedControls ? (
+                <s-stack gap="base">
+                    <s-stack gap="small-200">
                         <s-number-field
-                            label={t("maxDiscount")}
-                            value={maxDiscountAmount?.toString() || ""}
+                            label={t("minOrderValue")}
+                            value={minOrderValue?.toString() || ""}
                             step={1}
                             min={0}
-                            placeholder={t("noLimit")}
+                            placeholder="0.00"
                             prefix={getCurrency()}
                             onChange={(event: Event) => {
-                                const target = event.target as HTMLInputElement;
-                                handleMaxDiscountAmountChange(target.value);
+                                const target =
+                                    event.target as HTMLInputElement;
+                                handleMinOrderValueChange(target.value);
                             }}
-                            onBlur={createBlurHandler("maxDiscountAmount")}
-                            error={getFieldError("maxDiscountAmount")}
+                            onBlur={createBlurHandler("minOrderValue")}
+                            error={getFieldError("minOrderValue")}
                         />
-                    </div>
-                )}
-            </s-stack>
+                        <s-text tone="neutral">
+                            {t("minOrderValueDesc")}
+                        </s-text>
+                    </s-stack>
+
+                    {showMaxDiscountAmount && (
+                        <s-stack gap="small-200">
+                            <s-number-field
+                                label={t("maxDiscount")}
+                                value={maxDiscountAmount?.toString() || ""}
+                                step={1}
+                                min={0}
+                                placeholder={t("noLimit")}
+                                prefix={getCurrency()}
+                                onChange={(event: Event) => {
+                                    const target =
+                                        event.target as HTMLInputElement;
+                                    handleMaxDiscountAmountChange(
+                                        target.value,
+                                    );
+                                }}
+                                onBlur={createBlurHandler("maxDiscountAmount")}
+                                error={getFieldError("maxDiscountAmount")}
+                            />
+                            <s-text tone="neutral">
+                                {t("maxDiscountDesc")}
+                            </s-text>
+                        </s-stack>
+                    )}
+                </s-stack>
+            ) : (
+                <div
+                    className="cursor-pointer"
+                    onClick={() =>
+                        openCrossSell(t("minOrderValue"))
+                    }
+                >
+                    <s-stack gap="base">
+                        <div className="relative">
+                            <div className="pointer-events-none">
+                                <s-number-field
+                                    label={t("minOrderValue")}
+                                    value=""
+                                    placeholder="0.00"
+                                    prefix={getCurrency()}
+                                    disabled
+                                />
+                            </div>
+                            <span className="absolute top-0 right-0">
+                                <ProBadge label={t("minOrderValue")} />
+                            </span>
+                            <span className="opacity-50">
+                                <s-text tone="neutral">
+                                    {t("minOrderValueDesc")}
+                                </s-text>
+                            </span>
+                        </div>
+
+                        {showMaxDiscountAmount && (
+                            <div className="relative">
+                                <div className="pointer-events-none">
+                                    <s-number-field
+                                        label={t("maxDiscount")}
+                                        value=""
+                                        placeholder={t("noLimit")}
+                                        prefix={getCurrency()}
+                                        disabled
+                                    />
+                                </div>
+                                <span className="absolute top-0 right-0">
+                                    <ProBadge label={t("maxDiscount")} />
+                                </span>
+                                <span className="opacity-50">
+                                    <s-text tone="neutral">
+                                        {t("maxDiscountDesc")}
+                                    </s-text>
+                                </span>
+                            </div>
+                        )}
+                    </s-stack>
+                </div>
+            )}
         </s-stack>
     );
 }

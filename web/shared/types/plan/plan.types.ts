@@ -15,7 +15,9 @@ export type FeatureId =
     | "templates"
     | "export_data"
     | "remove_branding"
-    | "duplicate_bundle";
+    | "duplicate_bundle"
+    | "bundle_behavior"
+    | "advanced_discount_controls";
 
 export interface PlanFeatureConfig {
     feature: FeatureId;
