@@ -11,7 +11,6 @@ import {
     getButtonPadding,
     getCardBgColor,
 } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 const LOCK_SVG = (
     <svg
@@ -159,7 +158,7 @@ function ChecklistRewardItem({
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
-    const freeText = DEFAULT_LABELS.bogoFreeText;
+    const freeText = PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
@@ -271,20 +270,20 @@ export function WidgetChecklist({
     const progress = 0;
     const isUnlocked = false;
     const progressPercent = 0;
-    const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
+    const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const lockedLabel =
-        labels?.checklistLockedLabel || DEFAULT_LABELS.checklistLockedLabel;
+        labels?.checklistLockedLabel || PREVIEW_LABELS.checklistLockedLabel;
     const progressLabel = (
-        labels?.checklistProgressText || DEFAULT_LABELS.checklistProgressText
+        labels?.checklistProgressText || PREVIEW_LABELS.checklistProgressText || ""
     )
         .replace("{count}", String(progress))
         .replace("{total}", String(totalTriggers));
     const hintLabel = (
-        labels?.checklistHintText || DEFAULT_LABELS.checklistHintText
+        labels?.checklistHintText || PREVIEW_LABELS.checklistHintText || ""
     ).replace("{remaining}", String(totalTriggers));
     const pricingLockedLabel =
         labels?.checklistPricingLockedText ||
-        DEFAULT_LABELS.checklistPricingLockedText;
+        PREVIEW_LABELS.checklistPricingLockedText;
 
     const anyRewardFree = rewardProducts.some(
         (p) => !!p.compareAtPrice && /^[^1-9]*$/.test(p.price || ""),
@@ -293,7 +292,7 @@ export function WidgetChecklist({
         ? freeText
         : pricing?.hasDiscount && pricing.savingsAmount
           ? `${pricing.savingsAmount} Off`
-          : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+          : labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
 
     if (!products.length) {
         return (
@@ -330,7 +329,7 @@ export function WidgetChecklist({
                             color: styles.textColor,
                         }}
                     >
-                        {title || DEFAULT_LABELS.headingLabel}
+                        {title || PREVIEW_LABELS.headingLabel}
                     </div>
                 )}
                 {subtitle && (
@@ -445,29 +444,32 @@ export function WidgetChecklist({
                         marginBottom: 12,
                     }}
                 >
-                    <span
-                        style={{
-                            fontSize: parseInt(bodyFontSize) - 2,
-                            fontWeight: 500,
-                            color: styles.textColor,
-                        }}
-                    >
-                        {lockedLabel}
-                    </span>
-                    {displayOptions.showSavingsBadge && (
+                    <div style={{display: "flex", alignItems: "center", gap: 8}}>
                         <span
                             style={{
-                                fontSize: parseInt(bodyFontSize) - 5,
-                                fontWeight: 600,
-                                padding: "2px 10px",
-                                borderRadius: 12,
-                                color: "#fff",
-                                background: styles.savingsColor || "#16a34a",
+                                fontSize: parseInt(bodyFontSize) - 2,
+                                fontWeight: 500,
+                                color: styles.textColor,
+                                flex: 1,
                             }}
                         >
+                        {lockedLabel}
+                    </span>
+                        {displayOptions.showSavingsBadge && (
+                            <span
+                                style={{
+                                    fontSize: parseInt(bodyFontSize) - 5,
+                                    fontWeight: 600,
+                                    padding: "2px 10px",
+                                    borderRadius: 12,
+                                    color: "#fff",
+                                    background: styles.savingsColor || "#16a34a",
+                                }}
+                            >
                             {rewardBadgeText}
                         </span>
-                    )}
+                        )}
+                    </div>
                     <span
                         style={{
                             marginLeft: "auto",
@@ -546,7 +548,7 @@ export function WidgetChecklist({
                         cursor: "pointer",
                     }}
                 >
-                    {cartButtonText || DEFAULT_LABELS.addToCartText}
+                    {cartButtonText || PREVIEW_LABELS.addToCartText}
                 </button>
             )}
         </div>

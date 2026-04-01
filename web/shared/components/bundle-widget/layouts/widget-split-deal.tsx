@@ -12,7 +12,6 @@ import {
     getImageSize,
     getCardBgColor,
 } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
 
 function SplitProductCard({
@@ -30,7 +29,7 @@ function SplitProductCard({
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
-    const freeText = DEFAULT_LABELS.bogoFreeText;
+    const freeText = PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
@@ -154,15 +153,15 @@ export function WidgetSplitDeal({
     const isFullWidth = styles.buttonWidth !== "auto";
     const cardBg = getCardBgColor(styles);
     const triggerBadge =
-        labels?.bogoTriggerBadgeText || DEFAULT_LABELS.bogoTriggerBadgeText;
+        labels?.bogoTriggerBadgeText || PREVIEW_LABELS.bogoTriggerBadgeText;
     const anyRewardFree = rewardProducts.some(
         (p) => !!p.compareAtPrice && /^[^1-9]*$/.test(p.price || ""),
     );
     const rewardBadge = anyRewardFree
-        ? labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText
+        ? labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText
         : pricing?.hasDiscount && pricing.savingsAmount
           ? `${pricing.savingsAmount} Off`
-          : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+          : labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
     const accentColor = styles.primaryColor || "#303030";
     const isOutline = styles.badgeStyle === "outline";
     const bodyFontSize = getFontSize(styles.bodySize);
@@ -230,7 +229,7 @@ export function WidgetSplitDeal({
                             margin: 0,
                         }}
                     >
-                        {title || DEFAULT_LABELS.headingLabel}
+                        {title || PREVIEW_LABELS.headingLabel}
                     </h3>
                 )}
                 {subtitle && (
@@ -415,7 +414,7 @@ export function WidgetSplitDeal({
                             }}
                         >
                             {labels?.bogoYouPayLabel ||
-                                DEFAULT_LABELS.bogoYouPayLabel}
+                                PREVIEW_LABELS.bogoYouPayLabel}
                         </span>
                         <span
                             style={{
@@ -441,7 +440,7 @@ export function WidgetSplitDeal({
                             }}
                         >
                             {labels?.bogoYouSaveLabel ||
-                                DEFAULT_LABELS.bogoYouSaveLabel}
+                                PREVIEW_LABELS.bogoYouSaveLabel}
                         </span>
                         <span
                             style={{
@@ -481,7 +480,7 @@ export function WidgetSplitDeal({
                         cursor: "pointer",
                     }}
                 >
-                    {cartButtonText || DEFAULT_LABELS.addToCartText}
+                    {cartButtonText || PREVIEW_LABELS.addToCartText}
 
                     <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
                 </button>

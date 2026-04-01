@@ -12,7 +12,6 @@ import {
     getImageSize,
     getCardBgColor,
 } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 function SleekProductCard({
     product,
@@ -37,15 +36,14 @@ function SleekProductCard({
     const savingsColor = styles.savingsColor || "#16a34a";
     const borderRadius = getCardRadius(styles.cornerStyle);
     const bodyFontSize = getFontSize(styles.bodySize);
-    const freeTagColor = styles.bogoFreeTagColor || "#16a34a";
-    const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
+    const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const rewardBadgeText = isFreePrice
         ? freeText
         : pricing?.hasDiscount && pricing.savingsAmount
           ? `${pricing.savingsAmount} Off`
-          : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+          : labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
 
     const bgBase = styles.backgroundColor || "#fff";
     const cardBg = getCardBgColor(styles);
@@ -137,7 +135,7 @@ function SleekProductCard({
                         }}
                     >
                         {labels?.bogoYouPayLabel ||
-                            DEFAULT_LABELS.bogoYouPayLabel}
+                            PREVIEW_LABELS.bogoYouPayLabel}
                     </span>
                 ) : (
                     hasDiscount &&
@@ -248,7 +246,7 @@ export function WidgetSleek({
                         lineHeight: "1.3",
                     }}
                 >
-                    {title || DEFAULT_LABELS.headingLabel}
+                    {title || PREVIEW_LABELS.headingLabel}
                 </h3>
             )}
 
@@ -344,7 +342,7 @@ export function WidgetSleek({
                         }}
                     >
                         {labels?.bogoTotalLabel ||
-                            DEFAULT_LABELS.bogoTotalLabel}
+                            PREVIEW_LABELS.bogoTotalLabel}
                         : {pricing.finalPrice}
                     </span>
                 )}
@@ -370,7 +368,7 @@ export function WidgetSleek({
                             whiteSpace: "nowrap",
                         }}
                     >
-                        {cartButtonText || DEFAULT_LABELS.addToCartText}
+                        {cartButtonText || PREVIEW_LABELS.addToCartText}
                     </button>
                 )}
             </div>

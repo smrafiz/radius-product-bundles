@@ -1,6 +1,6 @@
 "use client";
 
-import { WidgetLayoutProps, PreviewProduct } from "@/shared";
+import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -14,7 +14,6 @@ import {
     getCardBgColor,
     getImageSize,
 } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
 
 const IMAGE_ASPECT_RATIOS = {
@@ -38,7 +37,7 @@ function ClassicProductItem({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const imageSizePx = getImageSize(styles.imageSize);
     const isHorizontal = styles.imagePosition === "left";
-    const freeText = DEFAULT_LABELS.bogoFreeText;
+    const freeText = PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
 
@@ -181,15 +180,15 @@ export function WidgetClassicCard({
         ? getCardBgColor(styles)
         : undefined;
     const triggerBadge =
-        labels?.bogoTriggerBadgeText || DEFAULT_LABELS.bogoTriggerBadgeText;
+        labels?.bogoTriggerBadgeText || PREVIEW_LABELS.bogoTriggerBadgeText;
     const anyRewardFree = rewardProducts.some(
         (p) => !!p.compareAtPrice && /^[^1-9]*$/.test(p.price || ""),
     );
     const rewardBadge = anyRewardFree
-        ? labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText
+        ? labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText
         : pricing?.hasDiscount && pricing.savingsAmount
           ? `${pricing.savingsAmount} Off`
-          : labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+          : labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
 
     if (!products.length) {
         return (
@@ -256,7 +255,7 @@ export function WidgetClassicCard({
                             textAlign: "center",
                         }}
                     >
-                        {title || DEFAULT_LABELS.headingLabel}
+                        {title || PREVIEW_LABELS.headingLabel}
                     </div>
                 )}
                 {subtitle && (
@@ -374,7 +373,7 @@ export function WidgetClassicCard({
                             }}
                         >
                             {labels?.bogoYouPayLabel ||
-                                DEFAULT_LABELS.bogoYouPayLabel}
+                                PREVIEW_LABELS.bogoYouPayLabel}
                         </div>
                         <div
                             style={{
@@ -396,7 +395,7 @@ export function WidgetClassicCard({
                             }}
                         >
                             {labels?.bogoYouSaveLabel ||
-                                DEFAULT_LABELS.bogoYouSaveLabel}
+                                PREVIEW_LABELS.bogoYouSaveLabel}
                         </div>
                         <div
                             style={{
@@ -434,7 +433,7 @@ export function WidgetClassicCard({
                         gap: 8,
                     }}
                 >
-                    {cartButtonText || DEFAULT_LABELS.addToCartText}
+                    {cartButtonText || PREVIEW_LABELS.addToCartText}
                 </button>
             )}
         </div>

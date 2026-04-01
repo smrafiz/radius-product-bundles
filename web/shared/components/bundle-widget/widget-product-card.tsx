@@ -9,7 +9,6 @@ import {
     PLACEHOLDER_IMAGES,
 } from "@/features/settings";
 import { WidgetProductCardProps } from "@/shared";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
 export function WidgetProductCard({

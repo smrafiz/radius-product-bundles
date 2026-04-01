@@ -12,7 +12,6 @@ import {
     getImageSize,
 } from "@/features/settings";
 import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 function getRewardBadge(
     product: PreviewProduct,
@@ -310,7 +309,7 @@ export function WidgetMinimalist({
                                 lineHeight: "1.3",
                             }}
                         >
-                            {title || DEFAULT_LABELS.headingLabel}
+                            {title || PREVIEW_LABELS.headingLabel}
                         </h3>
                     )}
                     {subtitle && (
@@ -419,7 +418,7 @@ export function WidgetMinimalist({
                         cursor: "pointer",
                     }}
                 >
-                    {cartButtonText || DEFAULT_LABELS.addToCartText}
+                    {cartButtonText || PREVIEW_LABELS.addToCartText}
                 </button>
             )}
         </div>

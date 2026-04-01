@@ -11,7 +11,6 @@ import {
     getCardRadius,
     getBadgeRadius,
     getHeadingFontSize,
-    getPadding,
     getSpacing,
     getCardBgColor,
     getImageSize,
@@ -50,12 +49,12 @@ function ProductTile({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const imageSizePx = getImageSize(styles.imageSize);
     const youPayLabel =
-        labels?.bogoYouPayLabel || DEFAULT_LABELS.bogoYouPayLabel;
-    const freeText = labels?.bogoFreeText || DEFAULT_LABELS.bogoFreeText;
+        labels?.bogoYouPayLabel || PREVIEW_LABELS.bogoYouPayLabel;
+    const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const rewardBadgeText =
-        labels?.bogoRewardBadgeText || DEFAULT_LABELS.bogoRewardBadgeText;
+        labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
     const rewardBadge = isFreePrice
         ? freeText
         : pricing?.hasDiscount && pricing.savingsAmount
@@ -435,7 +434,7 @@ export function WidgetCompactGrid({
                             fontWeight: 600,
                         }}
                     >
-                        {title || DEFAULT_LABELS.headingLabel}
+                        {title || PREVIEW_LABELS.headingLabel}
                     </span>
                     {subtitle && (
                         <span
@@ -567,7 +566,7 @@ export function WidgetCompactGrid({
                             }}
                         >
                             {labels?.bogoTotalLabel ||
-                                DEFAULT_LABELS.bogoTotalLabel}
+                                PREVIEW_LABELS.bogoTotalLabel}
                         </span>
                         <div
                             style={{
@@ -628,7 +627,7 @@ export function WidgetCompactGrid({
                             whiteSpace: "nowrap",
                         }}
                     >
-                        {cartButtonText || DEFAULT_LABELS.addToCartText}
+                        {cartButtonText || PREVIEW_LABELS.addToCartText}
                     </button>
                 )}
             </div>
