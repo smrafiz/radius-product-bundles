@@ -1,6 +1,6 @@
 "use client";
 
-import { WidgetLayoutProps, PreviewProduct } from "@/shared";
+import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -21,6 +21,7 @@ function SleekProductCard({
     displayOptions,
     labels,
     pricing,
+    bundleType,
 }: {
     product: PreviewProduct;
     variant: "trigger" | "reward";
@@ -28,6 +29,7 @@ function SleekProductCard({
     displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
     pricing?: WidgetLayoutProps["pricing"];
+    bundleType?: string;
 }) {
     const isTrigger = variant === "trigger";
     const isReward = !isTrigger;
@@ -60,6 +62,13 @@ function SleekProductCard({
                   ? `1px solid ${savingsColor}33`
                   : `1px solid ${styles.borderColor || "#e5e7eb"}`,
           };
+
+    const quantityEl = displayOptions.showQuantity && bundleType !== "BOGO" && (
+        <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
+            {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
+            {product.quantity}
+        </div>
+    );
 
     return (
         <div
@@ -117,6 +126,7 @@ function SleekProductCard({
                 >
                     {product.title}
                 </div>
+                {quantityEl}
                 {isTrigger && displayOptions.showSavingsBadge ? (
                     <span
                         style={{
@@ -201,6 +211,7 @@ export function WidgetSleek({
     cartButtonText,
     title,
     labels,
+    bundleType,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -250,6 +261,7 @@ export function WidgetSleek({
                     labels={labels}
                     pricing={pricing}
                     displayOptions={displayOptions}
+                    bundleType={bundleType}
                 />
             ))}
 
@@ -304,6 +316,7 @@ export function WidgetSleek({
                     labels={labels}
                     pricing={pricing}
                     displayOptions={displayOptions}
+                    bundleType={bundleType}
                 />
             ))}
 

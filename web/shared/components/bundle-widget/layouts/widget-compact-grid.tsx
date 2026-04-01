@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { WidgetLayoutProps, PreviewProduct } from "@/shared";
+import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -25,18 +25,21 @@ function ProductTile({
     displayOptions,
     labels,
     pricing,
+    bundleType,
 }: {
     product: {
         title: string;
         image?: string;
         price: string;
         compareAtPrice?: string;
+        quantity?: number;
     };
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
     pricing?: WidgetLayoutProps["pricing"];
+    bundleType?: string;
 }) {
     const isTrigger = variant === "trigger";
     const isReward = !isTrigger;
@@ -61,6 +64,12 @@ function ProductTile({
     const cardBg = styles.customizeCardStyle
         ? getCardBgColor(styles)
         : undefined;
+    const quantityEl = displayOptions.showQuantity && bundleType !== "BOGO" && (
+        <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
+            {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
+            {product.quantity}
+        </div>
+    );
 
     return (
         <div
@@ -131,6 +140,8 @@ function ProductTile({
             >
                 {product.title}
             </div>
+            
+            {quantityEl}
 
             <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
                 {displayOptions.showPrices && (
@@ -183,6 +194,7 @@ function TileSlider({
     perPage,
     flexVal,
     activeDevice,
+    bundleType,
 }: {
     products: PreviewProduct[];
     variant: "trigger" | "reward";
@@ -194,6 +206,7 @@ function TileSlider({
     perPage: number;
     flexVal: number;
     activeDevice?: "desktop" | "tablet" | "mobile";
+    bundleType?: string;
 }) {
     const pages = chunk(products, perPage);
     const [activeSlide, setActiveSlide] = useState(0);
@@ -300,6 +313,7 @@ function TileSlider({
                                     displayOptions={displayOptions}
                                     labels={labels}
                                     pricing={pricing}
+                                    bundleType={bundleType}
                                 />
                             ))}
                         </div>
@@ -352,6 +366,7 @@ export function WidgetCompactGrid({
     badgeText,
     labels,
     activeDevice,
+    bundleType,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -479,6 +494,7 @@ export function WidgetCompactGrid({
                     perPage={2}
                     flexVal={singleEach ? 1 : 2}
                     activeDevice={activeDevice}
+                    bundleType={bundleType}
                 />
 
                 <div
@@ -519,6 +535,7 @@ export function WidgetCompactGrid({
                     perPage={1}
                     flexVal={1}
                     activeDevice={activeDevice}
+                    bundleType={bundleType}
                 />
             </div>
 

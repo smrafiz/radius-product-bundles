@@ -90,6 +90,7 @@ export function TemplateBuyGet({
         badgeText: "BXGY DEAL",
         labels,
         activeDevice,
+        bundleType: "BUY_X_GET_Y",
     };
 
     switch (activeLayout) {

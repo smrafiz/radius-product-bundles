@@ -1,6 +1,6 @@
 "use client";
 
-import { WidgetLayoutProps, PreviewProduct } from "@/shared";
+import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -29,36 +29,28 @@ const LOCK_SVG = (
     </svg>
 );
 
-const CART_SVG = (
-    <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-    >
-        <circle cx="9" cy="21" r="1" />
-        <circle cx="20" cy="21" r="1" />
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-    </svg>
-);
-
 function ChecklistTriggerItem({
     product,
     styles,
     displayOptions,
+    labels,
 }: {
     product: PreviewProduct;
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
+    labels?: WidgetLayoutProps["labels"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
     const imageSizePx = getImageSize(styles.imageSize);
     const cardBg = getCardBgColor(styles);
+
+    const quantityEl = displayOptions.showQuantity && (
+        <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
+            {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
+            {product.quantity}
+        </div>
+    );
 
     return (
         <div
@@ -116,6 +108,7 @@ function ChecklistTriggerItem({
                 >
                     {product.title}
                 </div>
+                {quantityEl}
             </div>
             {displayOptions.showPrices && (
                 <div
@@ -157,10 +150,12 @@ function ChecklistRewardItem({
     product,
     styles,
     displayOptions,
+    labels,
 }: {
     product: PreviewProduct;
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
+    labels?: WidgetLayoutProps["labels"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
@@ -169,6 +164,12 @@ function ChecklistRewardItem({
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
     const cardBg = getCardBgColor(styles);
+    const quantityEl = displayOptions.showQuantity && (
+        <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
+            {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
+            {product.quantity}
+        </div>
+    );
 
     return (
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -206,6 +207,7 @@ function ChecklistRewardItem({
                 >
                     {product.title}
                 </div>
+                {quantityEl}
                 <div
                     style={{
                         display: "flex",
@@ -417,6 +419,7 @@ export function WidgetChecklist({
                         product={p}
                         styles={styles}
                         displayOptions={displayOptions}
+                        labels={labels}
                     />
                 ))}
             </div>
@@ -490,6 +493,7 @@ export function WidgetChecklist({
                             product={p}
                             styles={styles}
                             displayOptions={displayOptions}
+                            labels={labels}
                         />
                     ))}
                 </div>

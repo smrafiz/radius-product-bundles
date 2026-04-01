@@ -1,6 +1,6 @@
 "use client";
 
-import { WidgetLayoutProps, PreviewProduct } from "@/shared";
+import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -20,11 +20,13 @@ function SplitProductCard({
     isReward,
     styles,
     displayOptions,
+    labels,
 }: {
     product: PreviewProduct;
     isReward: boolean;
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
+    labels?: WidgetLayoutProps["labels"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
@@ -33,6 +35,12 @@ function SplitProductCard({
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
     const cardBg = getCardBgColor(styles);
+    const quantityEl = displayOptions.showQuantity && (
+        <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
+            {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
+            {product.quantity}
+        </div>
+    );
 
     return (
         <div
@@ -80,6 +88,7 @@ function SplitProductCard({
                 >
                     {product.title}
                 </div>
+                {quantityEl}
                 <div
                     style={{
                         display: "flex",
@@ -293,6 +302,7 @@ export function WidgetSplitDeal({
                                 isReward={false}
                                 styles={styles}
                                 displayOptions={displayOptions}
+                                labels={labels}
                             />
                         ))}
                     </div>
@@ -372,6 +382,7 @@ export function WidgetSplitDeal({
                                 isReward={true}
                                 styles={styles}
                                 displayOptions={displayOptions}
+                                labels={labels}
                             />
                         ))}
                     </div>

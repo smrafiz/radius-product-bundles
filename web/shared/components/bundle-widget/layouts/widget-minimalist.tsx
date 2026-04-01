@@ -1,6 +1,6 @@
 "use client";
 
-import { WidgetLayoutProps, PreviewProduct } from "@/shared";
+import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -34,18 +34,29 @@ function MinimalistItem({
     roleBadgeText,
     displayOptions,
     styles,
+    labels,
+    bundleType,
 }: {
     product: PreviewProduct;
     roleColor: string;
     roleBadgeText: string;
     displayOptions: WidgetLayoutProps["displayOptions"];
     styles: WidgetLayoutProps["styles"];
+    labels?: WidgetLayoutProps["labels"];
+    bundleType?: string;
 }) {
     const isReward = product.role === "REWARD";
     const savingsColor = styles.savingsColor || "#16a34a";
     const cardRadius = getCardRadius(styles.cornerStyle);
     const bodyFontSize = getFontSize(styles.bodySize);
     const imageSizePx = getImageSize(styles.imageSize);
+
+    const quantityEl = displayOptions.showQuantity && bundleType !== "BOGO" && (
+        <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
+            {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
+            {product.quantity}
+        </div>
+    );
 
     return (
         <div
@@ -125,6 +136,7 @@ function MinimalistItem({
                 >
                     {product.title}
                 </span>
+                {quantityEl}
                 <div
                     style={{
                         display: "flex",
@@ -175,6 +187,7 @@ export function WidgetMinimalist({
     badgeText,
     labels,
     activeDevice,
+    bundleType,
 }: WidgetLayoutProps) {
     const triggerProduct = products.find((p) => p.role === "TRIGGER");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
@@ -377,6 +390,8 @@ export function WidgetMinimalist({
                                 roleBadgeText={roleBadgeText}
                                 displayOptions={displayOptions}
                                 styles={styles}
+                                labels={labels}
+                                bundleType={bundleType}
                             />
                         );
                     })}

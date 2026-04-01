@@ -81,6 +81,7 @@ export function TemplateBogo({
         badgeText: "BOGO OFFER",
         labels,
         activeDevice,
+        bundleType: "BOGO",
     };
 
     switch (activeLayout) {

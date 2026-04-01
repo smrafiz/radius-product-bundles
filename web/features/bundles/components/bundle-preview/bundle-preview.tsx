@@ -276,6 +276,7 @@ function RenderLayout({
     badgeText,
     labels,
     activeDevice,
+    bundleType,
 }: {
     layout: DisplaySettings["layout"];
     products: PreviewProduct[];
@@ -288,8 +289,9 @@ function RenderLayout({
     badgeText?: string;
     labels?: WidgetLabels;
     activeDevice?: "desktop" | "tablet" | "mobile";
+    bundleType?: string;
 }) {
-    const layoutProps = { products, styles, displayOptions };
+    const layoutProps = { products, styles, displayOptions, bundleType };
 
     // Default values if empty or undefined
     const safeTitle = title?.trim() ? title : "Bundle & Save";
@@ -344,6 +346,7 @@ function RenderLayout({
                     title={safeTitle}
                     subtitle={subtitle}
                     badgeText={badgeText}
+                    labels={labels}
                     activeDevice={activeDevice}
                 />
             );
@@ -601,6 +604,7 @@ export function BundlePreview() {
                                             badgeText={badgeText}
                                             labels={labels}
                                             activeDevice="mobile"
+                                            bundleType={bundleData.type}
                                         />
                                     </BundleWidget>
                                 </div>
