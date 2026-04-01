@@ -69,11 +69,12 @@ export function responsiveImg(
               ? "(max-width: 768px) 80vw, 300px"
               : "(max-width: 768px) 45vw, 200px";
 
+    const srcWidth = opts.size === "thumb" ? 70 : DEFAULT_WIDTH;
     const srcset = SRCSET_WIDTHS.map(
         (w) => `${escapeHtml(cdnUrl(src, w))} ${w}w`,
     ).join(", ");
 
-    return `<img src="${escapeHtml(cdnUrl(src, DEFAULT_WIDTH))}" srcset="${srcset}" sizes="${sizes}" alt="${safeAlt}" width="${DEFAULT_WIDTH}" height="${DEFAULT_WIDTH}"${lazy} />`;
+    return `<img src="${escapeHtml(cdnUrl(src, srcWidth))}" srcset="${srcset}" sizes="${sizes}" alt="${safeAlt}" width="${srcWidth}" height="${srcWidth}"${lazy} />`;
 }
 
 export function extractNumericId(gid: string): string {
