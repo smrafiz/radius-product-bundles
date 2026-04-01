@@ -10,7 +10,6 @@ import {
     getFontSize,
     getCardRadius,
     getBadgeRadius,
-    getShadow,
     getCardBgColor,
     getImageSize,
 } from "@/features/settings";

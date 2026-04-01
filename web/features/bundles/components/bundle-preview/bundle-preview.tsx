@@ -291,7 +291,7 @@ function RenderLayout({
     activeDevice?: "desktop" | "tablet" | "mobile";
     bundleType?: string;
 }) {
-    const layoutProps = { products, styles, displayOptions, bundleType };
+    const layoutProps = { products, styles, displayOptions, bundleType, labels };
 
     // Default values if empty or undefined
     const safeTitle = title?.trim() ? title : "Bundle & Save";
