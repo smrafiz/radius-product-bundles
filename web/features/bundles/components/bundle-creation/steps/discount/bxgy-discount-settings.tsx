@@ -1,8 +1,8 @@
 "use client";
 
-import { useDiscountSettings } from "@/features/bundles";
+import { useDiscountSettings, useBundleStore } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
-import { ProBadge, useCrossSellStore } from "@/shared";
+import { ProBadge, useCrossSellStore, usePlan, triggerSaveBar } from "@/shared";
 import { useState } from "react";
 
 export function BxgyDiscountSettings() {
@@ -22,6 +22,9 @@ export function BxgyDiscountSettings() {
         showDiscountValue,
     } = useDiscountSettings();
     const { open: openCrossSell } = useCrossSellStore();
+    const { canUse } = usePlan();
+    const { bundleData, setBundleData, markDirty } = useBundleStore();
+    const canFreeShipping = canUse("bundle_behavior");
     const [isOpen, setIsOpen] = useState(false);
     const popoverId = "bxgy-discount-type-popover";
 
@@ -204,6 +207,47 @@ export function BxgyDiscountSettings() {
                     }}
                     error={getFieldError("discountValue")}
                 />
+            )}
+
+            <s-divider />
+
+            {canFreeShipping ? (
+                <s-switch
+                    name="freeShipping"
+                    label={t("freeShipping")}
+                    details={t("freeShippingDetails")}
+                    checked={bundleData.freeShipping}
+                    onInput={(e: Event) => {
+                        const target = e.target as HTMLInputElement;
+                        setBundleData({
+                            ...bundleData,
+                            freeShipping: target.checked,
+                        });
+                        markDirty();
+                        triggerSaveBar();
+                    }}
+                />
+            ) : (
+                <div
+                    className="cursor-pointer"
+                    onClick={() => openCrossSell(t("freeShipping"))}
+                >
+                    <s-stack
+                        direction="inline"
+                        justifyContent="space-between"
+                        alignItems="center"
+                    >
+                        <div className="pointer-events-none">
+                            <s-switch
+                                name="freeShipping-locked"
+                                label={t("freeShipping")}
+                                details={t("freeShippingDetails")}
+                                disabled
+                            />
+                        </div>
+                        <ProBadge label={t("freeShipping")} />
+                    </s-stack>
+                </div>
             )}
         </s-stack>
     );
