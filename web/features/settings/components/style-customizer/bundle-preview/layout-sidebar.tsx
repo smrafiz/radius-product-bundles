@@ -21,7 +21,7 @@ export function LayoutSidebar({
     const { open: openCrossSell } = useCrossSellStore();
 
     return (
-        <div className="md:w-64 border-r border-gray-200 bg-white">
+        <div className="rtpb-type-layout border-r border-gray-200 bg-white">
             <s-stack padding="base">
                 <s-heading>{heading}</s-heading>
             </s-stack>

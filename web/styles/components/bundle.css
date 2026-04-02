@@ -282,6 +282,9 @@
     border-radius: 0.75rem;
     overflow: hidden;
 }
+.rtpb-type-layout {
+    width: 240px;
+}
 
 /* Scrollable Preview Area */
 .rtpb-preview-scroll {
@@ -432,14 +435,14 @@
    Responsive Adjustments
    =========================================== */
 
-@media (max-width: 1200px) {
+@media (max-width: 1039px) {
     .rtpb-left-setting {
         flex: 0 0 320px;
         max-width: 320px;
     }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1039px) {
     .rtpb-full-modal-content {
         flex-direction: column;
         height: auto;
@@ -447,7 +450,6 @@
     }
 
     .rtpb-left-setting {
-        position: relative;
         flex: 1 1 100%;
         max-width: 100%;
         height: auto;
@@ -460,11 +462,15 @@
         height: auto;
     }
 
+}
+@media (max-width: 900px) {
+
     .rtpb-preview-shell {
         flex-direction: column;
     }
 
-    .rtpb-preview-scroll {
-        max-height: 50vh;
+    .rtpb-type-layout {
+        width: 100%;
     }
+
 }
