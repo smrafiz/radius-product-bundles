@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { getSpacing } from "@/features/settings";
 import { WidgetLayoutProps, WidgetProductCard } from "@/shared";
 
@@ -12,7 +12,17 @@ export function WidgetCarousel({
     labels,
 }: WidgetLayoutProps) {
     const carouselRef = useRef<HTMLDivElement>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
     const gap = getSpacing(styles.spacing);
+
+    const handleScroll = () => {
+        const el = carouselRef.current;
+        if (!el) return;
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (maxScroll <= 0) return;
+        const ratio = el.scrollLeft / maxScroll;
+        setActiveIndex(Math.round(ratio * (products.length - 1)));
+    };
 
     const showArrows =
         styles.carouselNavigation === "arrows" ||
@@ -45,7 +55,8 @@ export function WidgetCarousel({
         });
     };
 
-    const slideWidth = `calc(${100 / (styles.slidesPerView || 3)}% - ${gap})`;
+    const slidesPerView = styles.slidesPerView || 3;
+    const slideWidth = `calc((100% - ${slidesPerView - 1} * ${gap}) / ${slidesPerView})`;
 
     return (
         <div
@@ -103,6 +114,7 @@ export function WidgetCarousel({
 
             <div
                 ref={carouselRef}
+                onScroll={handleScroll}
                 style={{
                     display: "flex",
                     overflowX: "auto",
@@ -141,7 +153,7 @@ export function WidgetCarousel({
                                 height: "8px",
                                 borderRadius: "50%",
                                 backgroundColor:
-                                    i === 0 ? styles.primaryColor : "#d1d5db",
+                                    i === activeIndex ? styles.primaryColor : "#d1d5db",
                             }}
                         />
                     ))}

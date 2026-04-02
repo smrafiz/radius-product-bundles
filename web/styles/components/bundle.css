@@ -296,6 +296,7 @@
     scroll-behavior: smooth;
 }
 
+
 /* ===========================================
    Blur Fade Effect - Top & Bottom Edges
    =========================================== */
@@ -434,13 +435,6 @@
 /* ===========================================
    Responsive Adjustments
    =========================================== */
-
-@media (max-width: 1039px) {
-    .rtpb-left-setting {
-        flex: 0 0 320px;
-        max-width: 320px;
-    }
-}
 
 @media (max-width: 1039px) {
     .rtpb-full-modal-content {
