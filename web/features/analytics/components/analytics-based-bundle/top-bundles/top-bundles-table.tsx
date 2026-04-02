@@ -6,7 +6,7 @@ import {
     TopBundlesTableHeader,
     useTopBundles,
 } from "@/features/analytics";
-import { EmptyState, formatByType, useAppNavigation } from "@/shared";
+import { EmptyState, formatByType, useAppNavigation, usePlan } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 
 /**
@@ -108,7 +108,9 @@ function hasLowConfidence(views: number): boolean {
 export function TopBundlesTable() {
     const t = useTranslations("Analytics.TopBundles");
     const ta = useTranslations("Analytics.AllBundles");
-    const { data: bundles, isLoading, error } = useTopBundles(5);
+    const { canUse } = usePlan();
+    const limit = canUse("analytics_full") ? 10 : 5;
+    const { data: bundles, isLoading, error } = useTopBundles(limit);
     const { bundleData } = useAppNavigation();
 
     /**

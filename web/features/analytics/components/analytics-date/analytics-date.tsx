@@ -5,7 +5,7 @@ import {
     DATE_PRESET_GROUPS,
     DATE_RANGE_PRESETS,
 } from "@/features/analytics/constants";
-import { useShopSettings } from "@/shared";
+import { ProBadge, useCrossSellStore, usePlan, useShopSettings } from "@/shared";
 import { AnalyticsCalendar, useDateRangePicker } from "@/features/analytics";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -31,6 +31,10 @@ export function AnalyticsDate() {
     } = useDateRangePicker();
 
     useShopSettings();
+    const { canUse } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
+    const canFullAnalytics = canUse("analytics_full");
+    const FREE_PRESETS = new Set(["today", "yesterday", "last7", "last30"]);
 
     return (
         <s-stack gap="base">
@@ -60,50 +64,55 @@ export function AnalyticsDate() {
                                                 {DATE_RANGE_PRESETS.slice(
                                                     group.start,
                                                     group.end,
-                                                ).map((preset) => (
-                                                    <s-clickable
-                                                        key={preset.key}
-                                                        padding="small-300"
-                                                        borderRadius="base"
-                                                        background={
-                                                            activePreset ===
-                                                            preset.key
-                                                                ? "strong"
-                                                                : "transparent"
-                                                        }
-                                                        onClick={() =>
-                                                            handlePresetClick(
-                                                                preset,
-                                                            )
-                                                        }
-                                                    >
-                                                        <s-stack
-                                                            direction="inline"
-                                                            justifyContent="space-between"
+                                                ).map((preset) => {
+                                                    const isLocked = !canFullAnalytics && !FREE_PRESETS.has(preset.key);
+                                                    return (
+                                                        <s-clickable
+                                                            key={preset.key}
+                                                            padding="small-300"
+                                                            borderRadius="base"
+                                                            background={
+                                                                activePreset ===
+                                                                preset.key
+                                                                    ? "strong"
+                                                                    : "transparent"
+                                                            }
+                                                            onClick={() =>
+                                                                isLocked
+                                                                    ? openCrossSell(tp(preset.key, undefined, preset.label))
+                                                                    : handlePresetClick(preset)
+                                                            }
                                                         >
-                                                            <s-text
-                                                                type={
-                                                                    activePreset ===
-                                                                    preset.key
-                                                                        ? "strong"
-                                                                        : "generic"
-                                                                }
+                                                            <s-stack
+                                                                direction="inline"
+                                                                justifyContent="space-between"
+                                                                alignItems="center"
                                                             >
-                                                                {tp(
-                                                                    preset.key,
-                                                                    undefined,
-                                                                    preset.label,
-                                                                )}
-                                                            </s-text>
-                                                            {activePreset ===
-                                                                preset.key && (
-                                                                <s-text>
-                                                                    ✓
-                                                                </s-text>
-                                                            )}
-                                                        </s-stack>
-                                                    </s-clickable>
-                                                ))}
+                                                                <span className={isLocked ? "opacity-50" : undefined}>
+                                                                    <s-text
+                                                                        type={
+                                                                            activePreset ===
+                                                                            preset.key
+                                                                                ? "strong"
+                                                                                : "generic"
+                                                                        }
+                                                                    >
+                                                                        {tp(
+                                                                            preset.key,
+                                                                            undefined,
+                                                                            preset.label,
+                                                                        )}
+                                                                    </s-text>
+                                                                </span>
+                                                                {isLocked ? (
+                                                                    <ProBadge label={tp(preset.key, undefined, preset.label)} />
+                                                                ) : activePreset === preset.key ? (
+                                                                    <s-text>✓</s-text>
+                                                                ) : null}
+                                                            </s-stack>
+                                                        </s-clickable>
+                                                    );
+                                                })}
                                             </s-stack>
                                         </s-box>
 
@@ -121,14 +130,37 @@ export function AnalyticsDate() {
                             </div>
 
                             {/* Custom Calendar */}
-                            <AnalyticsCalendar
-                                value={range}
-                                onChange={handleCalendarChange}
-                                onStartInputChange={handleStartInputChange}
-                                onEndInputChange={handleEndInputChange}
-                                startInput={startInput}
-                                endInput={endInput}
-                            />
+                            {canFullAnalytics ? (
+                                <AnalyticsCalendar
+                                    value={range}
+                                    onChange={handleCalendarChange}
+                                    onStartInputChange={handleStartInputChange}
+                                    onEndInputChange={handleEndInputChange}
+                                    startInput={startInput}
+                                    endInput={endInput}
+                                />
+                            ) : (
+                                <div
+                                    className="relative cursor-pointer"
+                                    onClick={() => openCrossSell("Custom Date Range")}
+                                >
+                                    <div className="pointer-events-none opacity-30">
+                                        <AnalyticsCalendar
+                                            value={range}
+                                            onChange={() => {}}
+                                            onStartInputChange={() => {}}
+                                            onEndInputChange={() => {}}
+                                            startInput={startInput}
+                                            endInput={endInput}
+                                        />
+                                    </div>
+                                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-md">
+                                            <s-icon type="lock" tone="neutral" />
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
                         </s-stack>
 
                         <s-divider direction="inline" />

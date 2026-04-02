@@ -20,7 +20,7 @@ const FREE_CONFIG: PlanConfig = {
         allowedDiscountTypes: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
     },
     features: [
-        { feature: "analytics_full", gateMode: "enabled" },
+        { feature: "analytics_full", gateMode: "lock-overlay" },
         { feature: "ab_testing", gateMode: "lock-overlay" },
         { feature: "automation", gateMode: "lock-overlay" },
         { feature: "ai_insights", gateMode: "lock-overlay" },

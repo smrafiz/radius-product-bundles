@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
+import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
 
 const AnalyticsChart = dynamic(
     () =>
@@ -37,6 +38,9 @@ export function AnalyticsTabs() {
     const initialTab =
         tabParam && TAB_KEYS.includes(tabParam) ? tabParam : "overview";
     const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
+    const { canUse } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
+    const canFullAnalytics = canUse("analytics_full");
 
     const TABS = [
         {
@@ -73,7 +77,9 @@ export function AnalyticsTabs() {
                         <s-button
                             key={tab.key}
                             variant={
-                                activeTab === tab.key ? "secondary" : "tertiary"
+                                activeTab === tab.key
+                                    ? "secondary"
+                                    : "tertiary"
                             }
                             icon={tab.icon}
                             onClick={() => setActiveTab(tab.key)}
@@ -108,7 +114,35 @@ export function AnalyticsTabs() {
                 ) : (
                     <s-stack gap="base">
                         <AnalyticsBasedBundles />
-                        <AllBundlesTable />
+                        {canFullAnalytics ? (
+                            <AllBundlesTable />
+                        ) : (
+                            <s-section>
+                                <div
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                        openCrossSell(
+                                            "All Bundles Performance",
+                                        )
+                                    }
+                                >
+                                    <s-stack gap="base">
+                                        <s-stack
+                                            direction="inline"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                        >
+                                            <s-heading>
+                                                All Bundles Performance
+                                            </s-heading>
+                                        </s-stack>
+                                        <div className="h-48 rounded-lg bg-gray-50 flex items-center justify-center">
+                                            <ProBadge label="All Bundles Performance" />
+                                        </div>
+                                    </s-stack>
+                                </div>
+                            </s-section>
+                        )}
                     </s-stack>
                 )}
             </div>
