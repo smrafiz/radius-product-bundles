@@ -75,7 +75,7 @@ export function TemplateBogo({
         displayOptions: DEFAULT_DISPLAY_OPTIONS,
         showEmptyState: false,
         pricing: BOGO_PRICING,
-        cartButtonText: "Claim This Offer",
+        cartButtonText: "Add Bundle to Cart",
         title: "Buy One Get One Free",
         subtitle: "Limited time promotional offer",
         badgeText: "BOGO OFFER",

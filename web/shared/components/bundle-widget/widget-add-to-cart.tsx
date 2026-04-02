@@ -7,7 +7,7 @@ import {
     getButtonPadding,
     getButtonRadius,
 } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import { PREVIEW_LABELS } from "@/shared";
 
 export function WidgetAddToCart({
     styles,
@@ -45,7 +45,7 @@ export function WidgetAddToCart({
                     border: isOutline ? `2px solid ${bgColor}` : "none",
                 }}
             >
-                {cartButtonText || DEFAULT_LABELS.addToCartText}
+                {cartButtonText || PREVIEW_LABELS.addToCartText}
             </button>
         </div>
     );

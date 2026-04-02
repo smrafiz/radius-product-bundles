@@ -84,7 +84,7 @@ export function TemplateBuyGet({
         displayOptions: DEFAULT_DISPLAY_OPTIONS,
         showEmptyState: false,
         pricing: BXGY_PRICING,
-        cartButtonText: "Claim This Offer",
+        cartButtonText: "Add Bundle to Cart",
         title: "Buy 2 Get 1 Free",
         subtitle: "Mix and match your favorites",
         badgeText: "BXGY DEAL",
