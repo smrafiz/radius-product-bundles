@@ -3,6 +3,7 @@
 import { getGridClass, SectionConfig } from "@/features/settings";
 import { DynamicField } from "./dynamic-field";
 import { useTranslations } from "@/lib/i18n/provider";
+import { PlanGate } from "@/shared";
 
 /**
  * Universal section renderer - renders ANY section from config.
@@ -72,44 +73,83 @@ export function DynamicSection({
                     </s-text>
                 )}
 
-                {/* Grid Fields (text, number, select, textarea) */}
-                {gridFields.length > 0 && (
-                    <div className={gridClass}>
-                        {gridFields.map((field) => (
-                            <DynamicField
-                                key={String(field.name)}
-                                config={field}
-                                parentPath={parentPath}
-                                tabId={tabId}
-                            />
-                        ))}
-                    </div>
-                )}
-
-                {/* Full-Width Fields (break out of grid) */}
-                {fullWidthFields.map((field) => (
-                    <DynamicField
-                        key={String(field.name)}
-                        config={field}
+                {config.proFeature ? (
+                    <PlanGate feature={config.proFeature as any}>
+                        <SectionFields
+                            gridFields={gridFields}
+                            fullWidthFields={fullWidthFields}
+                            switchFields={switchFields}
+                            gridClass={gridClass}
+                            parentPath={parentPath}
+                            tabId={tabId}
+                        />
+                    </PlanGate>
+                ) : (
+                    <SectionFields
+                        gridFields={gridFields}
+                        fullWidthFields={fullWidthFields}
+                        switchFields={switchFields}
+                        gridClass={gridClass}
                         parentPath={parentPath}
                         tabId={tabId}
                     />
-                ))}
-
-                {/* Switch Fields (stacked) */}
-                {switchFields.length > 0 && (
-                    <s-stack gap="base">
-                        {switchFields.map((field) => (
-                            <DynamicField
-                                key={String(field.name)}
-                                config={field}
-                                parentPath={parentPath}
-                                tabId={tabId}
-                            />
-                        ))}
-                    </s-stack>
                 )}
             </s-stack>
         </s-section>
+    );
+}
+
+function SectionFields({
+    gridFields,
+    fullWidthFields,
+    switchFields,
+    gridClass,
+    parentPath,
+    tabId,
+}: {
+    gridFields: any[];
+    fullWidthFields: any[];
+    switchFields: any[];
+    gridClass: string;
+    parentPath?: string;
+    tabId: string;
+}) {
+    return (
+        <s-stack gap="base">
+            {gridFields.length > 0 && (
+                <div className={gridClass}>
+                    {gridFields.map((field: any) => (
+                        <DynamicField
+                            key={String(field.name)}
+                            config={field}
+                            parentPath={parentPath}
+                            tabId={tabId}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {fullWidthFields.map((field: any) => (
+                <DynamicField
+                    key={String(field.name)}
+                    config={field}
+                    parentPath={parentPath}
+                    tabId={tabId}
+                />
+            ))}
+
+            {switchFields.length > 0 && (
+                <s-stack gap="base">
+                    {switchFields.map((field: any) => (
+                        <DynamicField
+                            key={String(field.name)}
+                            config={field}
+                            parentPath={parentPath}
+                            tabId={tabId}
+                        />
+                    ))}
+                </s-stack>
+            )}
+        </s-stack>
     );
 }

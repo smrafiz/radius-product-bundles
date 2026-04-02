@@ -17,7 +17,9 @@ export type FeatureId =
     | "remove_branding"
     | "duplicate_bundle"
     | "bundle_behavior"
-    | "advanced_discount_controls";
+    | "advanced_discount_controls"
+    | "advanced_cart_controls"
+    | "auto_translate";
 
 export interface PlanFeatureConfig {
     feature: FeatureId;

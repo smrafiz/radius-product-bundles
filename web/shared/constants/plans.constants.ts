@@ -32,6 +32,8 @@ const FREE_CONFIG: PlanConfig = {
         { feature: "duplicate_bundle", gateMode: "lock-overlay" },
         { feature: "bundle_behavior", gateMode: "lock-overlay" },
         { feature: "advanced_discount_controls", gateMode: "lock-overlay" },
+        { feature: "advanced_cart_controls", gateMode: "lock-overlay" },
+        { feature: "auto_translate", gateMode: "lock-overlay" },
     ],
 };
 

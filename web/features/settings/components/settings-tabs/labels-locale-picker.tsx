@@ -16,7 +16,7 @@ import {
 } from "@/features/settings/actions/settings.action";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { useTranslations } from "@/lib/i18n/provider";
-import { triggerSaveBar } from "@/shared";
+import { triggerSaveBar, useCrossSellStore, usePlan } from "@/shared";
 
 export function LabelsLocalePicker() {
     const { data: locales, isLoading } = useLocales();
@@ -34,6 +34,9 @@ export function LabelsLocalePicker() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isTranslating, setIsTranslating] = useState(false);
     const [translateError, setTranslateError] = useState<string | null>(null);
+    const { canUse } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
+    const canAutoTranslate = canUse("auto_translate");
 
     const primaryLocale = locales?.find((l) => l.primary)?.locale ?? "en";
 
@@ -218,9 +221,12 @@ export function LabelsLocalePicker() {
                                 </s-tooltip>
                                 <s-button
                                     variant="secondary"
-                                    icon="language-translate"
-                                    onClick={handleAutoTranslate}
-                                    disabled={isTranslating || isLocaleLoading}
+                                    icon={canAutoTranslate ? "language-translate" : "lock"}
+                                    onClick={canAutoTranslate
+                                        ? handleAutoTranslate
+                                        : () => openCrossSell(t("autoTranslate"))
+                                    }
+                                    disabled={canAutoTranslate && (isTranslating || isLocaleLoading)}
                                     interestFor="auto-translate-tooltip"
                                 >
                                     {isTranslating

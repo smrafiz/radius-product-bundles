@@ -102,8 +102,10 @@ export async function saveSettingsService(
         validatedData.labels = allLocaleLabels as any;
     }
 
-    // Server-side enforcement: strip responsive overrides for plans without access
+    // Server-side enforcement: strip locked features for plans without access
     const plan = await resolveShopPlan(shop);
+
+    // Strip responsive overrides
     if (!hasFeature(plan, "responsive_overrides") && validatedData.globalStyles) {
         const styles = validatedData.globalStyles as Record<string, any>;
         delete styles.tablet;
@@ -117,6 +119,21 @@ export async function saveSettingsService(
                 }
             }
         }
+    }
+
+    // Strip advanced cart controls — reset to safe defaults
+    if (!hasFeature(plan, "advanced_cart_controls")) {
+        validatedData.bundlePriorityType = "index_based";
+        validatedData.hidePaymentButtons = false;
+        validatedData.maxBundlesPerOrder = 0;
+        validatedData.showSavingsBanner = false;
+        validatedData.allowDiscountStacking = false;
+    }
+
+    // Strip custom CSS
+    if (!hasFeature(plan, "custom_css")) {
+        validatedData.customCssClass = "";
+        validatedData.customCss = "";
     }
 
     const dbData = transformFormDataToSettings(validatedData, !!locale);

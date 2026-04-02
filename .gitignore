@@ -153,3 +153,5 @@ extension/extensions/**/*.js
 *.tmp
 *.bak
 *.old
+.claude-backup-*/
+CLAUDE.md.backup-*

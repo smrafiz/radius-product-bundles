@@ -192,6 +192,7 @@ export const LABELS_TAB: SettingsTabConfig = {
             title: "Shipping Labels",
             tooltip: "Text related to shipping displayed in the widget.",
             columns: 2,
+            proFeature: "bundle_behavior",
             fields: [
                 {
                     type: "text",
@@ -233,6 +234,7 @@ export const LABELS_TAB: SettingsTabConfig = {
             title: "Cart Limits",
             tooltip: "Text shown when cart bundle limits are reached.",
             columns: 1,
+            proFeature: "advanced_cart_controls",
             fields: [
                 {
                     type: "text",
@@ -461,6 +463,7 @@ export const LABELS_TAB: SettingsTabConfig = {
             id: "cart-banner",
             title: "Cart Page Savings Banner",
             tooltip: "Text displayed in the cart page savings banner.",
+            proFeature: "advanced_cart_controls",
             columns: 2,
             fields: [
                 {

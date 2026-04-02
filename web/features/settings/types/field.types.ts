@@ -26,6 +26,7 @@ interface BaseFieldConfig {
     placeholder?: string;
     validation?: FieldValidation;
     fullWidth?: boolean;
+    proFeature?: string;
 }
 
 /**
@@ -104,6 +105,7 @@ export interface SectionConfig {
     tooltip?: string;
     fields: FieldConfig[];
     columns?: 1 | 2 | 3;
+    proFeature?: string;
 }
 
 /**

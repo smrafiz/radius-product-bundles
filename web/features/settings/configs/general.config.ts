@@ -73,6 +73,7 @@ export const GENERAL_TAB: SettingsTabConfig = {
                         "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the bundle with the highest effective savings.",
                     defaultValue: "index_based",
                     fullWidth: true,
+                    proFeature: "advanced_cart_controls",
                     options: [
                         {
                             value: "index_based",
@@ -108,6 +109,7 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     details:
                         "Hides PayPal, Apple Pay, etc. on product and cart pages. Does not affect checkout page.",
                     defaultValue: false,
+                    proFeature: "advanced_cart_controls",
                 },
                 {
                     type: "switch",
@@ -126,6 +128,7 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     defaultValue: 0,
                     min: 0,
                     max: 10,
+                    proFeature: "advanced_cart_controls",
                     validation: {
                         min: {
                             value: 0,
@@ -143,7 +146,8 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     label: "Show savings banner in cart",
                     details:
                         "Display a banner on the cart page showing how much customers save with their bundles.",
-                    defaultValue: true,
+                    defaultValue: false,
+                    proFeature: "advanced_cart_controls",
                 },
                 {
                     type: "switch",
@@ -152,6 +156,7 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     details:
                         "Let bundle discounts combine with other store discounts (coupon codes, automatic discounts, shipping discounts).",
                     defaultValue: false,
+                    proFeature: "advanced_cart_controls",
                 },
             ],
         },

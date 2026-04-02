@@ -1,6 +1,6 @@
 "use client";
 
-import { triggerSaveBar } from "@/shared";
+import { ProBadge, triggerSaveBar, useCrossSellStore, usePlan } from "@/shared";
 import { useFormContext } from "react-hook-form";
 import { AppSettingsFormData, FieldConfig } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -22,6 +22,48 @@ export function DynamicField({
     parentPath?: string;
     tabId: string;
 }) {
+    const { canUse } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
+    const isLocked = config.proFeature && !canUse(config.proFeature as any);
+
+    if (isLocked) {
+        return (
+            <div
+                className="relative cursor-pointer"
+                onClick={() => openCrossSell(config.label)}
+            >
+                <div className="pointer-events-none opacity-50">
+                    <DynamicFieldInner
+                        config={config}
+                        parentPath={parentPath}
+                        tabId={tabId}
+                    />
+                </div>
+                <span className="absolute top-0 right-0 z-10">
+                    <ProBadge label={config.label} />
+                </span>
+            </div>
+        );
+    }
+
+    return (
+        <DynamicFieldInner
+            config={config}
+            parentPath={parentPath}
+            tabId={tabId}
+        />
+    );
+}
+
+function DynamicFieldInner({
+    config,
+    parentPath,
+    tabId,
+}: {
+    config: FieldConfig;
+    parentPath?: string;
+    tabId: string;
+}) {
     const {
         setValue,
         watch,
@@ -35,10 +77,8 @@ export function DynamicField({
     const t = useTranslations("Settings.Tabs");
 
     const tabKey = parentPath || tabId || "global";
-    // Construct key using name if possible, or fallback
     const fieldI18nKey = `${tabKey}.Fields.${config.name}`;
 
-    // Translated labels and details
     const label = t(`${fieldI18nKey}.label`, undefined, config.label);
     const details = config.details
         ? t(`${fieldI18nKey}.details`, undefined, config.details)

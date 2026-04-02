@@ -16,6 +16,7 @@ export const ADVANCED_TAB: SettingsTabConfig = {
             title: "Custom CSS",
             tooltip:
                 "Add custom CSS for advanced styling. Only use if you have CSS knowledge.",
+            proFeature: "custom_css",
             fields: [
                 {
                     type: "text",

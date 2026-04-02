@@ -229,7 +229,7 @@ export function buildGlobalSettingsMetafieldValue(
             hidePaymentButtons: appSettings?.hidePaymentButtons ?? false,
             enableStockValidation: appSettings?.enableStockValidation ?? true,
             maxBundlesPerOrder: appSettings?.maxBundlesPerOrder ?? 0,
-            showSavingsBanner: appSettings?.showSavingsBanner ?? true,
+            showSavingsBanner: appSettings?.showSavingsBanner ?? false,
             allowDiscountStacking: appSettings?.allowDiscountStacking ?? false,
             lazyLoadImages: appSettings?.lazyLoadImages ?? true,
             bundlePriorityType:
