@@ -1,11 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { SETTINGS_TABS } from "@/features/settings/configs/tabs.config";
 import { SettingsTabConfig, SettingsTabId } from "@/features/settings";
 import { AnimatedTabPanel } from "../settings-page/animated-tab-panel";
 import { DynamicSettingsTab } from "./dynamic-settings-tab";
 import { useTranslations } from "@/lib/i18n/provider";
+
+function useMediaQuery(query: string): boolean {
+    const [matches, setMatches] = useState(false);
+
+    useEffect(() => {
+        const media = window.matchMedia(query);
+        if (media.matches !== matches) {
+            setMatches(media.matches);
+        }
+        const listener = () => setMatches(media.matches);
+        window.addEventListener("resize", listener);
+        return () => window.removeEventListener("resize", listener);
+    }, [matches, query]);
+
+    return matches;
+}
 
 /**
  * Dynamic settings tabs component.
@@ -16,6 +32,8 @@ export function SettingsTab() {
     const [activeTab, setActiveTab] = useState<SettingsTabId>(
         SETTINGS_TABS[0].id,
     );
+    
+    const isMobile = useMediaQuery("(max-width: 768px)");
 
     const activeTabConfig = useMemo(
         () => SETTINGS_TABS.find((tab) => tab.id === activeTab),
@@ -24,7 +42,10 @@ export function SettingsTab() {
 
     return (
         <s-box>
-            <s-grid gridTemplateColumns="250px 1fr" gap="base">
+            <s-grid 
+                gridTemplateColumns={isMobile ? "1fr" : "250px 1fr"} 
+                gap="base"
+            >
                 {/* Left: Tab Navigation */}
                 <s-grid-item>
                     <div className="sticky top-6">
