@@ -567,6 +567,7 @@ export function renderBogoMinimalistProducts(
 
     const minLabels = structure.labels;
     let badgeHtml = "";
+
     if (savings > 0 && ctx.showSavingsBadge) {
         let badgeText = minLabels?.bogoBadgeText || "";
         if (!badgeText) {
@@ -582,12 +583,12 @@ export function renderBogoMinimalistProducts(
                 structure.discountType === "PERCENTAGE" &&
                 structure.discountValue > 0
             ) {
-                badgeText = `Save ${Math.round(structure.discountValue)}%`;
+                badgeText = `Buy ${buyQty} Get ${getQty} at ${Math.round(structure.discountValue)}% Off`;
             } else if (
                 structure.discountType === "FIXED_AMOUNT" &&
                 structure.discountValue > 0
             ) {
-                badgeText = `Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
+                badgeText = `Buy ${buyQty} Get ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
             }
         }
         if (badgeText) {
@@ -1038,7 +1039,7 @@ export function renderBogoChecklistProducts(
         labels?.checklistPricingLockedText ||
         "Select all items to see your price";
     const totalLabel = labels?.bogoTotalLabel || "Total";
-    const discountLabel = labels?.youSaveLabel || "You Save";
+    const discountLabel = labels?.bogoYouSaveLabel || "You Save";
     const youPayLabel = labels?.bogoYouPayLabel || "You Pay";
 
     const totalTriggers = triggers.length;
@@ -1329,17 +1330,17 @@ export function renderSplitDealProducts(
         structure.discountType === "PERCENTAGE" &&
         structure.discountValue === 100
     ) {
-        rewardLabel = `Get ${freeText}`;
+        rewardLabel = `${freeText}`;
     } else if (
         structure.discountType === "PERCENTAGE" &&
         structure.discountValue > 0
     ) {
-        rewardLabel = `Get at ${Math.round(structure.discountValue)}% Off`;
+        rewardLabel = `${Math.round(structure.discountValue)}% Off`;
     } else if (
         structure.discountType === "FIXED_AMOUNT" &&
         structure.discountValue > 0
     ) {
-        rewardLabel = `Get ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+        rewardLabel = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
     } else {
         rewardLabel = labels?.bogoRewardBadgeText || "Get";
     }
