@@ -109,7 +109,7 @@ export function TopBundlesTable() {
     const t = useTranslations("Analytics.TopBundles");
     const ta = useTranslations("Analytics.AllBundles");
     const { canUse } = usePlan();
-    const limit = canUse("analytics_full") ? 10 : 5;
+    const limit = canUse("analytics_full") ? 10 : 3;
     const { data: bundles, isLoading, error } = useTopBundles(limit);
     const { bundleData } = useAppNavigation();
 
