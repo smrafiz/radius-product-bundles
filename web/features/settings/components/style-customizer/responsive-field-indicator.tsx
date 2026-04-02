@@ -1,7 +1,8 @@
 "use client";
 
-import { ResponsiveFieldIndicatorProps } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
+import { useCrossSellStore, usePlan } from "@/shared";
+import { ResponsiveFieldIndicatorProps } from "@/features/settings";
 
 export function ResponsiveFieldIndicator({
     activeDevice,
@@ -14,9 +15,27 @@ export function ResponsiveFieldIndicator({
     }
 
     const t = useTranslations("Settings.Customizer");
+    const { canUse } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
+    const canResponsive = canUse("responsive_overrides");
 
     const deviceLabel =
         activeDevice.charAt(0).toUpperCase() + activeDevice.slice(1);
+
+    if (!canResponsive) {
+        return (
+            <button
+                type="button"
+                onClick={() => openCrossSell("Responsive Overrides")}
+                className="inline-flex items-center gap-0.5 opacity-30 hover:opacity-50 transition-opacity cursor-pointer bg-transparent border-0 p-0"
+                aria-label={`Responsive overrides (Pro)`}
+            >
+                <s-icon
+                    type={activeDevice === "tablet" ? "tablet" : "mobile"}
+                />
+            </button>
+        );
+    }
 
     if (isInherited) {
         return (

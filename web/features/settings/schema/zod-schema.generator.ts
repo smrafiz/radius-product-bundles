@@ -136,7 +136,7 @@ export function generateSettingsSchema() {
 
     // Add nested schemas
     for (const [parentPath, fields] of Object.entries(nestedSchemas)) {
-        schemaShape[parentPath] = z.object(fields).optional();
+        schemaShape[parentPath] = z.object(fields).optional().nullable();
     }
 
     // Add globalStyles

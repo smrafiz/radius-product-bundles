@@ -15,7 +15,6 @@ export function CustomizerHeader({
     availableTypes?: PreviewTemplateId[];
 }) {
     const { activeDevice, setActiveDevice } = useCustomizerStore();
-    const tone = activeDevice === "desktop" ? "info" : "auto";
 
     return (
         <div className="w-full border border-[#e3e3e3] rounded-xl overflow-hidden">
@@ -60,7 +59,6 @@ export function CustomizerHeader({
                             accessibility-label="Tablet preview"
                             onClick={() => setActiveDevice("tablet")}
                         >
-                            {" "}
                             <span
                                 className={
                                     activeDevice === "tablet"
@@ -83,7 +81,6 @@ export function CustomizerHeader({
                             accessibility-label="Mobile preview"
                             onClick={() => setActiveDevice("mobile")}
                         >
-                            {" "}
                             <span
                                 className={
                                     activeDevice === "mobile"

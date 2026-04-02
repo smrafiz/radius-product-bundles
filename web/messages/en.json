@@ -481,7 +481,7 @@
                 "rewardHeading": "Reward Discount",
                 "rewardTooltip": "This discount applies only to the reward product(s) the customer gets. Trigger products are always at full price.",
                 "rewardOnly": "Discount applies to reward products only",
-                "rewardPrice": "Set price for reward product",
+                "rewardPrice": "Custom price",
                 "rewardProductPrice": "Reward product price",
                 "bogoFreeHint": "To give reward items completely free, set the value to 100%.",
                 "behaviorHeading": "Bundle Behavior",

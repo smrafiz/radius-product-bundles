@@ -4,15 +4,15 @@ import {
     CustomizerStyles,
     DynamicCustomizerFieldProps,
     isFieldVisible,
+    ResponsiveFieldIndicator,
     StylePreset,
     useCustomizerField,
     useCustomizerStore,
 } from "@/features/settings";
-import { ResponsiveFieldIndicator } from "./responsive-field-indicator";
-import { RtpbRangeSlider } from "@/shared";
 import { useFormContext } from "react-hook-form";
-import { STYLE_PRESETS } from "@/features/settings/constants/defaults.constants";
 import { useTranslations } from "@/lib/i18n/provider";
+import { RtpbRangeSlider, useCrossSellStore, usePlan } from "@/shared";
+import { STYLE_PRESETS } from "@/features/settings/constants/defaults.constants";
 
 /**
  * Renders a single preset card.
@@ -81,7 +81,40 @@ function PresetCard({
  * - heading (section subheading)
  * - divider (visual separator)
  */
-export function DynamicCustomizerField({
+export function DynamicCustomizerField(props: DynamicCustomizerFieldProps) {
+    const isFormField = !["preset", "heading", "divider"].includes(
+        props.config.type,
+    );
+    const { activeDevice } = useCustomizerStore();
+    const { canUse } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
+
+    const isResponsiveLocked =
+        isFormField &&
+        (props.config as any).responsive === true &&
+        activeDevice !== "desktop" &&
+        !canUse("responsive_overrides");
+
+    const inner = <DynamicCustomizerFieldInner {...props} />;
+
+    if (!isResponsiveLocked) return inner;
+
+    return (
+        <div
+            className="relative cursor-pointer"
+            onClick={() => openCrossSell("Responsive Overrides")}
+        >
+            <div className="pointer-events-none opacity-40">{inner}</div>
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-md">
+                    <s-icon type="lock" tone="neutral" />
+                </span>
+            </div>
+        </div>
+    );
+}
+
+function DynamicCustomizerFieldInner({
     config,
     context,
     onFieldChangeAction,

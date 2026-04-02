@@ -20,8 +20,8 @@ import {
     findShopByDomain,
     upsertSettings,
 } from "@/features/settings/repositories";
+import { hasFeature, resolveShopPlan } from "@/shared/services/plan.service";
 import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 /**
  * Get app settings for a shop
@@ -100,6 +100,23 @@ export async function saveSettingsService(
 
         allLocaleLabels[locale] = sanitizedLabels;
         validatedData.labels = allLocaleLabels as any;
+    }
+
+    // Server-side enforcement: strip responsive overrides for plans without access
+    const plan = await resolveShopPlan(shop);
+    if (!hasFeature(plan, "responsive_overrides") && validatedData.globalStyles) {
+        const styles = validatedData.globalStyles as Record<string, any>;
+        delete styles.tablet;
+        delete styles.mobile;
+        if (styles.bundleTypeOverrides) {
+            for (const key of Object.keys(styles.bundleTypeOverrides)) {
+                const override = styles.bundleTypeOverrides[key];
+                if (override) {
+                    delete override.tablet;
+                    delete override.mobile;
+                }
+            }
+        }
     }
 
     const dbData = transformFormDataToSettings(validatedData, !!locale);
