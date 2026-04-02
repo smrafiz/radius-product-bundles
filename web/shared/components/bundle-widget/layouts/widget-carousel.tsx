@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSpacing } from "@/features/settings";
 import { WidgetLayoutProps, WidgetProductCard } from "@/shared";
 
@@ -13,16 +13,13 @@ export function WidgetCarousel({
 }: WidgetLayoutProps) {
     const carouselRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
+    const isTeleporting = useRef(false);
+    const scrollEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const gap = getSpacing(styles.spacing);
 
-    const handleScroll = () => {
-        const el = carouselRef.current;
-        if (!el) return;
-        const maxScroll = el.scrollWidth - el.clientWidth;
-        if (maxScroll <= 0) return;
-        const ratio = el.scrollLeft / maxScroll;
-        setActiveIndex(Math.round(ratio * (products.length - 1)));
-    };
+    const slidesPerView = styles.slidesPerView || 3;
+    const cloneCount = slidesPerView;
+    const slideWidth = `calc((100% - ${slidesPerView - 1} * ${gap}) / ${slidesPerView})`;
 
     const showArrows =
         styles.carouselNavigation === "arrows" ||
@@ -30,6 +27,71 @@ export function WidgetCarousel({
     const showDots =
         styles.carouselNavigation === "dots" ||
         styles.carouselNavigation === "both";
+
+    // Scroll to real first item on mount (skip pre-clones)
+    useEffect(() => {
+        const el = carouselRef.current;
+        if (!el) return;
+        const child = el.children[cloneCount] as HTMLElement;
+        if (child) el.scrollLeft = child.offsetLeft;
+    }, [cloneCount]);
+
+    const getClosestIndex = (el: HTMLDivElement) => {
+        const children = Array.from(el.children) as HTMLElement[];
+        let closest = 0;
+        let minDist = Infinity;
+        children.forEach((child, i) => {
+            const dist = Math.abs(child.offsetLeft - el.scrollLeft);
+            if (dist < minDist) {
+                minDist = dist;
+                closest = i;
+            }
+        });
+        return closest;
+    };
+
+    const handleScroll = () => {
+        if (isTeleporting.current) return;
+        const el = carouselRef.current;
+        if (!el) return;
+
+        const closest = getClosestIndex(el);
+        const realIndex = (closest - cloneCount + products.length) % products.length;
+        setActiveIndex(realIndex);
+
+        // Debounce teleport to after smooth scroll settles
+        if (scrollEndTimer.current) clearTimeout(scrollEndTimer.current);
+        scrollEndTimer.current = setTimeout(() => {
+            const children = Array.from(el.children) as HTMLElement[];
+            let target: HTMLElement | null = null;
+            if (closest < cloneCount) {
+                target = children[closest + products.length] ?? null;
+            } else if (closest >= cloneCount + products.length) {
+                target = children[closest - products.length] ?? null;
+            }
+            if (target) {
+                isTeleporting.current = true;
+                el.scrollLeft = target.offsetLeft;
+                requestAnimationFrame(() => {
+                    isTeleporting.current = false;
+                });
+            }
+        }, 150);
+    };
+
+    const scrollToIndex = (realIndex: number) => {
+        const el = carouselRef.current;
+        if (!el) return;
+        const child = el.children[realIndex + cloneCount] as HTMLElement;
+        if (!child) return;
+        el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
+    };
+
+    const scroll = (direction: "left" | "right") => {
+        const next = direction === "left" ? activeIndex - 1 : activeIndex + 1;
+        const looped = (next + products.length) % products.length;
+        scrollToIndex(looped);
+    };
 
     if (!products.length && showEmptyState) {
         return (
@@ -46,17 +108,8 @@ export function WidgetCarousel({
         );
     }
 
-    const scroll = (direction: "left" | "right") => {
-        if (!carouselRef.current) return;
-        const width = carouselRef.current.clientWidth;
-        carouselRef.current.scrollBy({
-            left: direction === "left" ? -width : width,
-            behavior: "smooth",
-        });
-    };
-
-    const slidesPerView = styles.slidesPerView || 3;
-    const slideWidth = `calc((100% - ${slidesPerView - 1} * ${gap}) / ${slidesPerView})`;
+    const preClones = products.slice(-cloneCount);
+    const postClones = products.slice(0, cloneCount);
 
     return (
         <div
@@ -123,8 +176,30 @@ export function WidgetCarousel({
                     scrollbarWidth: "none",
                 }}
             >
+                {preClones.map((product, i) => (
+                    <div key={`pre-${i}`} style={{ flex: `0 0 ${slideWidth}` }}>
+                        <WidgetProductCard
+                            product={product}
+                            styles={styles}
+                            displayOptions={displayOptions}
+                            labels={labels}
+                            variant="vertical"
+                        />
+                    </div>
+                ))}
                 {products.map((product) => (
                     <div key={product.id} style={{ flex: `0 0 ${slideWidth}` }}>
+                        <WidgetProductCard
+                            product={product}
+                            styles={styles}
+                            displayOptions={displayOptions}
+                            labels={labels}
+                            variant="vertical"
+                        />
+                    </div>
+                ))}
+                {postClones.map((product, i) => (
+                    <div key={`post-${i}`} style={{ flex: `0 0 ${slideWidth}` }}>
                         <WidgetProductCard
                             product={product}
                             styles={styles}
@@ -148,12 +223,16 @@ export function WidgetCarousel({
                     {products.map((product, i) => (
                         <div
                             key={product.id}
+                            onClick={() => scrollToIndex(i)}
                             style={{
                                 width: "8px",
                                 height: "8px",
                                 borderRadius: "50%",
+                                cursor: "pointer",
                                 backgroundColor:
-                                    i === activeIndex ? styles.primaryColor : "#d1d5db",
+                                    i === activeIndex
+                                        ? styles.primaryColor
+                                        : "#d1d5db",
                             }}
                         />
                     ))}
