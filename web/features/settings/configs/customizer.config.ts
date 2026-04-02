@@ -415,7 +415,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 {
                     type: "buttonGroup",
                     name: "breakpointPreset",
-                    label: "Breakpoint preset",
+                    label: "Breakpoints",
                     details:
                         "Standard (1024/768), Compact (960/640), Wide (1200/768)",
                     options: [
@@ -428,9 +428,10 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 {
                     type: "switch",
                     name: "customBreakpoints",
-                    label: "Use custom values",
+                    label: "Custom breakpoint",
                     details: "Override preset with exact pixel values",
                     defaultValue: false,
+                    proFeature: "responsive_overrides",
                 },
                 {
                     type: "range",

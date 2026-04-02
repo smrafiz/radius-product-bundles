@@ -423,6 +423,8 @@ interface BaseCustomizerFieldConfig {
     bundleTypes?: BundleType[];
     /** Whether this field supports per-device overrides */
     responsive?: boolean;
+    /** Lock this field behind a plan feature */
+    proFeature?: string;
 }
 
 /**

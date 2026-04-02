@@ -89,20 +89,29 @@ export function DynamicCustomizerField(props: DynamicCustomizerFieldProps) {
     const { canUse } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
 
+    const proFeature = (props.config as any).proFeature as string | undefined;
     const isResponsiveLocked =
         isFormField &&
         (props.config as any).responsive === true &&
         activeDevice !== "desktop" &&
         !canUse("responsive_overrides");
+    const isProLocked =
+        isFormField &&
+        proFeature &&
+        !canUse(proFeature as any);
 
     const inner = <DynamicCustomizerFieldInner {...props} />;
+    const isLocked = isResponsiveLocked || isProLocked;
+    const lockLabel = isProLocked
+        ? ((props.config as any).label ?? proFeature)
+        : "Responsive Overrides";
 
-    if (!isResponsiveLocked) return inner;
+    if (!isLocked) return inner;
 
     return (
         <div
             className="relative cursor-pointer"
-            onClick={() => openCrossSell("Responsive Overrides")}
+            onClick={() => openCrossSell(lockLabel)}
         >
             <div className="pointer-events-none opacity-40">{inner}</div>
             <div className="absolute inset-0 flex items-center justify-center z-10">
@@ -121,8 +130,21 @@ function DynamicCustomizerFieldInner({
     resetKey = 0,
 }: DynamicCustomizerFieldProps) {
     const t = useTranslations("Settings.Customizer");
+    const tc = useTranslations("Settings.Customizer.Config");
     // For non-form fields, we don't need the hook
     const isFormField = !["preset", "heading", "divider"].includes(config.type);
+
+    const fieldName = (config as any).name as string | undefined;
+    const _rawLabel = (config as any).label ?? "";
+    const _rawDetails = (config as any).details ?? "";
+    const label = fieldName
+        ? tc(`field_${fieldName}_label`, undefined, _rawLabel)
+        : _rawLabel;
+    const details = _rawDetails
+        ? (fieldName
+            ? tc(`field_${fieldName}_details`, undefined, _rawDetails)
+            : _rawDetails)
+        : undefined;
 
     const fieldHook = isFormField
         ? useCustomizerField(config as any, onFieldChangeAction)
@@ -203,11 +225,11 @@ function DynamicCustomizerFieldInner({
         case "preset":
             return (
                 <s-stack gap="small-200">
-                    <s-heading>{config.label}</s-heading>
-                    {config.details && (
+                    <s-heading>{label}</s-heading>
+                    {details && (
                         <s-text tone="neutral">
                             <span className="text-[0.75rem] text-[#616161]">
-                                {config.details}
+                                {details}
                             </span>
                         </s-text>
                     )}
@@ -259,11 +281,11 @@ function DynamicCustomizerFieldInner({
         case "heading":
             return (
                 <div className="bg-[#f1f1f1] border-l-4 border-current font-semibold p-2.5">
-                    {config.label}
-                    {config.details && (
+                    {label}
+                    {details && (
                         <s-text tone="neutral">
                             <span className="text-[0.75rem] text-[#616161]">
-                                {config.details}
+                                {details}
                             </span>
                         </s-text>
                     )}
@@ -276,10 +298,10 @@ function DynamicCustomizerFieldInner({
         case "divider":
             return (
                 <div className="py-2">
-                    {config.label ? (
+                    {label ? (
                         <div className="flex items-center gap-2">
                             <div className="flex-1 h-px bg-[#e5e7eb]" />
-                            <s-text tone="neutral">{config.label}</s-text>
+                            <s-text tone="neutral">{label}</s-text>
                             <div className="flex-1 h-px bg-[#e5e7eb]" />
                         </div>
                     ) : (
@@ -296,8 +318,8 @@ function DynamicCustomizerFieldInner({
                 <s-stack gap="small-200">
                     <s-color-field
                         key={fieldKey}
-                        label={config.label}
-                        details={config.details}
+                        label={label}
+                        details={details}
                         name={config.name}
                         alpha
                         placeholder={
@@ -329,7 +351,7 @@ function DynamicCustomizerFieldInner({
                             justifyContent="center"
                             gap="small-200"
                         >
-                            <s-text>{config.label}</s-text>
+                            <s-text>{label}</s-text>
                             <ResponsiveFieldIndicator
                                 activeDevice={activeDevice}
                                 isInherited={isInherited}
@@ -340,8 +362,8 @@ function DynamicCustomizerFieldInner({
                     )}
                     <s-number-field
                         key={fieldKey}
-                        label={isResponsive ? undefined : config.label}
-                        details={config.details}
+                        label={isResponsive ? undefined : label}
+                        details={details}
                         name={config.name}
                         placeholder="0"
                         step={config.step ?? 1}
@@ -378,7 +400,7 @@ function DynamicCustomizerFieldInner({
                                 justifyContent="center"
                                 gap="small-200"
                             >
-                                <s-text>{config.label}</s-text>
+                                <s-text>{label}</s-text>
                                 {isResponsive && (
                                     <ResponsiveFieldIndicator
                                         activeDevice={activeDevice}
@@ -407,10 +429,10 @@ function DynamicCustomizerFieldInner({
                                 action={(val) => handleChange(val as any)}
                             />
                         </div>
-                        {config.details && (
+                        {details && (
                             <s-text tone="neutral">
                                 <span className="text-[0.75rem] text-[#616161]">
-                                    {config.details}
+                                    {details}
                                 </span>
                             </s-text>
                         )}
@@ -442,8 +464,8 @@ function DynamicCustomizerFieldInner({
                                 gap="small-400"
                                 alignItems="center"
                             >
-                                <s-text>{config.label}</s-text>
-                                {config.details && (
+                                <s-text>{label}</s-text>
+                                {details && (
                                     <>
                                         <s-icon
                                             tone="neutral"
@@ -453,7 +475,7 @@ function DynamicCustomizerFieldInner({
                                         <s-tooltip
                                             id={`${config.name}-group-tooltip`}
                                         >
-                                            <s-text>{config.details}</s-text>
+                                            <s-text>{details}</s-text>
                                         </s-tooltip>
                                     </>
                                 )}
@@ -489,7 +511,7 @@ function DynamicCustomizerFieldInner({
                                                     : "opacity-50"
                                             }
                                         >
-                                            {option.label}
+                                            {fieldName ? tc(`field_${fieldName}_option_${option.value}`, undefined, option.label) : option.label}
                                         </span>
                                     </s-button>
                                 ))}
@@ -513,7 +535,7 @@ function DynamicCustomizerFieldInner({
                             justifyContent="center"
                             gap="small-200"
                         >
-                            <s-text>{config.label}</s-text>
+                            <s-text>{label}</s-text>
                             <ResponsiveFieldIndicator
                                 activeDevice={activeDevice}
                                 isInherited={isInherited}
@@ -524,8 +546,8 @@ function DynamicCustomizerFieldInner({
                     )}
                     <s-select
                         key={fieldKey}
-                        label={isResponsive ? undefined : config.label}
-                        details={config.details}
+                        label={isResponsive ? undefined : label}
+                        details={details}
                         name={config.name}
                         value={String(value ?? "")}
                         error={error || undefined}
@@ -543,7 +565,7 @@ function DynamicCustomizerFieldInner({
                                 key={option.value}
                                 value={String(option.value)}
                             >
-                                {option.label}
+                                {fieldName ? tc(`field_${fieldName}_option_${option.value}`, undefined, option.label) : option.label}
                             </s-option>
                         ))}
                     </s-select>
@@ -568,7 +590,7 @@ function DynamicCustomizerFieldInner({
                             justifyContent="center"
                             gap="small-200"
                         >
-                            <s-text>{config.label}</s-text>
+                            <s-text>{label}</s-text>
                             {isResponsive && (
                                 <ResponsiveFieldIndicator
                                     activeDevice={activeDevice}
@@ -580,7 +602,7 @@ function DynamicCustomizerFieldInner({
                         </s-stack>
                         <s-switch
                             key={fieldKey}
-                            label={config.label}
+                            label={label}
                             name={config.name}
                             labelAccessibilityVisibility="exclusive"
                             checked={Boolean(value)}
@@ -591,9 +613,9 @@ function DynamicCustomizerFieldInner({
                             }}
                         />
                     </s-stack>
-                    {config.details && (
+                    {details && (
                         <span className="text-[0.75rem] text-[#616161] -mt-2">
-                            {config.details}
+                            {details}
                         </span>
                     )}
                 </s-stack>
@@ -607,8 +629,8 @@ function DynamicCustomizerFieldInner({
                 <s-stack gap="small-200">
                     <s-text-field
                         key={fieldKey}
-                        label={config.label}
-                        details={config.details}
+                        label={label}
+                        details={details}
                         name={config.name}
                         placeholder={config.placeholder || ""}
                         value={String(value ?? "")}

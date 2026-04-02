@@ -11,6 +11,7 @@ import {
     isSectionVisible,
 } from "@/features/settings";
 import { DynamicCustomizerField } from "./dynamic-customizer-field";
+import { useTranslations } from "@/lib/i18n/provider";
 
 interface DynamicCustomizerSectionProps {
     config: CustomizerSectionConfig;
@@ -32,7 +33,11 @@ export function DynamicCustomizerSection({
     onFieldChangeAction,
     resetKey = 0,
 }: DynamicCustomizerSectionProps) {
-    const { title, description, fields, columns = 1 } = config;
+    const tc = useTranslations("Settings.Customizer.Config");
+    const { title: rawTitle, description, fields, columns = 1 } = config;
+    const title = config.id
+        ? tc(`section_${config.id}_title`, undefined, rawTitle)
+        : rawTitle;
     const {
         formState: { errors },
     } = useFormContext<CustomizerStyles>();
