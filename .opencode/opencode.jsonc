@@ -1,0 +1,25 @@
+{
+    "skills": {
+        "sources": [
+            {
+                "path": "./skills",
+                "recursive": true,
+            },
+        ],
+        "enable": [
+            "orchestrator",
+            "shopify-integration-engineer",
+            "storefront-engineer",
+            "graphql-engineer",
+            "rust-functions-engineer",
+            "security-engineer",
+            "frontend-engineer",
+            "backend-engineer",
+            "qa-engineer",
+            "debugger",
+            "code-reviewer",
+            "ai-engineer",
+            "accessibility-engineer",
+        ],
+    },
+}
