@@ -1606,21 +1606,22 @@
         "dismissCard": "Dismiss card",
         "pleaseWait": "Please wait...",
         "plans": {
-            "0": {
-                "title": "Development Only",
-                "description": "This is a great plan for stores that are just starting out",
-                "button": "Currently subscribed"
+            "free": {
+                "title": "Free",
+                "description": "Perfect for testing and small stores",
+                "button": "Current Plan",
+                "currentPlan": "Current Plan"
             },
-            "1": {
-                "title": "Starter Plan",
-                "featured": "Most Popular",
-                "description": "For stores that are growing and need a reliable solution to scale with them",
-                "button": "Select this plan"
+            "starter": {
+                "title": "Starter",
+                "featured": "Best Value",
+                "description": "For growing stores that need more power",
+                "button": "Select Starter"
             },
-            "2": {
-                "title": "Premium",
-                "description": "The best of the best, for stores that have the highest order processing needs",
-                "button": "Select this plan"
+            "premium": {
+                "title": "Pro",
+                "description": "For high-volume stores with advanced needs",
+                "button": "Select Pro"
             },
             "features": {
                 "orders": "Process up to 1,000 orders/mo",

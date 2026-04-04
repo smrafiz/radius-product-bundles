@@ -12,16 +12,19 @@ export function PricingCardItem({
     featuredText,
     primaryButton,
     frequency,
+    onSubscribe,
 }: PricingCardItemInfo) {
     const t = useTranslations("Pricing");
     const [loading, setLoading] = useState(false);
 
     const handleClick = async () => {
-        setLoading(true);
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-        } finally {
-            setLoading(false);
+        if (onSubscribe) {
+            setLoading(true);
+            try {
+                await onSubscribe();
+            } finally {
+                setLoading(false);
+            }
         }
     };
 

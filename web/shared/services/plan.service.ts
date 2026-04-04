@@ -8,7 +8,7 @@ import type {
     PlanLimits,
     QuotaResult,
 } from "@/shared/types/plan";
-import { getShopPlan } from "@/shared/repositories";
+import { getShopPlan, getShopSubscription } from "@/shared/repositories";
 import { countBundlesByShop } from "@/features/bundles/repositories";
 
 export function getPlanConfig(planId: PlanId): PlanConfig {
@@ -21,13 +21,17 @@ export function getPlanConfig(planId: PlanId): PlanConfig {
 }
 
 export async function resolveShopPlan(domain: string): Promise<PlanConfig> {
+    const subscription = await getShopSubscription(domain);
+
+    if (subscription?.subscriptionStatus === "ACTIVE") {
+        return getPlanConfig("paid" as PlanId);
+    }
+
     const planId = (await getShopPlan(domain)) ?? DEFAULT_PLAN_ID;
     return getPlanConfig(planId);
 }
 
-export async function getEffectiveLimits(
-    domain: string,
-): Promise<PlanLimits> {
+export async function getEffectiveLimits(domain: string): Promise<PlanLimits> {
     const plan = await resolveShopPlan(domain);
     return plan.limits;
 }
@@ -42,7 +46,10 @@ export function getFeatureGateMode(
     return featureConfig?.gateMode ?? "hidden";
 }
 
-export function hasFeature(planConfig: PlanConfig, feature: FeatureId): boolean {
+export function hasFeature(
+    planConfig: PlanConfig,
+    feature: FeatureId,
+): boolean {
     return getFeatureGateMode(planConfig, feature) === "enabled";
 }
 
@@ -101,9 +108,7 @@ export async function checkBundleStatusAllowed(
     };
 }
 
-export async function checkBundleQuota(
-    domain: string,
-): Promise<QuotaResult> {
+export async function checkBundleQuota(domain: string): Promise<QuotaResult> {
     const limits = await getEffectiveLimits(domain);
     const current = await countBundlesByShop(domain);
 

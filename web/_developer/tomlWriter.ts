@@ -51,6 +51,7 @@ try {
                     "shop/update",
                     "orders/create",
                     "products/delete",
+                    "app_subscriptions/update",
                 ],
                 uri: "/api/webhooks",
             },

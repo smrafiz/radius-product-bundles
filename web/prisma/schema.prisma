@@ -398,6 +398,15 @@ model Shop {
     status             ShopStatus @default(ACTIVE)
     plan               String?
     trialEndsAt        DateTime?
+    
+    // Shopify Subscription (Billing API)
+    subscriptionId     String?    @unique // Shopify subscription ID (gid://shopify/AppSubscription/xxx)
+    subscriptionStatus String?   // ACTIVE, CANCELLED, FROZEN, PAUSED, DECLINED, EXPIRED
+    subscriptionPlan  String?    // Plan handle from Shopify
+    subscriptionCreatedAt DateTime?
+    subscriptionUpdatedAt DateTime?
+    billingOn         DateTime?  // Next billing date
+    
     metafieldSetupDone Boolean    @default(false)
     discountSetupDone  Boolean    @default(false)
 

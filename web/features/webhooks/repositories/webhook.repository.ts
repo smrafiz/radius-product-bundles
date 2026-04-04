@@ -146,7 +146,6 @@ export async function markSetupComplete(shop: string): Promise<void> {
                 lastSetupCheck: new Date(),
             },
         });
-
     } catch (error) {
         console.error(
             "[Webhook Repository] Error marking setup complete:",
@@ -173,7 +172,6 @@ export async function markWebhooksRegistered(shop: string): Promise<void> {
                 lastSetupCheck: new Date(),
             },
         });
-
     } catch (error) {
         console.error("[Webhook Repository] Error marking webhooks:", error);
         throw error;
@@ -207,7 +205,6 @@ export async function resetSetupStatus(shop: string): Promise<void> {
                 lastSetupCheck: null,
             },
         });
-
     } catch (error) {
         console.error("[Webhook Repository] Error resetting status:", error);
         throw error;
@@ -304,9 +301,33 @@ export async function deleteShopData(shop: string): Promise<void> {
                 await tx.shop.deleteMany({ where: { id: shopId } });
             }
         });
-
     } catch (error) {
         console.error("[Webhook Repository] Error deleting shop data:", error);
+        throw error;
+    }
+}
+
+export async function updateShopSubscription(
+    shop: string,
+    subscriptionId: string,
+    status: string,
+    planName: string,
+): Promise<void> {
+    try {
+        await prisma.shop.update({
+            where: { domain: shop },
+            data: {
+                subscriptionId,
+                subscriptionStatus: status,
+                subscriptionPlan: planName,
+                subscriptionUpdatedAt: new Date(),
+            },
+        });
+    } catch (error) {
+        console.error(
+            "[Webhook Repository] Error updating subscription:",
+            error,
+        );
         throw error;
     }
 }

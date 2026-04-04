@@ -111,3 +111,18 @@ export async function getShopPlan(domain: string) {
     });
     return shop?.plan ?? null;
 }
+
+export async function getShopSubscription(domain: string) {
+    const shop = await prisma.shop.findUnique({
+        where: { domain },
+        select: {
+            subscriptionId: true,
+            subscriptionStatus: true,
+            subscriptionPlan: true,
+            subscriptionCreatedAt: true,
+            subscriptionUpdatedAt: true,
+            billingOn: true,
+        },
+    });
+    return shop as any;
+}

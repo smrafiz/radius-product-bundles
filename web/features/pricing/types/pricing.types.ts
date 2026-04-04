@@ -14,9 +14,11 @@ export interface PricingCardItemInfo {
         props: {
             variant: "primary" | "secondary";
             external?: boolean;
+            disabled?: boolean;
         };
     };
     featuredText?: string;
+    onSubscribe?: () => void;
 }
 
 /**

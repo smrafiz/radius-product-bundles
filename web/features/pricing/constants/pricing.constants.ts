@@ -1,106 +1,134 @@
 import { PricingCardItemInfo } from "@/features/pricing";
-import { PricingFaqItemInfo } from "@/features/pricing";
 
-/*
- * Pricing Table Card Data
- */
+export const SUBSCRIPTION_PLANS = {
+    FREE: "free",
+    STARTER: "starter",
+    PREMIUM: "premium",
+} as const;
+
+export type SubscriptionPlanType =
+    (typeof SUBSCRIPTION_PLANS)[keyof typeof SUBSCRIPTION_PLANS];
+
+export const PLAN_PRICING: Record<
+    SubscriptionPlanType,
+    {
+        price: number;
+        currencyCode: string;
+        interval: "EVERY_30_DAYS" | "ANNUAL";
+        trialDays?: number;
+    }
+> = {
+    [SUBSCRIPTION_PLANS.FREE]: {
+        price: 0,
+        currencyCode: "USD",
+        interval: "EVERY_30_DAYS",
+    },
+    [SUBSCRIPTION_PLANS.STARTER]: {
+        price: 9.99,
+        currencyCode: "USD",
+        interval: "EVERY_30_DAYS",
+        trialDays: 7,
+    },
+    [SUBSCRIPTION_PLANS.PREMIUM]: {
+        price: 19.99,
+        currencyCode: "USD",
+        interval: "EVERY_30_DAYS",
+        trialDays: 7,
+    },
+};
+
 export const PRICING_CARD: PricingCardItemInfo[] = [
     {
-        id: "0",
-        title: "Development Only",
-        description:
-            "This is a great plan for stores that are just starting out",
+        id: SUBSCRIPTION_PLANS.FREE,
+        title: "Free",
+        description: "Perfect for testing and small stores",
         features: [
-            "Process up to 1,000 orders/mo",
-            "Amazing feature",
-            "Another really cool feature",
-            "24/7 Customer Support",
+            "Up to 100 orders/month",
+            "5 active bundles",
+            "Basic analytics",
+            "Email support",
         ],
         price: "$0",
         frequency: "month",
         primaryButton: {
-            content: "Currently subscribed",
+            content: "Current Plan",
             loading: false,
             props: {
                 variant: "secondary",
-                external: true,
+                disabled: true,
             },
         },
     },
     {
-        id: "1",
-        title: "Starter Plan",
-        featuredText: "Most Popular",
-        description:
-            "For stores that are growing and need a reliable solution to scale with them",
+        id: SUBSCRIPTION_PLANS.STARTER,
+        title: "Starter",
+        featuredText: "Best Value",
+        description: "For growing stores that need more power",
         features: [
-            "Process up to 1,000 orders/mo",
-            "Amazing feature",
-            "Another really cool feature",
-            "24/7 Customer Support",
+            "Up to 1,000 orders/month",
+            "25 active bundles",
+            "Advanced analytics",
+            "Priority support",
+            "Custom bundle templates",
         ],
-        price: "$49",
+        price: "$9.99",
         frequency: "month",
         primaryButton: {
-            content: "Select this plan",
+            content: "Select Starter",
             loading: false,
             props: {
                 variant: "primary",
-                external: true,
             },
         },
     },
     {
-        id: "2",
-        title: "Premium",
-        description:
-            "The best of the best, for stores that have the highest order processing needs",
+        id: SUBSCRIPTION_PLANS.PREMIUM,
+        title: "Pro",
+        description: "For high-volume stores with advanced needs",
         features: [
-            "Process up to 1,000 orders/mo",
-            "Amazing feature",
-            "Another really cool feature",
-            "24/7 Customer Support",
+            "Unlimited orders",
+            "Unlimited bundles",
+            "Advanced analytics",
+            "24/7 priority support",
+            "Custom bundle templates",
+            "API access",
+            "White-label options",
         ],
-        price: "$99",
-        frequency: "year",
+        price: "$19.99",
+        frequency: "month",
         primaryButton: {
-            content: "Select this plan",
+            content: "Select Pro",
             loading: false,
             props: {
                 variant: "primary",
-                external: true,
             },
         },
     },
 ];
 
-/*
- * Pricing Faq Card Data
- */
-
-export const PRICING_FAQ_ITEM: PricingFaqItemInfo[] = [
+export const PRICING_FAQ_ITEM = [
     {
         id: "0",
-        title: "What’s the best plan for high-priced bundles?",
+        title: "What's included in the Free plan?",
         description:
-            "For businesses with high Average Order Value (AOV), tailored payment is key. We're here to help you grow with customized plans designed to fit your unique needs. Contact us to discuss how we can best support your business.",
+            "The Free plan includes basic bundle creation, up to 100 orders/month, 5 active bundles, and email support. Perfect for testing the app before committing.",
     },
     {
         id: "1",
-        title: "Can I use the app for free?",
+        title: "Can I upgrade or downgrade anytime?",
         description:
-            "You can test the app for free within the 7-day trial on all plans. Moreover, development stores and test stores can access the app for free without approving any charges.",
+            "Yes! You can upgrade or downgrade your plan at any time. Upgrades take effect immediately, and downgrades apply at the next billing cycle.",
     },
     {
         id: "2",
-        title: "Does the subscription fee automatically adjust based on my bundle sales?",
+        title: "Is there a free trial?",
         description:
-            "The subscription fee remains constant unless you explicitly approve changes. If you anticipate a decrease in sales, you can downgrade your plan accordingly. Conversely, if your sales exceed your plan's limit, you'll receive an email notification and can approve the upgrade.",
+            "All paid plans come with a 7-day free trial. No credit card required to start.",
     },
     {
         id: "3",
-        title: "What if I want to change or cancel my plan?",
+        title: "What happens if I exceed my plan limits?",
         description:
-            "You can thoroughly test the app during the 7-day trial and cancel without any charges. After that, downgrades are prorated, but cancellations are not. Contact support to explore refund options.",
+            "We'll notify you when you're approaching your limits. You can upgrade your plan anytime, or continue on your current plan with reduced functionality.",
     },
 ];
