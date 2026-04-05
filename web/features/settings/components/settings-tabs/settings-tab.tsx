@@ -3,8 +3,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { SETTINGS_TABS } from "@/features/settings/configs/tabs.config";
 import { SettingsTabConfig, SettingsTabId } from "@/features/settings";
-import { AnimatedTabPanel } from "../settings-page/animated-tab-panel";
-import { DynamicSettingsTab } from "./dynamic-settings-tab";
+import { AnimatedTabPanel } from "@/features/settings/components/settings-page/animated-tab-panel";
+import { DynamicSettingsTab } from "@/features/settings/components/settings-tabs/dynamic-settings-tab";
 import { useTranslations } from "@/lib/i18n/provider";
 
 function useMediaQuery(query: string): boolean {
