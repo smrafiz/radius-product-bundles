@@ -1,28 +1,22 @@
 "use client";
 
-import { useBillingStatus } from "@/features/pricing";
 import { useTranslations } from "@/lib/i18n/provider";
-import { usePlan, QuotaBar, ROUTES, useAppNavigation, SkeletonLines } from "@/shared";
+import { QuotaBar, SkeletonLines } from "@/shared";
+import { usePlanStatusCard } from "@/features/pricing/hooks/use-plan-status-card";
 
 export function PlanStatusCard() {
     const t = useTranslations("Pricing.PlanStatus");
-    const { plan } = usePlan();
-    const { billingData, isLoading, trialDaysRemaining } = useBillingStatus();
-    const { goTo } = useAppNavigation();
-
-    const isPro = plan.id === "PRO";
-    const sub = billingData?.subscription;
-    const daysLeft = trialDaysRemaining();
-    const isInTrial = typeof daysLeft === "number" && daysLeft > 0;
-
-    const formatDate = (iso: string | null | undefined): string => {
-        if (!iso) return "—";
-        return new Date(iso).toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    };
+    const {
+        plan,
+        isPro,
+        sub,
+        daysLeft,
+        isInTrial,
+        isLoading,
+        formatDate,
+        handleUpgrade,
+        handleManage,
+    } = usePlanStatusCard();
 
     if (isLoading) {
         return (
@@ -75,11 +69,11 @@ export function PlanStatusCard() {
                 {/* Right: CTA */}
                 <div className="shrink-0">
                     {!isPro ? (
-                        <s-button variant="primary" onClick={goTo(ROUTES.PRICING)}>
+                        <s-button variant="primary" onClick={handleUpgrade}>
                             {t("upgradeToPro")}
                         </s-button>
                     ) : (
-                        <s-button variant="secondary" onClick={goTo(ROUTES.PRICING)}>
+                        <s-button variant="secondary" onClick={handleManage}>
                             {t("manageSubscription")}
                         </s-button>
                     )}

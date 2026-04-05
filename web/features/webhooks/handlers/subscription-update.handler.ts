@@ -1,6 +1,4 @@
-import { upsertShop } from "@/shared/repositories/shop.queries";
-import { ShopifySubscriptionStatus } from "@/prisma/generated/client";
-import { updateShopSubscription } from "@/features/webhooks/repositories/webhook.repository";
+import { handleSubscriptionWebhookService } from "@/features/pricing/services/subscription.service";
 
 export async function handleAppSubscriptionUpdate(
     shop: string,
@@ -22,37 +20,18 @@ export async function handleAppSubscriptionUpdate(
     const sub =
         (data.app_subscription as Record<string, unknown> | undefined) ?? data;
 
+    const subscriptionId = String(sub.admin_graphql_api_id ?? sub.id ?? "");
+    const rawStatus = String(sub.status || "").toUpperCase();
+    const planName = String(sub.name || "");
+
     console.log(
         `[Subscription] Processing APP_SUBSCRIPTIONS_UPDATE for ${shop}:`,
-        sub.admin_graphql_api_id ?? sub.id,
-        sub.status,
+        subscriptionId,
+        rawStatus,
     );
 
     try {
-        const subscriptionId = String(
-            sub.admin_graphql_api_id ?? sub.id ?? "",
-        );
-        const rawStatus = String(sub.status || "").toUpperCase();
-        const planName = String(sub.name || "");
-
-        await updateShopSubscription(shop, subscriptionId, rawStatus, planName);
-
-        const isActive = rawStatus === ShopifySubscriptionStatus.ACTIVE;
-        const isTerminated =
-            rawStatus === ShopifySubscriptionStatus.CANCELLED ||
-            rawStatus === ShopifySubscriptionStatus.EXPIRED ||
-            rawStatus === ShopifySubscriptionStatus.DECLINED;
-
-        if (isActive) {
-            await upsertShop(shop, { plan: "PRO" });
-        } else if (isTerminated) {
-            await upsertShop(shop, { plan: "FREE" });
-            if (rawStatus === ShopifySubscriptionStatus.EXPIRED) {
-                console.warn(
-                    `[Subscription] Trial/subscription expired for ${shop} — downgraded to FREE`,
-                );
-            }
-        }
+        await handleSubscriptionWebhookService(shop, subscriptionId, rawStatus, planName);
 
         console.log(
             `[Subscription] Updated for ${shop}: ${subscriptionId} -> ${rawStatus} (${planName})`,

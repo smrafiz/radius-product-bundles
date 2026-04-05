@@ -1,26 +1,10 @@
-import {
-    GetActiveSubscriptionDocument,
-    GetActiveSubscriptionQuery,
-} from "@/lib/graphql/generated/graphql";
 import { NextRequest, NextResponse } from "next/server";
 import { getShop } from "@/shared/repositories/shop.queries";
-import { executeGraphQLQuery } from "@/lib/graphql/client";
 import {
-    upsertShopPlan,
-} from "@/features/pricing/repositories/shop-plan.repository";
-import { upsertShop } from "@/shared/repositories/shop.queries";
-import { findOfflineSessionByShop } from "@/shared/repositories";
-import { ShopifySubscriptionStatus, PlanName } from "@/prisma/generated/client";
-
-async function getAccessTokenForShop(shop: string): Promise<string | null> {
-    try {
-        const session = await findOfflineSessionByShop(shop);
-        return session?.accessToken || null;
-    } catch (error) {
-        console.error(`[Billing] Failed to get access token for ${shop}:`, error);
-        return null;
-    }
-}
+    confirmSubscriptionService,
+    getAccessTokenForShop,
+    BillingError,
+} from "@/features/pricing/services/subscription.service";
 
 export async function POST(request: NextRequest) {
     try {
@@ -33,7 +17,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const body = await request.json() as { chargeId?: string };
+        const body = (await request.json()) as { chargeId?: string };
         const { chargeId } = body;
 
         if (!chargeId) {
@@ -59,66 +43,21 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const result = await executeGraphQLQuery<GetActiveSubscriptionQuery>({
-            query: GetActiveSubscriptionDocument,
-            variables: {},
-            shop,
-            accessToken,
-        });
-
-        if (result.errors) {
-            console.error("[Billing] GraphQL errors:", result.errors);
-            return NextResponse.json(
-                { error: "Failed to fetch subscription from Shopify" },
-                { status: 500 },
-            );
-        }
-
-        const subscriptions =
-            result.data?.currentAppInstallation?.activeSubscriptions ?? [];
-
-        const matchedSub = subscriptions.find((s) => s.id === chargeId);
-
-        if (!matchedSub) {
-            return NextResponse.json(
-                { error: "Subscription not found or not active", status: "NOT_FOUND" },
-                { status: 404 },
-            );
-        }
-
-        const subStatus = matchedSub.status.toUpperCase() as ShopifySubscriptionStatus;
-        const isActive = subStatus === ShopifySubscriptionStatus.ACTIVE;
-
-        if (!isActive) {
-            return NextResponse.json(
-                { error: "Subscription is not active", status: matchedSub.status },
-                { status: 402 },
-            );
-        }
-
-        const lineItem = matchedSub.lineItems?.[0];
-        const pricingDetails = lineItem?.plan?.pricingDetails;
-        const pricing =
-            pricingDetails && "__typename" in pricingDetails &&
-            pricingDetails.__typename === "AppRecurringPricing"
-                ? pricingDetails
-                : null;
-
-        await upsertShopPlan(shop, {
-            billingId: matchedSub.id,
-            plan: PlanName.PRO,
-            status: ShopifySubscriptionStatus.ACTIVE,
-            activatedAt: new Date(),
-            currentPeriodEnd: matchedSub.currentPeriodEnd
-                ? new Date(matchedSub.currentPeriodEnd as string)
-                : null,
-            billingInterval: pricing?.interval ?? undefined,
-        });
-
-        await upsertShop(shop, { plan: "PRO" });
+        await confirmSubscriptionService(shop, accessToken, chargeId);
 
         return NextResponse.json({ success: true, plan: "PRO" });
     } catch (error) {
+        if (error instanceof BillingError) {
+            if (error.code === "NOT_FOUND") {
+                return NextResponse.json(
+                    { error: error.message, status: "NOT_FOUND" },
+                    { status: 404 },
+                );
+            }
+            if (error.code === "SHOPIFY_ERROR") {
+                return NextResponse.json({ error: error.message }, { status: 500 });
+            }
+        }
         console.error("[Billing] Error confirming subscription:", error);
         return NextResponse.json(
             { error: "Internal server error" },

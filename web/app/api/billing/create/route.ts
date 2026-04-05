@@ -1,30 +1,15 @@
-import {
-    CreateAppSubscriptionDocument,
-    CreateAppSubscriptionMutation,
-    CreateAppSubscriptionMutationVariables,
-    AppSubscriptionReplacementBehavior,
-    AppPricingInterval,
-    CurrencyCode,
-} from "@/lib/graphql/generated/graphql";
-import {
-    PRO_MONTHLY_PRICE,
-    PRO_ANNUAL_PRICE,
-    PRO_TRIAL_DAYS,
-    BILLING_CURRENCY,
-} from "@/features/pricing/constants/pricing.constants";
 import { NextRequest, NextResponse } from "next/server";
 import { getShop } from "@/shared/repositories/shop.queries";
 import { authenticateBillingRequest } from "../billing-auth";
-import { executeGraphQLMutation } from "@/lib/graphql/client";
 import {
-    getShopPlanRecord,
-    upsertShopPlan,
-} from "@/features/pricing/repositories/shop-plan.repository";
-import { ShopifySubscriptionStatus, PlanName } from "@/prisma/generated/client";
+    createSubscriptionService,
+    BillingError,
+} from "@/features/pricing/services/subscription.service";
+import { BillingInterval } from "@/features/pricing/types/pricing.types";
 
 interface CreateSubscriptionInput {
     planName: string;
-    interval: "EVERY_30_DAYS" | "ANNUAL";
+    interval: BillingInterval;
     returnUrl: string;
 }
 
@@ -43,7 +28,7 @@ export async function POST(request: NextRequest) {
         }
 
         const body = (await request.json()) as CreateSubscriptionInput;
-        const { planName, interval, returnUrl } = body;
+        const { interval, returnUrl } = body;
 
         const shopRecord = await getShop(shop);
         if (!shopRecord) {
@@ -53,100 +38,21 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const existingPlan = await getShopPlanRecord(shop);
-        if (existingPlan?.status === ShopifySubscriptionStatus.ACTIVE) {
-            return NextResponse.json(
-                { error: "Already has active subscription" },
-                { status: 400 },
-            );
-        }
-
-        const price =
-            interval === "ANNUAL" ? PRO_ANNUAL_PRICE : PRO_MONTHLY_PRICE;
-
-        const isTest = process.env.NODE_ENV !== "production";
-        const variables: CreateAppSubscriptionMutationVariables = {
-            name: planName,
-            returnUrl: `${returnUrl}?shop=${shop}`,
-            test: isTest,
-            trialDays: PRO_TRIAL_DAYS,
-            replacementBehavior:
-                AppSubscriptionReplacementBehavior.ApplyImmediately,
-            lineItems: [
-                {
-                    plan: {
-                        appRecurringPricingDetails: {
-                            price: {
-                                amount: price,
-                                currencyCode: BILLING_CURRENCY as CurrencyCode,
-                            },
-                            interval: interval as AppPricingInterval,
-                        },
-                    },
-                },
-            ],
-        };
-
-        const result =
-            await executeGraphQLMutation<CreateAppSubscriptionMutation>({
-                query: CreateAppSubscriptionDocument,
-                variables,
-                shop,
-                accessToken,
-            });
-
-        if (result.errors) {
-            console.error("[Billing] GraphQL errors:", result.errors);
-            return NextResponse.json(
-                { error: "Failed to create subscription" },
-                { status: 500 },
-            );
-        }
-
-        const payload = result.data?.appSubscriptionCreate;
-        if (!payload) {
-            return NextResponse.json(
-                { error: "No response from Shopify" },
-                { status: 500 },
-            );
-        }
-
-        if (payload.userErrors.length > 0) {
-            return NextResponse.json(
-                { errors: payload.userErrors },
-                { status: 400 },
-            );
-        }
-
-        const subscription = payload.appSubscription;
-        if (!subscription) {
-            return NextResponse.json(
-                { error: "Subscription not returned" },
-                { status: 500 },
-            );
-        }
-
-        await upsertShopPlan(shop, {
-            billingId: subscription.id,
-            plan: PlanName.PRO,
-            status: ShopifySubscriptionStatus.PENDING,
-            billingInterval: interval,
-            trialEndsAt: subscription.trialDays
-                ? new Date(
-                      Date.now() + subscription.trialDays * 24 * 60 * 60 * 1000,
-                  )
-                : null,
-        });
+        const result = await createSubscriptionService(shop, accessToken, interval, returnUrl);
 
         return NextResponse.json({
-            subscription: {
-                id: subscription.id,
-                status: subscription.status,
-                createdAt: subscription.createdAt,
-            },
-            confirmationUrl: payload.confirmationUrl,
+            confirmationUrl: result.confirmationUrl,
+            subscriptionId: result.subscriptionId,
         });
     } catch (error) {
+        if (error instanceof BillingError) {
+            if (error.code === "ALREADY_ACTIVE") {
+                return NextResponse.json({ error: error.message }, { status: 400 });
+            }
+            if (error.code === "SHOPIFY_ERROR") {
+                return NextResponse.json({ error: error.message }, { status: 500 });
+            }
+        }
         console.error("[Billing] Error creating subscription:", error);
         return NextResponse.json(
             { error: "Internal server error" },

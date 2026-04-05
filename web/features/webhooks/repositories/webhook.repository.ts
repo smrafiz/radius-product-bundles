@@ -7,8 +7,7 @@ import { Session } from "@shopify/shopify-api";
 import { WebhookSubscription } from "@/features/webhooks";
 import { prisma } from "@/shared/repositories/prisma-connect";
 import { registerWebhooks } from "@/lib/shopify/webhooks/register";
-import { ShopifySubscriptionStatus, PlanName } from "@/prisma/generated/client";
-import { upsertShopPlan, deleteShopPlan } from "@/features/pricing/repositories/shop-plan.repository";
+import { deleteShopPlan } from "@/features/pricing/repositories/shop-plan.repository";
 
 /**
  * Webhook Repository - Data Access Layer
@@ -310,35 +309,3 @@ export async function deleteShopData(shop: string): Promise<void> {
     }
 }
 
-export async function updateShopSubscription(
-    shop: string,
-    subscriptionId: string,
-    status: string,
-    planName: string,
-): Promise<void> {
-    try {
-        const normalizedStatus = status.toUpperCase() as ShopifySubscriptionStatus;
-        const isActive = normalizedStatus === ShopifySubscriptionStatus.ACTIVE;
-        const isCancelled = normalizedStatus === ShopifySubscriptionStatus.CANCELLED;
-
-        const resolvedPlan = isActive && planName.toLowerCase().includes("pro")
-            ? PlanName.PRO
-            : PlanName.FREE;
-
-        await upsertShopPlan(shop, {
-            billingId: subscriptionId || undefined,
-            status: Object.values(ShopifySubscriptionStatus).includes(normalizedStatus)
-                ? normalizedStatus
-                : undefined,
-            plan: resolvedPlan,
-            activatedAt: isActive ? new Date() : undefined,
-            cancelledAt: isCancelled ? new Date() : undefined,
-        });
-    } catch (error) {
-        console.error(
-            "[Webhook Repository] Error updating subscription:",
-            error,
-        );
-        throw error;
-    }
-}

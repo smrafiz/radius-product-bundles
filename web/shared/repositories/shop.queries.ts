@@ -1,4 +1,5 @@
 import prisma from "@/shared/repositories/prisma-connect";
+import type { ShopStatus } from "@/prisma/generated/enums";
 
 /**
  * Shop Repository
@@ -11,7 +12,7 @@ import prisma from "@/shared/repositories/prisma-connect";
  */
 export async function upsertShop(
     domain: string,
-    data?: Partial<{ plan: string; trialEndsAt: Date }>,
+    data?: Partial<{ status: ShopStatus }>,
 ) {
     return prisma.shop.upsert({
         where: { domain },
@@ -102,14 +103,6 @@ export async function markDiscountSetupDone(domain: string): Promise<void> {
             discountSetupDone: true,
         },
     });
-}
-
-export async function getShopPlan(domain: string) {
-    const shop = await prisma.shop.findUnique({
-        where: { domain },
-        select: { plan: true },
-    });
-    return shop?.plan ?? null;
 }
 
 export async function getShopSubscription(domain: string) {

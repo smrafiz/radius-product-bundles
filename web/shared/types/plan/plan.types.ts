@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import type { BundleType, BundleStatus, DiscountType } from "@/features/bundles";
+import type { PlanName } from "@/prisma/generated/enums";
 
-export type PlanId = "FREE" | "PRO";
+export type PlanId = PlanName;
 
 export type GateMode = "enabled" | "lock-overlay" | "hidden";
 

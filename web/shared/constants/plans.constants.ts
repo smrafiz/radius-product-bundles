@@ -1,11 +1,12 @@
-import type { PlanConfig, PlanId } from "@/shared";
+import type { PlanConfig, PlanId, PlanLimits } from "@/shared";
+import type { PlanName } from "@/prisma/generated/enums";
 
-export const DEFAULT_PLAN_ID: PlanId = "FREE";
+export const DEFAULT_PLAN_ID: PlanName = "FREE";
 
 const DEV_UNLOCK_ALL = process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true";
 
 const FREE_CONFIG: PlanConfig = {
-    id: "FREE",
+    id: "FREE" as PlanName,
     name: "Free",
     limits: {
         maxBundles: 5,
@@ -37,17 +38,27 @@ const FREE_CONFIG: PlanConfig = {
     ],
 };
 
-function unlockAll(config: PlanConfig): PlanConfig {
+function unlockAll(config: PlanConfig, overrides?: {
+    id?: PlanId;
+    name?: string;
+    extraLimits?: Partial<PlanLimits>;
+}): PlanConfig {
     return {
         ...config,
-        name: `${config.name} (Dev Unlocked)`,
+        id: overrides?.id ?? config.id,
+        name: overrides?.name ?? `${config.name} (Dev Unlocked)`,
         limits: {
             ...config.limits,
             maxBundles: -1,
             maxProductsPerBundle: -1,
             allowedLayouts: {},
             allowedStatuses: ["DRAFT", "ACTIVE", "PAUSED", "SCHEDULED", "ARCHIVED"],
-            allowedDiscountTypes: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT"],
+            allowedDiscountTypes: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT", "QUANTITY_BREAKS"],
+            allowedBundleTypes: [
+                "FIXED_BUNDLE", "BOGO", "BUY_X_GET_Y",
+                "VOLUME_DISCOUNT", "MIX_AND_MATCH", "FREQUENTLY_BOUGHT_TOGETHER",
+            ],
+            ...overrides?.extraLimits,
         },
         features: config.features.map((f) => ({
             ...f,
@@ -56,36 +67,12 @@ function unlockAll(config: PlanConfig): PlanConfig {
     };
 }
 
-const PRO_CONFIG: PlanConfig = {
-    id: "PRO",
+const PRO_CONFIG: PlanConfig = unlockAll(FREE_CONFIG, {
+    id: "PRO" as PlanName,
     name: "Pro",
-    limits: {
-        maxBundles: -1,
-        maxProductsPerBundle: -1,
-        allowedLayouts: {},
-        allowedBundleTypes: ["FIXED_BUNDLE", "BOGO", "BUY_X_GET_Y", "VOLUME_DISCOUNT", "MIX_AND_MATCH", "FREQUENTLY_BOUGHT_TOGETHER"],
-        allowedStatuses: ["DRAFT", "ACTIVE", "PAUSED", "SCHEDULED", "ARCHIVED"],
-        allowedDiscountTypes: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT", "QUANTITY_BREAKS"],
-    },
-    features: [
-        { feature: "analytics_full", gateMode: "enabled" },
-        { feature: "ab_testing", gateMode: "enabled" },
-        { feature: "automation", gateMode: "enabled" },
-        { feature: "ai_insights", gateMode: "enabled" },
-        { feature: "custom_css", gateMode: "enabled" },
-        { feature: "responsive_overrides", gateMode: "enabled" },
-        { feature: "templates", gateMode: "enabled" },
-        { feature: "export_data", gateMode: "enabled" },
-        { feature: "remove_branding", gateMode: "enabled" },
-        { feature: "duplicate_bundle", gateMode: "enabled" },
-        { feature: "bundle_behavior", gateMode: "enabled" },
-        { feature: "advanced_discount_controls", gateMode: "enabled" },
-        { feature: "advanced_cart_controls", gateMode: "enabled" },
-        { feature: "auto_translate", gateMode: "enabled" },
-    ],
-};
+});
 
-export const PLAN_CONFIGS: Record<PlanId, PlanConfig> = {
+export const PLAN_CONFIGS: Record<PlanName, PlanConfig> = {
     FREE: DEV_UNLOCK_ALL ? unlockAll(FREE_CONFIG) : FREE_CONFIG,
     PRO: PRO_CONFIG,
 };

@@ -8,10 +8,11 @@ import type {
     PlanLimits,
     QuotaResult,
 } from "@/shared/types/plan";
-import { getShopPlan, getShopSubscription } from "@/shared/repositories";
+import type { PlanName } from "@/prisma/generated/enums";
+import { getShopSubscription } from "@/shared/repositories";
 import { countBundlesByShop } from "@/features/bundles/repositories";
 
-export function getPlanConfig(planId: PlanId): PlanConfig {
+export function getPlanConfig(planId: PlanName): PlanConfig {
     const config = PLAN_CONFIGS[planId];
     if (!config) {
         console.warn(`[Plan] Unknown plan "${planId}", falling back to FREE`);
@@ -24,11 +25,10 @@ export async function resolveShopPlan(domain: string): Promise<PlanConfig> {
     const shopPlan = await getShopSubscription(domain);
 
     if (shopPlan?.status === "ACTIVE" && shopPlan?.plan === "PRO") {
-        return getPlanConfig("PRO" as PlanId);
+        return getPlanConfig("PRO");
     }
 
-    const planId = ((await getShopPlan(domain)) ?? DEFAULT_PLAN_ID) as PlanId;
-    return getPlanConfig(planId);
+    return getPlanConfig(DEFAULT_PLAN_ID);
 }
 
 export async function getEffectiveLimits(domain: string): Promise<PlanLimits> {
