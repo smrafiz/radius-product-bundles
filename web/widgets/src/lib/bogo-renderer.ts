@@ -508,9 +508,10 @@ export function renderBogoSleekProducts(
     };
 
     const totalDiscounted =
-        triggers.reduce((sum, p) => sum + p.price, 0) +
+        triggers.reduce((sum, p) => sum + p.price * p.quantity, 0) +
         rewards.reduce(
-            (sum, p) => sum + calculateBxgyRewardPrice(p.price, structure),
+            (sum, p) =>
+                sum + calculateBxgyRewardPrice(p.price, structure) * p.quantity,
             0,
         );
 
@@ -554,11 +555,15 @@ export function renderBogoMinimalistProducts(
     const structure = ctx.bundleStructure || bundle;
     const imgLazy = ctx.lazyLoadImages;
 
-    const totalOriginal = allProducts.reduce((sum, p) => sum + p.price, 0);
+    const totalOriginal = allProducts.reduce(
+        (sum, p) => sum + p.price * p.quantity,
+        0,
+    );
     const totalDiscounted =
-        triggers.reduce((sum, p) => sum + p.price, 0) +
+        triggers.reduce((sum, p) => sum + p.price * p.quantity, 0) +
         rewards.reduce(
-            (sum, p) => sum + calculateBxgyRewardPrice(p.price, structure),
+            (sum, p) =>
+                sum + calculateBxgyRewardPrice(p.price, structure) * p.quantity,
             0,
         );
     const savings = totalOriginal - totalDiscounted;
@@ -814,13 +819,14 @@ export function renderBogoCompactGridProducts(
     const labels = structure.labels;
 
     const totalOriginal = [...triggers, ...rewards].reduce(
-        (sum, p) => sum + p.price,
+        (sum, p) => sum + p.price * p.quantity,
         0,
     );
     const totalDiscounted =
-        triggers.reduce((sum, p) => sum + p.price, 0) +
+        triggers.reduce((sum, p) => sum + p.price * p.quantity, 0) +
         rewards.reduce(
-            (sum, p) => sum + calculateBxgyRewardPrice(p.price, structure),
+            (sum, p) =>
+                sum + calculateBxgyRewardPrice(p.price, structure) * p.quantity,
             0,
         );
     const savings = totalOriginal - totalDiscounted;
@@ -1472,13 +1478,14 @@ export function renderSplitDealProducts(
     html += `</div>`;
 
     const totalOriginal = [...triggers, ...rewards].reduce(
-        (sum, p) => sum + p.price,
+        (sum, p) => sum + p.price * p.quantity,
         0,
     );
     const totalDiscounted =
-        triggers.reduce((sum, p) => sum + p.price, 0) +
+        triggers.reduce((sum, p) => sum + p.price * p.quantity, 0) +
         rewards.reduce(
-            (sum, p) => sum + calculateBxgyRewardPrice(p.price, structure),
+            (sum, p) =>
+                sum + calculateBxgyRewardPrice(p.price, structure) * p.quantity,
             0,
         );
     const savings = totalOriginal - totalDiscounted;
