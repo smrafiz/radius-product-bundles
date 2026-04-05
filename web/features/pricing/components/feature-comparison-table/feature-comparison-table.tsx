@@ -48,7 +48,7 @@ export function FeatureComparisonTable() {
                                 <th className="py-3 px-4 text-center font-medium text-gray-700 w-1/4">
                                     Free
                                 </th>
-                                <th className="py-3 px-4 text-center font-semibold text-green-700 bg-green-50 w-1/4">
+                                <th className="py-3 px-4 text-center font-semibold text-gray-700 w-1/4">
                                     <span className="flex items-center justify-center gap-1">
                                         Pro
                                         <s-badge tone="success">{t("mostPopular")}</s-badge>
@@ -78,7 +78,7 @@ export function FeatureComparisonTable() {
                                             <td className="py-3 px-4 text-center text-gray-600">
                                                 <Cell value={row.free} t={t} />
                                             </td>
-                                            <td className="py-3 px-4 text-center text-green-700 font-medium bg-green-50/50">
+                                            <td className="py-3 px-4 text-center text-gray-600">
                                                 <Cell value={row.pro} t={t} />
                                             </td>
                                         </tr>

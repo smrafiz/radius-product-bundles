@@ -22,32 +22,28 @@ export const PricingCard = () => {
 
     return (
         <s-stack direction="block" gap="large">
-            {/* CSS-only billing toggle */}
-            <div className="flex items-center justify-center gap-3">
-                <span className={`text-sm font-medium ${isMonthly ? "text-gray-900" : "text-gray-400"}`}>
-                    {t("billingMonthly")}
-                </span>
-                <button
-                    type="button"
-                    role="switch"
-                    aria-checked={!isMonthly}
-                    aria-label={t("toggleBillingInterval")}
-                    onClick={() =>
-                        setBillingInterval(isMonthly ? "ANNUAL" : "EVERY_30_DAYS")
-                    }
-                    className="relative inline-flex h-6 w-11 items-center rounded-full border border-gray-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2"
-                    style={{ background: !isMonthly ? "#16a34a" : "#e5e7eb" }}
+            <s-stack direction="inline" justifyContent="center">
+                <s-stack
+                    direction="inline"
+                    gap="none"
+                    borderRadius="base"
+                    padding="small-200"
+                    background="base"
                 >
-                    <span
-                        className="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200"
-                        style={{ transform: !isMonthly ? "translateX(22px)" : "translateX(2px)" }}
-                    />
-                </button>
-                <span className={`text-sm font-medium ${!isMonthly ? "text-gray-900" : "text-gray-400"}`}>
-                    {t("billingAnnual")}{" "}
-                    <s-badge tone="success">{t("annualSavings")}</s-badge>
-                </span>
-            </div>
+                    <s-button
+                        variant={isMonthly ? "secondary" : "tertiary"}
+                        onClick={() => setBillingInterval("EVERY_30_DAYS")}
+                    >
+                        {t("billingMonthly")}
+                    </s-button>
+                    <s-button
+                        variant={!isMonthly ? "secondary" : "tertiary"}
+                        onClick={() => setBillingInterval("ANNUAL")}
+                    >
+                        {t("billingAnnual")}
+                    </s-button>
+                </s-stack>
+            </s-stack>
 
             {/* Plan cards */}
             <div

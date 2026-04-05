@@ -75,16 +75,14 @@ export function PricingCardItem({
                 </div>
 
                 <div className="mt-6">
-                    <div className="w-full">
-                        <s-button
-                            {...primaryButton.props}
-                            loading={primaryButton.loading}
-                            disabled={primaryButton.loading || primaryButton.props.disabled}
-                            onClick={handleClick}
-                        >
-                            {primaryButton.content}
-                        </s-button>
-                    </div>
+                    <s-button
+                        {...primaryButton.props}
+                        loading={primaryButton.loading}
+                        disabled={primaryButton.loading || primaryButton.props.disabled}
+                        onClick={handleClick}
+                    >
+                        {primaryButton.content}
+                    </s-button>
                 </div>
             </div>
         </div>
