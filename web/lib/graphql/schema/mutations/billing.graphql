@@ -2,11 +2,17 @@ mutation CreateAppSubscription(
     $name: String!
     $lineItems: [AppSubscriptionLineItemInput!]!
     $returnUrl: URL!
+    $test: Boolean = false
+    $trialDays: Int
+    $replacementBehavior: AppSubscriptionReplacementBehavior
 ) {
     appSubscriptionCreate(
         name: $name
         returnUrl: $returnUrl
         lineItems: $lineItems
+        test: $test
+        trialDays: $trialDays
+        replacementBehavior: $replacementBehavior
     ) {
         userErrors {
             field
@@ -17,6 +23,8 @@ mutation CreateAppSubscription(
             name
             status
             createdAt
+            test
+            trialDays
         }
         confirmationUrl
     }
@@ -31,32 +39,6 @@ mutation CancelAppSubscription($id: ID!) {
         appSubscription {
             id
             status
-        }
-    }
-}
-
-query GetActiveSubscription {
-    currentAppInstallation {
-        activeSubscriptions {
-            id
-            name
-            status
-            createdAt
-            trialDays
-            lineItems {
-                id
-                plan {
-                    pricingDetails {
-                        ... on AppRecurringPricing {
-                            price {
-                                amount
-                                currencyCode
-                            }
-                            interval
-                        }
-                    }
-                }
-            }
         }
     }
 }

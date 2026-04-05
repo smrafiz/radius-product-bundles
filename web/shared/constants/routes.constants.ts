@@ -10,6 +10,7 @@ export const ROUTES = {
     SETTINGS: "/settings",
     CUSTOMIZER: "/settings/customizer",
     PRICING: "/pricing",
+    SETTINGS_PLAN: "/settings/plan",
 
     // Bundle operations
     BUNDLE_CREATE: "/bundles/create",

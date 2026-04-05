@@ -1,57 +1,24 @@
+import {
+    GetActiveSubscriptionDocument,
+    GetActiveSubscriptionQuery,
+} from "@/lib/graphql/generated/graphql";
 import { NextRequest, NextResponse } from "next/server";
-import { getShop } from "@/shared/repositories/shop.queries";
-import { findOfflineSessionByShop, prisma } from "@/shared/repositories";
 import { executeGraphQLQuery } from "@/lib/graphql/client";
-
-async function getAccessTokenForShop(shop: string): Promise<string | null> {
-    try {
-        const session = await findOfflineSessionByShop(shop);
-        return session?.accessToken || null;
-    } catch (error) {
-        console.error(
-            `[Billing] Failed to get access token for ${shop}:`,
-            error,
-        );
-        return null;
-    }
-}
-
-const GET_SUBSCRIPTION_QUERY = `
-query GetActiveSubscription {
-    currentAppInstallation {
-        activeSubscriptions {
-            id
-            name
-            status
-            createdAt
-            trialDays
-            lineItems {
-                id
-                plan {
-                    pricingDetails {
-                        ... on AppRecurringPricing {
-                            price {
-                                amount
-                                currencyCode
-                            }
-                            interval
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-`;
+import { getShop } from "@/shared/repositories/shop.queries";
+import { authenticateBillingRequest } from "../billing-auth";
+import { getShopPlanRecord } from "@/features/pricing/repositories/shop-plan.repository";
 
 export async function GET(request: NextRequest) {
     try {
-        const shop = request.headers.get("x-shop-domain");
+        let shop: string;
+        let accessToken: string;
 
-        if (!shop) {
+        try {
+            ({ shop, accessToken } = await authenticateBillingRequest(request));
+        } catch {
             return NextResponse.json(
-                { error: "Missing shop domain" },
-                { status: 400 },
+                { error: "Unauthorized" },
+                { status: 401 },
             );
         }
 
@@ -63,16 +30,10 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const accessToken = await getAccessTokenForShop(shop);
-        if (!accessToken) {
-            return NextResponse.json(
-                { error: "Shop authentication required" },
-                { status: 401 },
-            );
-        }
+        const localPlan = await getShopPlanRecord(shop);
 
-        const result = await executeGraphQLQuery({
-            query: GET_SUBSCRIPTION_QUERY,
+        const result = await executeGraphQLQuery<GetActiveSubscriptionQuery>({
+            query: GetActiveSubscriptionDocument,
             variables: {},
             shop,
             accessToken,
@@ -87,18 +48,25 @@ export async function GET(request: NextRequest) {
         }
 
         const subscriptions =
-            result.data?.currentAppInstallation?.activeSubscriptions || [];
+            result.data?.currentAppInstallation?.activeSubscriptions ?? [];
 
         if (subscriptions.length === 0) {
             return NextResponse.json({
                 subscription: null,
+                localStatus: localPlan?.status ?? null,
+                trialEndsAt: localPlan?.trialEndsAt?.toISOString() ?? null,
                 status: "NO_SUBSCRIPTION",
             });
         }
 
         const sub = subscriptions[0];
         const lineItem = sub.lineItems?.[0];
-        const pricing = lineItem?.plan?.pricingDetails;
+        const pricingDetails = lineItem?.plan?.pricingDetails;
+        const pricing =
+            pricingDetails && "__typename" in pricingDetails &&
+            pricingDetails.__typename === "AppRecurringPricing"
+                ? pricingDetails
+                : null;
 
         return NextResponse.json({
             subscription: {
@@ -106,12 +74,15 @@ export async function GET(request: NextRequest) {
                 name: sub.name,
                 status: sub.status,
                 createdAt: sub.createdAt,
-                updatedAt: sub.updatedAt,
+                currentPeriodEnd: sub.currentPeriodEnd ?? null,
                 trialDays: sub.trialDays,
-                price: pricing?.price?.amount,
-                currencyCode: pricing?.price?.currencyCode,
-                interval: pricing?.interval,
+                test: sub.test,
+                price: pricing?.price?.amount ?? null,
+                currencyCode: pricing?.price?.currencyCode ?? null,
+                interval: pricing?.interval ?? null,
             },
+            localStatus: localPlan?.status ?? null,
+            trialEndsAt: localPlan?.trialEndsAt?.toISOString() ?? null,
             status: sub.status,
         });
     } catch (error) {

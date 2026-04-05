@@ -1,3 +1,5 @@
+import { upsertShop } from "@/shared/repositories/shop.queries";
+import { ShopifySubscriptionStatus } from "@/prisma/generated/client";
 import { updateShopSubscription } from "@/features/webhooks/repositories/webhook.repository";
 
 export async function handleAppSubscriptionUpdate(
@@ -17,21 +19,43 @@ export async function handleAppSubscriptionUpdate(
         return;
     }
 
+    const sub =
+        (data.app_subscription as Record<string, unknown> | undefined) ?? data;
+
     console.log(
         `[Subscription] Processing APP_SUBSCRIPTIONS_UPDATE for ${shop}:`,
-        data.id,
-        data.status,
+        sub.admin_graphql_api_id ?? sub.id,
+        sub.status,
     );
 
     try {
-        const subscriptionId = String(data.id || "");
-        const newStatus = String(data.status || "");
-        const planName = String(data.name || "");
+        const subscriptionId = String(
+            sub.admin_graphql_api_id ?? sub.id ?? "",
+        );
+        const rawStatus = String(sub.status || "").toUpperCase();
+        const planName = String(sub.name || "");
 
-        await updateShopSubscription(shop, subscriptionId, newStatus, planName);
+        await updateShopSubscription(shop, subscriptionId, rawStatus, planName);
+
+        const isActive = rawStatus === ShopifySubscriptionStatus.ACTIVE;
+        const isTerminated =
+            rawStatus === ShopifySubscriptionStatus.CANCELLED ||
+            rawStatus === ShopifySubscriptionStatus.EXPIRED ||
+            rawStatus === ShopifySubscriptionStatus.DECLINED;
+
+        if (isActive) {
+            await upsertShop(shop, { plan: "PRO" });
+        } else if (isTerminated) {
+            await upsertShop(shop, { plan: "FREE" });
+            if (rawStatus === ShopifySubscriptionStatus.EXPIRED) {
+                console.warn(
+                    `[Subscription] Trial/subscription expired for ${shop} — downgraded to FREE`,
+                );
+            }
+        }
 
         console.log(
-            `[Subscription] Updated subscription for ${shop}: ${subscriptionId} -> ${newStatus} (${planName})`,
+            `[Subscription] Updated for ${shop}: ${subscriptionId} -> ${rawStatus} (${planName})`,
         );
     } catch (error) {
         console.error(

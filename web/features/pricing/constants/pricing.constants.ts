@@ -1,9 +1,13 @@
 import { PricingCardItemInfo } from "@/features/pricing";
 
+export const PRO_TRIAL_DAYS = 14;
+export const PRO_MONTHLY_PRICE = 9.99;
+export const PRO_ANNUAL_PRICE = 99.99;
+export const BILLING_CURRENCY = "USD";
+
 export const SUBSCRIPTION_PLANS = {
     FREE: "free",
-    STARTER: "starter",
-    PREMIUM: "premium",
+    PRO: "pro",
 } as const;
 
 export type SubscriptionPlanType =
@@ -12,28 +16,17 @@ export type SubscriptionPlanType =
 export const PLAN_PRICING: Record<
     SubscriptionPlanType,
     {
-        price: number;
-        currencyCode: string;
-        interval: "EVERY_30_DAYS" | "ANNUAL";
-        trialDays?: number;
+        monthly: { price: number; currencyCode: string; interval: "EVERY_30_DAYS"; trialDays?: number };
+        annual: { price: number; currencyCode: string; interval: "ANNUAL"; trialDays?: number };
     }
 > = {
     [SUBSCRIPTION_PLANS.FREE]: {
-        price: 0,
-        currencyCode: "USD",
-        interval: "EVERY_30_DAYS",
+        monthly: { price: 0, currencyCode: BILLING_CURRENCY, interval: "EVERY_30_DAYS" },
+        annual: { price: 0, currencyCode: BILLING_CURRENCY, interval: "ANNUAL" },
     },
-    [SUBSCRIPTION_PLANS.STARTER]: {
-        price: 9.99,
-        currencyCode: "USD",
-        interval: "EVERY_30_DAYS",
-        trialDays: 7,
-    },
-    [SUBSCRIPTION_PLANS.PREMIUM]: {
-        price: 19.99,
-        currencyCode: "USD",
-        interval: "EVERY_30_DAYS",
-        trialDays: 7,
+    [SUBSCRIPTION_PLANS.PRO]: {
+        monthly: { price: PRO_MONTHLY_PRICE, currencyCode: BILLING_CURRENCY, interval: "EVERY_30_DAYS", trialDays: PRO_TRIAL_DAYS },
+        annual: { price: PRO_ANNUAL_PRICE, currencyCode: BILLING_CURRENCY, interval: "ANNUAL", trialDays: PRO_TRIAL_DAYS },
     },
 };
 
@@ -41,10 +34,12 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
     {
         id: SUBSCRIPTION_PLANS.FREE,
         title: "Free",
-        description: "Perfect for testing and small stores",
+        description: "Get started with bundle creation at no cost",
         features: [
-            "Up to 100 orders/month",
-            "5 active bundles",
+            "Up to 5 bundles",
+            "Up to 10 products per bundle",
+            "Fixed bundles, BOGO, Buy X Get Y",
+            "Grid and list layouts",
             "Basic analytics",
             "Email support",
         ],
@@ -60,44 +55,23 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         },
     },
     {
-        id: SUBSCRIPTION_PLANS.STARTER,
-        title: "Starter",
-        featuredText: "Best Value",
-        description: "For growing stores that need more power",
+        id: SUBSCRIPTION_PLANS.PRO,
+        title: "Pro",
+        featuredText: "Most Popular",
+        description: "Everything you need to grow your bundle revenue",
         features: [
-            "Up to 1,000 orders/month",
-            "25 active bundles",
-            "Advanced analytics",
+            "Unlimited bundles",
+            "Unlimited products per bundle",
+            "All bundle types",
+            "All layouts",
+            "Full analytics",
+            "Custom CSS",
             "Priority support",
-            "Custom bundle templates",
         ],
         price: "$9.99",
         frequency: "month",
         primaryButton: {
-            content: "Select Starter",
-            loading: false,
-            props: {
-                variant: "primary",
-            },
-        },
-    },
-    {
-        id: SUBSCRIPTION_PLANS.PREMIUM,
-        title: "Pro",
-        description: "For high-volume stores with advanced needs",
-        features: [
-            "Unlimited orders",
-            "Unlimited bundles",
-            "Advanced analytics",
-            "24/7 priority support",
-            "Custom bundle templates",
-            "API access",
-            "White-label options",
-        ],
-        price: "$19.99",
-        frequency: "month",
-        primaryButton: {
-            content: "Select Pro",
+            content: "Start Free Trial",
             loading: false,
             props: {
                 variant: "primary",
@@ -111,24 +85,30 @@ export const PRICING_FAQ_ITEM = [
         id: "0",
         title: "What's included in the Free plan?",
         description:
-            "The Free plan includes basic bundle creation, up to 100 orders/month, 5 active bundles, and email support. Perfect for testing the app before committing.",
+            "The Free plan includes up to 5 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support.",
     },
     {
         id: "1",
         title: "Can I upgrade or downgrade anytime?",
         description:
-            "Yes! You can upgrade or downgrade your plan at any time. Upgrades take effect immediately, and downgrades apply at the next billing cycle.",
+            "Yes. You can upgrade to Pro or downgrade to Free at any time. Upgrades take effect immediately, and downgrades apply at the next billing cycle.",
     },
     {
         id: "2",
         title: "Is there a free trial?",
         description:
-            "All paid plans come with a 7-day free trial. No credit card required to start.",
+            "Pro comes with a 14-day free trial. No credit card required to start your trial.",
     },
     {
         id: "3",
+        title: "What billing options are available?",
+        description:
+            "Pro is available on a monthly ($9.99/month) or annual ($99.99/year) billing cycle. Annual billing saves you about 17% compared to monthly.",
+    },
+    {
+        id: "4",
         title: "What happens if I exceed my plan limits?",
         description:
-            "We'll notify you when you're approaching your limits. You can upgrade your plan anytime, or continue on your current plan with reduced functionality.",
+            "On the Free plan, you'll be notified when approaching your bundle or product limits. You can upgrade to Pro at any time for unlimited access.",
     },
 ];

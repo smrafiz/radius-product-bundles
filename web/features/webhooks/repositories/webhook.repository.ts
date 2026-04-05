@@ -1,12 +1,14 @@
-import { executeGraphQLQuery } from "@/lib";
-import { Session } from "@shopify/shopify-api";
-import { registerWebhooks } from "@/lib/shopify/webhooks/register";
-import { prisma } from "@/shared/repositories/prisma-connect";
-import { WebhookSubscription } from "@/features/webhooks";
 import {
     GetWebhookSubscriptionsDocument,
     GetWebhookSubscriptionsQuery,
 } from "@/lib/graphql/generated/graphql";
+import { executeGraphQLQuery } from "@/lib";
+import { Session } from "@shopify/shopify-api";
+import { WebhookSubscription } from "@/features/webhooks";
+import { prisma } from "@/shared/repositories/prisma-connect";
+import { registerWebhooks } from "@/lib/shopify/webhooks/register";
+import { ShopifySubscriptionStatus, PlanName } from "@/prisma/generated/client";
+import { upsertShopPlan, deleteShopPlan } from "@/features/pricing/repositories/shop-plan.repository";
 
 /**
  * Webhook Repository - Data Access Layer
@@ -298,6 +300,7 @@ export async function deleteShopData(shop: string): Promise<void> {
                 await tx.aIInsight.deleteMany({ where: { shopId } });
                 await tx.notification.deleteMany({ where: { shopId } });
                 await tx.alertRule.deleteMany({ where: { shopId } });
+                await tx.shopPlan.deleteMany({ where: { shop } });
                 await tx.shop.deleteMany({ where: { id: shopId } });
             }
         });
@@ -314,14 +317,22 @@ export async function updateShopSubscription(
     planName: string,
 ): Promise<void> {
     try {
-        await prisma.shop.update({
-            where: { domain: shop },
-            data: {
-                subscriptionId,
-                subscriptionStatus: status,
-                subscriptionPlan: planName,
-                subscriptionUpdatedAt: new Date(),
-            },
+        const normalizedStatus = status.toUpperCase() as ShopifySubscriptionStatus;
+        const isActive = normalizedStatus === ShopifySubscriptionStatus.ACTIVE;
+        const isCancelled = normalizedStatus === ShopifySubscriptionStatus.CANCELLED;
+
+        const resolvedPlan = isActive && planName.toLowerCase().includes("pro")
+            ? PlanName.PRO
+            : PlanName.FREE;
+
+        await upsertShopPlan(shop, {
+            billingId: subscriptionId || undefined,
+            status: Object.values(ShopifySubscriptionStatus).includes(normalizedStatus)
+                ? normalizedStatus
+                : undefined,
+            plan: resolvedPlan,
+            activatedAt: isActive ? new Date() : undefined,
+            cancelledAt: isCancelled ? new Date() : undefined,
         });
     } catch (error) {
         console.error(

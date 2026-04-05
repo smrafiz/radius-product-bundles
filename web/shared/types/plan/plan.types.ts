@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { BundleType, BundleStatus, DiscountType } from "@/features/bundles";
 
-export type PlanId = "FREE" | (string & {});
+export type PlanId = "FREE" | "PRO";
 
 export type GateMode = "enabled" | "lock-overlay" | "hidden";
 

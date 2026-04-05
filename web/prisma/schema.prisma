@@ -398,15 +398,7 @@ model Shop {
     status             ShopStatus @default(ACTIVE)
     plan               String?
     trialEndsAt        DateTime?
-    
-    // Shopify Subscription (Billing API)
-    subscriptionId     String?    @unique // Shopify subscription ID (gid://shopify/AppSubscription/xxx)
-    subscriptionStatus String?   // ACTIVE, CANCELLED, FROZEN, PAUSED, DECLINED, EXPIRED
-    subscriptionPlan  String?    // Plan handle from Shopify
-    subscriptionCreatedAt DateTime?
-    subscriptionUpdatedAt DateTime?
-    billingOn         DateTime?  // Next billing date
-    
+
     metafieldSetupDone Boolean    @default(false)
     discountSetupDone  Boolean    @default(false)
 
@@ -493,8 +485,40 @@ model WebhookDelivery {
     @@map("webhook_deliveries")
 }
 
+model ShopPlan {
+    id               String                     @id @default(cuid())
+    shop             String                     @unique
+    plan             PlanName                   @default(FREE)
+    status           ShopifySubscriptionStatus?
+    billingId        String?                    @unique
+    billingInterval  String?
+    trialEndsAt      DateTime?
+    currentPeriodEnd DateTime?
+    activatedAt      DateTime?
+    cancelledAt      DateTime?
+    createdAt        DateTime                   @default(now())
+    updatedAt        DateTime                   @updatedAt
+
+    @@index([status])
+    @@map("shop_plans")
+}
+
 /// *
 /// * Enumerations
+enum PlanName {
+    FREE
+    PRO
+}
+
+enum ShopifySubscriptionStatus {
+    ACTIVE
+    CANCELLED
+    DECLINED
+    EXPIRED
+    FROZEN
+    PENDING
+}
+
 enum BundleType {
     FIXED_BUNDLE
     BUY_X_GET_Y

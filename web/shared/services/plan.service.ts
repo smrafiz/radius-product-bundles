@@ -21,13 +21,13 @@ export function getPlanConfig(planId: PlanId): PlanConfig {
 }
 
 export async function resolveShopPlan(domain: string): Promise<PlanConfig> {
-    const subscription = await getShopSubscription(domain);
+    const shopPlan = await getShopSubscription(domain);
 
-    if (subscription?.subscriptionStatus === "ACTIVE") {
-        return getPlanConfig("paid" as PlanId);
+    if (shopPlan?.status === "ACTIVE" && shopPlan?.plan === "PRO") {
+        return getPlanConfig("PRO" as PlanId);
     }
 
-    const planId = (await getShopPlan(domain)) ?? DEFAULT_PLAN_ID;
+    const planId = ((await getShopPlan(domain)) ?? DEFAULT_PLAN_ID) as PlanId;
     return getPlanConfig(planId);
 }
 

@@ -56,6 +56,36 @@ function unlockAll(config: PlanConfig): PlanConfig {
     };
 }
 
+const PRO_CONFIG: PlanConfig = {
+    id: "PRO",
+    name: "Pro",
+    limits: {
+        maxBundles: -1,
+        maxProductsPerBundle: -1,
+        allowedLayouts: {},
+        allowedBundleTypes: ["FIXED_BUNDLE", "BOGO", "BUY_X_GET_Y", "VOLUME_DISCOUNT", "MIX_AND_MATCH", "FREQUENTLY_BOUGHT_TOGETHER"],
+        allowedStatuses: ["DRAFT", "ACTIVE", "PAUSED", "SCHEDULED", "ARCHIVED"],
+        allowedDiscountTypes: ["PERCENTAGE", "FIXED_AMOUNT", "CUSTOM_PRICE", "NO_DISCOUNT", "QUANTITY_BREAKS"],
+    },
+    features: [
+        { feature: "analytics_full", gateMode: "enabled" },
+        { feature: "ab_testing", gateMode: "enabled" },
+        { feature: "automation", gateMode: "enabled" },
+        { feature: "ai_insights", gateMode: "enabled" },
+        { feature: "custom_css", gateMode: "enabled" },
+        { feature: "responsive_overrides", gateMode: "enabled" },
+        { feature: "templates", gateMode: "enabled" },
+        { feature: "export_data", gateMode: "enabled" },
+        { feature: "remove_branding", gateMode: "enabled" },
+        { feature: "duplicate_bundle", gateMode: "enabled" },
+        { feature: "bundle_behavior", gateMode: "enabled" },
+        { feature: "advanced_discount_controls", gateMode: "enabled" },
+        { feature: "advanced_cart_controls", gateMode: "enabled" },
+        { feature: "auto_translate", gateMode: "enabled" },
+    ],
+};
+
 export const PLAN_CONFIGS: Record<PlanId, PlanConfig> = {
     FREE: DEV_UNLOCK_ALL ? unlockAll(FREE_CONFIG) : FREE_CONFIG,
+    PRO: PRO_CONFIG,
 };

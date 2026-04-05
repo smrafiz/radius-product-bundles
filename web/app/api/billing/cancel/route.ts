@@ -1,44 +1,29 @@
+import {
+    CancelAppSubscriptionDocument,
+    CancelAppSubscriptionMutation,
+    CancelAppSubscriptionMutationVariables,
+} from "@/lib/graphql/generated/graphql";
 import { NextRequest, NextResponse } from "next/server";
 import { getShop } from "@/shared/repositories/shop.queries";
-import { findOfflineSessionByShop, prisma } from "@/shared/repositories";
-import { executeGraphQLQuery } from "@/lib/graphql/client";
-
-async function getAccessTokenForShop(shop: string): Promise<string | null> {
-    try {
-        const session = await findOfflineSessionByShop(shop);
-        return session?.accessToken || null;
-    } catch (error) {
-        console.error(
-            `[Billing] Failed to get access token for ${shop}:`,
-            error,
-        );
-        return null;
-    }
-}
-
-const CANCEL_SUBSCRIPTION_MUTATION = `
-mutation CancelAppSubscription($id: ID!) {
-    appSubscriptionCancel(id: $id) {
-        userErrors {
-            field
-            message
-        }
-        appSubscription {
-            id
-            status
-        }
-    }
-}
-`;
+import { authenticateBillingRequest } from "../billing-auth";
+import {
+    getShopPlanRecord,
+    cancelShopPlan,
+} from "@/features/pricing/repositories/shop-plan.repository";
+import { executeGraphQLMutation } from "@/lib/graphql/client";
+import { upsertShop } from "@/shared/repositories/shop.queries";
 
 export async function POST(request: NextRequest) {
     try {
-        const shop = request.headers.get("x-shop-domain");
+        let shop: string;
+        let accessToken: string;
 
-        if (!shop) {
+        try {
+            ({ shop, accessToken } = await authenticateBillingRequest(request));
+        } catch {
             return NextResponse.json(
-                { error: "Missing shop domain" },
-                { status: 400 },
+                { error: "Unauthorized" },
+                { status: 401 },
             );
         }
 
@@ -50,28 +35,25 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const currentSubscriptionId = (shopRecord as any).subscriptionId;
-        if (!currentSubscriptionId) {
+        const planRecord = await getShopPlanRecord(shop);
+        if (!planRecord?.billingId) {
             return NextResponse.json(
                 { error: "No active subscription found" },
                 { status: 400 },
             );
         }
 
-        const accessToken = await getAccessTokenForShop(shop);
-        if (!accessToken) {
-            return NextResponse.json(
-                { error: "Shop authentication required" },
-                { status: 401 },
-            );
-        }
+        const variables: CancelAppSubscriptionMutationVariables = {
+            id: planRecord.billingId,
+        };
 
-        const result = await executeGraphQLQuery({
-            query: CANCEL_SUBSCRIPTION_MUTATION,
-            variables: { id: currentSubscriptionId },
-            shop,
-            accessToken,
-        });
+        const result =
+            await executeGraphQLMutation<CancelAppSubscriptionMutation>({
+                query: CancelAppSubscriptionDocument,
+                variables,
+                shop,
+                accessToken,
+            });
 
         if (result.errors) {
             console.error("[Billing] GraphQL errors:", result.errors);
@@ -81,24 +63,26 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { appSubscriptionCancel } = result.data;
-        if (appSubscriptionCancel.userErrors?.length > 0) {
+        const payload = result.data?.appSubscriptionCancel;
+        if (!payload) {
             return NextResponse.json(
-                { errors: appSubscriptionCancel.userErrors },
+                { error: "No response from Shopify" },
+                { status: 500 },
+            );
+        }
+
+        if (payload.userErrors.length > 0) {
+            return NextResponse.json(
+                { errors: payload.userErrors },
                 { status: 400 },
             );
         }
 
-        await prisma.shop.update({
-            where: { domain: shop },
-            data: {
-                subscriptionStatus: "CANCELLED",
-                subscriptionUpdatedAt: new Date(),
-            },
-        });
+        await cancelShopPlan(shop);
+        await upsertShop(shop, { plan: "FREE" });
 
         return NextResponse.json({
-            subscription: appSubscriptionCancel.appSubscription,
+            subscription: payload.appSubscription,
         });
     } catch (error) {
         console.error("[Billing] Error cancelling subscription:", error);

@@ -1,11 +1,22 @@
 "use server";
 
-import {
-    SUBSCRIPTION_PLANS,
-    PLAN_PRICING,
-    SubscriptionPlanType,
-} from "@/features/pricing";
 import { handleSessionToken } from "@/lib/shopify";
+import { executeGraphQLMutation } from "@/lib/graphql/client";
+import {
+    CreateAppSubscriptionDocument,
+    CreateAppSubscriptionMutation,
+    CreateAppSubscriptionMutationVariables,
+    AppSubscriptionReplacementBehavior,
+    AppPricingInterval,
+    CurrencyCode,
+} from "@/lib/graphql/generated/graphql";
+import {
+    upsertShopPlan,
+} from "@/features/pricing/repositories/shop-plan.repository";
+import { ShopifySubscriptionStatus, PlanName } from "@/prisma/generated/client";
+import { PRO_TRIAL_DAYS, PRO_MONTHLY_PRICE } from "@/features/pricing/constants/pricing.constants";
+
+const PRO_PLAN_NAME = "Radius Pro";
 
 interface CreateSubscriptionResponse {
     status: "success" | "error";
@@ -19,59 +30,92 @@ interface CreateSubscriptionResponse {
 
 export async function createSubscriptionAction(
     sessionToken: string,
-    planId: SubscriptionPlanType,
+    _planId?: string,
+    interval: "EVERY_30_DAYS" | "ANNUAL" = "EVERY_30_DAYS",
 ): Promise<CreateSubscriptionResponse> {
     try {
-        const { session } = await handleSessionToken(sessionToken);
-        const { shop, accessToken } = session;
+        const { shop, session } = await handleSessionToken(sessionToken);
+        const { accessToken } = session;
 
         if (!accessToken) {
             return { status: "error", error: "No access token" };
         }
 
-        const pricing = PLAN_PRICING[planId];
-        if (!pricing) {
-            return { status: "error", error: "Invalid plan" };
-        }
+        const returnUrl = `${process.env.HOST}/settings/plan`;
+        const isTest = process.env.NODE_ENV !== "production";
 
-        const planNames: Record<SubscriptionPlanType, string> = {
-            [SUBSCRIPTION_PLANS.FREE]: "Free Plan",
-            [SUBSCRIPTION_PLANS.STARTER]: "Starter Plan",
-            [SUBSCRIPTION_PLANS.PREMIUM]: "Pro Plan",
+        const variables: CreateAppSubscriptionMutationVariables = {
+            name: PRO_PLAN_NAME,
+            returnUrl: `${returnUrl}?shop=${shop}`,
+            test: isTest,
+            trialDays: PRO_TRIAL_DAYS,
+            replacementBehavior:
+                AppSubscriptionReplacementBehavior.ApplyImmediately,
+            lineItems: [
+                {
+                    plan: {
+                        appRecurringPricingDetails: {
+                            price: {
+                                amount: PRO_MONTHLY_PRICE,
+                                currencyCode: CurrencyCode.Usd,
+                            },
+                            interval: interval as AppPricingInterval,
+                        },
+                    },
+                },
+            ],
         };
 
-        const response = await fetch(`${process.env.HOST}/api/billing/create`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-shop-domain": shop,
-            },
-            body: JSON.stringify({
-                planName: planNames[planId],
-                price: pricing.price,
-                currencyCode: pricing.currencyCode,
-                interval: pricing.interval,
-                returnUrl: `${process.env.HOST}/settings/plan`,
-                trialDays: pricing.trialDays,
-            }),
-        });
+        const result =
+            await executeGraphQLMutation<CreateAppSubscriptionMutation>({
+                query: CreateAppSubscriptionDocument,
+                variables,
+                shop,
+                accessToken,
+            });
 
-        const data = await response.json();
+        if (result.errors) {
+            console.error("[Billing] GraphQL errors:", result.errors);
+            return { status: "error", error: "Failed to create subscription" };
+        }
 
-        if (!response.ok || data.errors) {
-            console.error("[Billing] Subscription error:", data);
+        const payload = result.data?.appSubscriptionCreate;
+        if (!payload) {
+            return { status: "error", error: "No response from Shopify" };
+        }
+
+        if (payload.userErrors.length > 0) {
             return {
                 status: "error",
-                error:
-                    data.errors?.[0]?.message ||
-                    "Failed to create subscription",
+                error: payload.userErrors[0]?.message ?? "Shopify billing error",
             };
         }
 
+        const subscription = payload.appSubscription;
+        if (!subscription) {
+            return { status: "error", error: "Subscription not returned" };
+        }
+
+        await upsertShopPlan(shop, {
+            billingId: subscription.id,
+            plan: PlanName.PRO,
+            status: ShopifySubscriptionStatus.PENDING,
+            billingInterval: interval,
+            trialEndsAt: subscription.trialDays
+                ? new Date(
+                      Date.now() +
+                          subscription.trialDays * 24 * 60 * 60 * 1000,
+                  )
+                : null,
+        });
+
         return {
             status: "success",
-            confirmationUrl: data.confirmationUrl,
-            subscription: data.subscription,
+            confirmationUrl: payload.confirmationUrl ?? undefined,
+            subscription: {
+                id: subscription.id,
+                status: subscription.status,
+            },
         };
     } catch (error) {
         console.error("[Billing] Subscription error:", error);
