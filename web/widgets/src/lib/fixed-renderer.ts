@@ -7,11 +7,9 @@ import type {
 import { calculateBxgyRewardPrice } from "./bogo-renderer";
 import {
     escapeHtml,
-    formatLabel,
     formatMoney,
     getLocalePath,
     responsiveImg,
-    trimMoney,
 } from "./utils";
 
 export interface FixedContext extends BaseRenderContext {
