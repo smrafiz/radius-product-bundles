@@ -10,6 +10,7 @@ export interface PricingCardItemInfo {
     features: string[];
     price: string;
     frequency: string;
+    annualEquivalent?: string;
     primaryButton: {
         content: string;
         loading?: boolean;
@@ -66,3 +67,25 @@ export type ShopPlanUpsertData = {
     activatedAt?: Date | null;
     cancelledAt?: Date | null;
 };
+
+/**
+ * Feature comparison table types
+ */
+export type CellValue = boolean | string;
+
+/**
+ * Feature comparison table types
+ */
+export interface TableRow {
+    labelKey: string;
+    free: CellValue;
+    pro: CellValue;
+}
+
+/**
+ * Feature comparison table types
+ */
+export interface TableCategory {
+    categoryKey: string;
+    rows: TableRow[];
+}

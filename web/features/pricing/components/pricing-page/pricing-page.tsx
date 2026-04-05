@@ -1,9 +1,14 @@
 "use client";
 
+import {
+    PricingCard,
+    PricingFaq,
+    PlanStatusCard,
+    FeatureComparisonTable,
+} from "@/features/pricing";
 import { useAppNavigation } from "@/shared";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslations } from "@/lib/i18n/provider";
-import { PricingCard, PricingFaq, PricingStore } from "@/features/pricing";
 
 export function PricingPage() {
     const t = useTranslations("Pricing");
@@ -17,6 +22,7 @@ export function PricingPage() {
                 paddingBlockStart="large"
                 paddingBlockEnd="large"
             >
+                {/* Header row */}
                 <s-stack direction="inline" gap="base">
                     <s-stack paddingBlockStart="small-500">
                         <s-button
@@ -33,16 +39,17 @@ export function PricingPage() {
                     </s-stack>
                 </s-stack>
 
-                <s-stack gap="large">
-                    {/* Pricing Store */}
-                    <PricingStore />
+                {/* Zone 1: Plan status card */}
+                <PlanStatusCard />
 
-                    {/* Pricing Cards */}
-                    <PricingCard />
+                {/* Zone 2+3: Billing toggle + plan cards */}
+                <PricingCard />
 
-                    {/* Pricing Faq */}
-                    <PricingFaq />
-                </s-stack>
+                {/* Zone 4: Feature comparison table */}
+                <FeatureComparisonTable />
+
+                {/* Zone 5: FAQ */}
+                <PricingFaq />
             </s-stack>
         </s-page>
     );

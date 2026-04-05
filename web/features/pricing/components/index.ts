@@ -4,5 +4,7 @@ export { PricingCard } from "./pricing-card/pricing-card";
 export { PricingStore } from "./pricing-store/pricing-store";
 export { PricingFaqItem } from "./pricing-faq/pricing-faq-item";
 export { PricingCardItem } from "./pricing-card/pricing-card-item";
+export { PlanStatusCard } from "./plan-status-card/plan-status-card";
 export { PlanSettingsTab } from "./plan-settings-tab/plan-settings-tab";
 export { BillingConfirmation } from "./billing-confirmation/billing-confirmation";
+export { FeatureComparisonTable } from "./feature-comparison-table/feature-comparison-table";

@@ -1678,9 +1678,11 @@
     "billingMonthly": "Monthly",
     "billingAnnual": "Annual",
     "annualSavings": "Save 17%",
+    "annualBilledLabel": "{price}/year billed annually",
     "currentPlan": "Current Plan",
     "downgradeFree": "Downgrade to Free",
     "toggleBillingInterval": "Toggle billing interval",
+    "subscriptionError": "Failed to update subscription. Please try again.",
     "trialBadge": "{days}-day free trial",
     "Confirmation": {
       "activating": "Activating subscription...",
@@ -1711,6 +1713,53 @@
       "cancelModalBody": "Your Pro features will remain active until the end of the current billing period. After that, your account will revert to the Free plan.",
       "cancelModalKeep": "Keep subscription",
       "cancelModalConfirm": "Cancel subscription"
+    },
+    "PlanStatus": {
+      "freePlan": "Free Plan",
+      "proPlan": "Pro Plan",
+      "bundlesLabel": "Bundles",
+      "upgradeToPro": "Upgrade to Pro",
+      "manageSubscription": "Manage Subscription",
+      "nextBilling": "Next billing {date}",
+      "trialDaysLeft": "{days} days left in trial",
+      "billingMonthly": "Monthly",
+      "billingAnnual": "Annual"
+    },
+    "ComparisonTable": {
+      "title": "Compare Plans",
+      "subtitle": "See everything included in each plan",
+      "featureCol": "Feature",
+      "unlimited": "Unlimited",
+      "mostPopular": "Most Popular",
+      "categories": {
+        "bundles": "Bundles",
+        "analytics": "Analytics",
+        "advanced": "Advanced Features",
+        "support": "Support"
+      },
+      "features": {
+        "maxBundles": "Max bundles",
+        "maxProducts": "Products per bundle",
+        "bundleTypes": "Bundle types",
+        "discountTypes": "Discount types",
+        "analytics": "Analytics",
+        "exportData": "Export data",
+        "abTesting": "A/B Testing",
+        "automation": "Automation",
+        "aiInsights": "AI Insights",
+        "customCss": "Custom CSS",
+        "templates": "Templates",
+        "removeBranding": "Remove branding",
+        "responsiveOverrides": "Responsive overrides",
+        "duplicateBundle": "Duplicate bundle",
+        "support": "Support type"
+      },
+      "values": {
+        "basic": "Basic",
+        "full": "Full",
+        "email": "Email",
+        "priority": "Priority"
+      }
     }
   },
   "Support": {
