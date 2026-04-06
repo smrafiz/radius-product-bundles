@@ -19,7 +19,7 @@ function Cell({ value, t }: { value: CellValue; t: TranslateFn }) {
             );
         }
         return <span className="flex justify-center">
-            <s-icon type="x" tone="neutral" />
+            <s-icon type="x" tone="critical" />
         </span>;
     }
     const isValueKey = VALUE_KEYS.includes(value);

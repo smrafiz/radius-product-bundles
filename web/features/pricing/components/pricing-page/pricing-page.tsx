@@ -39,11 +39,11 @@ export function PricingPage() {
                     </s-stack>
                 </s-stack>
 
-                {/* Zone 1: Plan status card */}
-                <PlanStatusCard />
-
                 {/* Zone 2+3: Billing toggle + plan cards */}
                 <PricingCard />
+
+                {/* Zone 1: Plan status card */}
+                <PlanStatusCard />
 
                 {/* Zone 4: Feature comparison table */}
                 <FeatureComparisonTable />

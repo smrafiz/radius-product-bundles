@@ -26,10 +26,10 @@ export function QuotaBar({ resource, label }: QuotaBarProps) {
         label ?? (resource === "bundles" ? t("bundles") : t("products"));
 
     const barColor = isAtLimit
-        ? "var(--p-color-text-critical, #DC2626)"
+        ? "#DC2626"
         : isNearLimit
-          ? "var(--p-color-text-caution, #F59E0B)"
-          : "var(--p-color-text-info, #2563EB)";
+          ? "#F59E0B"
+          : "#303030";
 
     return (
         <s-stack gap="small-200">
@@ -48,7 +48,7 @@ export function QuotaBar({ resource, label }: QuotaBarProps) {
             <div
                 style={{
                     height: "6px",
-                    background: "var(--p-color-bg-fill-secondary, #E5E7EB)",
+                    background: "#E5E7EB",
                     borderRadius: "3px",
                     overflow: "hidden",
                 }}
