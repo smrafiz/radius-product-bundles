@@ -3,6 +3,7 @@
 import { useTranslations } from "@/lib/i18n/provider";
 import { QuotaBar, SkeletonLines } from "@/shared";
 import { usePlanStatusCard } from "@/features/pricing/hooks/use-plan-status-card";
+import { PLAN_STATUS_ITEM } from "@/features/pricing/constants/pricing.constants";
 
 export function PlanStatusCard() {
     const t = useTranslations("Pricing.PlanStatus");
@@ -85,30 +86,16 @@ export function PlanStatusCard() {
                     gap="base"
                     justifyContent="center"
                 >
-                    <s-grid-item>
-                        <s-section padding="base">
-                            <s-stack gap="small-300">
-                                <s-text>Total orders</s-text>
-                                <s-heading><span style={{fontSize: "18px", fontWeight:"700"}}>144</span></s-heading>
-                            </s-stack>
-                        </s-section>
-                    </s-grid-item>
-                    <s-grid-item>
-                        <s-section padding="base">
-                            <s-stack gap="small-300">
-                                <s-text>Revenue fron bundles</s-text>
-                                <s-heading><span style={{fontSize: "18px", fontWeight:"700"}}>$12345</span></s-heading>
-                            </s-stack>
-                        </s-section>
-                    </s-grid-item>
-                    <s-grid-item>
-                        <s-section padding="base">
-                            <s-stack gap="small-300">
-                                <s-text>Avg.bundle value</s-text>
-                                <s-heading><span style={{fontSize: "18px", fontWeight:"700"}}>$29.05</span></s-heading>
-                            </s-stack>
-                        </s-section>
-                    </s-grid-item>
+                    {PLAN_STATUS_ITEM.map((item) => (
+                        <s-grid-item key={item.id}>
+                            <s-section padding="base">
+                                <s-stack gap="small-300">
+                                    <s-text>{item.title}</s-text>
+                                    <s-heading><span style={{fontSize: "18px", fontWeight:"700"}}>{item.value}</span></s-heading>
+                                </s-stack>
+                            </s-section>
+                        </s-grid-item>
+                    ))}
                 </s-grid>
             </div>
         </s-section>

@@ -31,13 +31,13 @@ export const PricingCard = () => {
                     background="base"
                 >
                     <s-button
-                        variant={isMonthly ? "secondary" : "tertiary"}
+                        variant={isMonthly ? "primary" : "tertiary"}
                         onClick={() => setBillingInterval("EVERY_30_DAYS")}
                     >
                         {t("billingMonthly")}
                     </s-button>
                     <s-button
-                        variant={!isMonthly ? "secondary" : "tertiary"}
+                        variant={!isMonthly ? "primary" : "tertiary"}
                         onClick={() => setBillingInterval("ANNUAL")}
                     >
                         {t("billingAnnual")}

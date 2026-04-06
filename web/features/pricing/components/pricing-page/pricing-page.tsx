@@ -6,13 +6,11 @@ import {
     PlanStatusCard,
     FeatureComparisonTable,
 } from "@/features/pricing";
-import { useAppNavigation } from "@/shared";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function PricingPage() {
     const t = useTranslations("Pricing");
-    const { goBack } = useAppNavigation();
 
     return (
         <s-page>
@@ -23,20 +21,13 @@ export function PricingPage() {
                 paddingBlockEnd="large"
             >
                 {/* Header row */}
-                <s-stack direction="inline" gap="base">
-                    <s-stack paddingBlockStart="small-500">
-                        <s-button
-                            onClick={() => goBack()}
-                            icon="arrow-left"
-                            accessibilityLabel={t("back")}
-                        ></s-button>
-                    </s-stack>
-                    <s-stack>
+                <s-stack>
+                    <div className="text-center">
                         <s-heading>
-                            <div className="text-lg">{t("title")}</div>
+                            <div className="text-base text-center">{t("title")}</div>
                         </s-heading>
                         <s-text color="subdued">{t("description")}</s-text>
-                    </s-stack>
+                    </div>
                 </s-stack>
 
                 {/* Zone 2+3: Billing toggle + plan cards */}
