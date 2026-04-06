@@ -58,7 +58,8 @@ export async function createSubscriptionService(
     }
 
     const price = interval === "ANNUAL" ? PRO_ANNUAL_PRICE : PRO_MONTHLY_PRICE;
-    const isTest = process.env.NODE_ENV !== "production";
+    const forceAnnualTest = process.env.NEXT_PUBLIC_FORCE_ANNUAL_TEST === "true";
+    const isTest = process.env.NODE_ENV !== "production" && !forceAnnualTest;
 
     const variables: CreateAppSubscriptionMutationVariables = {
         name: PRO_PLAN_NAME,
@@ -215,6 +216,7 @@ export async function confirmSubscriptionService(
         billingId: matchedSub.id,
         plan: PlanName.PRO,
         status: ShopifySubscriptionStatus.ACTIVE,
+        trialUsed: true,
         activatedAt: new Date(),
         currentPeriodEnd: matchedSub.currentPeriodEnd
             ? new Date(matchedSub.currentPeriodEnd as string)
@@ -250,6 +252,7 @@ export async function getSubscriptionStatusService(
             subscription: null,
             localStatus: localPlan?.status ?? null,
             trialEndsAt: localPlan?.trialEndsAt?.toISOString() ?? null,
+            trialUsed: localPlan?.trialUsed ?? false,
             status: "NO_SUBSCRIPTION",
         };
     }
@@ -279,6 +282,7 @@ export async function getSubscriptionStatusService(
         },
         localStatus: localPlan?.status ?? null,
         trialEndsAt: localPlan?.trialEndsAt?.toISOString() ?? null,
+        trialUsed: localPlan?.trialUsed ?? false,
         status: sub.status,
     };
 }

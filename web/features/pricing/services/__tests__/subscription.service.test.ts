@@ -102,6 +102,7 @@ describe("handleSubscriptionWebhookService — plan resolution", () => {
             plan: "PRO" as any,
             status: "ACTIVE" as any,
             billingInterval: "EVERY_30_DAYS",
+            trialUsed: false,
             trialEndsAt: null,
             currentPeriodEnd: null,
             activatedAt: null,

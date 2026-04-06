@@ -13,6 +13,7 @@ import {
     PRO_TRIAL_DAYS,
     type SubscriptionPlanType,
 } from "@/features/pricing/constants/pricing.constants";
+import { useBillingStatus } from "@/features/pricing/hooks/use-billing-status";
 import type { BillingInterval } from "@/features/pricing/types/pricing.types";
 
 export function usePricingCard() {
@@ -21,6 +22,8 @@ export function usePricingCard() {
     const [billingInterval, setBillingInterval] = useState<BillingInterval>("EVERY_30_DAYS");
     const app = useAppBridge();
     const { plan, isLoading: isPlanLoading } = usePlan();
+    const { billingData } = useBillingStatus();
+    const trialUsed = billingData?.trialUsed ?? false;
     const { showError } = useGlobalBanner();
 
     const isMonthly = billingInterval === "EVERY_30_DAYS";
@@ -81,6 +84,7 @@ export function usePricingCard() {
     const getTrialBadge = (planId: string): string | undefined => {
         if (planId !== SUBSCRIPTION_PLANS.PRO) return undefined;
         if (currentPlanId === SUBSCRIPTION_PLANS.PRO) return undefined;
+        if (trialUsed) return undefined;
         return t("trialBadge", { days: String(PRO_TRIAL_DAYS) });
     };
 
@@ -93,6 +97,9 @@ export function usePricingCard() {
         }
         if (loadingPlan === planId) {
             return t("pleaseWait");
+        }
+        if (planId === SUBSCRIPTION_PLANS.PRO && trialUsed) {
+            return t("upgradePro");
         }
         return t(`plans.${planId}.button`);
     };

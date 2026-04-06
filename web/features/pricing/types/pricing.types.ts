@@ -42,6 +42,7 @@ export interface BillingStatusResponse {
     } | null;
     localStatus: string | null;
     trialEndsAt: string | null;
+    trialUsed: boolean;
     status: string;
 }
 
@@ -62,6 +63,7 @@ export type ShopPlanUpsertData = {
     status?: ShopifySubscriptionStatus;
     billingId?: string;
     billingInterval?: string;
+    trialUsed?: boolean;
     trialEndsAt?: Date | null;
     currentPeriodEnd?: Date | null;
     activatedAt?: Date | null;

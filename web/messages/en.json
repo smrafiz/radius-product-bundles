@@ -1681,6 +1681,7 @@
     "annualBilledLabel": "{price}/year billed annually",
     "currentPlan": "Current Plan",
     "downgradeFree": "Downgrade to Free",
+    "upgradePro": "Upgrade to Pro",
     "toggleBillingInterval": "Toggle billing interval",
     "subscriptionError": "Failed to update subscription. Please try again.",
     "trialBadge": "{days}-day free trial",
@@ -1715,21 +1716,26 @@
       "cancelModalConfirm": "Cancel subscription"
     },
     "PlanStatus": {
-      "freePlan": "Free Plan",
-      "proPlan": "Pro Plan",
+      "title": "Plan",
+      "freePlan": "Free",
+      "proPlan": "Pro",
       "bundlesLabel": "Bundles",
       "upgradeToPro": "Upgrade to Pro",
       "manageSubscription": "Manage Subscription",
       "nextBilling": "Next billing {date}",
       "trialDaysLeft": "{days} days left in trial",
       "billingMonthly": "Monthly",
-      "billingAnnual": "Annual"
+      "billingAnnual": "Annual",
+      "statTotalRevenue": "Total Revenue",
+      "statOrders": "Orders (30 days)",
+      "statActiveBundles": "Active Bundles"
     },
     "ComparisonTable": {
       "title": "Compare Plans",
       "subtitle": "See everything included in each plan",
       "featureCol": "Feature",
       "unlimited": "Unlimited",
+      "comingSoon": "Coming Soon",
       "mostPopular": "Most Popular",
       "categories": {
         "bundles": "Bundles",
@@ -1742,23 +1748,37 @@
         "maxProducts": "Products per bundle",
         "bundleTypes": "Bundle types",
         "discountTypes": "Discount types",
+        "bundleLayouts": "Bundle layouts",
+        "scheduledPaused": "Schedule & pause bundles",
         "analytics": "Analytics",
+        "customerJourneyFunnel": "Customer Journey Funnel",
+        "conversionPerformance": "Conversion Performance",
+        "revenueAnalysis": "Revenue Analysis",
+        "allBundlesPerformance": "All Bundles Performance",
         "exportData": "Export data",
         "abTesting": "A/B Testing",
         "automation": "Automation",
         "aiInsights": "AI Insights",
         "customCss": "Custom CSS",
-        "templates": "Templates",
-        "removeBranding": "Remove branding",
         "responsiveOverrides": "Responsive overrides",
+        "bundleBehavior": "Bundle behavior controls",
+        "advancedDiscountControls": "Advanced discount controls",
+        "maxBundlesPerOrder": "Max bundles per order",
+        "bundlePriorityStrategy": "Bundle priority strategy",
+        "hidePaymentButtons": "Hide third-party payment buttons",
+        "savingsBanner": "Show savings banner in cart",
+        "discountStacking": "Allow discount stacking",
         "duplicateBundle": "Duplicate bundle",
+        "autoTranslate": "Auto-translate labels",
         "support": "Support type"
       },
       "values": {
         "basic": "Basic",
         "full": "Full",
         "email": "Email",
-        "priority": "Priority"
+        "priority": "Priority",
+        "layoutsFree": "2 per type",
+        "layoutsPro": "All layouts"
       }
     }
   },

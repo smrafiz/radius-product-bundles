@@ -80,23 +80,6 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
     },
 ];
 
-export const PLAN_STATUS_ITEM = [
-    {
-        id: "0",
-        title: "Total orders",
-        value: "144",
-    },
-    {
-        id: "1",
-        title: "Revenue fron bundles",
-        value:"$12345",
-    },
-    {
-        id: "2",
-        title: "Avg.bundle value",
-        value: "$29.05",
-    },
-];
 
 export const PRICING_FAQ_ITEM = [
     {

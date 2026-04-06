@@ -492,6 +492,7 @@ model ShopPlan {
     status           ShopifySubscriptionStatus?
     billingId        String?                    @unique
     billingInterval  String?
+    trialUsed        Boolean                    @default(false)
     trialEndsAt      DateTime?
     currentPeriodEnd DateTime?
     activatedAt      DateTime?

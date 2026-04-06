@@ -5,11 +5,18 @@ import { useTranslations } from "@/lib/i18n/provider";
 import { CellValue } from "@/features/pricing";
 import { useFeatureComparisonTable } from "@/features/pricing/hooks/use-feature-comparison-table";
 
-const VALUE_KEYS = ["basic", "full", "email", "priority"];
+const VALUE_KEYS = ["basic", "full", "email", "priority", "layoutsFree", "layoutsPro"];
 
 type TranslateFn = ReturnType<typeof useTranslations>;
 
 function Cell({ value, t }: { value: CellValue; t: TranslateFn }) {
+    if (value === "coming-soon") {
+        return (
+            <span className="flex justify-center">
+                <s-badge tone="warning">{t("comingSoon")}</s-badge>
+            </span>
+        );
+    }
     if (typeof value === "boolean") {
         if (value) {
             return (
@@ -18,9 +25,11 @@ function Cell({ value, t }: { value: CellValue; t: TranslateFn }) {
                 </span>
             );
         }
-        return <span className="flex justify-center">
-            <s-icon type="x" tone="critical" />
-        </span>;
+        return (
+            <span className="flex justify-center">
+                <s-icon type="x" tone="critical" />
+            </span>
+        );
     }
     const isValueKey = VALUE_KEYS.includes(value);
     const translated = isValueKey ? t(`values.${value}` as never) : value;
