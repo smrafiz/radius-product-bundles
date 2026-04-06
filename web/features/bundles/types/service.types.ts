@@ -284,3 +284,21 @@ export interface SchedulerResult {
     deactivated: number;
     errors: Array<{ shop: string; error: string }>;
 }
+
+/*
+ * Preflight result types
+ */
+export interface PreflightResult {
+    security: {
+        success: boolean;
+        message?: string;
+        errors?: Record<string, { _errors: string[] }>;
+    };
+    context: BundleOperationContext;
+    quota: {
+        allowed: boolean;
+        reason?: string;
+        current?: number;
+        limit?: number;
+    };
+}

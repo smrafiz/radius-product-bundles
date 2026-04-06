@@ -20,7 +20,7 @@ export function usePricingCard() {
     const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
     const [billingInterval, setBillingInterval] = useState<BillingInterval>("EVERY_30_DAYS");
     const app = useAppBridge();
-    const { plan } = usePlan();
+    const { plan, isLoading: isPlanLoading } = usePlan();
     const { showError } = useGlobalBanner();
 
     const isMonthly = billingInterval === "EVERY_30_DAYS";
@@ -112,6 +112,7 @@ export function usePricingCard() {
 
     return {
         loadingPlan,
+        isPlanLoading,
         billingInterval,
         setBillingInterval,
         isMonthly,

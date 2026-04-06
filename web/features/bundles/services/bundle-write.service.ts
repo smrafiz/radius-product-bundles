@@ -37,6 +37,7 @@ import {
     updateBundleWithRelations,
 } from "@/features/bundles/repositories";
 import { formatValidationErrorsAsString } from "@/shared";
+import { validateShopPermissions } from "@/features/bundles/services/bundle-security.service";
 // ==========================================
 // CREATE Operations
 // ==========================================
@@ -58,6 +59,22 @@ export async function createBundleService(
                 success: false,
                 message: preflight.security.message || "Security check failed",
                 errors: preflight.security.errors || null,
+                bundle: null,
+            };
+        }
+
+        // Plan-gate: check bundle type and status are allowed on the shop's current plan
+        const permissionCheck = await validateShopPermissions(
+            shop,
+            "create",
+            data.type,
+            data.status,
+        );
+        if (!permissionCheck.passed) {
+            return {
+                success: false,
+                message: permissionCheck.reason ?? "Bundle type not available on your plan",
+                errors: null,
                 bundle: null,
             };
         }
@@ -266,6 +283,22 @@ export async function updateBundleService(
                 success: false,
                 message: preflight.security.message || "Security check failed",
                 errors: preflight.security.errors || null,
+                bundle: null,
+            };
+        }
+
+        // Plan-gate: check status is allowed on the shop's current plan
+        const permissionCheck = await validateShopPermissions(
+            shop,
+            "update",
+            undefined,
+            data.status,
+        );
+        if (!permissionCheck.passed) {
+            return {
+                success: false,
+                message: permissionCheck.reason ?? "Status not available on your plan",
+                errors: null,
                 bundle: null,
             };
         }

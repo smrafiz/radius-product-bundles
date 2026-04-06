@@ -8,6 +8,7 @@ export const PricingCard = () => {
     const t = useTranslations("Pricing");
     const {
         loadingPlan,
+        isPlanLoading,
         billingInterval,
         setBillingInterval,
         isMonthly,
@@ -70,6 +71,7 @@ export const PricingCard = () => {
                             frequency={getFrequency(item.id)}
                             annualEquivalent={getAnnualEquivalent(item.id)}
                             features={item.features}
+                            isPlanLoading={isPlanLoading}
                             primaryButton={{
                                 ...item.primaryButton,
                                 content: getButtonContent(item.id),

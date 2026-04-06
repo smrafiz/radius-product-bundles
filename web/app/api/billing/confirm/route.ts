@@ -1,22 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getShop } from "@/shared/repositories/shop.queries";
 import {
     confirmSubscriptionService,
-    getAccessTokenForShop,
     BillingError,
 } from "@/features/pricing/services/subscription.service";
+import { authenticateBillingRequest } from "../billing-auth";
 
 export async function POST(request: NextRequest) {
+    let shop: string;
+    let accessToken: string;
+
     try {
-        const shop = request.headers.get("x-shop-domain");
+        ({ shop, accessToken } = await authenticateBillingRequest(request));
+    } catch {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-        if (!shop) {
-            return NextResponse.json(
-                { error: "Missing shop domain" },
-                { status: 400 },
-            );
-        }
-
+    try {
         const body = (await request.json()) as { chargeId?: string };
         const { chargeId } = body;
 
@@ -24,22 +23,6 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(
                 { error: "Missing chargeId" },
                 { status: 400 },
-            );
-        }
-
-        const shopRecord = await getShop(shop);
-        if (!shopRecord) {
-            return NextResponse.json(
-                { error: "Shop not found" },
-                { status: 404 },
-            );
-        }
-
-        const accessToken = await getAccessTokenForShop(shop);
-        if (!accessToken) {
-            return NextResponse.json(
-                { error: "Shop authentication required" },
-                { status: 401 },
             );
         }
 

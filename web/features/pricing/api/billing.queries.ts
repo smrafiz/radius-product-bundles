@@ -1,50 +1,34 @@
-import type { BillingStatusResponse } from "@/features/pricing/types/pricing.types";
+import {
+    billingQueryKeys,
+    type BillingStatusResponse,
+} from "@/features/pricing";
+import { queryOptions } from "@tanstack/react-query";
+import { useAppBridge } from "@shopify/app-bridge-react";
 
-export const BILLING_KEYS = {
-    all: ["billing"] as const,
-    status: () => [...BILLING_KEYS.all, "status"] as const,
-};
-
-export async function fetchBillingStatus(
-    shop: string,
+async function fetchBillingStatus(
+    sessionToken: string,
 ): Promise<BillingStatusResponse> {
     const res = await fetch("/api/billing/status", {
-        headers: { "x-shop-domain": shop },
+        headers: { Authorization: `Bearer ${sessionToken}` },
     });
     if (!res.ok) {
         throw new Error(`Billing status fetch failed: ${res.status}`);
     }
-    return res.json() as Promise<BillingStatusResponse>;
+    return (await res.json()) as Promise<BillingStatusResponse>;
 }
 
-export async function cancelSubscription(shop: string): Promise<void> {
-    const res = await fetch("/api/billing/cancel", {
-        method: "POST",
-        headers: { "x-shop-domain": shop },
-    });
-    if (!res.ok) {
-        throw new Error(`Cancel subscription failed: ${res.status}`);
-    }
-}
-
-export async function confirmSubscriptionFetch(
-    shop: string,
-    chargeId: string,
-): Promise<void> {
-    const res = await fetch("/api/billing/confirm", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "x-shop-domain": shop,
-        },
-        body: JSON.stringify({ chargeId }),
-    });
-    if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as {
-            error?: string;
-        };
-        throw new Error(
-            body.error ?? `Subscription confirmation failed: ${res.status}`,
-        );
-    }
+export function billingQueries(app: ReturnType<typeof useAppBridge>) {
+    return {
+        status: () =>
+            queryOptions({
+                queryKey: billingQueryKeys.status(),
+                queryFn: async () => {
+                    const token = await app.idToken();
+                    return fetchBillingStatus(token);
+                },
+                staleTime: 30_000,
+                gcTime: 60_000,
+                refetchOnWindowFocus: false,
+            }),
+    };
 }

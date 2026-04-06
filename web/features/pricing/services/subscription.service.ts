@@ -28,12 +28,7 @@ import {
 } from "@/features/pricing/constants/pricing.constants";
 import { BillingInterval, BillingStatusResponse } from "@/features/pricing/types/pricing.types";
 
-const PRO_PLAN_NAME = "Radius Pro";
-
-export interface CreateSubscriptionResult {
-    confirmationUrl: string;
-    subscriptionId: string;
-}
+const PRO_PLAN_NAME = "Radius Bundles Pro";
 
 export class BillingError extends Error {
     constructor(
@@ -50,10 +45,16 @@ export async function createSubscriptionService(
     accessToken: string,
     interval: BillingInterval,
     returnUrl: string,
-): Promise<CreateSubscriptionResult> {
+): Promise<{
+    confirmationUrl: string;
+    subscriptionId: string;
+}> {
     const existingPlan = await getShopPlanRecord(shop);
     if (existingPlan?.status === ShopifySubscriptionStatus.ACTIVE) {
-        throw new BillingError("Already has active subscription", "ALREADY_ACTIVE");
+        throw new BillingError(
+            "Already has active subscription",
+            "ALREADY_ACTIVE",
+        );
     }
 
     const price = interval === "ANNUAL" ? PRO_ANNUAL_PRICE : PRO_MONTHLY_PRICE;
@@ -64,7 +65,8 @@ export async function createSubscriptionService(
         returnUrl: `${returnUrl}?shop=${shop}`,
         test: isTest,
         trialDays: PRO_TRIAL_DAYS,
-        replacementBehavior: AppSubscriptionReplacementBehavior.ApplyImmediately,
+        replacementBehavior:
+            AppSubscriptionReplacementBehavior.ApplyImmediately,
         lineItems: [
             {
                 plan: {
@@ -89,7 +91,10 @@ export async function createSubscriptionService(
 
     if (result.errors) {
         console.error("[Billing] GraphQL errors:", result.errors);
-        throw new BillingError("Failed to create subscription", "SHOPIFY_ERROR");
+        throw new BillingError(
+            "Failed to create subscription",
+            "SHOPIFY_ERROR",
+        );
     }
 
     const payload = result.data?.appSubscriptionCreate;
@@ -113,7 +118,9 @@ export async function createSubscriptionService(
         status: ShopifySubscriptionStatus.PENDING,
         billingInterval: interval,
         trialEndsAt: subscription.trialDays
-            ? new Date(Date.now() + subscription.trialDays * 24 * 60 * 60 * 1000)
+            ? new Date(
+                  Date.now() + subscription.trialDays * 24 * 60 * 60 * 1000,
+              )
             : null,
     });
 
@@ -179,7 +186,12 @@ export async function confirmSubscriptionService(
     }
 
     const subscriptions = result.data?.currentAppInstallation?.activeSubscriptions ?? [];
-    const matchedSub = subscriptions.find((s) => s.id === chargeId);
+    // Shopify redirect sends numeric charge_id; GraphQL IDs are GID format.
+    // Normalize to GID before comparing.
+    const normalizedChargeId = chargeId.startsWith("gid://")
+        ? chargeId
+        : `gid://shopify/AppSubscription/${chargeId}`;
+    const matchedSub = subscriptions.find((s) => s.id === normalizedChargeId);
 
     if (!matchedSub) {
         throw new BillingError("Subscription not found or not active", "NOT_FOUND");
@@ -286,8 +298,17 @@ export async function handleSubscriptionWebhookService(
         normalizedStatus === ShopifySubscriptionStatus.EXPIRED ||
         normalizedStatus === ShopifySubscriptionStatus.DECLINED;
 
-    const resolvedPlan =
-        isActive && planName.toLowerCase().includes("pro") ? PlanName.PRO : PlanName.FREE;
+    // Resolve plan: prefer the stored plan from billingId lookup over substring matching.
+    // This survives plan renames on the Shopify side.
+    let resolvedPlan: PlanName = PlanName.FREE;
+    if (isActive) {
+        const existingPlan = await getShopPlanRecord(shop);
+        if (existingPlan?.billingId === subscriptionId && existingPlan.plan === PlanName.PRO) {
+            resolvedPlan = PlanName.PRO;
+        } else if (planName.toLowerCase().includes("pro")) {
+            resolvedPlan = PlanName.PRO;
+        }
+    }
 
     await upsertShopPlan(shop, {
         billingId: subscriptionId || undefined,
@@ -304,12 +325,14 @@ export async function handleSubscriptionWebhookService(
     } else if (isFrozen) {
         await upsertShop(shop, { status: ShopStatus.SUSPENDED });
     } else if (isTerminated) {
-        await upsertShop(shop, { status: ShopStatus.ACTIVE });
-        if (normalizedStatus === ShopifySubscriptionStatus.EXPIRED) {
-            console.warn(
-                `[Subscription] Trial/subscription expired for ${shop} — downgraded to FREE`,
-            );
-        }
+        const terminatedStatus =
+            normalizedStatus === ShopifySubscriptionStatus.EXPIRED
+                ? ShopStatus.TRIAL_EXPIRED
+                : ShopStatus.SUSPENDED;
+        await upsertShop(shop, { status: terminatedStatus });
+        console.warn(
+            `[Subscription] Subscription ${normalizedStatus} for ${shop} — status set to ${terminatedStatus}`,
+        );
     }
 }
 

@@ -24,7 +24,7 @@ export async function createSubscriptionAction(
             return { status: "error", error: "No access token" };
         }
 
-        const returnUrl = `${process.env.HOST}/settings/plan`;
+        const returnUrl = `${process.env.HOST}/pricing/plan`;
 
         const result = await createSubscriptionService(shop, accessToken, interval, returnUrl);
 

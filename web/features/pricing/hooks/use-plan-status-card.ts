@@ -4,8 +4,9 @@ import { useBillingStatus } from "@/features/pricing/hooks/use-billing-status";
 import { usePlan, ROUTES, useAppNavigation } from "@/shared";
 
 export function usePlanStatusCard() {
-    const { plan } = usePlan();
-    const { billingData, isLoading, trialDaysRemaining } = useBillingStatus();
+    const { plan, isLoading: isPlanLoading } = usePlan();
+    const { billingData, isLoading: isBillingLoading, trialDaysRemaining } = useBillingStatus();
+    const isLoading = isPlanLoading || isBillingLoading;
     const { goTo } = useAppNavigation();
 
     const isPro = plan.id === "PRO";

@@ -1,14 +1,14 @@
 "use client";
 
 import { Suspense } from "react";
-import { useAppNavigation } from "@/shared";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslations } from "@/lib/i18n/provider";
-import { BillingConfirmation, PlanSettingsTab } from "@/features/pricing";
+import { useAppNavigation, ROUTES } from "@/shared";
+import { BillingConfirmation, PlanStatusCard } from "@/features/pricing";
 
-export default function PlanPage() {
+export default function PricingPlanPage() {
     const t = useTranslations("Pricing.PlanTab");
-    const { goBack } = useAppNavigation();
+    const { goTo } = useAppNavigation();
 
     return (
         <s-page>
@@ -21,7 +21,7 @@ export default function PlanPage() {
                 <s-stack direction="inline" gap="base">
                     <s-stack paddingBlockStart="small-500">
                         <s-button
-                            onClick={() => goBack()}
+                            onClick={goTo(ROUTES.PRICING)}
                             icon="arrow-left"
                             accessibilityLabel={t("back")}
                         />
@@ -35,7 +35,7 @@ export default function PlanPage() {
                     <BillingConfirmation />
                 </Suspense>
 
-                <PlanSettingsTab />
+                <PlanStatusCard />
             </s-stack>
         </s-page>
     );

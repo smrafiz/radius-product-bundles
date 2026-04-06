@@ -59,6 +59,7 @@ export interface PlanGateResult {
 
 export interface PlanContextValue {
     plan: PlanConfig;
+    isLoading: boolean;
     canUse: (feature: FeatureId) => boolean;
     getGateMode: (feature: FeatureId) => GateMode;
     isWithinQuota: (resource: "bundles" | "products") => boolean;

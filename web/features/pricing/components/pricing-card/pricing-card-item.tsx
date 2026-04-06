@@ -14,7 +14,8 @@ export function PricingCardItem({
     frequency,
     annualEquivalent,
     onSubscribe,
-}: PricingCardItemInfo) {
+    isPlanLoading,
+}: PricingCardItemInfo & { isPlanLoading?: boolean }) {
     const t = useTranslations("Pricing");
 
     const handleClick = async () => {
@@ -34,7 +35,7 @@ export function PricingCardItem({
             }`}
         >
             {featuredText ? (
-                <div className="absolute top-[-15px] right-1.5 z-50">
+                <div className="absolute -top-3.75 right-1.5 z-50">
                     <s-badge tone="success">{featuredText}</s-badge>
                 </div>
             ) : null}
@@ -75,14 +76,18 @@ export function PricingCardItem({
                 </div>
 
                 <div className="mt-6">
-                    <s-button
-                        {...primaryButton.props}
-                        loading={primaryButton.loading}
-                        disabled={primaryButton.loading || primaryButton.props.disabled}
-                        onClick={handleClick}
-                    >
-                        {primaryButton.content}
-                    </s-button>
+                    {isPlanLoading ? (
+                        <div className="h-7 w-27.5 rounded-lg bg-gray-100 animate-pulse" />
+                    ) : (
+                        <s-button
+                            {...primaryButton.props}
+                            loading={primaryButton.loading}
+                            disabled={primaryButton.loading || primaryButton.props.disabled}
+                            onClick={handleClick}
+                        >
+                            {primaryButton.content}
+                        </s-button>
+                    )}
                 </div>
             </div>
         </div>

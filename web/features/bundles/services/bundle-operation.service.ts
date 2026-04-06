@@ -1,33 +1,19 @@
 import {
     BundleFormData,
     BundleOperationContext,
+    PreflightResult,
     validateBusinessRules,
     validateSecurity,
     ValidationResult,
 } from "@/features/bundles";
-import { getShop } from "@/shared/repositories";
-import { getShopWithLimits } from "@/shared/repositories/shop.queries";
-import { performSecurityChecks } from "@/features/bundles/services";
 import {
-    countBundlesByShop,
     countRecentBundles,
     getBundleActivity,
 } from "@/features/bundles/repositories";
-
-export interface PreflightResult {
-    security: {
-        success: boolean;
-        message?: string;
-        errors?: Record<string, { _errors: string[] }>;
-    };
-    context: BundleOperationContext;
-    quota: {
-        allowed: boolean;
-        reason?: string;
-        current?: number;
-        limit?: number;
-    };
-}
+import { getShop } from "@/shared/repositories";
+import { checkBundleQuota } from "@/shared/services/plan.service";
+import { performSecurityChecks } from "@/features/bundles/services";
+import { getShopWithLimits } from "@/shared/repositories/shop.queries";
 
 /**
  * Runs security checks, shop context fetch, and quota check in parallel.
@@ -38,11 +24,10 @@ export async function fetchBundlePreflight(
 ): Promise<PreflightResult> {
     const oneHourAgo = new Date(Date.now() - 3600000);
 
-    const [shopData, recentCount, activity, bundleCount] = await Promise.all([
+    const [shopData, recentCount, activity] = await Promise.all([
         getShopWithLimits(shop),
         countRecentBundles(shop, oneHourAgo),
         getBundleActivity(shop, 24),
-        countBundlesByShop(shop),
     ]);
 
     const appSettings = shopData?.appSettings || null;
@@ -116,24 +101,23 @@ export async function fetchBundlePreflight(
         };
     }
 
-    // Evaluate quota
-    const maxBundles = appSettings?.maxBundlesPerShop;
-    const quotaExceeded = maxBundles && bundleCount >= maxBundles;
+    // Evaluate quota using plan limits (not the admin-configurable DB field)
+    const quotaResult = await checkBundleQuota(shop);
 
     return {
         security: { success: true },
         context: makeContext(),
-        quota: quotaExceeded
+        quota: quotaResult.allowed
             ? {
-                  allowed: false,
-                  reason: `Shop has reached maximum bundle limit (${maxBundles})`,
-                  current: bundleCount,
-                  limit: maxBundles,
+                  allowed: true,
+                  current: quotaResult.current,
+                  limit: quotaResult.limit === -1 ? undefined : quotaResult.limit,
               }
             : {
-                  allowed: true,
-                  current: bundleCount,
-                  limit: maxBundles ?? undefined,
+                  allowed: false,
+                  reason: `Shop has reached maximum bundle limit (${quotaResult.limit})`,
+                  current: quotaResult.current,
+                  limit: quotaResult.limit,
               },
     };
 }

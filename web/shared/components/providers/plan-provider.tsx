@@ -29,7 +29,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     const app = useAppBridge();
     const queryClient = useQueryClient();
 
-    const { data: planData } = useQuery({
+    const { data: planData, isLoading } = useQuery({
         ...planQueries(app).data(),
         enabled: !!app,
     });
@@ -42,6 +42,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
 
         return {
             plan: { ...planConfig, limits: data.limits },
+            isLoading,
             canUse: (feature: FeatureId) => {
                 const f = data.features.find((fc) => fc.feature === feature);
                 return f?.gateMode === "enabled";
@@ -61,7 +62,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
                 });
             },
         };
-    }, [data, queryClient]);
+    }, [data, isLoading, queryClient]);
 
     return (
         <PlanContext.Provider value={contextValue}>
