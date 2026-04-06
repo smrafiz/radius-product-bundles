@@ -61,11 +61,12 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     useEffect(() => {
         if (!isBxgy) return;
 
-        // Act when items were added OR when unassigned roles exist (e.g. picker replaced items)
+        // Act when items were added, unassigned roles exist, or no TRIGGER is present
         const hasUnassigned = selectedItems.some(
             (i) => !i.role || i.role === "INCLUDED",
         );
-        if (selectedItems.length <= prevLengthRef.current && !hasUnassigned) {
+        const hasTrigger = selectedItems.some((i) => i.role === "TRIGGER");
+        if (selectedItems.length <= prevLengthRef.current && !hasUnassigned && hasTrigger) {
             prevLengthRef.current = selectedItems.length;
             return;
         }
@@ -104,7 +105,6 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
         }
 
         // Assign roles to any unassigned items
-        const hasTrigger = selectedItems.some((i) => i.role === "TRIGGER");
         const unassigned = selectedItems.filter(
             (i) => !i.role || i.role === "INCLUDED",
         );

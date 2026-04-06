@@ -508,6 +508,7 @@ function buildDiscountBundlesMetafieldValue(
         const productRoleMap: Record<string, string> | null = isBxgy
             ? (() => {
                   const roles: Record<string, string> = {};
+                  let hadTriggerOverwrite = false;
                   for (const bp of bundleProducts) {
                       const role = bp.role || "INCLUDED";
                       if (
@@ -515,11 +516,24 @@ function buildDiscountBundlesMetafieldValue(
                           role === "REWARD"
                       ) {
                           roles[bp.productId] = "REWARD";
+                          // Same product serves as both TRIGGER and REWARD — intentional dual-role.
+                          // Rust handles this via is_same_product=true; do NOT apply positional fallback.
+                          hadTriggerOverwrite = true;
                       } else if (!roles[bp.productId]) {
                           roles[bp.productId] = role;
                       }
                   }
-                  return Object.keys(roles).length > 0 ? roles : null;
+                  // Positional fallback: only for pure legacy bad data (different products, all REWARD,
+                  // no product ever appeared as both TRIGGER and REWARD in the same bundle).
+                  const keys = Object.keys(roles);
+                  if (
+                      keys.length > 1 &&
+                      !hadTriggerOverwrite &&
+                      !Object.values(roles).includes("TRIGGER")
+                  ) {
+                      roles[keys[0]] = "TRIGGER";
+                  }
+                  return keys.length > 0 ? roles : null;
               })()
             : null;
 
@@ -544,7 +558,12 @@ function buildDiscountBundlesMetafieldValue(
                 }
             }
         }
-        const hasVariantRoles = Object.keys(variantRolesMap).length > 0;
+        // Only emit variantRoles if there's at least one TRIGGER — otherwise Rust enters
+        // the variant_roles path with no trigger and deal_count = 0 (no discount applied).
+        // Bad data (all-REWARD variants from duplicate rows) falls back to productRoles instead.
+        const hasVariantRoles =
+            Object.keys(variantRolesMap).length > 0 &&
+            Object.values(variantRolesMap).includes("TRIGGER");
 
         bundleMap[bundle.id] = {
             status: bundle.status,

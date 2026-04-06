@@ -233,23 +233,6 @@ export async function GET(request: NextRequest) {
                       )
                     : 0;
 
-                // BOGO/BUY_X_GET_Y bundles created before role auto-assignment
-                // may have all products stored with the default "INCLUDED" role.
-                // Fall back to positional assignment so the widget renders correctly.
-                const isBxgy =
-                    topBundle.type === "BOGO" ||
-                    topBundle.type === "BUY_X_GET_Y";
-                if (isBxgy) {
-                    const hasExplicitRole = transformedProducts.some(
-                        (p) => p.role === "TRIGGER" || p.role === "REWARD",
-                    );
-                    if (!hasExplicitRole) {
-                        transformedProducts.forEach((p, index) => {
-                            p.role = index === 0 ? "TRIGGER" : "REWARD";
-                        });
-                    }
-                }
-
                 const variantTitle = selectedVariant?.title;
                 const isDefaultVariant =
                     variantTitle === "Default Title" ||
@@ -273,6 +256,22 @@ export async function GET(request: NextRequest) {
                     available: selectedVariant?.availableForSale ?? true,
                 };
             }) || [];
+
+        // BOGO/BUY_X_GET_Y bundles created before role auto-assignment
+        // may have all products stored with the default "INCLUDED" role.
+        // Fall back to positional assignment so the widget renders correctly.
+        const isBxgy =
+            topBundle.type === "BOGO" || topBundle.type === "BUY_X_GET_Y";
+        if (isBxgy) {
+            const hasExplicitRole = transformedProducts.some(
+                (p) => p.role === "TRIGGER" || p.role === "REWARD",
+            );
+            if (!hasExplicitRole) {
+                transformedProducts.forEach((p, index) => {
+                    p.role = index === 0 ? "TRIGGER" : "REWARD";
+                });
+            }
+        }
 
         const transformedBundle = {
             id: topBundle.id,
