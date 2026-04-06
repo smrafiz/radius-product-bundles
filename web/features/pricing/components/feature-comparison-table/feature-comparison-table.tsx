@@ -14,11 +14,13 @@ function Cell({ value, t }: { value: CellValue; t: TranslateFn }) {
         if (value) {
             return (
                 <span className="flex justify-center">
-                    <s-icon type="check-circle" tone="success" size="small" />
+                    <s-icon type="check" tone="success" />
                 </span>
             );
         }
-        return <span className="text-gray-300 block text-center">—</span>;
+        return <span className="flex justify-center">
+            <s-icon type="x" tone="neutral" />
+        </span>;
     }
     const isValueKey = VALUE_KEYS.includes(value);
     const translated = isValueKey ? t(`values.${value}` as never) : value;

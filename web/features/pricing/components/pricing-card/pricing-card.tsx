@@ -25,7 +25,7 @@ export const PricingCard = () => {
             <s-stack direction="inline" justifyContent="center">
                 <s-stack
                     direction="inline"
-                    gap="none"
+                    gap="small-400"
                     borderRadius="base"
                     padding="small-200"
                     background="base"
