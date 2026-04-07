@@ -8,21 +8,24 @@ import {
     type VolumeTier,
 } from "@/features/bundles";
 import { useState } from "react";
-import { formatDateLong } from "@/shared";
+import { formatDateLong, getCurrencySymbol, useShopSettings } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 
 function formatTierDiscount(
     tier: VolumeTier,
     discountType: "PERCENTAGE" | "FIXED_AMOUNT",
+    currencySymbol: string,
 ): string {
     if (discountType === "PERCENTAGE") return `${tier.discount}% off`;
-    return `$${tier.discount.toFixed(2)} off`;
+    return `${currencySymbol}${tier.discount.toFixed(2)} off`;
 }
 
 export function VolumeReviewSection() {
     const t = useTranslations("Bundles.Creation.Review");
     const ts = useTranslations("Bundles.Statuses");
     const { bundleData, selectedItems } = useBundleStore();
+    const { currencyCode } = useShopSettings();
+    const currencySymbol = getCurrencySymbol(currencyCode);
     const [open, setOpen] = useState(true);
 
     const nameField = useBundleField<string>("name");
@@ -128,6 +131,7 @@ export function VolumeReviewSection() {
                                             {formatTierDiscount(
                                                 tier,
                                                 discountType,
+                                                currencySymbol,
                                             )}
                                         </span>
                                     </div>

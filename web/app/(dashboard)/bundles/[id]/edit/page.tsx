@@ -30,7 +30,12 @@ export default async function EditBundleByIdPage(props: {
     }
 
     // Pro gate: VOLUME_DISCOUNT bundles require Pro plan
-    if (shop && type === "VOLUME_DISCOUNT") {
+    if (type === "VOLUME_DISCOUNT") {
+        // No shop param = not a valid embedded session — block access
+        if (!shop) {
+            redirect("/pricing");
+        }
+
         const subscription = await getShopSubscription(shop);
         if (!subscription || subscription.plan === "FREE") {
             redirect("/pricing");

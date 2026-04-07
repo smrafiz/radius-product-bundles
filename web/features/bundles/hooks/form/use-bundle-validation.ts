@@ -118,8 +118,9 @@ export function useBundleValidation() {
             const groupedItems = getGroupedItems();
 
             const hasValidName = name && name.trim().length > 0;
+            const minProducts = bundleData.type === ("VOLUME_DISCOUNT" as BundleType) ? 1 : 2;
             const hasMinimumProducts =
-                Array.isArray(groupedItems) && groupedItems.length >= 2;
+                Array.isArray(groupedItems) && groupedItems.length >= minProducts;
 
             return hasValidName && hasMinimumProducts;
         }

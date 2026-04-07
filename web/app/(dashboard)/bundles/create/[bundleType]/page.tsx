@@ -57,11 +57,14 @@ export default async function CreateBundleByTypePage(props: {
 
     if (bundleConfig?.proRequired) {
         const shop = searchParams?.shop ?? "";
-        if (shop) {
-            const subscription = await getShopSubscription(shop);
-            if (!subscription || subscription.plan === "FREE") {
-                redirect("/pricing");
-            }
+        // No shop param = not a valid embedded session — block access
+        if (!shop) {
+            redirect("/pricing");
+        }
+
+        const subscription = await getShopSubscription(shop);
+        if (!subscription || subscription.plan === "FREE") {
+            redirect("/pricing");
         }
     }
 

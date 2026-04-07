@@ -3,6 +3,7 @@
 import type { WidgetLabels } from "@/shared";
 import {
     BundleWidget,
+    getCurrencySymbol,
     PreviewProduct,
     ROUTES,
     useShopSettings,
@@ -46,7 +47,9 @@ import { useTranslations } from "@/lib/i18n/provider";
 import "@/styles/components/bundle.css";
 
 function VolumePreviewWidget({ config }: { config: VolumeDiscountConfig }) {
-    const suffix = config.discountType === "PERCENTAGE" ? "%" : "$";
+    const { currencyCode } = useShopSettings();
+    const currencySymbol = getCurrencySymbol(currencyCode);
+    const suffix = config.discountType === "PERCENTAGE" ? "%" : currencySymbol;
     const position = config.discountType === "PERCENTAGE" ? "suffix" : "prefix";
 
     return (
