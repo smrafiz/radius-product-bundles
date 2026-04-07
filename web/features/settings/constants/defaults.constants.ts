@@ -113,6 +113,8 @@ export const DEFAULT_LABELS = {
     bogoRewardBadgeText: "",
     bogoBadgeText: "",
     bogoFreeText: "",
+    bogoBuyText: "",
+    bogoGetText: "",
     bogoTotalLabel: "",
     bogoSaveText: "",
 
@@ -151,6 +153,8 @@ export const LABEL_PLACEHOLDERS: Record<string, string> = {
     maxBundlesReachedText: "Maximum {count} bundle(s) per order allowed",
     bogoBadgeText: "Buy 1 Get 1 Free",
     bogoFreeText: "FREE",
+    bogoBuyText: "Buy",
+    bogoGetText: "Get",
     bogoYouPayLabel: "You Pay Only",
     bogoYouSaveLabel: "You Save",
     bogoTriggerBadgeText: "You Buy",

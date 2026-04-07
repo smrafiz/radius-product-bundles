@@ -24,6 +24,8 @@
         "bogoRewardBadgeText": "You Get FREE",
         "bogoBadgeText": "",
         "bogoFreeText": "FREE",
+        "bogoBuyText": "Buy",
+        "bogoGetText": "Get",
         "bogoTotalLabel": "Bundle Total",
         "bogoSaveText": "You Save: {amount}",
 

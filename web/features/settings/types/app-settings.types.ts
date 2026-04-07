@@ -38,6 +38,8 @@ export interface AppSettingsLabels {
     bogoRewardBadgeText: string;
     bogoBadgeText: string;
     bogoFreeText: string;
+    bogoBuyText: string;
+    bogoGetText: string;
     bogoTotalLabel: string;
     bogoSaveText: string;
 

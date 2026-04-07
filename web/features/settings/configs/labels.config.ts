@@ -292,6 +292,34 @@ export const LABELS_TAB: SettingsTabConfig = {
                 },
                 {
                     type: "text",
+                    name: "bogoBuyText",
+                    label: "Buy prefix",
+                    placeholder: "Buy",
+                    details:
+                        "The 'Buy' word in auto-generated badge text (e.g. 'Buy 2 Get 1 FREE'). Leave empty to use default.",
+                    validation: {
+                        maxLength: {
+                            value: 20,
+                            message: "Cannot exceed 20 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "bogoGetText",
+                    label: "Get prefix",
+                    placeholder: "Get",
+                    details:
+                        "The 'Get' word in auto-generated badge text (e.g. 'Buy 2 Get 1 FREE'). Leave empty to use default.",
+                    validation: {
+                        maxLength: {
+                            value: 20,
+                            message: "Cannot exceed 20 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
                     name: "bogoYouPayLabel",
                     label: "You pay label",
                     placeholder: "You Pay Only",

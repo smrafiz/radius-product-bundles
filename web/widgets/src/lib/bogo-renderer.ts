@@ -288,21 +288,23 @@ export function renderClassicCardProducts(
     if (!headerBadge) {
         const buyQty = triggers.length || structure.buyQuantity || 1;
         const getQty = rewards.length || structure.getQuantity || 1;
+        const buyText = labels?.bogoBuyText || "Buy";
+        const getText = labels?.bogoGetText || "Get";
         if (
             structure.discountType === "PERCENTAGE" &&
             structure.discountValue === 100
         ) {
-            headerBadge = `Buy ${buyQty} Get ${getQty} ${freeText}`;
+            headerBadge = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
         } else if (
             structure.discountType === "PERCENTAGE" &&
             structure.discountValue > 0
         ) {
-            headerBadge = `Buy ${buyQty} Get ${getQty} at ${Math.round(structure.discountValue)}% Off`;
+            headerBadge = `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
         } else if (
             structure.discountType === "FIXED_AMOUNT" &&
             structure.discountValue > 0
         ) {
-            headerBadge = `Buy ${buyQty} Get ${getQty} at ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+            headerBadge = `${buyText} ${buyQty} ${getText} ${getQty} at ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
         }
     }
 
@@ -579,21 +581,23 @@ export function renderBogoMinimalistProducts(
             const buyQty = triggers.length || structure.buyQuantity || 1;
             const getQty = rewards.length || structure.getQuantity || 1;
             const freeText = minLabels?.bogoFreeText || "FREE";
+            const buyText = minLabels?.bogoBuyText || "Buy";
+            const getText = minLabels?.bogoGetText || "Get";
             if (
                 structure.discountType === "PERCENTAGE" &&
                 structure.discountValue === 100
             ) {
-                badgeText = `Buy ${buyQty} Get ${getQty} ${freeText}`;
+                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
             } else if (
                 structure.discountType === "PERCENTAGE" &&
                 structure.discountValue > 0
             ) {
-                badgeText = `Buy ${buyQty} Get ${getQty} at ${Math.round(structure.discountValue)}% Off`;
+                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
             } else if (
                 structure.discountType === "FIXED_AMOUNT" &&
                 structure.discountValue > 0
             ) {
-                badgeText = `Buy ${buyQty} Get ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
             }
         }
         if (badgeText) {
@@ -838,21 +842,23 @@ export function renderBogoCompactGridProducts(
             const buyQty = triggers.length || structure.buyQuantity || 1;
             const getQty = rewards.length || structure.getQuantity || 1;
             const freeText = labels?.bogoFreeText || "FREE";
+            const buyText = labels?.bogoBuyText || "Buy";
+            const getText = labels?.bogoGetText || "Get";
             if (
                 structure.discountType === "PERCENTAGE" &&
                 structure.discountValue === 100
             ) {
-                badgeText = `Buy ${buyQty} Get ${getQty} ${freeText}`;
+                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
             } else if (
                 structure.discountType === "PERCENTAGE" &&
                 structure.discountValue > 0
             ) {
-                badgeText = `Save ${Math.round(structure.discountValue)}%`;
+                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
             } else if (
                 structure.discountType === "FIXED_AMOUNT" &&
                 structure.discountValue > 0
             ) {
-                badgeText = `Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
+                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
             }
         }
     }
@@ -1355,21 +1361,23 @@ export function renderSplitDealProducts(
     if (!badgeText) {
         const buyQty = triggers.length || structure.buyQuantity || 1;
         const getQty = rewards.length || structure.getQuantity || 1;
+        const buyText = labels?.bogoBuyText || "Buy";
+        const getText = labels?.bogoGetText || "Get";
         if (
             structure.discountType === "PERCENTAGE" &&
             structure.discountValue === 100
         ) {
-            badgeText = `Buy ${buyQty} Get ${getQty} ${freeText}`;
+            badgeText = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
         } else if (
             structure.discountType === "PERCENTAGE" &&
             structure.discountValue > 0
         ) {
-            badgeText = `Buy ${buyQty} Get ${getQty} at ${Math.round(structure.discountValue)}% Off`;
+            badgeText = `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
         } else if (
             structure.discountType === "FIXED_AMOUNT" &&
             structure.discountValue > 0
         ) {
-            badgeText = `Buy ${buyQty} Get ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+            badgeText = `${buyText} ${buyQty} ${getText} ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
         }
     }
 

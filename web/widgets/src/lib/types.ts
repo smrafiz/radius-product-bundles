@@ -75,6 +75,8 @@ export interface BundleStructure {
         bogoRewardBadgeText?: string;
         bogoBadgeText?: string;
         bogoFreeText?: string;
+        bogoBuyText?: string;
+        bogoGetText?: string;
         bogoTotalLabel?: string;
         bogoSaveText?: string;
         checklistProgressText?: string;
