@@ -18,4 +18,8 @@ export const VALIDATION_MESSAGES = {
     MAX_DISCOUNT_NOT_APPLICABLE:
         "Maximum discount amount is not applicable for custom price",
     CUSTOM_PRICE_INVALID: "Custom price must be greater than 0",
+    NO_PRODUCTS_SELECTED_VOLUME: "At least one product must be selected",
+    VOLUME_TIERS_REQUIRED:
+        "Volume discount bundles require at least one tier",
+    MAX_PRODUCTS_20: "Bundle cannot have more than 20 products",
 } as const;

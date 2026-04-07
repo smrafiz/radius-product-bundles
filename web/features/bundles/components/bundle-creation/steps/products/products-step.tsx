@@ -34,6 +34,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     );
     const isBxgy = BXGY_TYPES.includes(bundleType);
     const isBogo = bundleType === "BOGO";
+    const isVolume = bundleType === "VOLUME_DISCOUNT";
     const globalMax = (settingsData?.maxBundleProducts as number) ?? 10;
     const bogoMaxPicks = bundleData.sameProductMode ? 1 : 2;
     const maxProducts = isBogo ? bogoMaxPicks : globalMax;
@@ -49,10 +50,11 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     };
 
     useEffect(() => {
-        if (selectedItems.length >= 2) {
+        const minRequired = isVolume ? 1 : 2;
+        if (selectedItems.length >= minRequired) {
             clearErrors("products");
         }
-    }, [selectedItems.length, clearErrors]);
+    }, [selectedItems.length, clearErrors, isVolume]);
 
     // Auto-assign roles for BOGO and enforce product limits.
     // Runs whenever items change: trims excess, assigns TRIGGER/REWARD roles,
@@ -195,7 +197,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
         (error) => error.field === "products" || error.path === "products",
     )?.message;
     const showProductHint =
-        !isBxgy && selectedItems.length === 1 && !hasProductError;
+        !isBxgy && !isVolume && selectedItems.length === 1 && !hasProductError;
 
     return (
         <s-stack gap="base">
@@ -251,6 +253,11 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                     {showProductHint && (
                         <s-banner tone="info">
                             {t("minProductHint")} ({selectedItems.length}/2)
+                        </s-banner>
+                    )}
+                    {isVolume && selectedItems.length === 0 && (
+                        <s-banner tone="info">
+                            Select at least one product to apply volume discount tiers to.
                         </s-banner>
                     )}
                     {isAtLimit && (

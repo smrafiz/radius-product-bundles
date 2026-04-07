@@ -28,7 +28,7 @@ import { type AppSettings, Prisma } from "@/prisma/generated/client";
 export async function findBundleStatusById(id: string, shop: string) {
     return prisma.bundle.findFirst({
         where: { id, shop },
-        select: { id: true, status: true },
+        select: { id: true, status: true, type: true },
     });
 }
 

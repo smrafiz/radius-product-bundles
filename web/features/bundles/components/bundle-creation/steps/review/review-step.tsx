@@ -4,6 +4,7 @@ import {
     BundleSummary,
     BundleType,
     BxgyReviewSection,
+    VolumeReviewSection,
     useBundleFormMethods,
     useBundleStore,
 } from "@/features/bundles";
@@ -16,6 +17,7 @@ export function ReviewStep() {
     const { formState } = useBundleFormMethods();
     const bundleType = useBundleStore((s) => s.bundleData.type);
     const isBxgy = BXGY_TYPES.includes(bundleType as BundleType);
+    const isVolume = bundleType === "VOLUME_DISCOUNT";
 
     const errors = formState?.errors || {};
     const formErrors = Object.entries(errors).map(([field, error]) => ({
@@ -38,7 +40,13 @@ export function ReviewStep() {
                 </s-banner>
             )}
 
-            {isBxgy ? <BxgyReviewSection /> : <BundleSummary />}
+            {isVolume ? (
+                <VolumeReviewSection />
+            ) : isBxgy ? (
+                <BxgyReviewSection />
+            ) : (
+                <BundleSummary />
+            )}
         </s-stack>
     );
 }

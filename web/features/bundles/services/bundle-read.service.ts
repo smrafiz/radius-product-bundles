@@ -35,6 +35,7 @@ export async function checkBundleExists(bundleId: string, shop: string) {
     return {
         exists: !!bundle,
         isDeleted: bundle?.status === "DELETED",
+        type: bundle?.type ?? null,
     };
 }
 

@@ -10,10 +10,80 @@ const variantGidSchema = z
     .string()
     .regex(/^gid:\/\/shopify\/ProductVariant\/\d+$/);
 
-const volumeTierSchema = z.object({
-    quantity: z.number().int().min(1),
-    discount: z.number().min(0).max(100),
+const volumeTierBadgeSchema = z.object({
+    style: z.enum(["none", "popular", "best-value", "custom"]),
+    text: z.string().max(30).optional(),
 });
+
+const volumeTierSchema = z.object({
+    minQuantity: z.number().int().min(1, "Minimum quantity must be at least 1"),
+    discount: z
+        .number()
+        .min(0, "Discount cannot be negative")
+        .max(999999.99, "Discount exceeds maximum"),
+    title: z
+        .string()
+        .min(1, "Title is required")
+        .max(50, "Title must be 50 characters or less"),
+    subtitle: z
+        .string()
+        .max(80, "Subtitle must be 80 characters or less")
+        .optional(),
+    badge: volumeTierBadgeSchema.optional(),
+    isDefault: z.boolean().optional(),
+});
+
+export const volumeDiscountConfigSchema = z
+    .object({
+        discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"]),
+        openEnded: z.boolean().default(true),
+        tiers: z
+            .array(volumeTierSchema)
+            .min(1, "At least one tier is required")
+            .max(10, "Maximum of 10 tiers allowed"),
+    })
+    .superRefine((config, ctx) => {
+        config.tiers.forEach((tier, idx) => {
+            if (idx > 0) {
+                const prev = config.tiers[idx - 1];
+                if (tier.minQuantity <= prev.minQuantity) {
+                    ctx.addIssue({
+                        code: "custom",
+                        message: `Must be greater than tier ${idx} (${prev.minQuantity})`,
+                        path: ["tiers", idx, "minQuantity"],
+                    });
+                }
+                if (tier.discount <= prev.discount) {
+                    ctx.addIssue({
+                        code: "custom",
+                        message: `Must be greater than tier ${idx} (${prev.discount})`,
+                        path: ["tiers", idx, "discount"],
+                    });
+                }
+            }
+        });
+
+        if (config.discountType === "PERCENTAGE") {
+            config.tiers.forEach((tier, idx) => {
+                if (tier.discount > 99.99) {
+                    ctx.addIssue({
+                        code: "custom",
+                        message: "Percentage discount cannot exceed 99.99%",
+                        path: ["tiers", idx, "discount"],
+                    });
+                }
+            });
+        }
+
+        const defaultTiers = config.tiers.filter((t) => t.isDefault === true);
+        if (defaultTiers.length > 1) {
+            ctx.addIssue({
+                code: "custom",
+                message: "Only one tier can be pre-selected",
+                path: ["tiers"],
+            });
+        }
+    });
 
 const productGroupSchema = (v: T) =>
     z.object({
@@ -135,7 +205,6 @@ export function createBundleSchema(v: T) {
                         ]),
                     }),
                 )
-                .min(2, v("NO_PRODUCTS_SELECTED"))
                 .max(20, v("MAX_PRODUCTS_20")),
 
             discountType: z.enum([
@@ -150,7 +219,8 @@ export function createBundleSchema(v: T) {
             minOrderValue: z.number().min(0).max(999999.99).optional(),
             maxDiscountAmount: z.number().min(0).max(999999.99).optional(),
 
-            volumeTiers: z.array(volumeTierSchema).optional(),
+            volumeTiers: volumeDiscountConfigSchema.optional(),
+            openEnded: z.boolean().default(true).optional(),
 
             allowMixAndMatch: z.boolean().default(false),
             mixAndMatchPrice: z.number().min(0).optional(),
@@ -223,7 +293,36 @@ export function createBundleSchema(v: T) {
             }
         })
         .superRefine((data, ctx) => {
-            if (data.type !== "BUY_X_GET_Y" && data.type !== "BOGO") return;
+            // Conditional product minimum: VOLUME_DISCOUNT needs 1, all others need 2
+            if (data.type === "VOLUME_DISCOUNT" && (data.products?.length ?? 0) < 1) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("NO_PRODUCTS_SELECTED_VOLUME"),
+                    path: ["products"],
+                });
+            } else if (data.type !== "VOLUME_DISCOUNT" && (data.products?.length ?? 0) < 2) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("NO_PRODUCTS_SELECTED"),
+                    path: ["products"],
+                });
+            }
+
+            // VOLUME_DISCOUNT requires volumeTiers config
+            if (data.type === "VOLUME_DISCOUNT") {
+                if (!data.volumeTiers?.tiers || data.volumeTiers.tiers.length === 0) {
+                    ctx.addIssue({
+                        code: "custom",
+                        message: v("VOLUME_TIERS_REQUIRED"),
+                        path: ["volumeTiers"],
+                    });
+                }
+            }
+        })
+        .superRefine((data, ctx) => {
+            if (data.type !== "BUY_X_GET_Y" && data.type !== "BOGO") {
+                return;
+            }
 
             if (data.buyQuantity == null || data.getQuantity == null) {
                 ctx.addIssue({
@@ -276,20 +375,6 @@ export function createBundleSchema(v: T) {
         })
         .refine(
             (data) => {
-                if (data.type === "VOLUME_DISCOUNT") {
-                    return (
-                        data.volumeTiers != null && data.volumeTiers.length > 0
-                    );
-                }
-                return true;
-            },
-            {
-                message: v("VOLUME_TIERS_REQUIRED"),
-                path: ["volumeTiers"],
-            },
-        )
-        .refine(
-            (data) => {
                 if (data.type === "MIX_AND_MATCH") {
                     return (
                         data.allowMixAndMatch &&
@@ -334,6 +419,5 @@ export function createBundleSchema(v: T) {
  * Default schema with English messages (for server-side validation).
  */
 export const bundleSchema = createBundleSchema(
-    (key) =>
-        VALIDATION_MESSAGES[key as keyof typeof VALIDATION_MESSAGES] ?? key,
+    (key) => (VALIDATION_MESSAGES as Record<string, string>)[key] ?? key,
 );

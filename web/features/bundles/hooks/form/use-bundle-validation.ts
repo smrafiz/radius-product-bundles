@@ -2,6 +2,7 @@
 
 import {
     BundleFormData,
+    BundleType,
     bundleSchema,
     useBundleStore,
 } from "@/features/bundles";
@@ -18,6 +19,7 @@ export function useBundleValidation() {
         selectedItems,
         displaySettings,
         isFieldTouched,
+        bundleData,
     } = useBundleStore();
 
     if (!form) {
@@ -39,7 +41,9 @@ export function useBundleValidation() {
             case 1:
                 return ["name", "products"];
             case 2:
-                return ["discountType", "discountValue"];
+                return bundleData.type === ("VOLUME_DISCOUNT" as BundleType)
+                    ? ["discountType", "discountValue", "volumeTiers"]
+                    : ["discountType", "discountValue"];
             case 3:
                 return ["settings.title", "settings.cartButtonText"];
             case 4:
@@ -145,7 +149,7 @@ export function useBundleValidation() {
 
             return value !== undefined && value !== "";
         });
-    }, [currentStep, getValues, getGroupedItems, displaySettings]);
+    }, [currentStep, getValues, getGroupedItems, displaySettings, bundleData.type]);
 
     // Get field error message (show if field is touched or validation was attempted)
     const getFieldError = (fieldName: string): string | undefined => {

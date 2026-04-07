@@ -1,5 +1,7 @@
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getStaticTranslations } from "@/lib/i18n/server";
+import { getShopSubscription } from "@/shared/repositories";
 import { checkBundleExists } from "@/features/bundles/services";
 import { EditBundlePage, BundleRedirect } from "@/features/bundles";
 
@@ -21,10 +23,18 @@ export default async function EditBundleByIdPage(props: {
     ]);
     const shop = searchParams?.shop ?? "";
 
-    const { exists, isDeleted } = await checkBundleExists(params.id, shop);
+    const { exists, isDeleted, type } = await checkBundleExists(params.id, shop);
 
     if (shop && (!exists || isDeleted)) {
         return <BundleRedirect to="/bundles" />;
+    }
+
+    // Pro gate: VOLUME_DISCOUNT bundles require Pro plan
+    if (shop && type === "VOLUME_DISCOUNT") {
+        const subscription = await getShopSubscription(shop);
+        if (!subscription || subscription.plan === "FREE") {
+            redirect("/pricing");
+        }
     }
 
     return <EditBundlePage params={params} />;

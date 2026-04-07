@@ -1,10 +1,10 @@
-import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
 import {
     BundleDetail,
     BundleStatus,
     DiscountApplication,
     initialDisplaySettings,
 } from "@/features/bundles";
+import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
 
 /**
  * Transforms bundle data from the database format to the form format.
@@ -46,51 +46,32 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
         freeShipping: bundleData.freeShipping ?? false,
         priority: bundleData.priority ?? 0,
 
-        // Handle volumeTiers type conversion - ensure it's always an array of { quantity: number, discount: number } or undefined
+        // Handle volumeTiers: stored as VolumeDiscountConfig JSON { discountType, openEnded, tiers[] }
         volumeTiers: (() => {
             try {
-                // Handle case where volumeTiers might be a JSON string, null, or already parsed
-                const tiers = bundleData.volumeTiers;
-
-                // If it's falsy or not an array, return undefined
-                if (!tiers || !Array.isArray(tiers)) {
+                const raw = bundleData.volumeTiers;
+                if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
                     return undefined;
                 }
-
-                // Map and validate each tier
-                const result = tiers
-                    .map((tier) => {
-                        // Handle both direct access and potential Prisma.JsonObject access
-                        const quantity =
-                            tier &&
-                            typeof tier === "object" &&
-                            "quantity" in tier
-                                ? Number(tier.quantity)
-                                : undefined;
-                        const discount =
-                            tier &&
-                            typeof tier === "object" &&
-                            "discount" in tier
-                                ? Number(tier.discount)
-                                : undefined;
-
-                        // Only include valid tiers with both quantity and discount as numbers
-                        return quantity !== undefined &&
-                            discount !== undefined &&
-                            !isNaN(quantity) &&
-                            !isNaN(discount)
-                            ? { quantity, discount }
-                            : null;
-                    })
-                    .filter(
-                        (
-                            tier,
-                        ): tier is { quantity: number; discount: number } =>
-                            tier !== null,
-                    );
-
-                // Return undefined if no valid tiers were found
-                return result.length > 0 ? result : undefined;
+                const obj = raw as Record<string, unknown>;
+                if (!obj.tiers || !Array.isArray(obj.tiers) || obj.tiers.length === 0) {
+                    return undefined;
+                }
+                return {
+                    discountType: (obj.discountType as "PERCENTAGE" | "FIXED_AMOUNT") ?? "PERCENTAGE",
+                    openEnded: typeof obj.openEnded === "boolean" ? obj.openEnded : true,
+                    tiers: obj.tiers.map((t: unknown) => {
+                        const tier = t as Record<string, unknown>;
+                        return {
+                            minQuantity: Number(tier.minQuantity ?? tier.quantity ?? 1),
+                            discount: Number(tier.discount ?? 0),
+                            title: String(tier.title ?? "Buy {quantity}, get {discount} off"),
+                            subtitle: tier.subtitle ? String(tier.subtitle) : undefined,
+                            badge: tier.badge ? tier.badge as { style: "none" | "popular" | "best-value" | "custom"; text?: string } : undefined,
+                            isDefault: typeof tier.isDefault === "boolean" ? tier.isDefault : undefined,
+                        };
+                    }),
+                };
             } catch (error) {
                 console.error("Error processing volumeTiers:", error);
                 return undefined;

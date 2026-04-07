@@ -192,10 +192,10 @@ export const BUNDLE_TYPES = {
         features: ["Buy 2 Save 10%", "Buy 5 Save 20%"],
         bundleImage: "/assets/volume-discount.svg",
         modalImage: "/assets/volume-discount-popup.png",
-        badge: { text: "Coming soon!", tone: "success" },
         namePatterns: BUNDLE_NAME_PATTERNS.VOLUME_DISCOUNT,
         comingSoon: false,
-        hidden: true,
+        hidden: false,
+        proRequired: true,
     },
     MIX_AND_MATCH: {
         label: "Mix & match",

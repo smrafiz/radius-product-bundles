@@ -161,6 +161,8 @@ export const initialBundleData: Partial<ExtendedBundleFormData> = {
     priority: 0,
     usesPerOrderLimit: undefined,
     sameProductMode: false,
+    openEnded: true,
+    volumeTiers: undefined,
 };
 
 export const initialConfiguration: BundleConfiguration = {
@@ -177,6 +179,10 @@ export function getDefaultLayout(bundleType?: string): BundleLayoutType {
 
     if (bundleType === "BUY_X_GET_Y") {
         return "COMPACT_GRID";
+    }
+
+    if (bundleType === "VOLUME_DISCOUNT") {
+        return "VOLUME_TABLE";
     }
 
     return "LIST";

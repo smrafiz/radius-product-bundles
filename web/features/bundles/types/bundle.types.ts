@@ -201,6 +201,7 @@ export type BundleConfig = {
     badge?: { text: string; tone: "success" | "info" | "warning" | "critical" };
     comingSoon?: boolean | undefined;
     hidden?: boolean;
+    proRequired?: boolean;
     namePatterns: readonly string[];
 };
 
@@ -301,6 +302,7 @@ export interface ExtendedBundleFormData extends BundleFormData {
     priority?: number;
     usesPerOrderLimit?: number | null;
     sameProductMode?: boolean;
+    openEnded?: boolean;
     displaySettings?: DisplaySettings;
 }
 
@@ -312,7 +314,37 @@ export type BogoLayout =
     | "SLEEK"
     | "CHECKLIST"
     | "SPLIT_DEAL";
-export type BundleLayoutType = FixedBundleLayout | BogoLayout;
+export type VolumeLayout =
+    | "VOLUME_TABLE"
+    | "VOLUME_CARDS"
+    | "VOLUME_LIST"
+    | "VOLUME_COMPACT";
+export type BundleLayoutType = FixedBundleLayout | BogoLayout | VolumeLayout;
+
+/*
+ * Volume Discount types
+ */
+export type VolumeBadgeStyle = "none" | "popular" | "best-value" | "custom";
+
+export interface VolumeTierBadge {
+    style: VolumeBadgeStyle;
+    text?: string;
+}
+
+export interface VolumeTier {
+    minQuantity: number;
+    discount: number;
+    title: string;
+    subtitle?: string;
+    badge?: VolumeTierBadge;
+    isDefault?: boolean;
+}
+
+export interface VolumeDiscountConfig {
+    discountType: "PERCENTAGE" | "FIXED_AMOUNT";
+    openEnded: boolean;
+    tiers: VolumeTier[];
+}
 
 export interface DisplaySettings {
     layout: BundleLayoutType;

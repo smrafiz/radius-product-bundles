@@ -1,24 +1,31 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAppNavigation, withLoader } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 import { BundleConfig, useBundleSelectionStore } from "@/features/bundles";
+import { useAppNavigation, withLoader, usePlan, ProBadge, ROUTES } from "@/shared";
 
 export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
     const t = useTranslations("Bundles.Selection");
     const tt = useTranslations("Bundles.Types");
-    const { bundleData } = useAppNavigation();
+    const { bundleData, goTo } = useAppNavigation();
     const { selectingBundleId, setSelectingBundleId, reset } =
         useBundleSelectionStore();
+    const { canUse } = usePlan();
 
     useEffect(() => reset(), []);
 
     const isThisCardSelecting = selectingBundleId === bundleType.id;
     const isAnotherCardSelecting =
         selectingBundleId !== null && !isThisCardSelecting;
+    const isProLocked = bundleType.proRequired === true && !canUse("volume_discount");
 
     const handleSelect = async () => {
+        if (isProLocked) {
+            goTo(ROUTES.PRICING)();
+            return;
+        }
+
         setSelectingBundleId(bundleType.id);
 
         try {
@@ -35,11 +42,13 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
             <s-section>
                 <s-stack gap="base" paddingBlockEnd="base">
                     <div className="absolute right-4 top-4">
-                        {bundleType.badge && (
+                        {isProLocked ? (
+                            <ProBadge />
+                        ) : bundleType.badge ? (
                             <s-badge tone={bundleType.badge.tone}>
                                 {tt("comingSoon")}
                             </s-badge>
-                        )}
+                        ) : null}
                     </div>
 
                     {bundleType.bundleImage && (

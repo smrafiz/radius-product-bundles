@@ -26,6 +26,7 @@ import {
     formatPrice,
     useBundlePreviewPricing,
     useBundleStore,
+    VolumeDiscountConfig,
 } from "@/features/bundles";
 import {
     CustomizerStyles,
@@ -43,6 +44,55 @@ import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
 import { useTranslations } from "@/lib/i18n/provider";
 import "@/styles/components/bundle.css";
+
+function VolumePreviewWidget({ config }: { config: VolumeDiscountConfig }) {
+    const suffix = config.discountType === "PERCENTAGE" ? "%" : "$";
+    const position = config.discountType === "PERCENTAGE" ? "suffix" : "prefix";
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {config.tiers.map((tier, index) => {
+                const isLast = index === config.tiers.length - 1;
+                const nextMin = config.tiers[index + 1]?.minQuantity;
+                const rangeLabel = isLast
+                    ? config.openEnded
+                        ? `${tier.minQuantity}+ units`
+                        : `${tier.minQuantity} units`
+                    : `${tier.minQuantity}–${(nextMin ?? 0) - 1} units`;
+                const discountLabel = position === "suffix"
+                    ? `${tier.discount}${suffix} off`
+                    : `${suffix}${tier.discount} off`;
+
+                return (
+                    <div
+                        key={index}
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            padding: "10px 14px",
+                            borderRadius: 6,
+                            border: "1px solid #e1e3e5",
+                            background: tier.isDefault ? "#f0f7ff" : "#fff",
+                        }}
+                    >
+                        <div>
+                            <div style={{ fontWeight: 600, fontSize: 14 }}>
+                                {tier.title || rangeLabel}
+                            </div>
+                            <div style={{ fontSize: 12, color: "#6d7175" }}>
+                                {rangeLabel}
+                            </div>
+                        </div>
+                        <div style={{ fontWeight: 700, color: "#008060" }}>
+                            {discountLabel}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
 
 function useWidgetStyles(): CustomizerStyles {
     const serverData = useSettingsStore((s) => s.serverData);
@@ -397,6 +447,8 @@ export function BundlePreview() {
     const { appWindowRef } = useCustomizerModal();
     const { displaySettings, bundleData } = useBundleStore();
     const { currencyCode } = useShopSettings();
+    const isVolume = bundleData.type === "VOLUME_DISCOUNT";
+    const volumeConfig = bundleData.volumeTiers as VolumeDiscountConfig | undefined;
 
     const { setCustomizerSource } = useCustomizerStore();
     const styles = useWidgetStyles();
@@ -517,7 +569,24 @@ export function BundlePreview() {
                             />
                         </s-stack>
                     </s-stack>
-                    {products.length === 0 ? (
+                    {isVolume ? (
+                        volumeConfig && volumeConfig.tiers.length > 0 ? (
+                            <VolumePreviewWidget config={volumeConfig} />
+                        ) : (
+                            <div
+                                style={{
+                                    minHeight: 120,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: styles.textColor,
+                                    fontSize: 14,
+                                }}
+                            >
+                                Configure discount tiers to see a preview.
+                            </div>
+                        )
+                    ) : products.length === 0 ? (
                         <div
                             style={{
                                 minHeight: 200,

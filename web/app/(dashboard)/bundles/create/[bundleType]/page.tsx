@@ -1,6 +1,8 @@
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getStaticTranslations } from "@/lib/i18n/server";
-import { BUNDLE_TYPES, BundleType, CreateBundlePage } from "@/features/bundles";
+import { getShopSubscription } from "@/shared/repositories";
+import { BUNDLE_TYPES, BundleType, BundleConfig, CreateBundlePage } from "@/features/bundles";
 
 export function generateStaticParams() {
     return Object.values(BUNDLE_TYPES).map((type) => ({
@@ -42,7 +44,26 @@ export async function generateMetadata({
  */
 export default async function CreateBundleByTypePage(props: {
     params: Promise<{ bundleType: BundleType }>;
+    searchParams?: Promise<{ shop?: string }>;
 }) {
-    const params = await props.params;
+    const [params, searchParams] = await Promise.all([
+        props.params,
+        props.searchParams,
+    ]);
+
+    const bundleConfig = Object.values(BUNDLE_TYPES).find(
+        (type) => type.slug === (params.bundleType as unknown as string),
+    ) as BundleConfig | undefined;
+
+    if (bundleConfig?.proRequired) {
+        const shop = searchParams?.shop ?? "";
+        if (shop) {
+            const subscription = await getShopSubscription(shop);
+            if (!subscription || subscription.plan === "FREE") {
+                redirect("/pricing");
+            }
+        }
+    }
+
     return <CreateBundlePage params={params} />;
 }

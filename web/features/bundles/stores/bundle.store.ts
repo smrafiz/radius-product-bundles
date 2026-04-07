@@ -729,6 +729,21 @@ export const useBundleStore = create(
                 state.hasManuallyEditedTitle = false;
                 state.isDirty = false;
                 state.savedProductSnapshot = null;
+
+                if (bundleType === "VOLUME_DISCOUNT") {
+                    state.bundleData.discountType = "QUANTITY_BREAKS";
+                    state.bundleData.discountValue = 0;
+                    state.bundleData.openEnded = true;
+                    state.bundleData.volumeTiers = {
+                        discountType: "PERCENTAGE",
+                        openEnded: true,
+                        tiers: [
+                            { minQuantity: 1, discount: 5,  title: "Buy {quantity}, get {discount} off" },
+                            { minQuantity: 2, discount: 10, title: "Buy {quantity}, get {discount} off", isDefault: true },
+                            { minQuantity: 3, discount: 15, title: "Buy {quantity}, get {discount} off" },
+                        ],
+                    };
+                }
             });
         },
 

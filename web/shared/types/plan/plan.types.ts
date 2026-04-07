@@ -4,7 +4,7 @@ import type { PlanName } from "@/prisma/generated/enums";
 
 export type PlanId = PlanName;
 
-export type GateMode = "enabled" | "lock-overlay" | "hidden";
+export type GateMode = "enabled" | "lock-overlay" | "hidden" | "redirect";
 
 export type FeatureId =
     | "analytics_full"
@@ -20,7 +20,8 @@ export type FeatureId =
     | "bundle_behavior"
     | "advanced_discount_controls"
     | "advanced_cart_controls"
-    | "auto_translate";
+    | "auto_translate"
+    | "volume_discount";
 
 export interface PlanFeatureConfig {
     feature: FeatureId;

@@ -6,6 +6,7 @@ import {
     BundleType,
     BxgyDiscountSettings,
     DiscountSettings,
+    VolumeDiscountSettings,
     useBundleStore,
 } from "@/features/bundles";
 import { usePathname } from "next/navigation";
@@ -17,6 +18,15 @@ export function DiscountStep() {
     const mode = pathname.includes("/edit") ? "edit" : "create";
     const bundleType = useBundleStore((s) => s.bundleData.type);
     const isBxgy = BXGY_TYPES.includes(bundleType as BundleType);
+    const isVolume = bundleType === "VOLUME_DISCOUNT";
+
+    if (isVolume) {
+        return (
+            <s-stack gap="base">
+                <VolumeDiscountSettings />
+            </s-stack>
+        );
+    }
 
     return (
         <s-stack gap="base">

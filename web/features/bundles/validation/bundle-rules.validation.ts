@@ -40,7 +40,8 @@ export function validateBusinessRules(
 
     // 1. Volume discount validation
     if (data.type === "VOLUME_DISCOUNT") {
-        if (!data.volumeTiers || data.volumeTiers.length === 0) {
+        const vConfig = data.volumeTiers as { tiers?: unknown[] } | undefined;
+        if (!vConfig || !vConfig.tiers || vConfig.tiers.length === 0) {
             errors.volumeTiers = {
                 _errors: ["Volume discount bundles require at least one tier"],
             };

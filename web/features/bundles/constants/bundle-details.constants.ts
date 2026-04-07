@@ -17,6 +17,8 @@ export const BUNDLE_STEP_FIELD_MAP: Record<string, number> = {
     maxDiscountAmount: 2,
     discountApplication: 2,
     freeShipping: 2,
+    volumeTiers: 2,
+    openEnded: 2,
 
     // Step 3: Display/Bundle as Product
     createProduct: 3,
@@ -120,13 +122,37 @@ export const BXGY_LAYOUTS = [
     },
 ];
 
+export const VOLUME_LAYOUTS = [
+    {
+        label: "Volume Table",
+        value: "VOLUME_TABLE" as const,
+        widgetLayout: "/assets/widget-volume-table-layout.png",
+    },
+    {
+        label: "Volume Cards",
+        value: "VOLUME_CARDS" as const,
+        widgetLayout: "/assets/widget-volume-cards-layout.png",
+    },
+    {
+        label: "Volume List",
+        value: "VOLUME_LIST" as const,
+        widgetLayout: "/assets/widget-volume-list-layout.png",
+    },
+    {
+        label: "Volume Compact",
+        value: "VOLUME_COMPACT" as const,
+        widgetLayout: "/assets/widget-volume-compact-layout.png",
+    },
+];
+
 export const LAYOUTS_BY_BUNDLE_TYPE: Record<
     string,
-    typeof WIDGET_LAYOUTS | typeof BOGO_LAYOUTS | typeof BXGY_LAYOUTS
+    typeof WIDGET_LAYOUTS | typeof BOGO_LAYOUTS | typeof BXGY_LAYOUTS | typeof VOLUME_LAYOUTS
 > = {
     FIXED_BUNDLE: WIDGET_LAYOUTS,
     BOGO: BOGO_LAYOUTS,
     BUY_X_GET_Y: BXGY_LAYOUTS,
+    VOLUME_DISCOUNT: VOLUME_LAYOUTS,
 };
 
 export const BOGO_LAYOUT_VALUES = [
