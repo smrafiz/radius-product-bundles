@@ -14,6 +14,7 @@ import {
     getCardBgColor,
     getImageSize,
     getPadding,
+    getSpacing,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -381,7 +382,7 @@ export function WidgetCompactGrid({
     const isOutline = styles.badgeStyle === "outline";
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const bodyFontSize = getFontSize(styles.bodySize);
-    const padding = getPadding(styles.spacing);
+    const gap = getSpacing(styles.spacing);
 
     if (!products.length) {
         return (
@@ -483,7 +484,7 @@ export function WidgetCompactGrid({
                     alignItems: "stretch",
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                     gap: 4,
-                    padding: `${parseInt(padding)}px ${parseInt(padding)}px 10px`,
+                    padding: `${parseInt(gap)}px ${parseInt(gap)}px 10px`,
                 }}
             >
                 <TileSlider
@@ -548,7 +549,7 @@ export function WidgetCompactGrid({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: `10px ${parseInt(padding)}px ${parseInt(padding)}px`,
+                    padding: `10px ${parseInt(gap)}px ${parseInt(gap)}px`,
                     gap: 12,
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                 }}
