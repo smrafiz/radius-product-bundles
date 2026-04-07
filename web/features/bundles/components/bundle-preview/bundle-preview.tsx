@@ -230,7 +230,6 @@ function useWidgetLabels(): WidgetLabels {
 }
 
 function useBadgeText(labels: WidgetLabels): string {
-    const tp = useTranslations("Bundles.Creation.Preview");
     const { bundleData, selectedItems } = useBundleStore();
 
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
@@ -244,24 +243,20 @@ function useBadgeText(labels: WidgetLabels): string {
     const discountType = bundleData.discountType;
     const discountValue = bundleData.discountValue ?? 0;
 
+    const buyWord = labels.bogoBuyText || "Buy";
+    const getWord = labels.bogoGetText || "Get";
+    const freeWord = labels.bogoFreeText || "Free";
+
     if (discountType === "PERCENTAGE" && discountValue === 100) {
-        return tp("bogoBadgeFree", { buy: String(buy), get: String(get) });
+        return `${buyWord} ${buy} ${getWord} ${get} ${freeWord}`;
     }
     if (discountType === "PERCENTAGE" && discountValue > 0) {
-        return tp("bogoBadgePercent", {
-            buy: String(buy),
-            get: String(get),
-            discount: String(discountValue),
-        });
+        return `${buyWord} ${buy} ${getWord} ${get} at ${discountValue}% Off`;
     }
     if (discountType === "FIXED_AMOUNT" && discountValue > 0) {
-        return tp("bogoBadgeFixed", {
-            buy: String(buy),
-            get: String(get),
-            amount: String(discountValue),
-        });
+        return `${buyWord} ${buy} ${getWord} ${get} - $${discountValue} Off`;
     }
-    return tp("bogoBadgeDefault", { buy: String(buy), get: String(get) });
+    return `${buyWord} ${buy} ${getWord} ${get}`;
 }
 
 function RenderLayout({

@@ -469,7 +469,8 @@ export function WidgetCompactGrid({
                         >
                             {badgeText}
                         </span>
-                    )}
+                    )
+                }
             </div>
 
             {/* Product tiles — 2-col slider per side */}
