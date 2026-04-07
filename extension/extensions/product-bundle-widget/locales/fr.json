@@ -24,6 +24,8 @@
         "bogoRewardBadgeText": "Vous obtenez GRATUITEMENT",
         "bogoBadgeText": "",
         "bogoFreeText": "GRATUIT",
+        "bogoBuyText": "Acheter",
+        "bogoGetText": "Obtenir",
         "bogoTotalLabel": "Total du lot",
         "bogoSaveText": "Vous économisez : {amount}",
 

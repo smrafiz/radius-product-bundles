@@ -24,6 +24,8 @@
         "bogoRewardBadgeText": "無料で差し上げます",
         "bogoBadgeText": "",
         "bogoFreeText": "無料",
+        "bogoBuyText": "購入",
+        "bogoGetText": "入手",
         "bogoTotalLabel": "セットの合計",
         "bogoSaveText": "節約額：{amount}",
 
