@@ -60,13 +60,13 @@ export function FeatureComparisonTable() {
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-gray-200">
-                                <th className="py-3 px-4 text-left font-medium text-gray-700 w-1/2">
+                                <th className="py-3 px-4 text-left font-semibold w-1/2">
                                     {t("featureCol")}
                                 </th>
-                                <th className="py-3 px-4 text-center font-medium text-gray-700 w-1/4">
+                                <th className="py-3 px-4 text-center font-semibold w-1/4">
                                     Free
                                 </th>
-                                <th className="py-3 px-4 text-center font-semibold text-gray-700 w-1/4">
+                                <th className="py-3 px-4 text-center font-semibold w-1/4">
                                     <span className="flex items-center justify-center gap-1">
                                         Pro
                                         <s-badge tone="success">
@@ -79,10 +79,10 @@ export function FeatureComparisonTable() {
                         <tbody>
                             {categories.map((cat) => (
                                 <Fragment key={cat.categoryKey}>
-                                    <tr className="bg-gray-50 border-b border-gray-100">
+                                    <tr className="bg-[#f7f7f7] border-b border-t border-[#e3e3e3]">
                                         <td
                                             colSpan={3}
-                                            className="py-2 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wide"
+                                            className="py-2.5 px-4 text-[13px] font-semibold text-[#303030] tracking-wide border-t border-[#e3e3e3]"
                                         >
                                             {t(
                                                 `categories.${cat.categoryKey}` as never,
@@ -94,15 +94,15 @@ export function FeatureComparisonTable() {
                                             key={row.labelKey}
                                             className="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors"
                                         >
-                                            <td className="py-3 px-4 text-gray-700">
+                                            <td className="py-3 px-4 text-[13px]">
                                                 {t(
                                                     `features.${row.labelKey}` as never,
                                                 )}
                                             </td>
-                                            <td className="py-3 px-4 text-center text-gray-600">
+                                            <td className="py-3 px-4 text-center text-[13px]">
                                                 <Cell value={row.free} t={t} />
                                             </td>
-                                            <td className="py-3 px-4 text-center text-gray-600">
+                                            <td className="py-3 px-4 text-center text-[13px] font-medium">
                                                 <Cell value={row.pro} t={t} />
                                             </td>
                                         </tr>
