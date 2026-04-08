@@ -589,7 +589,7 @@ export function WidgetCompactGrid({
                             >
                                 {pricing.finalPrice}
                             </span>
-                            {pricing.hasDiscount && (
+                            {pricing.hasDiscount && displayOptions.showSavings && (
                                 <span
                                     style={{
                                         fontSize: parseInt(bodyFontSize) - 2,

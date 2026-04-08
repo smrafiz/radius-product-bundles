@@ -1012,7 +1012,7 @@ export function renderBogoCompactGridProducts(
     const cgSaveText = labels?.bogoSaveText || "Save {amount}";
     html += `<span class="rb-cg__footer-label">${escapeHtml(cgTotalLabel)}</span>`;
     html += `<span class="rb-cg__footer-total">${formatMoney(totalDiscounted)}`;
-    if (savings > 0) {
+    if (savings > 0 && ctx.showSavings) {
         html += ` <span class="rb-cg__footer-savings">${escapeHtml(formatLabel(cgSaveText, { amount: formatMoney(savings) }))}</span>`;
     }
     html += `</span></div>`;
@@ -1501,18 +1501,20 @@ export function renderSplitDealProducts(
         );
     const savings = totalOriginal - totalDiscounted;
 
-    if (savings > 0 && ctx.showSavings) {
+    if (ctx.pricingSummaryBox) {
         html += `
             <div class="rb-split__summary">
                 <div class="rb-split__summary-col">
                     <span class="rb-split__summary-label rb-split__summary-pay">${escapeHtml(youPayLabel)}</span>
                     <span class="rb-split__summary-value">${formatMoney(totalDiscounted)}</span>
                 </div>
+                ${savings > 0 && ctx.showSavings ? `
                 <div class="rb-split__summary-col rb-split__summary-col--right">
                     <span class="rb-split__summary-label rb-split__summary-save">${escapeHtml(youSaveLabel)}</span>
                     <span class="rb-split__summary-value rb-split__summary-value--savings">${formatMoney(savings)}</span>
                 </div>
             </div>
+            ` : ''}
         `;
     }
 

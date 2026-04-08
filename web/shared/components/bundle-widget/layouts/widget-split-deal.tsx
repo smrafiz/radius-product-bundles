@@ -427,32 +427,34 @@ export function WidgetSplitDeal({
                             {pricing.finalPrice}
                         </span>
                     </div>
-                    <div style={{ textAlign: "right" }}>
-                        <span
-                            style={{
-                                display: "block",
-                                fontSize: parseInt(bodyFontSize) - 4,
-                                fontWeight: 600,
-                                textTransform: "uppercase" as const,
-                                letterSpacing: "0.04em",
-                                marginBottom: 2,
-                                color: styles.savingsColor || "#15803d",
-                            }}
-                        >
-                            {labels?.bogoYouSaveLabel ||
-                                PREVIEW_LABELS.bogoYouSaveLabel}
-                        </span>
-                        <span
-                            style={{
-                                display: "block",
-                                fontSize: parseInt(headingFontSize),
-                                fontWeight: 600,
-                                color: styles.savingsColor || "#16a34a",
-                            }}
-                        >
-                            {pricing.savingsAmount}
-                        </span>
-                    </div>
+                    {displayOptions.showSavings && (
+                        <div style={{ textAlign: "right" }}>
+                            <span
+                                style={{
+                                    display: "block",
+                                    fontSize: parseInt(bodyFontSize) - 4,
+                                    fontWeight: 600,
+                                    textTransform: "uppercase" as const,
+                                    letterSpacing: "0.04em",
+                                    marginBottom: 2,
+                                    color: styles.savingsColor || "#15803d",
+                                }}
+                            >
+                                {labels?.bogoYouSaveLabel ||
+                                    PREVIEW_LABELS.bogoYouSaveLabel}
+                            </span>
+                            <span
+                                style={{
+                                    display: "block",
+                                    fontSize: parseInt(headingFontSize),
+                                    fontWeight: 600,
+                                    color: styles.savingsColor || "#16a34a",
+                                }}
+                            >
+                                {pricing.savingsAmount}
+                            </span>
+                        </div>
+                    )}
                 </div>
             )}
 

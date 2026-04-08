@@ -314,12 +314,14 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                 {
                     type: "heading",
                     label: "Pricing Summary",
+                    layouts: ["LIST", "GRID", "CAROUSEL", "COMPACT", "SPLIT_DEAL", "CLASSIC_CARD"],
                 },
                 {
                     type: "switch",
                     name: "pricingSummaryBox",
                     label: "Show summary box",
                     defaultValue: true,
+                    layouts: ["LIST", "GRID", "CAROUSEL", "COMPACT", "SPLIT_DEAL", "CLASSIC_CARD"],
                 },
                 {
                     type: "color",
@@ -331,6 +333,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         operator: "equals",
                         value: true,
                     },
+                    layouts: ["LIST", "GRID", "CAROUSEL", "COMPACT", "SPLIT_DEAL", "CLASSIC_CARD"],
                 },
                 {
                     type: "buttonGroup",
@@ -342,6 +345,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "highlight", label: "Highlight" },
                     ],
                     defaultValue: "card",
+                    layouts: ["LIST", "GRID", "CAROUSEL", "COMPACT", "SPLIT_DEAL", "CLASSIC_CARD"],
                     showWhen: [
                         {
                             field: "pricingSummaryBox",
