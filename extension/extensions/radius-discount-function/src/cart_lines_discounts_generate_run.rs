@@ -54,6 +54,9 @@ struct MetafieldBundleConfig {
     get_quantity: Option<i32>,
     product_roles: Option<HashMap<String, String>>,
     variant_roles: Option<HashMap<String, String>>, // variantId -> role (for same-product different-variant BOGO)
+    // Volume discount fields
+    #[allow(dead_code)]
+    volume_tiers: Option<serde_json::Value>,
 }
 
 /// Checks if a Shopify product GID belongs to this bundle.
@@ -119,6 +122,165 @@ struct BundleLineInfo<'a> {
     line: &'a schema::cart_lines_discounts_generate_run::input::cart::Lines,
     product_id: Option<String>,
     variant_id: Option<String>,
+}
+
+/// Volume discount tier configuration (from `volumeTiers` in the metafield).
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct VolumeTierConfig {
+    discount_type: String, // "PERCENTAGE" or "FIXED_AMOUNT"
+    open_ended: bool,
+    tiers: Vec<VolumeTier>,
+}
+
+/// A single volume discount tier.
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct VolumeTier {
+    min_quantity: u64,
+    discount: f64,
+}
+
+/// Find the highest-matching tier for `cart_qty`.
+///
+/// Tiers are treated as minimum thresholds: the highest tier whose `min_quantity`
+/// is <= `cart_qty` wins.  When `open_ended` is false, quantities above the last
+/// tier's `min_quantity` still qualify (tiers define floors, not ceilings).
+fn find_volume_tier<'a>(tiers: &'a [VolumeTier], cart_qty: u64, open_ended: bool) -> Option<&'a VolumeTier> {
+    if tiers.is_empty() {
+        return None;
+    }
+
+    // Sort order is ascending by spec, but guard against unsorted input.
+    let matching = tiers.iter().filter(|t| cart_qty >= t.min_quantity);
+    let best = matching.max_by_key(|t| t.min_quantity);
+
+    if best.is_some() {
+        return best;
+    }
+
+    // qty is below the lowest tier.  If open_ended, still apply the first tier.
+    if open_ended {
+        tiers.iter().min_by_key(|t| t.min_quantity)
+    } else {
+        None
+    }
+}
+
+/// Calculate VOLUME_DISCOUNT candidates for a bundle.
+///
+/// Each matching product in the cart gets a per-unit discount based on the
+/// highest qualifying tier.  Returns `None` when no tier matches any product.
+fn calculate_volume_discount(
+    bundle_settings: &MetafieldBundleConfig,
+    bundle_lines: &[BundleLineInfo],
+    bundle_name: &str,
+) -> Option<ProductDiscountCandidate> {
+    let raw_tiers = bundle_settings.volume_tiers.as_ref()?;
+
+    let tier_config: VolumeTierConfig = match serde_json::from_value(raw_tiers.clone()) {
+        Ok(c) => c,
+        Err(e) => {
+            log!("[RadiusDiscount] Failed to parse volume_tiers: {}", e);
+            return None;
+        }
+    };
+
+    if tier_config.tiers.is_empty() {
+        return None;
+    }
+
+    if bundle_settings.discount_value < 0.0 {
+        return None;
+    }
+
+    // Aggregate cart qty per product across all bundle lines.
+    let mut product_qty: HashMap<String, u64> = HashMap::new();
+    for bl in bundle_lines {
+        if let Some(ref pid) = bl.product_id {
+            let qty = *bl.line.quantity() as u64;
+            *product_qty.entry(pid.clone()).or_insert(0) += qty;
+        }
+    }
+
+    let mut targets: Vec<ProductDiscountCandidateTarget> = Vec::new();
+    let mut total_discount_amount: f64 = 0.0;
+
+    for bl in bundle_lines {
+        let pid = match bl.product_id.as_ref() {
+            Some(p) => p,
+            None => continue,
+        };
+
+        let cart_qty = match product_qty.get(pid) {
+            Some(&q) => q,
+            None => continue,
+        };
+
+        let tier = match find_volume_tier(&tier_config.tiers, cart_qty, tier_config.open_ended) {
+            Some(t) => t,
+            None => continue,
+        };
+
+        if tier.discount < 0.0 {
+            continue;
+        }
+
+        let line_qty = *bl.line.quantity() as u64;
+        let unit_price = bl.line.cost().amount_per_quantity().amount().0;
+
+        let line_discount = match tier_config.discount_type.as_str() {
+            "PERCENTAGE" => unit_price * (tier.discount / 100.0) * line_qty as f64,
+            "FIXED_AMOUNT" => tier.discount * line_qty as f64,
+            _ => {
+                log!("[RadiusDiscount] Unknown volume discount_type: {}", tier_config.discount_type);
+                continue;
+            }
+        };
+
+        total_discount_amount += line_discount;
+
+        targets.push(ProductDiscountCandidateTarget::CartLine(CartLineTarget {
+            id: bl.line.id().clone(),
+            quantity: Some(line_qty as i32),
+        }));
+    }
+
+    if targets.is_empty() {
+        return None;
+    }
+
+    // Apply max discount cap if configured.
+    let capped_discount = if let Some(max_d) = bundle_settings.max_discount_amount {
+        if max_d > 0.0 && total_discount_amount > max_d {
+            log!(
+                "[RadiusDiscount] Volume discount capped from {:.2} to {:.2}",
+                total_discount_amount,
+                max_d
+            );
+            max_d
+        } else {
+            total_discount_amount
+        }
+    } else {
+        total_discount_amount
+    };
+
+    if capped_discount <= 0.0 {
+        return None;
+    }
+
+    let value = ProductDiscountCandidateValue::FixedAmount(ProductDiscountCandidateFixedAmount {
+        amount: Decimal(capped_discount),
+        applies_to_each_item: None,
+    });
+
+    Some(ProductDiscountCandidate {
+        targets,
+        message: Some(bundle_name.to_string()),
+        value,
+        associated_discount_code: None,
+    })
 }
 
 /// Shared helper: build a ProductDiscountCandidate from pre-computed targets and totals.
@@ -686,12 +848,22 @@ fn cart_lines_discounts_generate_run(
             continue;
         }
 
-        // --- BOGO/BXGY: route to dedicated discount logic ---
-        let is_bxgy = bundle_settings
-            .bundle_type
-            .as_deref()
-            .map(|t| t == "BOGO" || t == "BUY_X_GET_Y")
-            .unwrap_or(false);
+        // --- Route by bundle type ---
+        let bundle_type = bundle_settings.bundle_type.as_deref().unwrap_or("");
+
+        let is_bxgy = bundle_type == "BOGO" || bundle_type == "BUY_X_GET_Y";
+        let is_volume = bundle_type == "VOLUME_DISCOUNT";
+
+        // --- VOLUME_DISCOUNT: tier-based per-unit discount ---
+        if is_volume {
+            let vol_name = cart_config.bundle_name.as_deref().unwrap_or("Bundle");
+            if let Some(candidate) =
+                calculate_volume_discount(bundle_settings, &bundle_lines, vol_name)
+            {
+                candidates.push(candidate);
+            }
+            continue;
+        }
 
         // For non-BXGY bundles, validate required line count.
         // Skip for BXGY because same-product BOGO merges into one cart line;
@@ -989,6 +1161,7 @@ mod tests {
             get_quantity: None,
             product_roles: None,
             variant_roles: None,
+            volume_tiers: None,
         }
     }
 
@@ -1115,5 +1288,108 @@ mod tests {
     fn no_qty_map_no_main_id_returns_false() {
         let settings = make_settings(None);
         assert!(!is_product_in_bundle("gid://shopify/Product/1", None, &settings));
+    }
+
+    // ── find_volume_tier ─────────────────────────────────────────────────────
+
+    fn make_tiers() -> Vec<VolumeTier> {
+        vec![
+            VolumeTier { min_quantity: 10, discount: 10.0 },
+            VolumeTier { min_quantity: 15, discount: 15.0 },
+            VolumeTier { min_quantity: 20, discount: 20.0 },
+            VolumeTier { min_quantity: 21, discount: 25.0 },
+        ]
+    }
+
+    #[test]
+    fn volume_tier_basic_match_first_tier() {
+        let tiers = make_tiers();
+        let tier = find_volume_tier(&tiers, 10, false).expect("should match");
+        assert_eq!(tier.discount as u32, 10);
+    }
+
+    #[test]
+    fn volume_tier_higher_tier_match() {
+        let tiers = make_tiers();
+        let tier = find_volume_tier(&tiers, 20, false).expect("should match");
+        assert_eq!(tier.discount as u32, 20);
+    }
+
+    #[test]
+    fn volume_tier_max_tier_at_21() {
+        let tiers = make_tiers();
+        let tier = find_volume_tier(&tiers, 21, false).expect("should match");
+        assert_eq!(tier.discount as u32, 25);
+    }
+
+    #[test]
+    fn volume_tier_no_match_below_first_tier_not_open_ended() {
+        let tiers = make_tiers();
+        let result = find_volume_tier(&tiers, 5, false);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn volume_tier_below_first_tier_open_ended_returns_first() {
+        let tiers = make_tiers();
+        // open_ended means the lowest tier applies even below its min_quantity
+        let tier = find_volume_tier(&tiers, 5, true).expect("should match via open_ended");
+        assert_eq!(tier.min_quantity, 10);
+        assert_eq!(tier.discount as u32, 10);
+    }
+
+    #[test]
+    fn volume_tier_above_last_min_open_ended() {
+        let tiers = make_tiers();
+        // qty 50 is above all tiers — should still return the highest tier
+        let tier = find_volume_tier(&tiers, 50, true).expect("should match");
+        assert_eq!(tier.min_quantity, 21);
+    }
+
+    #[test]
+    fn volume_tier_above_last_min_not_open_ended() {
+        let tiers = make_tiers();
+        // qty 50 > last min_quantity (21) — last tier still applies (floors, not ranges)
+        let tier = find_volume_tier(&tiers, 50, false).expect("should match");
+        assert_eq!(tier.min_quantity, 21);
+    }
+
+    #[test]
+    fn volume_tier_empty_tiers_returns_none() {
+        let result = find_volume_tier(&[], 10, true);
+        assert!(result.is_none());
+    }
+
+    // ── find_volume_tier: percentage vs fixed amount (logic check) ───────────
+
+    #[test]
+    fn volume_tier_discount_percentage_value() {
+        // Tier at min_qty=10 gives 10% off.  Cart qty=12 → matches first tier.
+        // At unit_price=100.0: expected line discount = 100 * 0.10 * 12 = 120.0
+        let tiers = vec![VolumeTier { min_quantity: 10, discount: 10.0 }];
+        let tier = find_volume_tier(&tiers, 12, false).unwrap();
+        let unit_price = 100.0_f64;
+        let line_qty = 12_u64;
+        let line_discount = unit_price * (tier.discount / 100.0) * line_qty as f64;
+        assert!((line_discount - 120.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn volume_tier_discount_fixed_amount_value() {
+        // Tier at min_qty=10 gives $5 off per unit.  Cart qty=3 → no match (< 10).
+        // Cart qty=10 → tier applies: discount = 5.0 * 10 = 50.0
+        let tiers = vec![VolumeTier { min_quantity: 10, discount: 5.0 }];
+        let tier = find_volume_tier(&tiers, 10, false).unwrap();
+        let line_qty = 10_u64;
+        let line_discount = tier.discount * line_qty as f64;
+        assert!((line_discount - 50.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn volume_tier_no_match_returns_no_discount() {
+        let tiers = vec![VolumeTier { min_quantity: 10, discount: 5.0 }];
+        let result = find_volume_tier(&tiers, 3, false);
+        // qty=3 < min_quantity=10, open_ended=false → no tier
+        assert!(result.is_none());
     }
 }

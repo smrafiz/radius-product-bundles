@@ -24,9 +24,16 @@ export function getPlanConfig(planId: PlanName): PlanConfig {
 export async function resolveShopPlan(domain: string): Promise<PlanConfig> {
     const shopPlan = await getShopSubscription(domain);
 
-    console.log("[resolveShopPlan] domain:", domain, "shopPlan:", shopPlan ? { plan: shopPlan.plan, status: shopPlan.status } : "null");
-
     if (shopPlan?.status === "ACTIVE" && shopPlan?.plan === "PRO") {
+        return getPlanConfig("PRO");
+    }
+
+    // Trial grace: if trial window is still open, grant PRO access regardless of subscription status
+    if (
+        shopPlan?.plan === "PRO" &&
+        shopPlan?.trialEndsAt != null &&
+        shopPlan.trialEndsAt > new Date()
+    ) {
         return getPlanConfig("PRO");
     }
 

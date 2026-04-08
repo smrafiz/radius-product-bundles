@@ -39,11 +39,11 @@ import {
     validateStock,
 } from "./lib/fixed-renderer";
 import {
-    type VolumeContext,
     initVolumeTierSelection,
     parseVolumeTiers,
     renderVolumeTable,
 } from "./lib/volume-renderer";
+import type { VolumeContext } from "./lib/types";
 
 (function () {
     "use strict";
@@ -592,6 +592,16 @@ import {
                 ) {
                     badgeText = `Buy ${buyQty} Get ${getQty} for ${trimMoney(formatMoney(structure.discountValue * 100))}`;
                 }
+            } else if (structure.bundleType === "VOLUME_DISCOUNT") {
+                const volConfig = parseVolumeTiers(structure);
+                if (volConfig?.tiers?.length) {
+                    const maxTier = volConfig.tiers[volConfig.tiers.length - 1];
+                    if (volConfig.discountType === "PERCENTAGE") {
+                        badgeText = `Up to ${Math.round(maxTier.discount)}% off`;
+                    } else if (volConfig.discountType === "FIXED_AMOUNT") {
+                        badgeText = `Up to ${trimMoney(formatMoney(maxTier.discount * 100))} off`;
+                    }
+                }
             } else if (structure.discountValue && structure.discountValue > 0) {
                 switch (structure.discountType) {
                     case "PERCENTAGE": {
@@ -979,12 +989,14 @@ import {
                 return;
             }
 
-            // Use first product as the "main" product for display
-            const firstProduct = bundle.products[0] ?? null;
-            const unitPriceCents = firstProduct?.price ?? 0;
-            const productTitle = firstProduct?.title ?? bundle.name;
-            const productImageSrc = firstProduct?.featuredImage ?? null;
-            const variantId = firstProduct?.variantId ?? "";
+            // Find the current page product from the bundle's product list
+            const currentProduct = bundle.products.find(
+                (p) => p.id === this.productId,
+            ) ?? bundle.products[0] ?? null;
+            const unitPriceCents = currentProduct?.price ?? 0;
+            const productTitle = currentProduct?.title ?? bundle.name;
+            const productImageSrc = currentProduct?.featuredImage ?? null;
+            const variantId = currentProduct?.variantId ?? "";
 
             const ctx = this.getVolumeContext();
 
@@ -1083,6 +1095,9 @@ import {
          * Binds event listeners
          */
         private bindEvents(): void {
+            // Volume bundles have their own ATC handler via initVolumeTierSelection
+            if (this.isVolumeBundle()) return;
+
             // Add to cart button
             const addToCartBtn = this.container.querySelector(
                 "[data-bundle-add-to-cart]",

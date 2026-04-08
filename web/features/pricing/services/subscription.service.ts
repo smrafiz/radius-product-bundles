@@ -304,12 +304,23 @@ export async function handleSubscriptionWebhookService(
 
     // Resolve plan: prefer the stored plan from billingId lookup over substring matching.
     // This survives plan renames on the Shopify side.
+    // Fetch existing plan record upfront so we can check trial status for all code paths.
+    const existingPlan = await getShopPlanRecord(shop);
+
     let resolvedPlan: PlanName = PlanName.FREE;
     if (isActive) {
-        const existingPlan = await getShopPlanRecord(shop);
         if (existingPlan?.billingId === subscriptionId && existingPlan.plan === PlanName.PRO) {
             resolvedPlan = PlanName.PRO;
         } else if (planName.toLowerCase().includes("pro")) {
+            resolvedPlan = PlanName.PRO;
+        }
+    } else if (isTerminated) {
+        // If trial window is still open, preserve PRO instead of forcing FREE
+        if (
+            existingPlan?.plan === PlanName.PRO &&
+            existingPlan?.trialEndsAt != null &&
+            existingPlan.trialEndsAt > new Date()
+        ) {
             resolvedPlan = PlanName.PRO;
         }
     }
@@ -329,14 +340,20 @@ export async function handleSubscriptionWebhookService(
     } else if (isFrozen) {
         await upsertShop(shop, { status: ShopStatus.SUSPENDED });
     } else if (isTerminated) {
-        const terminatedStatus =
-            normalizedStatus === ShopifySubscriptionStatus.EXPIRED
-                ? ShopStatus.TRIAL_EXPIRED
-                : ShopStatus.SUSPENDED;
-        await upsertShop(shop, { status: terminatedStatus });
-        console.warn(
-            `[Subscription] Subscription ${normalizedStatus} for ${shop} — status set to ${terminatedStatus}`,
-        );
+        // Only mark trial expired / suspended if the trial window has actually closed
+        const trialStillActive =
+            existingPlan?.trialEndsAt != null && existingPlan.trialEndsAt > new Date();
+
+        if (!trialStillActive) {
+            const terminatedStatus =
+                normalizedStatus === ShopifySubscriptionStatus.EXPIRED
+                    ? ShopStatus.TRIAL_EXPIRED
+                    : ShopStatus.SUSPENDED;
+            await upsertShop(shop, { status: terminatedStatus });
+            console.warn(
+                `[Subscription] Subscription ${normalizedStatus} for ${shop} — status set to ${terminatedStatus}`,
+            );
+        }
     }
 }
 

@@ -60,6 +60,28 @@ function calcSavingsDisplay(
     }
 }
 
+/** Resolve {quantity} and {discount} placeholders in tier title/subtitle */
+function resolvePlaceholders(
+    text: string,
+    tier: VolumeTier,
+    discountType: VolumeTiersConfig["discountType"],
+): string {
+    let discountStr: string;
+    switch (discountType) {
+        case "PERCENTAGE":
+            discountStr = `${tier.discount}%`;
+            break;
+        case "FIXED_AMOUNT":
+            discountStr = trimMoney(formatMoney(tier.discount * 100));
+            break;
+        default:
+            discountStr = String(tier.discount);
+    }
+    return text
+        .replace(/\{quantity\}/g, String(tier.minQuantity))
+        .replace(/\{discount\}/g, discountStr);
+}
+
 function badgeClass(style?: string): string {
     switch (style) {
         case "popular":
@@ -82,10 +104,10 @@ function renderTierRow(
     showSavings: boolean,
 ): string {
     const isDefault = !!tier.isDefault;
-    const isOpenLast = config.openEnded && index === config.tiers.length - 1;
-    const qtyLabel = isOpenLast
+    const isLast = index === config.tiers.length - 1;
+    const qtyLabel = config.openEnded || !isLast
         ? `${tier.minQuantity}+`
-        : `${tier.minQuantity}+`;
+        : `${tier.minQuantity}`;
 
     const discountedCents = calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType);
     const savingsText = showSavings ? calcSavingsDisplay(unitPriceCents, tier, config.discountType) : "";
@@ -109,14 +131,14 @@ function renderTierRow(
             role="button"
             tabindex="0"
             aria-pressed="${isDefault ? "true" : "false"}"
-            aria-label="${escapeHtml(tier.title || `Buy ${qtyLabel}`)}">
+            aria-label="${escapeHtml(resolvePlaceholders(tier.title || `Buy ${qtyLabel}`, tier, config.discountType))}">
             <div class="rb-vol__tier-qty">
                 <span class="rb-vol__tier-qty-num">${escapeHtml(qtyLabel)}</span>
                 <span class="rb-vol__tier-qty-unit">units</span>
             </div>
             <div class="rb-vol__tier-info">
-                ${tier.title ? `<span class="rb-vol__tier-title">${escapeHtml(tier.title)}</span>` : ""}
-                ${tier.subtitle ? `<span class="rb-vol__tier-subtitle">${escapeHtml(tier.subtitle)}</span>` : ""}
+                ${tier.title ? `<span class="rb-vol__tier-title">${escapeHtml(resolvePlaceholders(tier.title, tier, config.discountType))}</span>` : ""}
+                ${tier.subtitle ? `<span class="rb-vol__tier-subtitle">${escapeHtml(resolvePlaceholders(tier.subtitle, tier, config.discountType))}</span>` : ""}
                 ${badgeHtml}
             </div>
             <div class="rb-vol__tier-pricing">
@@ -217,9 +239,16 @@ export function initVolumeTierSelection(
         "[data-bundle-add-to-cart]",
     );
     if (!atcBtn) return;
+
+    // Prevent double-binding if called from both loadProductDetails and loadBundleLegacy
+    if (atcBtn.dataset.volumeBound === "true") return;
+    atcBtn.dataset.volumeBound = "true";
     atcBtn.disabled = false;
 
-    atcBtn.addEventListener("click", async () => {
+    atcBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         const selectedEl = widgetContainer.querySelector<HTMLElement>(
             ".rb-vol__tier--selected",
         );
@@ -228,6 +257,8 @@ export function initVolumeTierSelection(
         const tierIndex = parseInt(selectedEl.dataset.tierIndex || "0", 10);
         const tier = config.tiers[tierIndex];
         if (!tier) return;
+
+        console.log("[RadiusBundle] Volume ATC — tier:", tierIndex, "qty:", tier.minQuantity, "variantId:", variantId);
 
         const numericVariantId = extractNumericId(variantId);
         if (!numericVariantId) {
