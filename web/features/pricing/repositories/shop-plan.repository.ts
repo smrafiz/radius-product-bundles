@@ -22,6 +22,8 @@ export async function cancelShopPlan(shop: string) {
         data: {
             status: ShopifySubscriptionStatus.CANCELLED,
             cancelledAt: new Date(),
+            trialEndsAt: null,
+            plan: "FREE",
         },
     });
 }

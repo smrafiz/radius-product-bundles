@@ -35,7 +35,7 @@ export function PricingCardItem({
             }`}
         >
             {featuredText ? (
-                <div className="absolute -top-3.75 right-1.5 z-50">
+                <div className="absolute -top-2.5 right-5 z-50">
                     <s-badge tone="success">{featuredText}</s-badge>
                 </div>
             ) : null}
