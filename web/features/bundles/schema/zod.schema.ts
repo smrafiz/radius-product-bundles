@@ -16,11 +16,19 @@ const volumeTierBadgeSchema = z.object({
 });
 
 const volumeTierSchema = z.object({
-    minQuantity: z.number().int().min(1, "Minimum quantity must be at least 1"),
-    discount: z
-        .number()
-        .min(0, "Discount cannot be negative")
-        .max(999999.99, "Discount exceeds maximum"),
+    id: z.string().optional(),
+    minQuantity: z.preprocess(
+        (v) => (typeof v === "number" && isNaN(v) ? undefined : v),
+        z.number({ error: "Quantity is required" })
+            .int("Must be a whole number")
+            .min(1, "Minimum quantity must be at least 1"),
+    ),
+    discount: z.preprocess(
+        (v) => (typeof v === "number" && isNaN(v) ? undefined : v),
+        z.number({ error: "Discount is required" })
+            .min(0, "Discount cannot be negative")
+            .max(999999.99, "Discount exceeds maximum"),
+    ),
     title: z
         .string()
         .min(1, "Title is required")

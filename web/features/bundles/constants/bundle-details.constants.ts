@@ -155,6 +155,10 @@ export const LAYOUTS_BY_BUNDLE_TYPE: Record<
     VOLUME_DISCOUNT: VOLUME_LAYOUTS,
 };
 
+export const BXGY_TYPES = ["BOGO", "BUY_X_GET_Y"] as const;
+
+export const VOLUME_TIER_DEFAULT_TITLE = "Buy {quantity}, get {discount} off";
+
 export const BOGO_LAYOUT_VALUES = [
     "CLASSIC_CARD",
     "COMPACT_GRID",

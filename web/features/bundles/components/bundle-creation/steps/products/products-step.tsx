@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    BXGY_TYPES,
     BundleDetails,
     BundleType,
     ProductList,
@@ -12,8 +13,6 @@ import { useProductPicker } from "@/shared";
 import { useFormContext } from "react-hook-form";
 import { useSettingsStore } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
-
-const BXGY_TYPES: BundleType[] = ["BOGO", "BUY_X_GET_Y"];
 
 export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const t = useTranslations("Bundles.Creation.Products");
@@ -32,7 +31,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
     const settingsData = useSettingsStore(
         (state) => state.localData ?? state.serverData,
     );
-    const isBxgy = BXGY_TYPES.includes(bundleType);
+    const isBxgy = (BXGY_TYPES as readonly BundleType[]).includes(bundleType);
     const isBogo = bundleType === "BOGO";
     const isVolume = bundleType === "VOLUME_DISCOUNT";
     const globalMax = (settingsData?.maxBundleProducts as number) ?? 10;

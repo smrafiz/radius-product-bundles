@@ -1,6 +1,7 @@
 "use client";
 
 import {
+    VOLUME_TIER_DEFAULT_TITLE,
     useVolumeDiscount,
     type VolumeBadgeStyle,
     type VolumeTier,
@@ -14,8 +15,6 @@ const BADGE_STYLES: { label: string; value: VolumeBadgeStyle }[] = [
     { label: "Custom", value: "custom" },
 ];
 
-const DEFAULT_TITLE = "Buy {quantity}, get {discount} off";
-
 function VolumeTierCard({
     tier,
     index,
@@ -25,6 +24,7 @@ function VolumeTierCard({
     initialCollapsed,
     qtyError,
     discountError,
+    titleError,
     onUpdate,
     onRemove,
 }: {
@@ -36,6 +36,7 @@ function VolumeTierCard({
     initialCollapsed?: boolean;
     qtyError?: string;
     discountError?: string;
+    titleError?: string;
     onUpdate: (index: number, updates: Partial<VolumeTier>) => void;
     onRemove: (index: number) => void;
 }) {
@@ -64,7 +65,7 @@ function VolumeTierCard({
                             type={collapsed ? "chevron-right" : "chevron-down"}
                         />
                         <s-heading>Tier {index + 1}</s-heading>
-                        {(qtyError || discountError) && (
+                        {(qtyError || discountError || titleError) && (
                             <s-icon type="alert-circle" tone="critical" />
                         )}
                     </s-stack>
@@ -94,30 +95,26 @@ function VolumeTierCard({
                             <s-stack gap="base">
                                 <s-stack direction="inline" gap="base">
                                     <div className="flex-1">
-                                        <s-text-field
+                                        <s-number-field
+                                            required
                                             label="Min Quantity"
                                             value={String(
                                                 tier.minQuantity ?? "",
                                             )}
-                                            details="Minimum items a customer must add to qualify for this tier."
+                                            details="Minimum items a customer must add to cart."
                                             error={qtyError}
                                             onInput={(e: Event) => {
                                                 const val = parseInt(
-                                                    (
-                                                        e.target as HTMLInputElement
-                                                    ).value,
+                                                    (e.target as HTMLInputElement).value,
                                                     10,
                                                 );
-                                                if (!isNaN(val) && val >= 1) {
-                                                    onUpdate(index, {
-                                                        minQuantity: val,
-                                                    });
-                                                }
+                                                onUpdate(index, { minQuantity: val });
                                             }}
                                         />
                                     </div>
                                     <div className="flex-1">
-                                        <s-text-field
+                                        <s-number-field
+                                            required
                                             label={`Discount (${suffix})`}
                                             value={
                                                 tier.discount !== undefined
@@ -129,25 +126,21 @@ function VolumeTierCard({
                                             error={discountError}
                                             onInput={(e: Event) => {
                                                 const val = parseFloat(
-                                                    (
-                                                        e.target as HTMLInputElement
-                                                    ).value,
+                                                    (e.target as HTMLInputElement).value,
                                                 );
-                                                if (!isNaN(val) && val >= 0) {
-                                                    onUpdate(index, {
-                                                        discount: val,
-                                                    });
-                                                }
+                                                onUpdate(index, { discount: val });
                                             }}
                                         />
                                     </div>
                                 </s-stack>
 
                                 <s-text-field
+                                    required
                                     label="Title"
-                                    value={tier.title ?? DEFAULT_TITLE}
+                                    value={tier.title ?? VOLUME_TIER_DEFAULT_TITLE}
                                     maxLength={50}
                                     details={`Shown on the storefront. Use {quantity} and {discount} as dynamic variables.`}
+                                    error={titleError}
                                     onInput={(e: Event) => {
                                         onUpdate(index, {
                                             title: (
@@ -427,7 +420,7 @@ export function VolumeDiscountSettings() {
             {/* Tier cards */}
             {config.tiers.map((tier, index) => (
                 <VolumeTierCard
-                    key={index}
+                    key={tier.id ?? index}
                     tier={tier}
                     index={index}
                     isOnly={config.tiers.length === 1}
@@ -436,6 +429,7 @@ export function VolumeDiscountSettings() {
                     initialCollapsed={index > 0 && index !== lastAddedIndex}
                     qtyError={tierFieldErrors[index]?.minQuantity}
                     discountError={tierFieldErrors[index]?.discount}
+                    titleError={tierFieldErrors[index]?.title}
                     onUpdate={updateTier}
                     onRemove={removeTier}
                 />

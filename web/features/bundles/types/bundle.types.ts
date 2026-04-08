@@ -332,6 +332,7 @@ export interface VolumeTierBadge {
 }
 
 export interface VolumeTier {
+    id?: string;
     minQuantity: number;
     discount: number;
     title: string;

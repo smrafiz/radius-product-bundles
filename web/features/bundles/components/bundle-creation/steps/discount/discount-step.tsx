@@ -4,6 +4,7 @@ import {
     BundleAsProduct,
     BundleBehavior,
     BundleType,
+    BXGY_TYPES,
     BxgyDiscountSettings,
     DiscountSettings,
     VolumeDiscountSettings,
@@ -11,13 +12,11 @@ import {
 } from "@/features/bundles";
 import { usePathname } from "next/navigation";
 
-const BXGY_TYPES: BundleType[] = ["BOGO", "BUY_X_GET_Y"];
-
 export function DiscountStep() {
     const pathname = usePathname();
     const mode = pathname.includes("/edit") ? "edit" : "create";
     const bundleType = useBundleStore((s) => s.bundleData.type);
-    const isBxgy = BXGY_TYPES.includes(bundleType as BundleType);
+    const isBxgy = !!bundleType && (BXGY_TYPES as readonly BundleType[]).includes(bundleType);
     const isVolume = bundleType === "VOLUME_DISCOUNT";
 
     if (isVolume) {

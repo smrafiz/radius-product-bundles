@@ -2,6 +2,7 @@
 
 import {
     BundleFormData,
+    VOLUME_TIER_DEFAULT_TITLE,
     VolumeDiscountConfig,
     VolumeTier,
     volumeDiscountConfigSchema,
@@ -11,15 +12,13 @@ import { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { getCurrencySymbol, useShopSettings } from "@/shared";
 
-const DEFAULT_TITLE = "Buy {quantity}, get {discount} off";
-
 const DEFAULT_CONFIG: VolumeDiscountConfig = {
     discountType: "PERCENTAGE",
     openEnded: true,
     tiers: [
-        { minQuantity: 1, discount: 5, title: DEFAULT_TITLE },
-        { minQuantity: 2, discount: 10, title: DEFAULT_TITLE, isDefault: true },
-        { minQuantity: 3, discount: 15, title: DEFAULT_TITLE },
+        { id: "tier-0", minQuantity: 1, discount: 5, title: VOLUME_TIER_DEFAULT_TITLE },
+        { id: "tier-1", minQuantity: 2, discount: 10, title: VOLUME_TIER_DEFAULT_TITLE, isDefault: true },
+        { id: "tier-2", minQuantity: 3, discount: 15, title: VOLUME_TIER_DEFAULT_TITLE },
     ],
 };
 
@@ -46,7 +45,7 @@ export function useVolumeDiscount() {
     const parseResult = volumeDiscountConfigSchema.safeParse(config);
     const tierFieldErrors = !parseResult.success
         ? parseResult.error.issues.reduce<
-              Record<number, { minQuantity?: string; discount?: string }>
+              Record<number, { minQuantity?: string; discount?: string; title?: string }>
           >((acc, issue) => {
               if (
                   issue.path[0] === "tiers" &&
@@ -58,6 +57,7 @@ export function useVolumeDiscount() {
                   if (field === "minQuantity")
                       acc[idx].minQuantity = issue.message;
                   if (field === "discount") acc[idx].discount = issue.message;
+                  if (field === "title") acc[idx].title = issue.message;
               }
               return acc;
           }, {})
@@ -94,9 +94,10 @@ export function useVolumeDiscount() {
         const lastTier = config.tiers[config.tiers.length - 1];
         const newIndex = config.tiers.length;
         const newTier: VolumeTier = {
-            minQuantity: lastTier.minQuantity + 1,
-            discount: (lastTier.discount ?? 0) + 5,
-            title: DEFAULT_TITLE,
+            id: `tier-${Date.now()}`,
+            minQuantity: (isNaN(lastTier.minQuantity) ? 1 : lastTier.minQuantity) + 1,
+            discount: (isNaN(lastTier.discount) ? 0 : lastTier.discount) + 5,
+            title: VOLUME_TIER_DEFAULT_TITLE,
         };
         setLastAddedIndex(newIndex);
         updateConfig({ tiers: [...config.tiers, newTier] });
