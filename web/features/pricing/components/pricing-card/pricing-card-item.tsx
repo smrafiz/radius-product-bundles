@@ -68,7 +68,7 @@ export function PricingCardItem({
                     <ul className="flex flex-col gap-3">
                         {features?.map((feature, index) => (
                             <li key={index} className="flex items-center gap-2">
-                                <s-icon type="check" tone="success" size="small" />
+                                <s-icon type="check" tone="success" />
                                 <span className="text-sm text-gray-700">{feature}</span>
                             </li>
                         ))}

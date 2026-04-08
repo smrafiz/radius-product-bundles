@@ -5,7 +5,14 @@ import { useTranslations } from "@/lib/i18n/provider";
 import { CellValue } from "@/features/pricing";
 import { useFeatureComparisonTable } from "@/features/pricing/hooks/use-feature-comparison-table";
 
-const VALUE_KEYS = ["basic", "full", "email", "priority", "layoutsFree", "layoutsPro"];
+const VALUE_KEYS = [
+    "basic",
+    "full",
+    "email",
+    "priority",
+    "layoutsFree",
+    "layoutsPro",
+];
 
 type TranslateFn = ReturnType<typeof useTranslations>;
 
@@ -62,7 +69,9 @@ export function FeatureComparisonTable() {
                                 <th className="py-3 px-4 text-center font-semibold text-gray-700 w-1/4">
                                     <span className="flex items-center justify-center gap-1">
                                         Pro
-                                        <s-badge tone="success">{t("mostPopular")}</s-badge>
+                                        <s-badge tone="success">
+                                            {t("mostPopular")}
+                                        </s-badge>
                                     </span>
                                 </th>
                             </tr>
@@ -75,7 +84,9 @@ export function FeatureComparisonTable() {
                                             colSpan={3}
                                             className="py-2 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wide"
                                         >
-                                            {t(`categories.${cat.categoryKey}` as never)}
+                                            {t(
+                                                `categories.${cat.categoryKey}` as never,
+                                            )}
                                         </td>
                                     </tr>
                                     {cat.rows.map((row) => (
@@ -84,7 +95,9 @@ export function FeatureComparisonTable() {
                                             className="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors"
                                         >
                                             <td className="py-3 px-4 text-gray-700">
-                                                {t(`features.${row.labelKey}` as never)}
+                                                {t(
+                                                    `features.${row.labelKey}` as never,
+                                                )}
                                             </td>
                                             <td className="py-3 px-4 text-center text-gray-600">
                                                 <Cell value={row.free} t={t} />
