@@ -263,6 +263,11 @@ export function createBundleSchema(v: T) {
         .superRefine((data, ctx) => {
             const { discountType, discountValue } = data;
 
+            // QUANTITY_BREAKS and NO_DISCOUNT don't use top-level discountValue
+            if (discountType === "QUANTITY_BREAKS" || discountType === "NO_DISCOUNT") {
+                return;
+            }
+
             if (discountType === "PERCENTAGE") {
                 if (discountValue > 100) {
                     ctx.addIssue({

@@ -259,6 +259,11 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                             Select at least one product to apply volume discount tiers to.
                         </s-banner>
                     )}
+                    {isVolume && selectedItems.length > 1 && (
+                        <s-banner tone="info">
+                            All selected products will share the same volume discount tiers. Customers buying any of these products will see the same volume discounts.
+                        </s-banner>
+                    )}
                     {isAtLimit && (
                         <s-banner tone="info">
                             {isBogo

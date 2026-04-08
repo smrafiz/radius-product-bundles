@@ -349,6 +349,7 @@ export async function updateBundleWithRelations(
             endDate: data.endDate ?? null,
             mainProductId: data.mainProductId ?? null,
             mainVariantId: data.mainVariantId ?? null,
+            volumeTiers: data.volumeTiers ?? Prisma.JsonNull,
             discountApplication: data.discountApplication || "bundle",
             discountedProductIds: data.discountedProductIds ?? [],
             freeShipping: data.freeShipping ?? false,

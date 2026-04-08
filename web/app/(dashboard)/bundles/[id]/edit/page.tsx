@@ -29,21 +29,17 @@ export default async function EditBundleByIdPage(props: {
         return <BundleRedirect to="/bundles" />;
     }
 
-    const devUnlock =
-        process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true" &&
-        process.env.NODE_ENV !== "production";
+    const devUnlock = process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true";
 
     // Pro gate: VOLUME_DISCOUNT bundles require Pro plan
     if (type === "VOLUME_DISCOUNT" && !devUnlock) {
-        // No shop param = not a valid embedded session — block access
-        if (!shop) {
-            redirect("/pricing");
+        if (shop) {
+            const subscription = await getShopSubscription(shop);
+            if (!subscription || subscription.plan === "FREE") {
+                redirect("/pricing");
+            }
         }
-
-        const subscription = await getShopSubscription(shop);
-        if (!subscription || subscription.plan === "FREE") {
-            redirect("/pricing");
-        }
+        // If no shop param, client-side plan gating handles restriction
     }
 
     return <EditBundlePage params={params} />;

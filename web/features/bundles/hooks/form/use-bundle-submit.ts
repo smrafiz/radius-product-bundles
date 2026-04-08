@@ -245,6 +245,15 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         data.discountedProductIds = storeData.discountedProductIds ?? [];
         data.freeShipping = storeData.freeShipping ?? false;
         data.priority = storeData.priority ?? 0;
+        if (storeData.volumeTiers) {
+            data.volumeTiers = storeData.volumeTiers as typeof data.volumeTiers;
+        }
+        if (storeData.discountType) {
+            data.discountType = storeData.discountType as typeof data.discountType;
+        }
+        if (storeData.discountValue !== undefined) {
+            data.discountValue = storeData.discountValue as number;
+        }
     };
 
     /**

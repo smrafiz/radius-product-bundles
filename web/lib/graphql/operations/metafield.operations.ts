@@ -439,6 +439,8 @@ function buildShopBundlesMetafieldValue(
         const productVariantIdsList = bundleProducts.map((bp) => bp.variantId || null);
         const hasVariants = productVariantIdsList.some((v) => v !== null);
 
+        const isVolume = bundle.type === "VOLUME_DISCOUNT";
+
         bundleMap[bundle.id] = {
             status: bundle.status,
             bundleType: bundle.type,
@@ -479,6 +481,9 @@ function buildShopBundlesMetafieldValue(
                 getQuantity: bundle.getQuantity || 1,
                 usesPerOrderLimit: bundle.usesPerOrderLimit || null,
                 productRoles: productRoles,
+            }),
+            ...(isVolume && bundle.volumeTiers != null && {
+                volumeTiers: bundle.volumeTiers,
             }),
         };
     }
@@ -565,6 +570,8 @@ function buildDiscountBundlesMetafieldValue(
             Object.keys(variantRolesMap).length > 0 &&
             Object.values(variantRolesMap).includes("TRIGGER");
 
+        const isVolume = bundle.type === "VOLUME_DISCOUNT";
+
         bundleMap[bundle.id] = {
             status: bundle.status,
             discountType: bundle.discountType || "PERCENTAGE",
@@ -589,6 +596,10 @@ function buildDiscountBundlesMetafieldValue(
                 usesPerOrderLimit: bundle.usesPerOrderLimit || null,
                 productRoles: productRoleMap,
                 variantRoles: hasVariantRoles ? variantRolesMap : null,
+            }),
+            ...(isVolume && bundle.volumeTiers != null && {
+                bundleType: bundle.type,
+                volumeTiers: bundle.volumeTiers,
             }),
         };
     }
@@ -638,14 +649,6 @@ export async function syncActiveBundlesToMetafield(
             getShopId(auth, shop),
         ]);
 
-        if (!discountId) {
-            console.error("[Metafield] Bundle discount not found");
-            return {
-                success: false,
-                error: "Bundle discount not found. Please reinstall the app.",
-            };
-        }
-
         if (!shopId) {
             console.error("[Metafield] Shop ID not found");
             return {
@@ -672,31 +675,43 @@ export async function syncActiveBundlesToMetafield(
             freeShippingMethodTitle,
             priceMap,
         );
-        const discountValue = buildDiscountBundlesMetafieldValue(
-            activeBundles,
-            freeShippingMethodTitle,
-        );
+
+        // Build metafield entries — shop metafield always written, discount metafield only if discount ID exists
+        const metafields: Array<{
+            ownerId: string;
+            namespace: string;
+            key: string;
+            type: string;
+            value: string;
+        }> = [
+            {
+                ownerId: shopId,
+                namespace: METAFIELD_NAMESPACE,
+                key: ACTIVE_BUNDLES_KEY,
+                type: JSON_TYPE,
+                value: shopValue,
+            },
+        ];
+
+        if (discountId) {
+            const discountValue = buildDiscountBundlesMetafieldValue(
+                activeBundles,
+                freeShippingMethodTitle,
+            );
+            metafields.push({
+                ownerId: discountId,
+                namespace: METAFIELD_NAMESPACE,
+                key: ACTIVE_BUNDLES_KEY,
+                type: JSON_TYPE,
+                value: discountValue,
+            });
+        } else {
+            console.warn("[Metafield] Bundle discount not found — shop metafield will still be written");
+        }
 
         const result = await executeGraphQLMutation<MetafieldsSetMutation>({
             query: MetafieldsSetDocument,
-            variables: {
-                metafields: [
-                    {
-                        ownerId: discountId,
-                        namespace: METAFIELD_NAMESPACE,
-                        key: ACTIVE_BUNDLES_KEY,
-                        type: JSON_TYPE,
-                        value: discountValue,
-                    },
-                    {
-                        ownerId: shopId,
-                        namespace: METAFIELD_NAMESPACE,
-                        key: ACTIVE_BUNDLES_KEY,
-                        type: JSON_TYPE,
-                        value: shopValue,
-                    },
-                ],
-            },
+            variables: { metafields },
             ...resolveAuth(auth),
         });
 

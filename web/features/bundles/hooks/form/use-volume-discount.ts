@@ -10,7 +10,7 @@ import {
 } from "@/features/bundles";
 import { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { getCurrencySymbol, useShopSettings } from "@/shared";
+import { getCurrencySymbol, TRIGGER_SAVE_BAR, useShopSettings } from "@/shared";
 
 const DEFAULT_CONFIG: VolumeDiscountConfig = {
     discountType: "PERCENTAGE",
@@ -23,7 +23,7 @@ const DEFAULT_CONFIG: VolumeDiscountConfig = {
 };
 
 export function useVolumeDiscount() {
-    const { bundleData, setBundleData } = useBundleStore();
+    const { bundleData, setBundleData, markDirty } = useBundleStore();
     const { currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
     const [lastAddedIndex, setLastAddedIndex] = useState<number | null>(null);
@@ -66,6 +66,10 @@ export function useVolumeDiscount() {
     const updateConfig = (updates: Partial<VolumeDiscountConfig>) => {
         const next = { ...config, ...updates };
         setBundleData({ volumeTiers: next });
+        markDirty();
+        if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent(TRIGGER_SAVE_BAR));
+        }
         if (form) {
             form.setValue("volumeTiers", next, { shouldDirty: true });
             void form.trigger("volumeTiers");

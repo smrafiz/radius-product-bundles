@@ -68,6 +68,7 @@ export interface UpdateBundleInput {
     buyQuantity?: number | null;
     getQuantity?: number | null;
     usesPerOrderLimit?: number | null;
+    volumeTiers?: Prisma.NullableJsonNullValueInput | Prisma.InputJsonValue;
     startDate?: Date | null;
     endDate?: Date | null;
     discountApplication?: string;
@@ -100,7 +101,7 @@ export interface UpdateBundleInputWithRelations {
     discountValue: number;
     minOrderValue?: number | null;
     maxDiscountAmount?: number | null;
-    volumeTiers?: any;
+    volumeTiers?: Prisma.NullableJsonNullValueInput | Prisma.InputJsonValue;
     allowMixAndMatch?: boolean | null;
     mixAndMatchPrice?: number | null;
     discountApplication?: string;

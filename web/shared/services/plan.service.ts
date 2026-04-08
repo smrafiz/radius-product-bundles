@@ -24,6 +24,8 @@ export function getPlanConfig(planId: PlanName): PlanConfig {
 export async function resolveShopPlan(domain: string): Promise<PlanConfig> {
     const shopPlan = await getShopSubscription(domain);
 
+    console.log("[resolveShopPlan] domain:", domain, "shopPlan:", shopPlan ? { plan: shopPlan.plan, status: shopPlan.status } : "null");
+
     if (shopPlan?.status === "ACTIVE" && shopPlan?.plan === "PRO") {
         return getPlanConfig("PRO");
     }

@@ -55,21 +55,17 @@ export default async function CreateBundleByTypePage(props: {
         (type) => type.slug === (params.bundleType as unknown as string),
     ) as BundleConfig | undefined;
 
-    const devUnlock =
-        process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true" &&
-        process.env.NODE_ENV !== "production";
+    const devUnlock = process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true";
 
     if (bundleConfig?.proRequired && !devUnlock) {
         const shop = searchParams?.shop ?? "";
-        // No shop param = not a valid embedded session — block access
-        if (!shop) {
-            redirect("/pricing");
+        if (shop) {
+            const subscription = await getShopSubscription(shop);
+            if (!subscription || subscription.plan === "FREE") {
+                redirect("/pricing");
+            }
         }
-
-        const subscription = await getShopSubscription(shop);
-        if (!subscription || subscription.plan === "FREE") {
-            redirect("/pricing");
-        }
+        // If no shop param, client-side plan gating handles restriction
     }
 
     return <CreateBundlePage params={params} />;

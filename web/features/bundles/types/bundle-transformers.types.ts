@@ -69,6 +69,7 @@ export interface TransformedBundle extends TransformedBundleBase {
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
+    volumeTiers?: unknown;
     buyQuantity?: number;
     getQuantity?: number;
     usesPerOrderLimit?: number;
