@@ -1,28 +1,36 @@
 "use client";
 
+import {
+    useAppNavigation,
+    withLoader,
+    usePlan,
+    ProBadge,
+    useCrossSellStore,
+} from "@/shared";
 import { useEffect } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 import { BundleConfig, useBundleSelectionStore } from "@/features/bundles";
-import { useAppNavigation, withLoader, usePlan, ProBadge, ROUTES } from "@/shared";
 
 export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
     const t = useTranslations("Bundles.Selection");
     const tt = useTranslations("Bundles.Types");
-    const { bundleData, goTo } = useAppNavigation();
+    const { bundleData } = useAppNavigation();
     const { selectingBundleId, setSelectingBundleId, reset } =
         useBundleSelectionStore();
     const { canUse } = usePlan();
+    const { open } = useCrossSellStore();
 
     useEffect(() => reset(), []);
 
     const isThisCardSelecting = selectingBundleId === bundleType.id;
     const isAnotherCardSelecting =
         selectingBundleId !== null && !isThisCardSelecting;
-    const isProLocked = bundleType.proRequired === true && !canUse("volume_discount");
+    const isProLocked =
+        bundleType.proRequired === true && !canUse("volume_discount");
 
     const handleSelect = async () => {
         if (isProLocked) {
-            goTo(ROUTES.PRICING)();
+            open("volume discount");
             return;
         }
 
@@ -77,7 +85,11 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                         <s-stack gap="small">
                             <s-button
                                 variant="secondary"
-                                onClick={withLoader(handleSelect)}
+                                onClick={
+                                    isProLocked
+                                        ? handleSelect
+                                        : withLoader(handleSelect)
+                                }
                                 loading={isThisCardSelecting}
                                 disabled={
                                     bundleType.comingSoon ||
@@ -130,7 +142,11 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                 <s-stack>
                                     <s-button
                                         variant="primary"
-                                        onClick={withLoader(handleSelect)}
+                                        onClick={
+                                            isProLocked
+                                                ? handleSelect
+                                                : withLoader(handleSelect)
+                                        }
                                         loading={isThisCardSelecting}
                                     >
                                         {bundleType.comingSoon
