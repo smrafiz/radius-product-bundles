@@ -275,9 +275,7 @@ export function WidgetClassicCard({
                 style={{
                     display: "grid",
                     gridTemplateColumns:
-                        (styles.splitDealStyle ?? "row") === "column"
-                            ? "1fr"
-                            : "1fr 1fr",
+                        activeDevice === "mobile" ? "1fr" : (styles.splitDealStyle ?? "row") === "column" ? "1fr" : "1fr 1fr",
                     gap: spacingValues.gap + 2,
                     marginTop: 10,
                 }}
@@ -384,28 +382,30 @@ export function WidgetClassicCard({
                             {pricing.finalPrice}
                         </div>
                     </div>
-                    <div style={{ textAlign: "right" }}>
-                        <div
-                            style={{
-                                fontSize: parseInt(bodyFontSize) - 3,
-                                fontWeight: 500,
-                                color: freeTagColor,
-                                marginBottom: 4,
-                            }}
-                        >
-                            {labels?.bogoYouSaveLabel ||
-                                PREVIEW_LABELS.bogoYouSaveLabel}
+                    {displayOptions.showSavings && (
+                        <div style={{ textAlign: "right" }}>
+                            <div
+                                style={{
+                                    fontSize: parseInt(bodyFontSize) - 3,
+                                    fontWeight: 500,
+                                    color: freeTagColor,
+                                    marginBottom: 4,
+                                }}
+                            >
+                                {labels?.bogoYouSaveLabel ||
+                                    PREVIEW_LABELS.bogoYouSaveLabel}
+                            </div>
+                            <div
+                                style={{
+                                    fontSize: parseInt(bodyFontSize) + 4,
+                                    fontWeight: 600,
+                                    color: styles.savingsColor || "#16a34a",
+                                }}
+                            >
+                                {pricing.savingsAmount}
+                            </div>
                         </div>
-                        <div
-                            style={{
-                                fontSize: parseInt(bodyFontSize) + 4,
-                                fontWeight: 600,
-                                color: styles.savingsColor || "#16a34a",
-                            }}
-                        >
-                            {pricing.savingsAmount}
-                        </div>
-                    </div>
+                    )}
                 </div>
             )}
 

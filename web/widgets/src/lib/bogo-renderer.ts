@@ -20,6 +20,7 @@ export interface BogoContext extends BaseRenderContext {
     badgeStyle: string;
     imageSize: string;
     quantityLabel: string;
+    pricingSummaryBox: boolean;
     splitDealStyle?: "column" | "row";
 }
 
@@ -377,17 +378,19 @@ export function renderClassicCardProducts(
         );
     const savings = totalOriginal - totalDiscounted;
 
-    if (savings > 0 && ctx.showSavings) {
+    if (ctx.pricingSummaryBox) {
         html += `
             <div class="rb-classic__pricing-bar">
                 <div class="rb-classic__pricing-col">
                     <span class="rb-classic__pricing-label rb-classic__pricing-pay">${escapeHtml(youPayLabel)}</span>
                     <span class="rb-classic__pricing-value">${formatMoney(totalDiscounted)}</span>
                 </div>
+                ${savings > 0 && ctx.showSavings ? `
                 <div class="rb-classic__pricing-col rb-classic__pricing-col--right">
                     <span class="rb-classic__pricing-label rb-classic__pricing-save">${escapeHtml(youSaveLabel)}</span>
                     <span class="rb-classic__pricing-value rb-classic__pricing-value--savings">${formatMoney(savings)}</span>
                 </div>
+                ` : ''}
             </div>
         `;
     }
