@@ -1,0 +1,26 @@
+<div class="radius-bundle__inner">
+{% render 'radius-bundle-header', name: name, subtitle: subtitle, show_savings_badge: show_savings_badge %}
+<div class="radius-bundle__products radius-bundle__products--volume_table" data-bundle-products>
+<div class="rb-vol__wrap">
+<div class="rb-vol__product-header">
+<div class="radius-bundle__product-placeholder" style="width:var(--rb-image-size,70px);height:var(--rb-image-size,70px);border-radius:var(--rb-border-radius,8px);background:var(--rb-product-bg-color,#f9fafb);flex-shrink:0;" aria-hidden="true"></div>
+<div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+<div class="radius-bundle__skeleton-line" style="width:60%;height:14px;"></div>
+<div class="radius-bundle__skeleton-line" style="width:30%;height:12px;"></div>
+</div>
+</div>
+<ul class="rb-vol__tiers" role="list">
+{% assign skeleton_count = tier_count | default: 3 %}
+{% for i in (1..skeleton_count) %}
+<li class="rb-vol__tier" aria-hidden="true">
+<div class="rb-vol__tier-qty"><div class="radius-bundle__skeleton-line" style="width:36px;height:22px;"></div></div>
+<div class="rb-vol__tier-info"><div class="radius-bundle__skeleton-line" style="width:80%;height:14px;"></div><div class="radius-bundle__skeleton-line" style="width:50%;height:12px;margin-top:4px;"></div></div>
+<div class="rb-vol__tier-pricing"><div class="radius-bundle__skeleton-line" style="width:48px;height:14px;"></div></div>
+<div class="rb-vol__tier-check" aria-hidden="true"></div>
+</li>
+{% endfor %}
+</ul>
+</div>
+</div>
+{% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text %}
+</div>

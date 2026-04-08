@@ -38,6 +38,12 @@ import {
     updatePricing,
     validateStock,
 } from "./lib/fixed-renderer";
+import {
+    type VolumeContext,
+    initVolumeTierSelection,
+    parseVolumeTiers,
+    renderVolumeTable,
+} from "./lib/volume-renderer";
 
 (function () {
     "use strict";
@@ -728,6 +734,11 @@ import {
                 // Fetch tax-inclusive storefront prices via Shopify Ajax API
                 await this.fetchStorefrontPrices(this.bundle.products);
 
+                if (this.isVolumeBundle()) {
+                    this.renderVolumeBundle(this.bundle);
+                    return;
+                }
+
                 this.renderProducts(this.bundle);
                 updatePricing(this.bundle, this.getFixedContext());
                 if (this.enableStockValidation)
@@ -867,6 +878,12 @@ import {
                 }
 
                 await this.fetchStorefrontPrices(this.bundle.products);
+
+                if (this.isVolumeBundle()) {
+                    this.renderVolumeBundle(this.bundle);
+                    return;
+                }
+
                 this.renderProducts(this.bundle);
                 updatePricing(this.bundle, this.getFixedContext());
                 if (this.enableStockValidation)
@@ -884,6 +901,24 @@ import {
         private isBxgyBundle(): boolean {
             const t = this.bundleStructure?.bundleType;
             return t === "BOGO" || t === "BUY_X_GET_Y";
+        }
+
+        private isVolumeBundle(): boolean {
+            return this.bundleStructure?.bundleType === "VOLUME_DISCOUNT";
+        }
+
+        private getVolumeContext(): VolumeContext {
+            return {
+                container: this.container,
+                bundleStructure: this.bundleStructure,
+                showImages: this.showImages,
+                showPrices: this.showPrices,
+                showSavings: this.showSavings,
+                lazyLoadImages: this.lazyLoadImages,
+                redirectAfterCart: this.redirectAfterCart,
+                enableAnalytics: this.enableAnalytics,
+                maxBundlesPerOrder: this.maxBundlesPerOrder,
+            };
         }
 
         private getBogoContext(): BogoContext {
@@ -929,6 +964,53 @@ import {
                 quantityLabel: this.getQuantityLabel(),
                 isBxgy: this.isBxgyBundle(),
             };
+        }
+
+        private renderVolumeBundle(bundle: Bundle): void {
+            const productsContainer = this.container.querySelector<HTMLElement>(
+                "[data-bundle-products]",
+            );
+            if (!productsContainer || !this.bundleStructure) return;
+
+            const config = parseVolumeTiers(this.bundleStructure);
+            if (!config) {
+                // Fallback: no tiers configured, hide widget
+                this.container.style.display = "none";
+                return;
+            }
+
+            // Use first product as the "main" product for display
+            const firstProduct = bundle.products[0] ?? null;
+            const unitPriceCents = firstProduct?.price ?? 0;
+            const productTitle = firstProduct?.title ?? bundle.name;
+            const productImageSrc = firstProduct?.featuredImage ?? null;
+            const variantId = firstProduct?.variantId ?? "";
+
+            const ctx = this.getVolumeContext();
+
+            renderVolumeTable(
+                productsContainer,
+                config,
+                this.bundleStructure,
+                productImageSrc,
+                productTitle,
+                unitPriceCents,
+                ctx.showImages,
+                ctx.showPrices,
+                ctx.showSavings,
+                ctx.lazyLoadImages,
+            );
+
+            initVolumeTierSelection(
+                this.container,
+                config,
+                this.bundleStructure,
+                variantId,
+                unitPriceCents,
+                ctx.redirectAfterCart,
+                ctx.enableAnalytics,
+                ctx.maxBundlesPerOrder,
+            );
         }
 
         private renderProducts(bundle: Bundle): void {

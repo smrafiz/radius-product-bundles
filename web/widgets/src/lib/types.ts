@@ -57,6 +57,18 @@ export interface BundleStructure {
     usesPerOrderLimit?: number;
     productRoles?: string[];
     layout: string;
+    volumeTiers?: {
+        discountType: "PERCENTAGE" | "FIXED_AMOUNT" | "CUSTOM_PRICE" | "NO_DISCOUNT";
+        openEnded: boolean;
+        tiers: Array<{
+            minQuantity: number;
+            discount: number;
+            title?: string;
+            subtitle?: string;
+            badge?: { style?: string; text?: string };
+            isDefault?: boolean;
+        }>;
+    } | string | null;
     labels: {
         buttonText: string;
         regularPriceLabel: string;
@@ -151,4 +163,35 @@ export interface BaseRenderContext {
     showQuantity: boolean;
     lazyLoadImages: boolean;
     enableHyperLink: boolean;
+}
+
+export interface VolumeTier {
+    minQuantity: number;
+    discount: number;
+    title?: string;
+    subtitle?: string;
+    badge?: { style?: string; text?: string };
+    isDefault?: boolean;
+}
+
+export interface VolumeTiersConfig {
+    discountType:
+        | "PERCENTAGE"
+        | "FIXED_AMOUNT"
+        | "CUSTOM_PRICE"
+        | "NO_DISCOUNT";
+    openEnded: boolean;
+    tiers: VolumeTier[];
+}
+
+export interface VolumeContext {
+    container: HTMLElement;
+    bundleStructure: BundleStructure | null;
+    showImages: boolean;
+    showPrices: boolean;
+    showSavings: boolean;
+    lazyLoadImages: boolean;
+    redirectAfterCart: string;
+    enableAnalytics: boolean;
+    maxBundlesPerOrder: number;
 }
