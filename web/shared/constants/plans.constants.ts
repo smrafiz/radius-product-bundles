@@ -3,7 +3,10 @@ import type { PlanName } from "@/prisma/generated/enums";
 
 export const DEFAULT_PLAN_ID: PlanName = "FREE";
 
-const DEV_UNLOCK_ALL = process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true";
+// Only active outside of production — prevents accidental unlock in live stores
+const DEV_UNLOCK_ALL =
+    process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true" &&
+    process.env.NODE_ENV !== "production";
 
 const FREE_CONFIG: PlanConfig = {
     id: "FREE" as PlanName,

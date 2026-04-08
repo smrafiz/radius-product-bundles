@@ -55,7 +55,11 @@ export default async function CreateBundleByTypePage(props: {
         (type) => type.slug === (params.bundleType as unknown as string),
     ) as BundleConfig | undefined;
 
-    if (bundleConfig?.proRequired) {
+    const devUnlock =
+        process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true" &&
+        process.env.NODE_ENV !== "production";
+
+    if (bundleConfig?.proRequired && !devUnlock) {
         const shop = searchParams?.shop ?? "";
         // No shop param = not a valid embedded session — block access
         if (!shop) {

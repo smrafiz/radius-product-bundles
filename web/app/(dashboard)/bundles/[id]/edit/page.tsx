@@ -29,8 +29,12 @@ export default async function EditBundleByIdPage(props: {
         return <BundleRedirect to="/bundles" />;
     }
 
+    const devUnlock =
+        process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true" &&
+        process.env.NODE_ENV !== "production";
+
     // Pro gate: VOLUME_DISCOUNT bundles require Pro plan
-    if (type === "VOLUME_DISCOUNT") {
+    if (type === "VOLUME_DISCOUNT" && !devUnlock) {
         // No shop param = not a valid embedded session — block access
         if (!shop) {
             redirect("/pricing");
