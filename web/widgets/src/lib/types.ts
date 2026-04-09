@@ -189,6 +189,7 @@ export interface VolumeContext {
     bundleStructure: BundleStructure | null;
     showImages: boolean;
     showPrices: boolean;
+    showComparePrices: boolean;
     showSavings: boolean;
     lazyLoadImages: boolean;
     redirectAfterCart: string;

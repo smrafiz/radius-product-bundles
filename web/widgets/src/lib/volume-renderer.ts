@@ -101,6 +101,7 @@ function renderTierRow(
     config: VolumeTiersConfig,
     unitPriceCents: number,
     showPrices: boolean,
+    showComparePrices: boolean,
     showSavings: boolean,
 ): string {
     const isDefault = !!tier.isDefault;
@@ -133,7 +134,7 @@ function renderTierRow(
     const priceColHtml = showPrices && unitPriceCents > 0
         ? `<div class="rb-vol__tier-pricing">
                 <span class="rb-vol__tier-price">${trimMoney(formatMoney(discountedCents))}</span>
-                ${hasDiscount ? `<span class="rb-vol__tier-original">${trimMoney(formatMoney(unitPriceCents))}</span>` : ""}
+                ${hasDiscount && showComparePrices ? `<span class="rb-vol__tier-original">${trimMoney(formatMoney(unitPriceCents))}</span>` : ""}
             </div>`
         : "";
 
@@ -171,6 +172,7 @@ export function renderVolumeTable(
     unitPriceCents: number,
     showImages: boolean,
     showPrices: boolean,
+    showComparePrices: boolean,
     showSavings: boolean,
     lazyLoadImages: boolean,
 ): void {
@@ -181,7 +183,7 @@ export function renderVolumeTable(
 
     const tiersHtml = config.tiers
         .map((tier, i) =>
-            renderTierRow(tier, i, config, unitPriceCents, showPrices, showSavings),
+            renderTierRow(tier, i, config, unitPriceCents, showPrices, showComparePrices, showSavings),
         )
         .join("");
 

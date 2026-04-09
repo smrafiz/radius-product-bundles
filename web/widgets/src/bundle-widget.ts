@@ -928,6 +928,7 @@ import type { VolumeContext } from "./lib/types";
                 bundleStructure: this.bundleStructure,
                 showImages: this.showImages,
                 showPrices: this.showPrices,
+                showComparePrices: this.showComparePrices,
                 showSavings: this.showSavings,
                 lazyLoadImages: this.lazyLoadImages,
                 redirectAfterCart: this.redirectAfterCart,
@@ -1079,6 +1080,7 @@ import type { VolumeContext } from "./lib/types";
                     unitPriceCents,
                     ctx.showImages,
                     ctx.showPrices,
+                    ctx.showComparePrices,
                     ctx.showSavings,
                     ctx.lazyLoadImages,
                 );
