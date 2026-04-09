@@ -124,24 +124,24 @@ export const BXGY_LAYOUTS = [
 
 export const VOLUME_LAYOUTS = [
     {
-        label: "Volume Table",
-        value: "VOLUME_TABLE" as const,
-        widgetLayout: "/assets/widget-volume-table-layout.png",
+        label: "Tier List",
+        value: "VOLUME_TIER_LIST" as const,
+        widgetLayout: "/assets/widget-volume-tier-list-layout.svg",
     },
     {
-        label: "Volume Cards",
-        value: "VOLUME_CARDS" as const,
-        widgetLayout: "/assets/widget-volume-cards-layout.png",
+        label: "Pricing Cards",
+        value: "VOLUME_PRICING_CARDS" as const,
+        widgetLayout: "/assets/widget-volume-pricing-cards-layout.svg",
     },
     {
-        label: "Volume List",
-        value: "VOLUME_LIST" as const,
-        widgetLayout: "/assets/widget-volume-list-layout.png",
+        label: "Quantity Slider",
+        value: "VOLUME_SLIDER" as const,
+        widgetLayout: "/assets/widget-volume-slider-layout.svg",
     },
     {
-        label: "Volume Compact",
-        value: "VOLUME_COMPACT" as const,
-        widgetLayout: "/assets/widget-volume-compact-layout.png",
+        label: "Savings Calculator",
+        value: "VOLUME_CALCULATOR" as const,
+        widgetLayout: "/assets/widget-volume-calculator-layout.svg",
     },
 ];
 

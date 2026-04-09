@@ -27,6 +27,8 @@
 {%- when 'minimalist' -%}
 <div class="radius-bundle__loading radius-bundle__loading--minimalist" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text, layout: layout %}
+{%- when 'volume_tier_list' or 'volume_pricing_cards' or 'volume_slider' or 'volume_calculator' -%}
+<div class="radius-bundle__loading radius-bundle__loading--list" data-bundle-loading style="--sk-count:{{ tier_count | default: 3 }};"></div>
 {%- else -%}
 <div class="radius-bundle__loading radius-bundle__loading--list" data-bundle-loading style="--sk-count:{{ sk_count }};"></div>
 {%- endcase -%}

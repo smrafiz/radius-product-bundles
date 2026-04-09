@@ -110,18 +110,31 @@ function renderTierRow(
         : `${tier.minQuantity}`;
 
     const discountedCents = calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType);
-    const savingsText = showSavings ? calcSavingsDisplay(unitPriceCents, tier, config.discountType) : "";
+    const hasDiscount = config.discountType !== "NO_DISCOUNT" && tier.discount > 0;
+    const savingsText = showSavings && hasDiscount
+        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType)
+        : "";
 
     const badgeHtml = tier.badge?.text
         ? `<span class="rb-vol__tier-badge ${badgeClass(tier.badge.style)}">${escapeHtml(tier.badge.text)}</span>`
         : "";
 
-    const priceHtml = showPrices && unitPriceCents > 0
-        ? `<span class="rb-vol__tier-price">${trimMoney(formatMoney(discountedCents))}</span>${config.discountType !== "NO_DISCOUNT" ? `<span class="rb-vol__tier-original">${trimMoney(formatMoney(unitPriceCents))}</span>` : ""}`
+    // Title: fall back to "Buy X Units"
+    const resolvedTitle = tier.title
+        ? escapeHtml(resolvePlaceholders(tier.title, tier, config.discountType))
+        : `Buy ${escapeHtml(qtyLabel)} Units`;
+
+    // Savings line below title (green)
+    const savingsLineHtml = savingsText
+        ? `<span class="rb-vol__tier-savings-line">Save ${escapeHtml(savingsText)}</span>`
         : "";
 
-    const savingsHtml = savingsText
-        ? `<span class="rb-vol__tier-savings">${escapeHtml(savingsText)}</span>`
+    // Right-side pricing
+    const priceColHtml = showPrices && unitPriceCents > 0
+        ? `<div class="rb-vol__tier-pricing">
+                <span class="rb-vol__tier-price">${trimMoney(formatMoney(discountedCents))}</span>
+                ${hasDiscount ? `<span class="rb-vol__tier-original">${trimMoney(formatMoney(unitPriceCents))}</span>` : ""}
+            </div>`
         : "";
 
     return `
@@ -131,28 +144,23 @@ function renderTierRow(
             role="button"
             tabindex="0"
             aria-pressed="${isDefault ? "true" : "false"}"
-            aria-label="${escapeHtml(resolvePlaceholders(tier.title || `Buy ${qtyLabel}`, tier, config.discountType))}">
-            <div class="rb-vol__tier-qty">
-                <span class="rb-vol__tier-qty-num">${escapeHtml(qtyLabel)}</span>
-                <span class="rb-vol__tier-qty-unit">units</span>
+            aria-label="${resolvedTitle}">
+            <div class="rb-vol__tier-radio" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
             <div class="rb-vol__tier-info">
-                ${tier.title ? `<span class="rb-vol__tier-title">${escapeHtml(resolvePlaceholders(tier.title, tier, config.discountType))}</span>` : ""}
-                ${tier.subtitle ? `<span class="rb-vol__tier-subtitle">${escapeHtml(resolvePlaceholders(tier.subtitle, tier, config.discountType))}</span>` : ""}
-                ${badgeHtml}
+                <div class="rb-vol__tier-title-row">
+                    <span class="rb-vol__tier-title">${resolvedTitle}</span>
+                    ${badgeHtml}
+                </div>
+                ${savingsLineHtml}
             </div>
-            <div class="rb-vol__tier-pricing">
-                ${priceHtml}
-                ${savingsHtml}
-            </div>
-            <div class="rb-vol__tier-check" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
+            ${priceColHtml}
         </li>
     `;
 }
 
-/** Render the full volume table into the products container */
+/** Render the full volume tier list into the products container */
 export function renderVolumeTable(
     container: Element,
     config: VolumeTiersConfig,
@@ -196,7 +204,7 @@ export function renderVolumeTable(
     `;
 }
 
-/** Wire tier selection interaction */
+/** Wire tier selection + qty selector interaction (two-way binding) */
 export function initVolumeTierSelection(
     widgetContainer: HTMLElement,
     config: VolumeTiersConfig,
@@ -207,15 +215,79 @@ export function initVolumeTierSelection(
     enableAnalytics: boolean,
     maxBundlesPerOrder: number,
 ): void {
-    const tiers = widgetContainer.querySelectorAll<HTMLElement>(".rb-vol__tier");
+    function getTiers() {
+        return widgetContainer.querySelectorAll<HTMLElement>(".rb-vol__tier");
+    }
+    const tiers = getTiers();
+    const atcBtn = widgetContainer.querySelector<HTMLButtonElement>("[data-bundle-add-to-cart]");
+    if (!atcBtn) return;
+    const btnTextEl = atcBtn.querySelector<HTMLElement>("[data-button-text]");
 
-    function selectTier(tierEl: HTMLElement) {
-        tiers.forEach((t) => {
+    // Live references — always query from DOM so we read current state
+    function getQtyEl(): HTMLInputElement | null {
+        return widgetContainer.querySelector<HTMLInputElement>("[data-vol-qty]");
+    }
+    function getDecEl(): HTMLButtonElement | null {
+        return widgetContainer.querySelector<HTMLButtonElement>("[data-vol-qty-dec]");
+    }
+
+    function getQty(): number {
+        return parseInt(getQtyEl()?.value || "1", 10) || 1;
+    }
+
+    function setQty(n: number): void {
+        const el = getQtyEl();
+        const clamped = Math.max(1, n);
+        if (el) el.value = String(clamped);
+        const dec = getDecEl();
+        if (dec) dec.disabled = clamped <= 1;
+        updateAtcText(clamped);
+    }
+
+    function updateAtcText(qty: number): void {
+        if (!btnTextEl) return;
+        const base = bundleStructure.labels?.buttonText || "Add to Cart";
+        btnTextEl.textContent = `${base} (${qty})`;
+    }
+
+    // ── Tier selection ─────────────────────────────────────────────────
+    function selectTier(tierEl: HTMLElement, updateQtyInput = true) {
+        getTiers().forEach((t) => {
             t.classList.remove("rb-vol__tier--selected");
             t.setAttribute("aria-pressed", "false");
         });
         tierEl.classList.add("rb-vol__tier--selected");
         tierEl.setAttribute("aria-pressed", "true");
+
+        if (updateQtyInput) {
+            const tierQty = parseInt(tierEl.dataset.tierQty || "1", 10);
+            setQty(tierQty);
+        }
+    }
+
+    function deselectAll() {
+        getTiers().forEach((t) => {
+            t.classList.remove("rb-vol__tier--selected");
+            t.setAttribute("aria-pressed", "false");
+        });
+    }
+
+    /** Sync tier highlight to qty — deselect if below all tiers */
+    function syncTierToQty() {
+        const match = tierForQty(getQty());
+        if (match) selectTier(match, false);
+        else deselectAll();
+    }
+
+    /** Given a qty, find the highest tier where qty >= minQuantity */
+    function tierForQty(qty: number): HTMLElement | null {
+        const liveTiers = getTiers();
+        let best: HTMLElement | null = null;
+        liveTiers.forEach((t) => {
+            const min = parseInt(t.dataset.tierQty || "1", 10);
+            if (qty >= min) best = t;
+        });
+        return best;
     }
 
     // Apply initial selection (default tier or first)
@@ -224,6 +296,7 @@ export function initVolumeTierSelection(
         (tiers.length > 0 ? tiers[0] : null);
     if (defaultEl) selectTier(defaultEl);
 
+    // Tier row click / keydown → select + update qty input
     tiers.forEach((tierEl) => {
         tierEl.addEventListener("click", () => selectTier(tierEl));
         tierEl.addEventListener("keydown", (e) => {
@@ -234,13 +307,36 @@ export function initVolumeTierSelection(
         });
     });
 
-    // Wire the add-to-cart button
-    const atcBtn = widgetContainer.querySelector<HTMLButtonElement>(
-        "[data-bundle-add-to-cart]",
-    );
-    if (!atcBtn) return;
+    // Qty +/− buttons
+    const decBtn = getDecEl();
+    if (decBtn && !decBtn.dataset.volBound) {
+        decBtn.dataset.volBound = "true";
+        decBtn.addEventListener("click", () => {
+            setQty(getQty() - 1);
+            syncTierToQty();
+        });
+    }
+    const incBtn = widgetContainer.querySelector<HTMLButtonElement>("[data-vol-qty-inc]");
+    if (incBtn && !incBtn.dataset.volBound) {
+        incBtn.dataset.volBound = "true";
+        incBtn.addEventListener("click", () => {
+            setQty(getQty() + 1);
+            syncTierToQty();
+        });
+    }
+    const inputEl = getQtyEl();
+    if (inputEl && !inputEl.dataset.volBound) {
+        inputEl.dataset.volBound = "true";
+        inputEl.removeAttribute("readonly");
+        inputEl.addEventListener("input", () => {
+            const v = parseInt(inputEl.value || "1", 10) || 1;
+            setQty(v);
+            const match = tierForQty(v);
+            if (match) selectTier(match, false);
+        });
+    }
 
-    // Prevent double-binding if called from both loadProductDetails and loadBundleLegacy
+    // ── Add-to-cart button ─────────────────────────────────────────────
     if (atcBtn.dataset.volumeBound === "true") return;
     atcBtn.dataset.volumeBound = "true";
     atcBtn.disabled = false;
@@ -252,13 +348,12 @@ export function initVolumeTierSelection(
         const selectedEl = widgetContainer.querySelector<HTMLElement>(
             ".rb-vol__tier--selected",
         );
-        if (!selectedEl) return;
 
-        const tierIndex = parseInt(selectedEl.dataset.tierIndex || "0", 10);
-        const tier = config.tiers[tierIndex];
-        if (!tier) return;
+        const tierIndex = selectedEl ? parseInt(selectedEl.dataset.tierIndex || "0", 10) : -1;
+        const tier = tierIndex >= 0 ? config.tiers[tierIndex] : null;
 
-        console.log("[RadiusBundle] Volume ATC — tier:", tierIndex, "qty:", tier.minQuantity, "variantId:", variantId);
+        // Use the current qty input value (may differ from tier.minQuantity if user typed)
+        const quantity = getQty();
 
         const numericVariantId = extractNumericId(variantId);
         if (!numericVariantId) {
@@ -269,7 +364,6 @@ export function initVolumeTierSelection(
         atcBtn.classList.add("is-loading");
         atcBtn.disabled = true;
         atcBtn.setAttribute("aria-busy", "true");
-        const btnTextEl = atcBtn.querySelector<HTMLElement>("[data-button-text]");
         const origText = btnTextEl?.textContent || "";
         if (btnTextEl) btnTextEl.textContent = bundleStructure.labels?.addingText ?? "Adding...";
 
@@ -281,7 +375,7 @@ export function initVolumeTierSelection(
                     items: [
                         {
                             id: parseInt(numericVariantId, 10),
-                            quantity: tier.minQuantity,
+                            quantity,
                             properties: {
                                 _bundle_id: bundleStructure.id,
                                 _bundle_name: bundleStructure.name,
@@ -300,8 +394,8 @@ export function initVolumeTierSelection(
             await enqueueCartAttributeWrite(bundleStructure.id, {
                 bundleId: bundleStructure.id,
                 bundleName: bundleStructure.name,
-                discountType: config.discountType,
-                discountValue: tier.discount,
+                discountType: tier ? config.discountType : "NO_DISCOUNT",
+                discountValue: tier ? tier.discount : 0,
                 requiredLineCount: 1,
                 minOrderValue: bundleStructure.minOrderValue || 0,
                 maxDiscountAmount: bundleStructure.maxDiscountAmount || 0,
@@ -310,14 +404,14 @@ export function initVolumeTierSelection(
                 freeShipping: bundleStructure.freeShipping || false,
             });
 
-            if (enableAnalytics) {
+            if (enableAnalytics && tier) {
                 const discountedCents = calcDiscountedPricePerUnit(
                     unitPriceCents,
                     tier,
                     config.discountType,
                 );
-                const totalValue = unitPriceCents * tier.minQuantity;
-                const discountValue = totalValue - discountedCents * tier.minQuantity;
+                const totalValue = unitPriceCents * quantity;
+                const discountValue = totalValue - discountedCents * quantity;
                 widgetContainer.dispatchEvent(
                     new CustomEvent("bundle:addedToCart", {
                         detail: {

@@ -315,10 +315,10 @@ export type BogoLayout =
     | "CHECKLIST"
     | "SPLIT_DEAL";
 export type VolumeLayout =
-    | "VOLUME_TABLE"
-    | "VOLUME_CARDS"
-    | "VOLUME_LIST"
-    | "VOLUME_COMPACT";
+    | "VOLUME_TIER_LIST"
+    | "VOLUME_PRICING_CARDS"
+    | "VOLUME_SLIDER"
+    | "VOLUME_CALCULATOR";
 export type BundleLayoutType = FixedBundleLayout | BogoLayout | VolumeLayout;
 
 /*

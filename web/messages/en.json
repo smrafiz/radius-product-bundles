@@ -698,7 +698,11 @@
         "MINIMALIST": "Minimalist",
         "SLEEK": "Sleek",
         "CHECKLIST": "Checklist",
-        "SPLIT_DEAL": "Split Deal"
+        "SPLIT_DEAL": "Split Deal",
+        "VOLUME_TIER_LIST": "Tier List",
+        "VOLUME_PRICING_CARDS": "Pricing Cards",
+        "VOLUME_SLIDER": "Quantity Slider",
+        "VOLUME_CALCULATOR": "Savings Calculator"
       },
       "displaySettings": {
         "showImages": {

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="168" height="136" viewBox="0 0 168 136" fill="none">
+  <rect width="168" height="136" rx="8" fill="#F9FAFB"/>
+  <!-- Qty input -->
+  <text x="8" y="14" font-size="6" fill="#374151" font-family="system-ui" font-weight="500">Enter Quantity</text>
+  <rect x="8" y="18" width="152" height="20" rx="6" fill="#fff" stroke="#6366F1" stroke-width="1.5"/>
+  <text x="78" y="32" font-size="10" fill="#6366F1" font-family="system-ui" font-weight="700">5</text>
+  <text x="144" y="28" font-size="6" fill="#9CA3AF" font-family="system-ui">▲</text>
+  <text x="144" y="35" font-size="6" fill="#9CA3AF" font-family="system-ui">▼</text>
+  <!-- Total Cost -->
+  <rect x="8" y="44" width="152" height="16" rx="5" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
+  <text x="14" y="55" font-size="6" fill="#374151" font-family="system-ui">Total Cost</text>
+  <rect x="110" y="49" width="42" height="6" rx="2" fill="#6366F1" opacity="0.6"/>
+  <!-- You Save -->
+  <rect x="8" y="64" width="152" height="20" rx="5" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="1"/>
+  <text x="14" y="75" font-size="6" fill="#374151" font-family="system-ui">You Save</text>
+  <rect x="116" y="69" width="36" height="7" rx="2" fill="#16A34A" opacity="0.6"/>
+  <rect x="118" y="78" width="32" height="4" rx="2" fill="#9CA3AF" opacity="0.4"/>
+  <!-- Cost Per Unit -->
+  <rect x="8" y="88" width="152" height="16" rx="5" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
+  <text x="14" y="99" font-size="6" fill="#374151" font-family="system-ui">Cost Per Unit</text>
+  <rect x="118" y="93" width="34" height="6" rx="2" fill="#374151" opacity="0.5"/>
+  <!-- Tier pills -->
+  <rect x="8" y="108" width="22" height="10" rx="5" fill="#E5E7EB"/>
+  <text x="14" y="115" font-size="5" fill="#6B7280" font-family="system-ui">1+</text>
+  <rect x="34" y="108" width="34" height="10" rx="5" fill="#E5E7EB"/>
+  <text x="38" y="115" font-size="5" fill="#6B7280" font-family="system-ui">3+ (-8%)</text>
+  <rect x="72" y="108" width="38" height="10" rx="5" fill="#6366F1"/>
+  <text x="76" y="115" font-size="5" fill="#fff" font-family="system-ui" font-weight="600">5+ (-20%)</text>
+  <rect x="114" y="108" width="42" height="10" rx="5" fill="#E5E7EB"/>
+  <text x="118" y="115" font-size="5" fill="#6B7280" font-family="system-ui">10+ (-28%)</text>
+  <!-- ATC -->
+  <rect x="8" y="122" width="152" height="10" rx="4" fill="#6366F1"/>
+  <text x="56" y="130" font-size="6" fill="#fff" font-family="system-ui" font-weight="500">Add to Cart</text>
+</svg>

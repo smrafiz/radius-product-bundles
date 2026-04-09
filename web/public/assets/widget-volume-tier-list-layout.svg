@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="168" height="136" viewBox="0 0 168 136" fill="none">
+  <rect width="168" height="136" rx="8" fill="#F9FAFB"/>
+  <!-- Row 1 (selected) -->
+  <rect x="8" y="8" width="152" height="24" rx="6" fill="#EEF2FF" stroke="#6366F1" stroke-width="1.5"/>
+  <circle cx="20" cy="20" r="5" fill="#6366F1"/>
+  <path d="M18 20l1.5 1.5L22 18.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="30" y="14" width="60" height="5" rx="2" fill="#6366F1" opacity="0.7"/>
+  <rect x="30" y="22" width="40" height="4" rx="2" fill="#16A34A" opacity="0.5"/>
+  <rect x="128" y="14" width="24" height="5" rx="2" fill="#6366F1" opacity="0.6"/>
+  <rect x="132" y="22" width="20" height="4" rx="2" fill="#D1D5DB"/>
+  <!-- Row 2 -->
+  <rect x="8" y="38" width="152" height="24" rx="6" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
+  <circle cx="20" cy="50" r="5" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+  <rect x="30" y="44" width="55" height="5" rx="2" fill="#374151" opacity="0.5"/>
+  <rect x="30" y="52" width="35" height="4" rx="2" fill="#16A34A" opacity="0.4"/>
+  <rect x="128" y="44" width="24" height="5" rx="2" fill="#374151" opacity="0.4"/>
+  <rect x="132" y="52" width="20" height="4" rx="2" fill="#D1D5DB"/>
+  <!-- Row 3 -->
+  <rect x="8" y="68" width="152" height="24" rx="6" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
+  <circle cx="20" cy="80" r="5" fill="none" stroke="#D1D5DB" stroke-width="1.5"/>
+  <rect x="30" y="74" width="50" height="5" rx="2" fill="#374151" opacity="0.5"/>
+  <rect x="30" y="82" width="30" height="4" rx="2" fill="#16A34A" opacity="0.4"/>
+  <rect x="128" y="74" width="24" height="5" rx="2" fill="#374151" opacity="0.4"/>
+  <rect x="132" y="82" width="20" height="4" rx="2" fill="#D1D5DB"/>
+  <!-- Qty + ATC bar -->
+  <rect x="8" y="100" width="40" height="20" rx="5" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
+  <text x="14" y="113" font-size="8" fill="#9CA3AF" font-family="system-ui">−</text>
+  <text x="25" y="113" font-size="8" fill="#374151" font-family="system-ui" font-weight="600">3</text>
+  <text x="38" y="113" font-size="8" fill="#9CA3AF" font-family="system-ui">+</text>
+  <rect x="54" y="100" width="106" height="20" rx="5" fill="#303030"/>
+  <text x="76" y="114" font-size="8" fill="#fff" font-family="system-ui" font-weight="500">Add to Cart</text>
+</svg>

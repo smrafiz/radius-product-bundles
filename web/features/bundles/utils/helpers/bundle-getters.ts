@@ -182,7 +182,7 @@ export function getDefaultLayout(bundleType?: string): BundleLayoutType {
     }
 
     if (bundleType === "VOLUME_DISCOUNT") {
-        return "VOLUME_TABLE";
+        return "VOLUME_TIER_LIST";
     }
 
     return "LIST";

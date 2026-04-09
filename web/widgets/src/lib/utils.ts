@@ -157,8 +157,8 @@ export function getLayout(container: HTMLElement): string {
         return "checklist";
     if (container.classList.contains("radius-bundle--split_deal"))
         return "split_deal";
-    if (container.classList.contains("radius-bundle--volume_table"))
-        return "volume_table";
+    if (container.classList.contains("radius-bundle--volume_tier_list"))
+        return "volume_tier_list";
     return "list";
 }
 

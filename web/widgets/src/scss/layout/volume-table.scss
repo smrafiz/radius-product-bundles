@@ -1,14 +1,15 @@
 // ==========================================================================
-// Volume Table Layout — VOLUME_DISCOUNT bundles
+// Volume Tier List Layout — VOLUME_DISCOUNT bundles
 // ==========================================================================
 
 .radius-bundle {
-    &--volume_table {
-        .radius-bundle__actions {
-            margin-top: var(--rb-gap-spacing, 12px);
+    &--volume_tier_list {
+        // Hide the standalone actions block (outside the action bar)
+        > .radius-bundle__actions {
+            display: none;
         }
         .radius-bundle__pricing {
-            display: none; // Volume uses its own inline pricing
+            display: none;
         }
     }
 }
@@ -76,10 +77,10 @@
 
     &__tier {
         display: grid;
-        grid-template-columns: 64px 1fr auto 24px;
+        grid-template-columns: 28px 1fr auto;
         align-items: center;
         gap: var(--rb-gap-spacing, 12px);
-        padding: 12px 14px;
+        padding: 14px 16px;
         border: 2px solid var(--rb-border-color, #e5e7eb);
         border-radius: var(--rb-border-radius, 8px);
         background: var(--rb-product-bg-color, #fff);
@@ -98,55 +99,53 @@
             outline-offset: 2px;
         }
 
-        // Default (pre-selected visually but not interactively selected yet)
-        &--default {
-            border-color: var(--rb-primary-color, #303030);
-        }
-
         // Interactively selected
         &--selected {
             border-color: var(--rb-primary-color, #303030);
             background: color-mix(
                 in srgb,
-                var(--rb-primary-color, #303030) 6%,
+                var(--rb-primary-color, #303030) 8%,
                 var(--rb-background-color, #fff)
             );
 
-            .rb-vol__tier-check {
-                opacity: 1;
-                color: var(--rb-primary-color, #303030);
+            .rb-vol__tier-radio {
+                background: var(--rb-primary-color, #303030);
+                border-color: var(--rb-primary-color, #303030);
+
+                svg {
+                    display: block;
+                }
             }
 
-            .rb-vol__tier-qty-num {
+            .rb-vol__tier-title {
                 color: var(--rb-primary-color, #303030);
             }
         }
     }
 
-    // ── Qty column ────────────────────────────────────────────────────
-    &__tier-qty {
+    // ── Checkbox circle (left) — matches checklist pattern ─────────────
+    &__tier-radio {
+        width: 22px;
+        height: 22px;
+        min-width: 22px;
+        border-radius: 50%;
+        border: 2px solid var(--rb-border-color, #d1d5db);
+        background: var(--rb-background-color, #fff);
         display: flex;
-        flex-direction: column;
         align-items: center;
-        text-align: center;
-        flex-shrink: 0;
+        justify-content: center;
+        justify-self: center;
+        transition: all 0.2s ease;
+
+        svg {
+            display: none;
+            width: 12px;
+            height: 12px;
+            color: #fff;
+        }
     }
 
-    &__tier-qty-num {
-        font-size: calc(var(--rb-heading-font-size, 20px) * 0.85);
-        font-weight: 700;
-        color: var(--rb-text-color, #333);
-        line-height: 1;
-    }
-
-    &__tier-qty-unit {
-        font-size: calc(var(--rb-body-font-size, 14px) - 2px);
-        color: var(--rb-text-color, #333);
-        opacity: 0.5;
-        margin-top: 2px;
-    }
-
-    // ── Info column ───────────────────────────────────────────────────
+    // ── Info column (middle) ──────────────────────────────────────────
     &__tier-info {
         display: flex;
         flex-direction: column;
@@ -154,35 +153,38 @@
         min-width: 0;
     }
 
+    &__tier-title-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
     &__tier-title {
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 600;
         color: var(--rb-text-color, #333);
         line-height: 1.2;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        transition: color 0.15s ease;
     }
 
-    &__tier-subtitle {
+    &__tier-savings-line {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
-        color: var(--rb-text-color, #333);
-        opacity: 0.65;
+        font-weight: 500;
+        color: var(--rb-savings-color, #16a34a);
         line-height: 1.2;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     &__tier-badge {
         display: inline-block;
         font-size: calc(var(--rb-body-font-size, 14px) - 3px);
-        font-weight: 600;
+        font-weight: 700;
         padding: 2px 8px;
         border-radius: 20px;
         line-height: 1.5;
-        width: fit-content;
-        letter-spacing: 0.02em;
+        white-space: nowrap;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
 
         &--popular {
             background: var(--rb-primary-color, #303030);
@@ -205,12 +207,12 @@
         }
     }
 
-    // ── Pricing column ────────────────────────────────────────────────
+    // ── Pricing column (right) ────────────────────────────────────────
     &__tier-pricing {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        gap: 3px;
+        gap: 2px;
         flex-shrink: 0;
         text-align: end;
     }
@@ -221,29 +223,18 @@
         color: var(--rb-text-color, #333);
     }
 
+    &__tier-per-unit {
+        font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+        font-weight: 400;
+        opacity: 0.6;
+        margin-left: 1px;
+    }
+
     &__tier-original {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
         color: var(--rb-text-color, #333);
-        opacity: 0.45;
+        opacity: 0.4;
         text-decoration: line-through;
-    }
-
-    &__tier-savings {
-        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
-        font-weight: 600;
-        color: var(--rb-savings-color, #16a34a);
-        white-space: nowrap;
-    }
-
-    // ── Check icon ────────────────────────────────────────────────────
-    &__tier-check {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        flex-shrink: 0;
-        transition: opacity 0.15s ease;
-        color: var(--rb-primary-color, #303030);
     }
 
     // ── Wrap ──────────────────────────────────────────────────────────
@@ -251,21 +242,92 @@
         display: flex;
         flex-direction: column;
     }
-}
 
-// ── Responsive: stack gracefully on small screens ─────────────────────────
-@media (max-width: 480px) {
-    .rb-vol__tier {
-        grid-template-columns: 52px 1fr auto 20px;
-        gap: 8px;
-        padding: 10px 10px;
+    // ── Bottom action bar ─────────────────────────────────────────────
+    &__action-bar {
+        display: flex;
+        align-items: center;
+        gap: var(--rb-gap-spacing, 12px);
+        margin-top: var(--rb-gap-spacing, 12px);
     }
 
-    .rb-vol__tier-qty-num {
-        font-size: calc(var(--rb-heading-font-size, 20px) * 0.75);
+    &__qty-selector {
+        display: flex;
+        align-items: center;
+        border: 2px solid var(--rb-border-color, #e5e7eb);
+        border-radius: var(--rb-border-radius, 8px);
+        overflow: hidden;
+        flex-shrink: 0;
+        height: 44px;
+    }
+
+    &__qty-btn {
+        width: 36px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--rb-text-color, #333);
+        font-size: 18px;
+        font-weight: 400;
+        transition: background 0.12s ease;
+        padding: 0;
+
+        &:hover:not(:disabled) {
+            background: color-mix(in srgb, var(--rb-primary-color, #303030) 8%, transparent);
+        }
+
+        &:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+    }
+
+    &__qty-input {
+        width: 40px;
+        text-align: center;
+        border: none;
+        border-left: 1px solid var(--rb-border-color, #e5e7eb);
+        border-right: 1px solid var(--rb-border-color, #e5e7eb);
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 600;
+        color: var(--rb-text-color, #333);
+        background: transparent;
+        height: 100%;
+        outline: none;
+        -moz-appearance: textfield;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    &__atc-wrap {
+        flex: 1;
+    }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 480px) {
+    .rb-vol__tier {
+        padding: 12px 12px;
+        gap: 8px;
     }
 
     .rb-vol__tier-title {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    }
+
+    .rb-vol__action-bar {
+        flex-wrap: wrap;
+    }
+
+    .rb-vol__atc-wrap {
+        flex: 1 1 100%;
     }
 }

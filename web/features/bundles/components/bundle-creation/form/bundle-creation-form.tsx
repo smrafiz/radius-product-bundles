@@ -186,7 +186,7 @@ export function BundleCreationForm({
                                             {tActions("noProducts")}
                                         </s-text>
                                     )}
-                                    {mainProductUrl && (
+                                    {mainProductUrl && bundleType !== "VOLUME_DISCOUNT" && (
                                         <>
                                             <s-divider />
                                             <s-heading>

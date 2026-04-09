@@ -156,7 +156,7 @@ export function BundleActionsGroup({
                             ) : (
                                 <s-text>{t("noProducts")}</s-text>
                             )}
-                            {bundle.mainProduct && (
+                            {bundle.mainProduct && bundle.type !== "VOLUME_DISCOUNT" && (
                                 <>
                                     <s-divider />
                                     <s-heading>{t("bundleProduct")}</s-heading>
