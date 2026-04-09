@@ -10,6 +10,8 @@ import {
     PRICING_CARD,
     SUBSCRIPTION_PLANS,
     PLAN_PRICING,
+    PRO_MONTHLY_PRICE,
+    PRO_ANNUAL_PRICE,
     PRO_TRIAL_DAYS,
     type SubscriptionPlanType,
 } from "@/features/pricing/constants/pricing.constants";
@@ -27,6 +29,9 @@ export function usePricingCard() {
     const { showError } = useGlobalBanner();
 
     const isMonthly = billingInterval === "EVERY_30_DAYS";
+    const annualSavingsPercent = Math.round(
+        ((PRO_MONTHLY_PRICE * 12 - PRO_ANNUAL_PRICE) / (PRO_MONTHLY_PRICE * 12)) * 100
+    );
     const currentPlanId = plan.id.toLowerCase();
 
     const handleSubscribe = async (planId: SubscriptionPlanType): Promise<void> => {
@@ -123,6 +128,7 @@ export function usePricingCard() {
         billingInterval,
         setBillingInterval,
         isMonthly,
+        annualSavingsPercent,
         currentPlanId,
         handleSubscribe,
         getPrice,

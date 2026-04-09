@@ -127,10 +127,6 @@
     }
 
     &__add-to-cart {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
         width: var(--rb-button-width, auto);
         padding: var(--rb-button-padding);
         background: var(--rb-button-bg);

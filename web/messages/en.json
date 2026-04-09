@@ -1678,7 +1678,7 @@
     },
     "billingMonthly": "Monthly",
     "billingAnnual": "Annual",
-    "annualSavings": "Save 17%",
+    "annualSavings": "Save {percent}%",
     "annualBilledLabel": "{price}/year billed annually",
     "currentPlan": "Current Plan",
     "downgradeFree": "Downgrade to Free",

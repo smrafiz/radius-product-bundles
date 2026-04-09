@@ -12,6 +12,7 @@ export const PricingCard = () => {
         billingInterval,
         setBillingInterval,
         isMonthly,
+        annualSavingsPercent,
         handleSubscribe,
         getPrice,
         getAnnualEquivalent,
@@ -41,7 +42,14 @@ export const PricingCard = () => {
                         variant={!isMonthly ? "primary" : "tertiary"}
                         onClick={() => setBillingInterval("ANNUAL")}
                     >
-                        {t("billingAnnual")}
+                        {/*{t("billingAnnual")}*/}
+                    {/*    <span className={`flex align-center font-medium ${!isMonthly ? "text-white" : "text-gray-400"}`}>*/}
+                    {/*{t("billingAnnual")}{" "}*/}
+                            <s-stack gap="small-300" direction="inline">
+                                <span className={`text-[12px] font-[550] ${!isMonthly ? "text-white" : ""}`}>{t("billingAnnual")}</span>
+                                <s-badge tone="success">{t("annualSavings", { percent: String(annualSavingsPercent) })}</s-badge>
+                            </s-stack>
+                {/*</span>*/}
                     </s-button>
                 </s-stack>
             </s-stack>

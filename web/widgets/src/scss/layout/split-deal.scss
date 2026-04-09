@@ -5,6 +5,12 @@
 .radius-bundle__products {
     &--split_deal {
         margin-bottom: 0;
+        .radius-bundle__add-to-cart {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
     }
 }
 .rb-split {
