@@ -284,6 +284,8 @@ function useWidgetLabels(): WidgetLabels {
 
 function useBadgeText(labels: WidgetLabels): string {
     const { bundleData, selectedItems } = useBundleStore();
+    const { currencyCode } = useShopSettings();
+    const currencySymbol = getCurrencySymbol(currencyCode);
 
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
 
@@ -307,7 +309,7 @@ function useBadgeText(labels: WidgetLabels): string {
         return `${buyWord} ${buy} ${getWord} ${get} at ${discountValue}% Off`;
     }
     if (discountType === "FIXED_AMOUNT" && discountValue > 0) {
-        return `${buyWord} ${buy} ${getWord} ${get} - $${discountValue} Off`;
+        return `${buyWord} ${buy} ${getWord} ${get} - ${currencySymbol}${discountValue} Off`;
     }
     return `${buyWord} ${buy} ${getWord} ${get}`;
 }

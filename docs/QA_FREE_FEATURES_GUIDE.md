@@ -29,7 +29,7 @@ This document covers **Free plan only**.
 | Create Bundle | `/bundles/create` | Yes |
 | Bundle Wizard | `/bundles/create/:type` | Yes (3 types) |
 | Edit Bundle | `/bundles/:id/edit` | Yes |
-| Analytics | `/analytics` | Locked (Pro) |
+| Analytics | `/analytics` | Partial (basic free, full Pro) |
 | Settings | `/settings` | Yes (partial) |
 | Pricing | `/pricing` | Yes |
 | Support | `/support` | Yes |
@@ -42,17 +42,17 @@ This document covers **Free plan only**.
 
 The dashboard is the landing page after install. It contains:
 
-| Section | What it shows | Free |
-|---|---|---|
-| Setup Guide | 5-step onboarding checklist | Yes |
-| Widget Status Banner | Whether app embed + widget block are active | Yes |
-| Analytics Disabled Warning | Shows if analytics tracking is off | Yes |
-| Metrics Overview | KPI cards (views, carts, revenue) | Yes (basic) |
-| Recent Bundles | Table of recently created active bundles | Yes |
+| Section | What it shows                                    | Free |
+|---|--------------------------------------------------|---|
+| Setup Guide | 6-step onboarding checklist                      | Yes |
+| Widget Status Banner | Whether app embed + widget block are active      | Yes |
+| Analytics Disabled Warning | Shows if analytics tracking is off               | Yes |
+| Metrics Overview | KPI cards (views, carts, revenue)                | Yes (basic) |
+| Recent Bundles | Table of recently created active bundles         | Yes |
 | Quick Actions | Shortcut buttons (Create bundle, Settings, etc.) | Yes |
-| Features Section | App features overview | Yes |
-| Video Overview | Tutorial videos | Yes |
-| Review Banner | Prompt to leave review | Yes |
+| Features Section | App features overview                            | Yes |
+| Video Overview | Tutorial videos                                  | Yes |
+| Review Banner | Prompt to leave review                           | Yes |
 
 ### Setup Guide (6 Steps)
 
@@ -304,11 +304,77 @@ Opens the **Style Customizer** — a modal for visual customization of the bundl
 
 ### 5.5 Tools Tab
 
-Utility tools for the app.
+| Section | Tool | Free | Description |
+|---|---|---|---|
+| **Data Management** | Export Settings | Yes | Download all settings as JSON file |
+| | Import Settings | Yes | Upload JSON file to restore settings (opens confirmation modal) |
+| **Sync & Cache** | Sync to Shopify | Yes | Force push settings + styles to Shopify metafields |
+| | Clear Cache | Yes | Purge all cached data (settings, locales, plan) |
+| **Webhook Management** | Check Webhooks | Yes | Shows registered webhooks, missing webhooks, GDPR compliance status |
+| | Force Register Webhooks | Yes | Re-registers all webhooks from scratch (results shown in modal) |
+| **Danger Zone** | Reset Settings | Yes | Factory reset all settings to defaults (confirmation required) |
+
+**QA checks:**
+- Export → download JSON → import on different store → verify settings restored
+- Sync to Shopify → verify metafields updated (check Shopify admin → Settings → Custom data)
+- Clear cache → verify fresh data loads on next page visit
+- Check Webhooks → verify all required topics listed as registered
+- Force Register → verify success toast + all webhooks active
+- Reset Settings → verify all customizations removed, defaults restored
 
 ---
 
-## 6. Storefront Widget (Customer-Facing)
+## 6. Analytics Page
+
+**Route:** `/analytics`
+
+Analytics is **partially available** on Free — the page is accessible, basic metrics and charts are visible, but advanced sections are Pro-locked.
+
+### Free (visible and interactive)
+
+| Section | Details |
+|---|---|
+| **4 Metric Cards** | Total Revenue, Revenue Growth, Conversion Rate, Conversion Growth |
+| **Main Chart** | Area chart — toggle between Revenue, Views, Purchases over time |
+| **Date Range Picker** | Select custom date ranges |
+| **Top Bundles Table** | Top **3 bundles only** (Pro shows top 10) with: rank, name, badge, revenue, AOV, trend, orders, views, CVR |
+| **Analytics Disabled Banner** | Warning if analytics off in Settings |
+
+### Pro-locked (visible as placeholders with Pro badge)
+
+| Section | What it shows locked |
+|---|---|
+| **Customer Journey Funnel** | Gray placeholder + Pro badge |
+| **Conversion Performance chart** | Gray placeholder + Pro badge |
+| **Revenue Analysis chart** | Gray placeholder + Pro badge |
+| **All Bundles Performance table** | Gray placeholder + Pro badge (replaces full table) |
+
+Clicking any locked placeholder opens the Cross-Sell Modal.
+
+### Performance Badges (on bundle rows)
+
+| Badge | Criteria | Free |
+|---|---|---|
+| High Converter | ≥15% CVR | Yes |
+| Revenue Star | ≥$5K revenue | Yes |
+| Trending | ≥25% growth | Yes |
+| Hidden Gem | <100 views + ≥10% CVR | Pro |
+| Declining | ≤-25% drop | Pro |
+| High Interest | ≥30% ATC rate | Pro |
+
+**QA checks:**
+- Free user can access `/analytics` page (nav link visible)
+- 4 metric cards show real data
+- Main chart toggles between Revenue/Views/Purchases
+- Date range picker filters data correctly
+- Top 3 bundles show in performance table
+- Locked sections show Pro badge placeholders
+- Clicking locked section opens Cross-Sell Modal
+- Auto-marks setup guide step 5 on page visit
+
+---
+
+## 7. Storefront Widget (Customer-Facing)
 
 The widget renders on Shopify product pages when a product belongs to an active bundle.
 
@@ -365,15 +431,86 @@ The widget renders on Shopify product pages when a product belongs to an active 
 | VOLUME_SLIDER | Quantity slider with live tier selection |
 | VOLUME_CALCULATOR | Input-based quantity selector with pricing |
 
+### Widget Display Features
+
+| Feature | Setting | Default | Free |
+|---|---|---|---|
+| Product images | `showImages` | true | Yes |
+| Prices | `showPrices` | true | Yes |
+| Compare prices | `showComparePrices` | true | Yes |
+| Savings amount | `showSavings` | true | Yes |
+| Savings badge | `showSavingsBadge` | true | Yes |
+| Product quantity | `showQuantity` | true | Yes |
+| Free shipping badge | `showFreeShipping` | true | Yes |
+| Product hyperlinks | `enableHyperLink` | false | Yes |
+| Pricing summary box | `pricingSummaryBox` | true | Yes |
+| Stock validation | `enableStockValidation` | true | Yes |
+| Lazy load images | `lazyLoadImages` | false | Yes |
+
+### Standalone Bundle Mode
+
+When a bundle has a "main product" (created via Bundle as Product), the widget operates in **standalone mode** on that product's page:
+
+- Widget container is hidden (no visible widget)
+- Hidden form inputs (`_bundle_id`, `_bundle_name`) injected into product form
+- "Buy Now" button is hidden (prevents checkout bypass)
+- Add to Cart from the product form adds all bundle products
+- Analytics still tracks `bundle_view` event
+
+**QA checks:**
+- Create bundle with "Bundle as Product" enabled
+- Visit the main product page → widget should NOT be visible
+- Click Add to Cart → all bundle products added with bundle attributes
+- "Buy Now" button should be hidden
+
 ### Cart Behavior
 
 | Step | What happens |
 |---|---|
 | Click "Add to Cart" | Validates stock → adds all bundle products as line items |
-| Cart Attributes | Stores `_bundle_id`, `_bundle_name`, `_bundle_discount_type`, `_bundle_discount_value` |
+| Cart Attributes | Stores `_radiusDiscounts` JSON (all active bundles) + per-item `_bundle_id`, `_bundle_name`, `_bundle_discount_type`, `_bundle_discount_value` |
 | After Add | Behavior per settings: open cart drawer / redirect to cart / checkout / stay |
 | Toast | Success or error notification |
 | Cart Count | Auto-updates cart bubble |
+| Max per order | If `maxBundlesPerOrder` > 0, counts existing bundles in cart and blocks if at limit (shows error toast) |
+
+### Cart Auto-Cleanup
+
+The widget monitors the cart and automatically removes invalid bundle data:
+
+- If a bundle product is manually removed from cart → remaining bundle items are cleaned up
+- If a bundle is deactivated server-side → `_radiusDiscounts` entry removed on next cart update
+- If bundle settings changed server-side → discount values updated in cart attributes
+- Intercepts fetch calls to `/cart/change`, `/cart/update`, `/cart/clear`
+- Debounced updates (500ms)
+- Dispatches `radiusBundles:cleanup` custom event
+
+**QA checks:**
+- Add bundle → remove one product from cart → verify other bundle products removed
+- Deactivate bundle in admin → refresh cart page → verify bundle attributes cleaned
+- Change discount value in admin → refresh cart → verify cart attributes updated
+
+### Cart Page Savings Banner (App Embed)
+
+A separate widget (not the product page widget) that shows on the **cart page**:
+
+- Displays real-time savings for all bundles in cart
+- Updates when bundles are added/modified/removed
+- Positioned at top of cart form automatically
+- Polls cart every 10 seconds + listens to `cart:change` events
+- Shows bundle name, discount amount, free shipping status
+
+**Customization** (via Settings → Style → Cart Banner section):
+- Background, text, border, highlight colors
+- Corner style, shadow, spacing
+- Font size (small/medium/large)
+- Icon type (tag, percent, gift, sparkle, fire, check, none)
+
+**QA checks:**
+- Add bundle to cart → navigate to cart page → verify banner appears
+- Shows correct savings amount per bundle
+- Remove bundle → banner disappears
+- Test different icon types and colors via customizer
 
 ### Analytics Tracking (if enabled)
 
@@ -381,7 +518,7 @@ The widget renders on Shopify product pages when a product belongs to an active 
 |---|---|
 | `bundle_view` | Bundle widget enters viewport (0.5 threshold, 1s debounce) |
 | `bundle_add_to_cart` | After successful add to cart |
-| `page_view` | Page load with bundles present |
+| `page_view` | Page load with bundles present (product + cart pages) |
 
 **Endpoint:** `/apps/radius-bundles/analytics` (POST via App Proxy)
 
@@ -394,16 +531,20 @@ The widget renders on Shopify product pages when a product belongs to an active 
 - Cart attributes are set correctly
 - Analytics events fire (check network tab)
 - Stock validation prevents add when out of stock
+- Carousel autoplay works (if enabled: rotates, pauses on hover)
+- Product hyperlinks navigate to product pages (if enabled)
+- Pricing summary box shows/hides per settings
+- Free shipping badge appears when bundle has free shipping
 
 ---
 
-## 7. Pro-Locked Features (Visible but Gated)
+## 8. Pro-Locked Features (Visible but Gated)
 
 These features are **visible** on the Free plan but show a **Pro badge** and **lock overlay**. Clicking opens a **Cross-Sell Modal** prompting upgrade.
 
 | Feature | Where it appears |
 |---|---|
-| Full Analytics | Analytics page |
+| Full Analytics (comparison charts + all bundles table) | Analytics page |
 | A/B Testing | Navigation + page |
 | Automation | Navigation + page |
 | AI Insights | Dashboard card + page |
@@ -421,7 +562,7 @@ These features are **visible** on the Free plan but show a **Pro badge** and **l
 
 ---
 
-## 8. Free Plan Limits & Enforcement
+## 9. Free Plan Limits & Enforcement
 
 | Limit | Value | Enforcement |
 |---|---|---|
@@ -444,7 +585,7 @@ Appears when approaching or at the bundle limit. Shows `X / 5 bundles used` with
 
 ---
 
-## 9. Testing Checklist Summary
+## 10. Testing Checklist Summary
 
 ### Happy Path (End-to-End)
 
@@ -471,6 +612,18 @@ Appears when approaching or at the bundle limit. Shows `X / 5 bundles used` with
 - Disable analytics → events stop firing
 - Out-of-stock product in bundle → Add to Cart blocked (if stock validation on)
 - Same product in trigger & reward (BOGO) → works with toggle
+- Max bundles per order limit → error toast when exceeded
+- Remove 1 product from bundle in cart → auto-cleanup removes remaining
+- Standalone bundle product → widget hidden, form injection works
+- Cart savings banner appears/disappears correctly
+
+### Storefront Integration Tests
+
+- Add bundle → check cart attributes (`_radiusDiscounts` JSON)
+- Deactivate bundle → refresh cart → attributes cleaned up
+- Change discount in admin → cart attributes update on next page load
+- Multiple bundles in cart → each tracked separately
+- Bundle priority: index-based vs discount-based (Settings → General)
 
 ### Cross-Sell Modal
 
@@ -481,7 +634,7 @@ Appears when approaching or at the bundle limit. Shows `X / 5 bundles used` with
 
 ---
 
-## 10. Translations & Localization
+## 11. Translations & Localization
 
 ### Admin App (i18n)
 
@@ -547,7 +700,97 @@ English, French, German, Spanish, Italian, Portuguese, Japanese
 
 ---
 
-## 11. Key URLs & Endpoints
+## 12. Discount Function (Rust/WASM — Server-Side)
+
+The discount is applied by a **Shopify Function** (compiled Rust → WASM) that runs server-side at checkout. This is invisible to the merchant but critical for QA.
+
+| Aspect | Details |
+|---|---|
+| Line-item discounts | Applies percentage/fixed/custom-price discount to bundle product lines |
+| Delivery discounts | Applies free shipping when bundle has `freeShipping: true` |
+| Validation | Verifies products in cart actually belong to the bundle (tamper-proof) |
+| Deal counting | BOGO/BXGY: calculates how many complete "deals" fit based on cart quantities |
+| Safety guards | Overflow protection (`safe_mul`), zero-qty guard, bundle ID validation |
+
+**QA checks:**
+- Create bundle with 10% off → add to cart → verify discount applied at checkout
+- Fixed amount discount → verify correct dollar amount deducted
+- Free shipping bundle → verify shipping is $0 at checkout
+- Add only partial bundle products → verify NO discount applied
+- BOGO: buy 2 of trigger, 1 of reward → verify only 1 deal's discount applied
+- Multiple bundles in same cart → verify each gets independent discount
+
+---
+
+## 13. Bundle Scheduling (Pro Status — SCHEDULED)
+
+| Aspect | Details |
+|---|---|
+| Status | SCHEDULED (Pro only) |
+| Fields | `startDate`, `endDate` on Bundle model |
+| Cron job | `/api/cron/bundle-scheduler/` — runs daily |
+| Activation | SCHEDULED → ACTIVE when `startDate` arrives |
+| Deactivation | ACTIVE → PAUSED when `endDate` passes |
+| Auth | Protected by `CRON_SECRET` bearer token |
+
+**Not testable on Free plan** (SCHEDULED status is Pro-locked), but the cron job runs for all shops.
+
+---
+
+## 14. Support Page
+
+**Route:** `/support`
+
+| Section | Content |
+|---|---|
+| Quick Actions | Common action buttons |
+| FAQ | Frequently asked questions (expandable) |
+| Resources Panel | Documentation link, email support |
+| Contact | Email support button |
+
+---
+
+## 15. Backend & Infrastructure (for reference)
+
+### Webhook Handlers
+
+| Topic | What it does |
+|---|---|
+| `products/delete` | Clears main product references from bundles |
+| `shop/update` | Syncs shop settings to DB |
+| `orders/create` | Tracks bundle purchases, calculates revenue for analytics |
+| `app/uninstalled` | Deletes all shop data |
+| GDPR `customers/data_request` | Logs compiled customer data |
+| GDPR `customers/redact` | Handles customer data erasure |
+| GDPR `shop/redact` | Handles shop data deletion |
+
+- All webhooks: HMAC verified, idempotent (7-day dedup via `WebhookDelivery` table)
+- Cold-start recovery: auto-re-registers missing webhooks on first request
+
+### API Routes
+
+| Route | Purpose |
+|---|---|
+| `/api/auth` + `/api/auth/callback` | Shopify OAuth flow |
+| `/api/webhooks` | Centralized webhook handler |
+| `/api/proxy/products` | Storefront product/bundle data (App Proxy) |
+| `/api/proxy/analytics` | Storefront analytics tracking (App Proxy) |
+| `/api/session/validate` + `/api/session/refresh` | Token management |
+| `/api/upload` | File uploads (20MB max, rate-limited: 10 req/60s per shop) |
+| `/api/billing/confirm` + `/api/billing/cancel` + `/api/billing/status` | Shopify billing (Pro plan) |
+| `/api/cron/bundle-scheduler` | Daily scheduled bundle activation/deactivation |
+| `/api/cron/keep-alive` | Database keep-alive ping (every 4 min, prevents Neon cold start) |
+
+### Metafield Sync
+
+Bundle and settings data flows to the storefront via Shopify metafields:
+- `$app.bundle_ids` on products → tells widget which bundles apply
+- App-level metafields → global styles, labels, settings
+- Sync triggered on: bundle save, settings save, or manual "Sync to Shopify" tool
+
+---
+
+## 16. Key URLs & Endpoints
 
 | Purpose | URL |
 |---|---|

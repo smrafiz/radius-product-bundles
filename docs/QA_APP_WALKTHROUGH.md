@@ -36,7 +36,7 @@ Every page shares these elements:
 |---|---|---|---|
 | Dashboard | `/dashboard` | Visible | Home link |
 | Bundles | `/bundles` | Visible | |
-| Analytics | `/analytics` | Hidden | Pro feature — `analytics_full` gate |
+| Analytics | `/analytics` | Visible | Partially gated — basic free, advanced Pro (`analytics_full`) |
 | Settings | `/settings` | Visible | |
 | Pricing | `/pricing` | Visible | |
 | Support | `/support` | Visible | |
@@ -594,7 +594,31 @@ Opens a modal-style customizer:
 
 ### Tools Tab
 
-Utility tools.
+```
+┌──────────────────────────────────────────────────────┐
+│  Data Management                                      │
+│  [📥 Export Settings]  [📤 Import Settings]           │
+│  ──────────────────────────────────────────────────  │
+│  Sync & Cache                                         │
+│  [🔄 Sync to Shopify]  [🗑 Clear Cache]              │
+│  ──────────────────────────────────────────────────  │
+│  Webhook Management                                   │
+│  [✓ Check Webhooks]  [⚡ Force Register Webhooks]     │
+│  ──────────────────────────────────────────────────  │
+│  ⚠ Danger Zone                                       │
+│  [Reset Settings]  (tone="critical")                  │
+└──────────────────────────────────────────────────────┘
+```
+
+| Tool | Action | Result |
+|---|---|---|
+| Export Settings | Downloads JSON backup | File download |
+| Import Settings | Upload JSON file | Confirmation modal → applies settings |
+| Sync to Shopify | Pushes settings/styles to metafields | Success/error toast |
+| Clear Cache | Purges cached data | Success toast |
+| Check Webhooks | Queries registered webhooks | Modal showing status per topic + GDPR compliance |
+| Force Register | Re-registers all webhooks | Modal showing results per topic |
+| Reset Settings | Factory reset | Confirmation modal → restores defaults |
 
 ### Form Controls
 
@@ -607,24 +631,80 @@ Utility tools.
 
 ## Page 7: Analytics (`/analytics`)
 
-**Free plan:** Page content wrapped in `PlanGate` → shows `LockOverlay` (blurred content with Pro badge). The page structure is visible but not interactive.
+**Free plan:** Page is **accessible** (nav link visible). Basic metrics and charts are free. Advanced sections show as Pro-locked placeholders.
 
-### What's behind the lock (for reference)
+### Layout
 
 ```
 ┌──────────────────────────────────────────────────────┐
 │  Analytics                                            │
 │  ──────────────────────────────────────────────────  │
+│  [AnalyticsDisabledBanner]  (if analytics off)       │
+│  ──────────────────────────────────────────────────  │
 │  [Overview] [Bundle Performance]    [Date Range ▼]   │
 │  ──────────────────────────────────────────────────  │
-│  Metrics: Revenue | AOV | Conversion | Views         │
+│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐       │
+│  │Revenue │ │Rev     │ │CVR     │ │CVR     │       │
+│  │ $1,234 │ │Growth  │ │ 12.5%  │ │Growth  │       │
+│  │        │ │ ▲+15%  │ │        │ │ ▲+2.3% │       │
+│  └────────┘ └────────┘ └────────┘ └────────┘       │
 │  ──────────────────────────────────────────────────  │
-│  [Charts / Tables per selected tab]                  │
-│  ──────────────────────────────────────────────────  │
-│                    🔒 BLURRED                        │
-│              ⭐ Upgrade to Pro                       │
+│                                                       │
+│  OVERVIEW TAB:                                        │
+│  ┌──────────────────────────────────────────────┐   │
+│  │  Main Chart (area)                            │   │
+│  │  [Revenue] [Views] [Purchases]  ← toggles     │   │
+│  │  📈 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ │   │
+│  └──────────────────────────────────────────────┘   │
+│                                                       │
+│  ┌──────────────┐ ┌──────────────┐  🔒 Pro          │
+│  │ 🔒 Customer  │ │ 🔒 Conversion│                   │
+│  │    Journey    │ │    Perform.  │  ← gray           │
+│  │    Funnel     │ │              │    placeholders    │
+│  └──────────────┘ └──────────────┘                   │
+│  ┌─────────────────────────────────┐  🔒 Pro          │
+│  │ 🔒 Revenue Analysis             │                   │
+│  └─────────────────────────────────┘                   │
+│                                                       │
+│  BUNDLE PERFORMANCE TAB:                              │
+│  ┌──────────────────────────────────────────────┐   │
+│  │  Top Bundles (3 on Free, 10 on Pro)           │   │
+│  │  #1  Summer Kit     ⭐Revenue Star   $5,200  │   │
+│  │  #2  BOGO Deal      🔥Trending       $2,100  │   │
+│  │  #3  Essentials     📈High Convert   $1,800  │   │
+│  └──────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────┐   │
+│  │  🔒 All Bundles Performance        ⭐PRO     │   │
+│  │     (gray placeholder)                        │   │
+│  └──────────────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────┘
 ```
+
+### Free vs Pro breakdown
+
+| Element | Free | Pro |
+|---|---|---|
+| 4 Metric cards | ✅ | ✅ |
+| Main area chart (revenue/views/purchases) | ✅ | ✅ |
+| Date range picker | ✅ | ✅ |
+| Top Bundles table | 3 bundles | 10 bundles |
+| Customer Journey Funnel | 🔒 Placeholder | ✅ |
+| Conversion Performance chart | 🔒 Placeholder | ✅ |
+| Revenue Analysis chart | 🔒 Placeholder | ✅ |
+| All Bundles Performance table | 🔒 Placeholder | ✅ |
+
+Clicking any 🔒 placeholder opens the Cross-Sell Modal for "Advanced Analytics".
+
+### Performance Badges (on bundle rows)
+
+| Badge | Free | Criteria |
+|---|---|---|
+| High Converter | ✅ | ≥15% CVR |
+| Revenue Star | ✅ | ≥$5K revenue |
+| Trending | ✅ | ≥25% growth |
+| Hidden Gem | 🔒 | <100 views + ≥10% CVR |
+| Declining | 🔒 | ≤-25% drop |
+| High Interest | 🔒 | ≥30% ATC rate |
 
 ---
 
@@ -677,7 +757,30 @@ Utility tools.
 
 ## Page 9: Support (`/support`)
 
-Support page with contact info, FAQ, and help resources.
+```
+┌──────────────────────────────────────────────────────┐
+│  Support                                              │
+│  ──────────────────────────────────────────────────  │
+│  ┌──────────────────────┐  ┌──────────────────────┐ │
+│  │ Main Content          │  │ Side Panel            │ │
+│  │                       │  │                       │ │
+│  │ Quick Actions         │  │ Resources             │ │
+│  │ [Common shortcuts]    │  │ • Documentation       │ │
+│  │                       │  │ • Email support       │ │
+│  │ FAQ                   │  │ • Changelog           │ │
+│  │ ▸ Question 1          │  │                       │ │
+│  │ ▸ Question 2          │  │ [📧 Email Support]   │ │
+│  │ ▸ Question 3          │  │                       │ │
+│  └──────────────────────┘  └──────────────────────┘ │
+└──────────────────────────────────────────────────────┘
+```
+
+| Element | Interaction |
+|---|---|
+| FAQ items | Click to expand/collapse |
+| Quick action buttons | Navigate to relevant pages |
+| Email Support button | Opens email client |
+| Documentation link | Opens external docs |
 
 ---
 
@@ -688,27 +791,37 @@ These modals can appear on any page:
 | Modal | Trigger | Content |
 |---|---|---|
 | **Delete Bundle** | Delete button (list/edit) | "Are you sure?" + confirm/cancel |
-| **Duplicate Bundle** | Duplicate button (list/edit) | Pro: creates copy. Free: opens Cross-Sell |
+| **Duplicate Bundle** | Duplicate button (list/edit) | Pro: creates copy (auto-named "#2"). Free: opens Cross-Sell |
 | **Change Status** | Status popover → select status | Confirm status change. SCHEDULED shows date picker |
 | **Delete Product** | Remove product in wizard | Confirm removal |
 | **Restore Defaults** | Reset in customizer | Confirm style reset |
-| **Import Settings** | Tools tab | File upload |
+| **Import Settings** | Tools tab → Import | File upload + confirmation |
+| **Webhook Status** | Tools tab → Check Webhooks | Lists registered/missing webhooks + GDPR status |
+| **Webhook Register** | Tools tab → Force Register | Shows per-topic registration results |
+| **Reset Settings** | Tools tab → Reset | Danger confirmation → factory reset |
 | **Quota Exceeded** | Create when at 5/5 | Upgrade prompt |
 | **Cross-Sell (Pro Upsell)** | Any Pro badge/locked feature | Benefits list + "Upgrade" link to pricing |
 | **Bundle Type Info** | ℹ button on type card | Description + features + "Select" CTA |
 | **Video Player** | Video card on dashboard | Embedded video |
-| **Product Picker** | "Add Products" in wizard | Shopify resource picker |
+| **Product Picker** | "Add Products" in wizard | Shopify resource picker (multi-select) |
 
 ---
 
 ## Storefront Widget (Customer-Facing)
 
-Not in the admin app. Renders on the merchant's Shopify store product pages.
+Not in the admin app. Two components render on the merchant's Shopify store:
+1. **Bundle Widget** (app-block) — on product pages
+2. **Cart Savings Banner** (app-embed) — on cart page
 
-### Where to find it
+### Where to find them
 
+**Bundle Widget:**
 1. Go to merchant's store → any product page that's in an active bundle
 2. Widget appears in the position configured in Step 3 (Appearance)
+
+**Cart Savings Banner:**
+1. Go to cart page with bundle products in cart
+2. Banner appears at top of cart form (auto-positioned)
 
 ### What it looks like
 
@@ -751,6 +864,58 @@ Each bundle product becomes a separate line item with properties:
 - `_bundle_name`
 - `_bundle_discount_type`
 - `_bundle_discount_value`
+
+Plus a global cart attribute `_radiusDiscounts` (JSON array of all active bundle configs).
+
+### Standalone Bundle Mode
+
+When a bundle has a "main product" (via Bundle as Product), visiting that product's page:
+- Widget container is **hidden** (no visible widget UI)
+- Hidden inputs injected into the product form: `_bundle_id`, `_bundle_name`
+- "Buy Now" button is hidden (prevents checkout bypass)
+- Normal "Add to Cart" adds all bundle products with attributes
+- Analytics `bundle_view` still fires
+
+### Cart Auto-Cleanup
+
+The widget monitors the cart continuously:
+- Intercepts `/cart/change`, `/cart/update`, `/cart/clear` fetch calls
+- If a bundle product is manually removed → remaining bundle items cleaned up
+- If bundle deactivated server-side → `_radiusDiscounts` entry removed
+- If discount settings changed → cart attributes updated
+- Debounced (500ms), dispatches `radiusBundles:cleanup` event
+
+### Cart Savings Banner (App Embed)
+
+```
+┌──────────────────────────────────────────────────────┐
+│  [🏷]  You're saving $7.50 with Summer Bundle!       │
+│        Free shipping included                         │
+└──────────────────────────────────────────────────────┘
+```
+
+- Renders on **cart page** only (separate from product page widget)
+- Auto-positions at top of cart form
+- Polls cart every 10s + listens to `cart:change` events
+- Updates in real-time when bundles added/removed/modified
+- Customizable via Settings → Style → Cart Banner section:
+  - Colors, corner style, shadow, spacing, font size
+  - Icon type (tag, percent, gift, sparkle, fire, check, none)
+- Label placeholders: `{discount}`, `{name}`, `{price}`
+
+### Max Bundles Per Order
+
+If `maxBundlesPerOrder` > 0 (set in Settings → General, Pro feature):
+- Widget counts existing bundles in cart before Add to Cart
+- If at limit → shows error toast, blocks addition
+- Default: 0 (unlimited)
+
+### Stock Validation
+
+If `enableStockValidation` is on (default: true):
+- Widget checks product availability from API response
+- Out-of-stock variants → Add to Cart button disabled
+- Error message displayed to customer
 
 ### Widget Translation / Locale Handling
 
