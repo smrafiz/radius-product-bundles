@@ -54,7 +54,16 @@ function VolumeTierCard({
             <s-stack gap="base">
                 <div
                     className="cursor-pointer flex items-center justify-between"
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={!collapsed}
                     onClick={() => setCollapsed(!collapsed)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setCollapsed(!collapsed);
+                        }
+                    }}
                 >
                     <s-stack
                         direction="inline"
@@ -154,7 +163,16 @@ function VolumeTierCard({
 
                                 <div
                                     className="cursor-pointer"
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-expanded={expanded}
                                     onClick={() => setExpanded(!expanded)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            setExpanded(!expanded);
+                                        }
+                                    }}
                                 >
                                     <s-stack
                                         direction="inline"
@@ -198,61 +216,55 @@ function VolumeTierCard({
                                                 gap="base"
                                             >
                                                 <div className="flex-1">
-                                                    <s-stack gap="small-200">
-                                                        <s-select
-                                                            label="Badge Style"
-                                                            value={
-                                                                tier.badge
-                                                                    ?.style ??
-                                                                "none"
-                                                            }
-                                                            onInput={(
-                                                                e: Event,
-                                                            ) => {
-                                                                const style = (
-                                                                    e.target as HTMLSelectElement
-                                                                )
-                                                                    .value as VolumeBadgeStyle;
-                                                                onUpdate(
-                                                                    index,
+                                                    <s-select
+                                                        label="Badge Style"
+                                                        value={
+                                                            tier.badge
+                                                                ?.style ??
+                                                            "none"
+                                                        }
+                                                        details="Highlight label displayed on this tier option."
+                                                        onInput={(
+                                                            e: Event,
+                                                        ) => {
+                                                            const style = (
+                                                                e.target as HTMLSelectElement
+                                                            )
+                                                                .value as VolumeBadgeStyle;
+                                                            onUpdate(
+                                                                index,
+                                                                {
+                                                                    badge:
+                                                                        style ===
+                                                                        "none"
+                                                                            ? undefined
+                                                                            : {
+                                                                                  style,
+                                                                                  text: tier
+                                                                                      .badge
+                                                                                      ?.text,
+                                                                              },
+                                                                },
+                                                            );
+                                                        }}
+                                                    >
+                                                        {BADGE_STYLES.map(
+                                                            (opt) => (
+                                                                <s-option
+                                                                    key={
+                                                                        opt.value
+                                                                    }
+                                                                    value={
+                                                                        opt.value
+                                                                    }
+                                                                >
                                                                     {
-                                                                        badge:
-                                                                            style ===
-                                                                            "none"
-                                                                                ? undefined
-                                                                                : {
-                                                                                      style,
-                                                                                      text: tier
-                                                                                          .badge
-                                                                                          ?.text,
-                                                                                  },
-                                                                    },
-                                                                );
-                                                            }}
-                                                        >
-                                                            {BADGE_STYLES.map(
-                                                                (opt) => (
-                                                                    <s-option
-                                                                        key={
-                                                                            opt.value
-                                                                        }
-                                                                        value={
-                                                                            opt.value
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            opt.label
-                                                                        }
-                                                                    </s-option>
-                                                                ),
-                                                            )}
-                                                        </s-select>
-                                                        <span className="text-xs text-[#616161] -mt-1 block">
-                                                            Highlight label
-                                                            displayed on this
-                                                            tier option.
-                                                        </span>
-                                                    </s-stack>
+                                                                        opt.label
+                                                                    }
+                                                                </s-option>
+                                                            ),
+                                                        )}
+                                                    </s-select>
                                                 </div>
 
                                                 {tier.badge?.style &&
@@ -367,6 +379,7 @@ export function VolumeDiscountSettings() {
                             <s-button
                                 slot="secondary-actions"
                                 variant="secondary"
+                                aria-pressed={config.discountType === "PERCENTAGE"}
                                 onClick={() =>
                                     updateConfig({ discountType: "PERCENTAGE" })
                                 }
@@ -384,6 +397,7 @@ export function VolumeDiscountSettings() {
                             <s-button
                                 slot="secondary-actions"
                                 variant="secondary"
+                                aria-pressed={config.discountType === "FIXED_AMOUNT"}
                                 onClick={() =>
                                     updateConfig({
                                         discountType: "FIXED_AMOUNT",

@@ -28,7 +28,7 @@ jest.mock("@/shared/constants", () => ({
     },
 }));
 
-import { createBundleSchema } from "../zod.schema";
+import { createBundleSchema, volumeDiscountConfigSchema } from "../zod.schema";
 
 const VALIDATION_MESSAGES: Record<string, string> = {
     REQUIRED_FIELD: "This field is required",
@@ -316,6 +316,51 @@ describe("Bundle Zod Schema", () => {
                 volumeBase([{ minQuantity: 2, discount: -5, title: "Bad" }]),
             );
             expect(result.success).toBe(false);
+        });
+
+        it("NaN minQuantity is rejected with 'Quantity is required'", () => {
+            const result = volumeDiscountConfigSchema.safeParse({
+                discountType: "PERCENTAGE",
+                openEnded: true,
+                tiers: [{ minQuantity: NaN, discount: 10, title: "Tier 1" }],
+            });
+            expect(result.success).toBe(false);
+            if (!result.success) {
+                const messages = result.error.issues.map((i) => i.message);
+                expect(messages.some((m) => m.includes("Quantity is required"))).toBe(true);
+            }
+        });
+
+        it("NaN discount is rejected with 'Discount is required'", () => {
+            const result = volumeDiscountConfigSchema.safeParse({
+                discountType: "PERCENTAGE",
+                openEnded: true,
+                tiers: [{ minQuantity: 2, discount: NaN, title: "Tier 1" }],
+            });
+            expect(result.success).toBe(false);
+            if (!result.success) {
+                const messages = result.error.issues.map((i) => i.message);
+                expect(messages.some((m) => m.includes("Discount is required"))).toBe(true);
+            }
+        });
+
+        it("QUANTITY_BREAKS discountValue=0 does not trigger percentage validation", () => {
+            const result = schema.safeParse(
+                makeBase({
+                    type: "VOLUME_DISCOUNT",
+                    discountType: "QUANTITY_BREAKS",
+                    discountValue: 0,
+                    products: [makeProduct()],
+                    volumeTiers: {
+                        discountType: "PERCENTAGE",
+                        openEnded: true,
+                        tiers: [
+                            { minQuantity: 2, discount: 10, title: "Tier 1" },
+                        ],
+                    },
+                }),
+            );
+            expect(result.success).toBe(true);
         });
     });
 

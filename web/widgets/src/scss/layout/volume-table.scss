@@ -271,6 +271,11 @@
         height: 44px;
     }
 
+    &__qty-selector:focus-within {
+        border-color: var(--rb-primary-color, #303030);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--rb-primary-color, #303030) 15%, transparent);
+    }
+
     &__qty-btn {
         width: 36px;
         height: 100%;
@@ -673,9 +678,8 @@
         }
 
         &:focus-visible {
-            &::-webkit-slider-thumb {
-                box-shadow: 0 0 0 3px var(--rb-primary-color, #303030), 0 2px 6px rgba(0,0,0,0.15);
-            }
+            outline: 2px solid var(--rb-primary-color, #303030);
+            outline-offset: 4px;
         }
     }
 
@@ -943,6 +947,17 @@
             border-color: var(--rb-primary-color, #303030);
             color: #fff;
         }
+    }
+}
+
+// ── Reduced motion ────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+    .rb-vol__tier,
+    .rb-vol__card,
+    .rb-vol-slider__nudge-fill,
+    .rb-vol-slider__slider-track,
+    .rb-vol-calc__pill {
+        transition: none !important;
     }
 }
 

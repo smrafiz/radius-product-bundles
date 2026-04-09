@@ -144,9 +144,9 @@ struct VolumeTier {
 /// Find the highest-matching tier for `cart_qty`.
 ///
 /// Tiers are treated as minimum thresholds: the highest tier whose `min_quantity`
-/// is <= `cart_qty` wins.  When `open_ended` is false, quantities above the last
-/// tier's `min_quantity` still qualify (tiers define floors, not ceilings).
-fn find_volume_tier<'a>(tiers: &'a [VolumeTier], cart_qty: u64, open_ended: bool) -> Option<&'a VolumeTier> {
+/// is <= `cart_qty` wins.  Returns `None` when `cart_qty` is below all tier
+/// minimums, regardless of `open_ended`.
+fn find_volume_tier<'a>(tiers: &'a [VolumeTier], cart_qty: u64, _open_ended: bool) -> Option<&'a VolumeTier> {
     if tiers.is_empty() {
         return None;
     }
@@ -159,12 +159,7 @@ fn find_volume_tier<'a>(tiers: &'a [VolumeTier], cart_qty: u64, open_ended: bool
         return best;
     }
 
-    // qty is below the lowest tier.  If open_ended, still apply the first tier.
-    if open_ended {
-        tiers.iter().min_by_key(|t| t.min_quantity)
-    } else {
-        None
-    }
+    None
 }
 
 /// Calculate VOLUME_DISCOUNT candidates for a bundle.
@@ -1332,10 +1327,9 @@ mod tests {
     #[test]
     fn volume_tier_below_first_tier_open_ended_returns_first() {
         let tiers = make_tiers();
-        // open_ended means the lowest tier applies even below its min_quantity
-        let tier = find_volume_tier(&tiers, 5, true).expect("should match via open_ended");
-        assert_eq!(tier.min_quantity, 10);
-        assert_eq!(tier.discount as u32, 10);
+        // qty below all tier minimums should return None even when open_ended
+        let tier = find_volume_tier(&tiers, 5, true);
+        assert!(tier.is_none());
     }
 
     #[test]

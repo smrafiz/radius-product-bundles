@@ -97,6 +97,8 @@ export function showToast(message: string, type: "success" | "error"): void {
 
     const toast = document.createElement("div");
     toast.className = `radius-bundle-toast radius-bundle-toast--${type}`;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.setAttribute('aria-atomic', 'true');
 
     const icon =
         type === "success"

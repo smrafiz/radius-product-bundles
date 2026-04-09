@@ -48,9 +48,9 @@ function calcSavingsDisplay(
 ): string {
     switch (discountType) {
         case "PERCENTAGE":
-            return `${Math.round(tier.discount)}% off`;
+            return `Save ${Math.round(tier.discount)}%`;
         case "FIXED_AMOUNT":
-            return `${trimMoney(formatMoney(tier.discount * 100))} off`;
+            return `Save ${trimMoney(formatMoney(tier.discount * 100))} off`;
         case "CUSTOM_PRICE": {
             const saving = unitPriceCents - tier.discount * 100;
             return saving > 0 ? `Save ${trimMoney(formatMoney(saving))}` : "";
@@ -127,7 +127,7 @@ function renderTierRow(
 
     // Savings line below title (green)
     const savingsLineHtml = savingsText
-        ? `<span class="rb-vol__tier-savings-line">Save ${escapeHtml(savingsText)}</span>`
+        ? `<span class="rb-vol__tier-savings-line">${escapeHtml(savingsText)}</span>`
         : "";
 
     // Right-side pricing
@@ -246,10 +246,12 @@ function renderPricingCard(
         : "";
 
     const savingsPillHtml = savingsText
-        ? `<div class="rb-vol__card-savings">SAVE ${escapeHtml(savingsText.toUpperCase())}</div>`
+        ? `<div class="rb-vol__card-savings">${escapeHtml(savingsText).toUpperCase()}</div>`
         : "";
 
     const btnLabel = "Select";
+    const savingsPart = savingsText ? `, ${savingsText}` : "";
+    const badgePart = badgeText ? `, ${badgeText}` : "";
 
     return `
         <li class="rb-vol__tier rb-vol__card${isDefault ? " rb-vol__tier--default" : ""}${badgeText ? " rb-vol__card--popular" : ""}"
@@ -258,7 +260,7 @@ function renderPricingCard(
             role="button"
             tabindex="0"
             aria-pressed="${isDefault ? "true" : "false"}"
-            aria-label="${resolvedTitle}, Buy ${escapeHtml(qtyLabel)} units">
+            aria-label="${resolvedTitle}, Buy ${escapeHtml(qtyLabel)} units${escapeHtml(savingsPart)}${escapeHtml(badgePart)}">
             ${badgeHtml}
             <div class="rb-vol__card-title">${resolvedTitle}</div>
             ${subtitleHtml}
@@ -406,7 +408,7 @@ export function renderVolumeSlider(
     const imageHtml = productImageSrc
         ? `<div class="rb-vol-slider__hero-image">
             ${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "hero" })}
-            <div class="rb-vol-slider__savings-badge" aria-live="polite"${hasSavings ? "" : ' style="display:none"'}>${hasSavings && initTier ? escapeHtml(tierSavingsBadgeText(initTier, config)) : ""}</div>
+            <div class="rb-vol-slider__savings-badge"${hasSavings ? "" : ' style="display:none"'}>${hasSavings && initTier ? escapeHtml(tierSavingsBadgeText(initTier, config)) : ""}</div>
         </div>`
         : "";
 
@@ -437,7 +439,7 @@ export function renderVolumeSlider(
             (nextTier.minQuantity - (config.tiers[config.tiers.indexOf(nextTier) - 1]?.minQuantity ?? 1))) * 100)
         : 0;
 
-    const nudgeHtml = `<div class="rb-vol-slider__nudge"${nudgeVisible ? "" : ' style="display:none"'} aria-live="polite">
+    const nudgeHtml = `<div class="rb-vol-slider__nudge"${nudgeVisible ? "" : ' style="display:none"'}>
         <div class="rb-vol-slider__nudge-header">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
             <span class="rb-vol-slider__nudge-text">${nudgeMsg}</span>
@@ -449,6 +451,7 @@ export function renderVolumeSlider(
 
     container.innerHTML = `
         <div class="rb-vol-slider__wrap">
+            <div class="sr-only" aria-live="polite" data-vol-slider-live></div>
             ${imageHtml}
             <div class="rb-vol-slider__product-title">${escapeHtml(productTitle)}</div>
             ${priceBoxHtml}
@@ -501,6 +504,8 @@ export function initVolumeSlider(
     const sliderEl = maybeSlider;
 
     const btnTextEl = atcBtn.querySelector<HTMLElement>("[data-button-text]");
+    const liveRegion = widgetContainer.querySelector<HTMLElement>("[data-vol-slider-live]");
+    let previousTierIndex = -1;
 
     // DOM element refs (queried fresh each update)
     function el<T extends HTMLElement>(sel: string): T | null {
@@ -523,6 +528,16 @@ export function initVolumeSlider(
         if (unitPriceCents <= 0) return;
 
         const tier = activeTierForQty(qty, config);
+        const currentTierIndex = tier ? config.tiers.indexOf(tier) : -1;
+        if (liveRegion && currentTierIndex !== previousTierIndex) {
+            previousTierIndex = currentTierIndex;
+            if (tier) {
+                liveRegion.textContent = tierSavingsBadgeText(tier, config);
+            } else {
+                liveRegion.textContent = "";
+            }
+        }
+
         const discounted = tier
             ? calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType)
             : unitPriceCents;
@@ -808,7 +823,6 @@ export function renderVolumeCalculator(
                         min="1"
                         value="${initQty}"
                         step="1"
-                        aria-label="Quantity"
                     />
                     <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-inc aria-label="Increase quantity">+</button>
                 </div>

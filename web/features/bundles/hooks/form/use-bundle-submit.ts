@@ -425,7 +425,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                     "Failed to update price:",
                                     priceResult.message,
                                 );
-                            } else {
                             }
                         }
                     }
@@ -569,7 +568,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                     productResult.message,
                                 );
                             } else {
-                                // Update snapshot after successful sync
                                 useBundleStore
                                     .getState()
                                     .setSavedProductSnapshot({
@@ -584,7 +582,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                         productIds: currentProductIds,
                                     });
                             }
-                        } else {
                         }
                     }
                 } else {
