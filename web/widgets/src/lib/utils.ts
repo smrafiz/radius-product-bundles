@@ -157,10 +157,14 @@ export function getLayout(container: HTMLElement): string {
         return "checklist";
     if (container.classList.contains("radius-bundle--split_deal"))
         return "split_deal";
+    if (container.classList.contains("radius-bundle--volume_calculator"))
+        return "volume_calculator";
     if (container.classList.contains("radius-bundle--volume_tier_list"))
         return "volume_tier_list";
     if (container.classList.contains("radius-bundle--volume_pricing_cards"))
         return "volume_pricing_cards";
+    if (container.classList.contains("radius-bundle--volume_slider"))
+        return "volume_slider";
     return "list";
 }
 

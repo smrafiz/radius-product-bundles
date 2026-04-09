@@ -466,6 +466,483 @@
     pointer-events: none; // card itself handles click
 }
 
+// ── Volume Slider Layout ──────────────────────────────────────────────────
+
+.radius-bundle {
+    &--volume_slider {
+        > .radius-bundle__actions {
+            display: none;
+        }
+        .radius-bundle__pricing {
+            display: none;
+        }
+    }
+}
+
+.rb-vol-slider {
+    &__wrap {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rb-gap-spacing, 12px);
+    }
+
+    // ── Hero image ─────────────────────────────────────────────────────
+    &__hero-image {
+        position: relative;
+        width: 100%;
+        border-radius: var(--rb-border-radius, 8px);
+        overflow: hidden;
+        background: var(--rb-product-bg-color, #f9fafb);
+        aspect-ratio: 1 / 1;
+        max-height: 300px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+    }
+
+    &__savings-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: var(--rb-savings-color, #16a34a);
+        color: #fff;
+        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 20px;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    // ── Product title ──────────────────────────────────────────────────
+    &__product-title {
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 600;
+        color: var(--rb-text-color, #333);
+        line-height: 1.3;
+    }
+
+    // ── Price box ──────────────────────────────────────────────────────
+    &__price-box {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 2px solid var(--rb-border-color, #e5e7eb);
+        border-radius: var(--rb-border-radius, 8px);
+        background: var(--rb-product-bg-color, #fff);
+    }
+
+    &__price-left {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    &__price-total {
+        font-size: calc(var(--rb-body-font-size, 14px) + 6px);
+        font-weight: 700;
+        color: var(--rb-primary-color, #303030);
+        line-height: 1.1;
+    }
+
+    &__price-unit {
+        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+        color: var(--rb-text-color, #333);
+        opacity: 0.65;
+    }
+
+    &__price-original {
+        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+        color: var(--rb-text-color, #333);
+        opacity: 0.45;
+        text-decoration: line-through;
+    }
+
+    &__price-savings {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+        flex-shrink: 0;
+    }
+
+    &__price-savings-amount {
+        font-size: calc(var(--rb-body-font-size, 14px) + 2px);
+        font-weight: 700;
+        color: var(--rb-savings-color, #16a34a);
+        line-height: 1.1;
+    }
+
+    &__price-savings-label {
+        font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+        color: var(--rb-savings-color, #16a34a);
+        opacity: 0.8;
+        white-space: nowrap;
+    }
+
+    // ── Slider section ─────────────────────────────────────────────────
+    &__slider-section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    &__slider-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    &__qty-label {
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 500;
+        color: var(--rb-text-color, #333);
+    }
+
+    &__qty-counter {
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 700;
+    }
+
+    // Range input — custom styled
+    &__slider-track {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        outline: none;
+        cursor: pointer;
+        transition: background 0.15s ease;
+        background: linear-gradient(
+            to right,
+            var(--rb-primary-color, #303030) 0%,
+            var(--rb-primary-color, #303030) var(--rb-slider-fill-pct, 0%),
+            var(--rb-border-color, #e5e7eb) var(--rb-slider-fill-pct, 0%),
+            var(--rb-border-color, #e5e7eb) 100%
+        );
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            margin-top: -8px;
+            border-radius: 50%;
+            background: var(--rb-primary-color, #303030);
+            cursor: pointer;
+            border: 3px solid var(--rb-background-color, #fff);
+            box-shadow: 0 0 0 2px var(--rb-primary-color, #303030), 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+
+            &:active {
+                transform: scale(1.15);
+                box-shadow: 0 0 0 2px var(--rb-primary-color, #303030), 0 3px 10px rgba(0,0,0,0.2);
+            }
+        }
+
+        &::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--rb-primary-color, #303030);
+            cursor: pointer;
+            border: 3px solid var(--rb-background-color, #fff);
+            box-shadow: 0 0 0 2px var(--rb-primary-color, #303030), 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        &::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        &::-moz-range-track {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--rb-border-color, #e5e7eb);
+        }
+
+        &:focus-visible {
+            &::-webkit-slider-thumb {
+                box-shadow: 0 0 0 3px var(--rb-primary-color, #303030), 0 2px 6px rgba(0,0,0,0.15);
+            }
+        }
+    }
+
+    &__slider-markers {
+        position: relative;
+        height: 8px;
+        margin: 0 11px; // half thumb width to align with thumb center
+    }
+
+    &__marker {
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 8px;
+        background: var(--rb-border-color, #e5e7eb);
+        border-radius: 1px;
+    }
+
+    // ── Nudge banner ───────────────────────────────────────────────────
+    &__nudge {
+        background: #fffbeb;
+        border: 1px solid #fbbf24;
+        border-radius: var(--rb-border-radius, 8px);
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    &__nudge-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #92400e;
+
+        svg {
+            flex-shrink: 0;
+        }
+    }
+
+    &__nudge-text {
+        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+        font-weight: 600;
+        color: #92400e;
+        line-height: 1.3;
+    }
+
+    &__nudge-bar {
+        width: 100%;
+        height: 6px;
+        background: #fde68a;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    &__nudge-fill {
+        height: 100%;
+        background: #f59e0b;
+        border-radius: 3px;
+        transition: width 0.2s ease;
+    }
+}
+
+// ── Volume Calculator Layout ──────────────────────────────────────────────────
+
+.radius-bundle {
+    &--volume_calculator {
+        > .radius-bundle__actions {
+            display: none;
+        }
+        .radius-bundle__pricing {
+            display: none;
+        }
+    }
+}
+
+.rb-vol-calc {
+    &__wrap {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rb-gap-spacing, 12px);
+    }
+
+    // ── Hero image ─────────────────────────────────────────────────────
+    &__hero-image {
+        position: relative;
+        width: 100%;
+        border-radius: var(--rb-border-radius, 8px);
+        overflow: hidden;
+        background: var(--rb-product-bg-color, #f9fafb);
+        aspect-ratio: 1 / 1;
+        max-height: 300px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+    }
+
+    // ── Product title ──────────────────────────────────────────────────
+    &__product-title {
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 600;
+        color: var(--rb-text-color, #333);
+        line-height: 1.3;
+    }
+
+    // ── Quantity section ───────────────────────────────────────────────
+    &__qty-section {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    &__qty-label {
+        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+        font-weight: 500;
+        color: var(--rb-text-color, #333);
+        opacity: 0.7;
+    }
+
+    &__qty-wrap {
+        display: flex;
+        align-items: stretch;
+        border: 2px solid var(--rb-border-color, #e5e7eb);
+        border-radius: var(--rb-border-radius, 8px);
+        overflow: hidden;
+        transition: border-color 0.15s ease;
+
+        &:focus-within {
+            border-color: var(--rb-primary-color, #303030);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--rb-primary-color, #303030) 15%, transparent);
+        }
+    }
+
+    &__qty-btn {
+        width: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: 400;
+        color: var(--rb-text-color, #333);
+        transition: background 0.12s ease;
+        padding: 0;
+
+        &:hover {
+            background: color-mix(in srgb, var(--rb-primary-color, #303030) 8%, transparent);
+        }
+    }
+
+    &__qty-input {
+        flex: 1;
+        text-align: center;
+        font-size: calc(var(--rb-body-font-size, 14px) + 8px);
+        font-weight: 700;
+        color: var(--rb-text-color, #333);
+        background: var(--rb-background-color, #fff);
+        border: none;
+        border-left: 1px solid var(--rb-border-color, #e5e7eb);
+        border-right: 1px solid var(--rb-border-color, #e5e7eb);
+        padding: 14px 16px;
+        outline: none;
+        -moz-appearance: textfield;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    // ── Calculator rows ────────────────────────────────────────────────
+    &__calc-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 1px solid var(--rb-border-color, #e5e7eb);
+        border-left: 4px solid var(--rb-primary-color, #303030);
+        border-radius: var(--rb-border-radius, 8px);
+        background: var(--rb-product-bg-color, #fff);
+
+        &--savings {
+            border-left-color: var(--rb-savings-color, #16a34a);
+            background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 6%, var(--rb-background-color, #fff));
+        }
+    }
+
+    &__calc-label {
+        font-size: var(--rb-body-font-size, 14px);
+        font-weight: 500;
+        color: var(--rb-text-color, #333);
+        flex-shrink: 0;
+    }
+
+    &__calc-value-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+        text-align: right;
+    }
+
+    &__calc-value {
+        font-size: calc(var(--rb-body-font-size, 14px) + 4px);
+        font-weight: 700;
+        color: var(--rb-text-color, #333);
+        line-height: 1.1;
+    }
+
+    &__calc-sub {
+        font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+        color: var(--rb-text-color, #333);
+        opacity: 0.5;
+        line-height: 1.3;
+
+        s {
+            text-decoration: line-through;
+        }
+    }
+
+    // ── Tier pills ─────────────────────────────────────────────────────
+    &__pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    &__pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 2px solid var(--rb-border-color, #e5e7eb);
+        background: var(--rb-background-color, #fff);
+        color: var(--rb-text-color, #333);
+        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        white-space: nowrap;
+        user-select: none;
+
+        &:hover:not(.rb-vol-calc__pill--active) {
+            border-color: var(--rb-primary-color, #303030);
+            background: color-mix(in srgb, var(--rb-primary-color, #303030) 6%, var(--rb-background-color, #fff));
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--rb-primary-color, #303030);
+            outline-offset: 2px;
+        }
+
+        &--active {
+            background: var(--rb-primary-color, #303030);
+            border-color: var(--rb-primary-color, #303030);
+            color: #fff;
+        }
+    }
+}
+
 // ── Responsive ────────────────────────────────────────────────────────────
 @media (max-width: 480px) {
     .rb-vol__tier {

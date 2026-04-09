@@ -311,6 +311,748 @@ export function renderVolumePricingCards(
     `;
 }
 
+// ── Volume Slider Layout ─────────────────────────────────────────────────────
+
+/** Compute slider max: openEnded → lastMin×1.5 capped at 100, else lastMin */
+function sliderMax(config: VolumeTiersConfig): number {
+    const lastMin = config.tiers[config.tiers.length - 1].minQuantity;
+    if (config.openEnded) return Math.min(100, Math.round(lastMin * 1.5));
+    return lastMin;
+}
+
+/** Find the highest tier where qty >= minQuantity; null if below all tiers */
+function activeTierForQty(qty: number, config: VolumeTiersConfig): VolumeTier | null {
+    let best: VolumeTier | null = null;
+    for (const t of config.tiers) {
+        if (qty >= t.minQuantity) best = t;
+    }
+    return best;
+}
+
+/** Next tier above current qty; null if at/above last tier */
+function nextTierForQty(qty: number, config: VolumeTiersConfig): VolumeTier | null {
+    for (const t of config.tiers) {
+        if (qty < t.minQuantity) return t;
+    }
+    return null;
+}
+
+/** Percent savings string for a tier, e.g. "Save 8%" */
+function tierSavingsBadgeText(tier: VolumeTier, config: VolumeTiersConfig): string {
+    switch (config.discountType) {
+        case "PERCENTAGE":
+            return `Save ${Math.round(tier.discount)}%`;
+        case "FIXED_AMOUNT":
+            return `Save ${trimMoney(formatMoney(tier.discount * 100))}`;
+        case "CUSTOM_PRICE":
+            return `Special price`;
+        default:
+            return "";
+    }
+}
+
+/** Nudge text: "Add X more to save Y%!" */
+function nudgeText(qty: number, next: VolumeTier, config: VolumeTiersConfig): string {
+    const more = next.minQuantity - qty;
+    let savingStr = "";
+    switch (config.discountType) {
+        case "PERCENTAGE":
+            savingStr = `${Math.round(next.discount)}%`;
+            break;
+        case "FIXED_AMOUNT":
+            savingStr = `${trimMoney(formatMoney(next.discount * 100))}`;
+            break;
+        case "CUSTOM_PRICE":
+            savingStr = `a special price`;
+            break;
+    }
+    return `Add ${more} more to save ${savingStr}!`;
+}
+
+/** Render the full slider layout into the products container */
+export function renderVolumeSlider(
+    container: Element,
+    config: VolumeTiersConfig,
+    productImageSrc: string | null,
+    productTitle: string,
+    unitPriceCents: number,
+    showPrices: boolean,
+    lazyLoadImages: boolean,
+): void {
+    const max = sliderMax(config);
+    const firstTier = config.tiers[0];
+    const initQty = firstTier.minQuantity;
+
+    // Initial active tier for rendering
+    const initTier = activeTierForQty(initQty, config);
+    const initDiscounted = initTier
+        ? calcDiscountedPricePerUnit(unitPriceCents, initTier, config.discountType)
+        : unitPriceCents;
+    const initTotal = initDiscounted * initQty;
+    const initOrigTotal = unitPriceCents * initQty;
+    const initSavingsAmt = initOrigTotal - initTotal;
+    const hasSavings = initTier !== null && initSavingsAmt > 0;
+
+    // Tier markers: position as percent of slider range
+    const markerHtml = config.tiers
+        .map((t) => {
+            const pct = max > 1 ? ((t.minQuantity - 1) / (max - 1)) * 100 : 0;
+            return `<span class="rb-vol-slider__marker" style="left:${pct.toFixed(2)}%" aria-hidden="true" data-marker-qty="${t.minQuantity}"></span>`;
+        })
+        .join("");
+
+    const imageHtml = productImageSrc
+        ? `<div class="rb-vol-slider__hero-image">
+            ${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "hero" })}
+            <div class="rb-vol-slider__savings-badge" aria-live="polite"${hasSavings ? "" : ' style="display:none"'}>${hasSavings && initTier ? escapeHtml(tierSavingsBadgeText(initTier, config)) : ""}</div>
+        </div>`
+        : "";
+
+    const priceSavingsHtml = showPrices
+        ? `<div class="rb-vol-slider__price-savings"${hasSavings ? "" : ' style="display:none"'}>
+            <span class="rb-vol-slider__price-savings-amount" style="color:var(--rb-savings-color,#16a34a)">-${escapeHtml(trimMoney(formatMoney(initSavingsAmt)))}</span>
+            <span class="rb-vol-slider__price-savings-label">You save</span>
+        </div>`
+        : "";
+
+    const priceBoxHtml = showPrices && unitPriceCents > 0
+        ? `<div class="rb-vol-slider__price-box">
+            <div class="rb-vol-slider__price-left">
+                <span class="rb-vol-slider__price-total">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
+                <span class="rb-vol-slider__price-unit">${escapeHtml(trimMoney(formatMoney(initDiscounted)))} / unit</span>
+                ${hasSavings ? `<span class="rb-vol-slider__price-original">${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</span>` : `<span class="rb-vol-slider__price-original" style="display:none"></span>`}
+            </div>
+            ${priceSavingsHtml}
+        </div>`
+        : "";
+
+    // Nudge banner
+    const nextTier = nextTierForQty(initQty, config);
+    const nudgeVisible = nextTier !== null;
+    const nudgeMsg = nextTier ? escapeHtml(nudgeText(initQty, nextTier, config)) : "";
+    const nudgePct = nextTier
+        ? Math.round(((initQty - (config.tiers[config.tiers.indexOf(nextTier) - 1]?.minQuantity ?? 1)) /
+            (nextTier.minQuantity - (config.tiers[config.tiers.indexOf(nextTier) - 1]?.minQuantity ?? 1))) * 100)
+        : 0;
+
+    const nudgeHtml = `<div class="rb-vol-slider__nudge"${nudgeVisible ? "" : ' style="display:none"'} aria-live="polite">
+        <div class="rb-vol-slider__nudge-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            <span class="rb-vol-slider__nudge-text">${nudgeMsg}</span>
+        </div>
+        <div class="rb-vol-slider__nudge-bar">
+            <div class="rb-vol-slider__nudge-fill" style="width:${Math.min(100, nudgePct)}%"></div>
+        </div>
+    </div>`;
+
+    container.innerHTML = `
+        <div class="rb-vol-slider__wrap">
+            ${imageHtml}
+            <div class="rb-vol-slider__product-title">${escapeHtml(productTitle)}</div>
+            ${priceBoxHtml}
+            <div class="rb-vol-slider__slider-section">
+                <div class="rb-vol-slider__slider-header">
+                    <span class="rb-vol-slider__qty-label">Select Quantity</span>
+                    <span class="rb-vol-slider__qty-counter" style="color:var(--rb-primary-color,#303030)">${initQty} units</span>
+                </div>
+                <input
+                    class="rb-vol-slider__slider-track"
+                    type="range"
+                    min="1"
+                    max="${max}"
+                    value="${initQty}"
+                    step="1"
+                    aria-label="Select quantity"
+                    aria-valuemin="1"
+                    aria-valuemax="${max}"
+                    aria-valuenow="${initQty}"
+                />
+                <div class="rb-vol-slider__slider-markers" aria-hidden="true">
+                    ${markerHtml}
+                </div>
+            </div>
+            ${nudgeHtml}
+        </div>
+    `;
+}
+
+/** Wire slider interaction for volume slider layout */
+export function initVolumeSlider(
+    widgetContainer: HTMLElement,
+    config: VolumeTiersConfig,
+    bundleStructure: BundleStructure,
+    variantId: string,
+    unitPriceCents: number,
+    redirectAfterCart: string,
+    enableAnalytics: boolean,
+    maxBundlesPerOrder: number,
+): void {
+    // Hide the Liquid qty selector — slider replaces it
+    const qtySelector = widgetContainer.querySelector<HTMLElement>(
+        ".rb-vol__action-bar .rb-vol__qty-selector",
+    );
+    if (qtySelector) qtySelector.style.display = "none";
+
+    const sliderEl = widgetContainer.querySelector<HTMLInputElement>(".rb-vol-slider__slider-track");
+    const atcBtn = widgetContainer.querySelector<HTMLButtonElement>("[data-bundle-add-to-cart]");
+    if (!sliderEl || !atcBtn) return;
+
+    const btnTextEl = atcBtn.querySelector<HTMLElement>("[data-button-text]");
+
+    // DOM element refs (queried fresh each update)
+    function el<T extends HTMLElement>(sel: string): T | null {
+        return widgetContainer.querySelector<T>(sel);
+    }
+
+    function updateAll(qty: number): void {
+        sliderEl.setAttribute("aria-valuenow", String(qty));
+
+        // Update counter
+        const counter = el(".rb-vol-slider__qty-counter");
+        if (counter) counter.textContent = `${qty} units`;
+
+        // Update ATC button text
+        if (btnTextEl) {
+            const base = bundleStructure.labels?.addToCartText || bundleStructure.labels?.buttonText || "Add to Cart";
+            btnTextEl.textContent = `${base} (${qty})`;
+        }
+
+        if (unitPriceCents <= 0) return;
+
+        const tier = activeTierForQty(qty, config);
+        const discounted = tier
+            ? calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType)
+            : unitPriceCents;
+        const total = discounted * qty;
+        const origTotal = unitPriceCents * qty;
+        const savingsAmt = origTotal - total;
+        const hasSavings = tier !== null && savingsAmt > 0;
+
+        // Price total
+        const priceTotal = el(".rb-vol-slider__price-total");
+        if (priceTotal) priceTotal.textContent = trimMoney(formatMoney(total));
+
+        // Per unit
+        const priceUnit = el(".rb-vol-slider__price-unit");
+        if (priceUnit) priceUnit.textContent = `${trimMoney(formatMoney(discounted))} / unit`;
+
+        // Original total (strikethrough)
+        const priceOrig = el<HTMLElement>(".rb-vol-slider__price-original");
+        if (priceOrig) {
+            if (hasSavings) {
+                priceOrig.textContent = trimMoney(formatMoney(origTotal));
+                priceOrig.style.display = "";
+            } else {
+                priceOrig.style.display = "none";
+            }
+        }
+
+        // Savings box (right side)
+        const savingsBox = el<HTMLElement>(".rb-vol-slider__price-savings");
+        if (savingsBox) {
+            if (hasSavings) {
+                savingsBox.style.display = "";
+                const savingsAmt2 = el(".rb-vol-slider__price-savings-amount");
+                if (savingsAmt2) savingsAmt2.textContent = `-${trimMoney(formatMoney(savingsAmt))}`;
+            } else {
+                savingsBox.style.display = "none";
+            }
+        }
+
+        // Savings badge on image
+        const badge = el<HTMLElement>(".rb-vol-slider__savings-badge");
+        if (badge) {
+            if (hasSavings && tier) {
+                badge.textContent = tierSavingsBadgeText(tier, config);
+                badge.style.display = "";
+            } else {
+                badge.style.display = "none";
+            }
+        }
+
+        // Nudge banner
+        const nextTier = nextTierForQty(qty, config);
+        const nudge = el<HTMLElement>(".rb-vol-slider__nudge");
+        if (nudge) {
+            if (nextTier) {
+                nudge.style.display = "";
+                const nudgeText2 = el(".rb-vol-slider__nudge-text");
+                if (nudgeText2) nudgeText2.textContent = nudgeText(qty, nextTier, config);
+
+                // Progress within bracket
+                const tierIdx = config.tiers.indexOf(nextTier);
+                const prevMin = tierIdx > 0 ? config.tiers[tierIdx - 1].minQuantity : 1;
+                const pct = Math.min(100, Math.round(((qty - prevMin) / (nextTier.minQuantity - prevMin)) * 100));
+                const fill = el<HTMLElement>(".rb-vol-slider__nudge-fill");
+                if (fill) fill.style.width = `${pct}%`;
+            } else {
+                // At or above last tier — show "max discount" message
+                nudge.style.display = "";
+                const nudgeText2 = el(".rb-vol-slider__nudge-text");
+                if (nudgeText2) nudgeText2.textContent = "Maximum discount applied!";
+                const fill = el<HTMLElement>(".rb-vol-slider__nudge-fill");
+                if (fill) fill.style.width = "100%";
+            }
+        }
+
+        // Slider track fill (CSS custom property)
+        const pct = sliderEl.max === sliderEl.min
+            ? 100
+            : Math.round(((qty - 1) / (parseInt(sliderEl.max, 10) - 1)) * 100);
+        sliderEl.style.setProperty("--rb-slider-fill-pct", `${pct}%`);
+    }
+
+    // Initial fill
+    updateAll(parseInt(sliderEl.value, 10) || 1);
+
+    // Slider input event
+    sliderEl.addEventListener("input", () => {
+        const qty = parseInt(sliderEl.value, 10) || 1;
+        updateAll(qty);
+    });
+
+    // ATC button — guard with data-volume-bound
+    if (atcBtn.dataset.volumeBound === "true") return;
+    atcBtn.dataset.volumeBound = "true";
+    atcBtn.disabled = false;
+
+    atcBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const qty = parseInt(sliderEl.value, 10) || 1;
+        const tier = activeTierForQty(qty, config);
+
+        const numericVariantId = extractNumericId(variantId);
+        if (!numericVariantId) {
+            showToast("No product variant available", "error");
+            return;
+        }
+
+        atcBtn.classList.add("is-loading");
+        atcBtn.disabled = true;
+        atcBtn.setAttribute("aria-busy", "true");
+        const origText = btnTextEl?.textContent || "";
+        if (btnTextEl) btnTextEl.textContent = bundleStructure.labels?.addingText ?? "Adding...";
+
+        try {
+            const resp = await fetch(getLocalePath("/cart/add.js"), {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items: [
+                        {
+                            id: parseInt(numericVariantId, 10),
+                            quantity: qty,
+                            properties: {
+                                _bundle_id: bundleStructure.id,
+                                _bundle_name: bundleStructure.name,
+                            },
+                        },
+                    ],
+                }),
+            });
+
+            if (!resp.ok) {
+                const errData = await resp.json().catch(() => ({}));
+                showToast(errData.description || "Failed to add to cart", "error");
+                return;
+            }
+
+            await enqueueCartAttributeWrite(bundleStructure.id, {
+                bundleId: bundleStructure.id,
+                bundleName: bundleStructure.name,
+                discountType: tier ? config.discountType : "NO_DISCOUNT",
+                discountValue: tier ? tier.discount : 0,
+                requiredLineCount: 1,
+                minOrderValue: bundleStructure.minOrderValue || 0,
+                maxDiscountAmount: bundleStructure.maxDiscountAmount || 0,
+                discountApplication: bundleStructure.discountApplication || "bundle",
+                discountedProductIds: bundleStructure.discountedProductIds || [],
+                freeShipping: bundleStructure.freeShipping || false,
+            });
+
+            if (enableAnalytics && tier) {
+                const discountedCents = calcDiscountedPricePerUnit(
+                    unitPriceCents,
+                    tier,
+                    config.discountType,
+                );
+                const totalValue = unitPriceCents * qty;
+                const discountValue = totalValue - discountedCents * qty;
+                widgetContainer.dispatchEvent(
+                    new CustomEvent("bundle:addedToCart", {
+                        detail: {
+                            bundleId: bundleStructure.id,
+                            productIds: [numericVariantId],
+                            totalValue,
+                            discountValue,
+                        },
+                        bubbles: true,
+                    }),
+                );
+            }
+
+            showToast("Added to cart!", "success");
+            await updateCartCount();
+            handleCartRedirect(redirectAfterCart, null, true);
+        } catch (err) {
+            console.error("[RadiusBundle] Volume Slider ATC error:", err);
+            showToast("Failed to add to cart", "error");
+        } finally {
+            atcBtn.classList.remove("is-loading");
+            atcBtn.setAttribute("aria-busy", "false");
+            if (btnTextEl) btnTextEl.textContent = bundleStructure.labels?.addedText ?? "Added!";
+            atcBtn.classList.add("is-added");
+            setTimeout(() => {
+                if (btnTextEl) btnTextEl.textContent = origText;
+                atcBtn.classList.remove("is-added");
+                atcBtn.disabled = false;
+            }, 1500);
+        }
+    });
+}
+
+// ── Volume Calculator Layout ──────────────────────────────────────────────────
+
+/** Render the savings-calculator layout into the products container */
+export function renderVolumeCalculator(
+    container: Element,
+    config: VolumeTiersConfig,
+    productImageSrc: string | null,
+    productTitle: string,
+    unitPriceCents: number,
+    showPrices: boolean,
+    lazyLoadImages: boolean,
+): void {
+    const imageHtml = productImageSrc
+        ? `<div class="rb-vol-calc__hero-image">
+            ${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "hero" })}
+          </div>`
+        : "";
+
+    // Build tier pills — one per tier with discount label
+    const pillsHtml = config.tiers
+        .map((t, i) => {
+            let label: string;
+            switch (config.discountType) {
+                case "PERCENTAGE":
+                    label = `${t.minQuantity}+ (-${Math.round(t.discount)}%)`;
+                    break;
+                case "FIXED_AMOUNT":
+                    label = `${t.minQuantity}+ (-${trimMoney(formatMoney(t.discount * 100))})`;
+                    break;
+                default:
+                    label = `${t.minQuantity}+`;
+            }
+            return `<button
+                class="rb-vol-calc__pill"
+                type="button"
+                data-calc-tier-index="${i}"
+                data-calc-tier-qty="${t.minQuantity}"
+                aria-pressed="false"
+                aria-label="${escapeHtml(label)}"
+            >${escapeHtml(label)}</button>`;
+        })
+        .join("");
+
+    // Initial values — no tier active (qty=1, below first tier unless firstTier.min=1)
+    const initQty = 1;
+    const initTier = activeTierForQty(initQty, config);
+    const initDiscounted = initTier
+        ? calcDiscountedPricePerUnit(unitPriceCents, initTier, config.discountType)
+        : unitPriceCents;
+    const initTotal = initDiscounted * initQty;
+    const initOrigTotal = unitPriceCents * initQty;
+    const initSavings = initOrigTotal - initTotal;
+    const initHasSavings = initTier !== null && initSavings > 0;
+
+    const calcRows = showPrices && unitPriceCents > 0
+        ? `<div class="rb-vol-calc__calc-row" data-calc-total>
+                <span class="rb-vol-calc__calc-label">Total Cost</span>
+                <div class="rb-vol-calc__calc-value-wrap">
+                    <span class="rb-vol-calc__calc-value" style="color:var(--rb-primary-color,#303030)">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
+                </div>
+            </div>
+            <div class="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"${initHasSavings ? "" : ' style="display:none"'}>
+                <span class="rb-vol-calc__calc-label">You Save</span>
+                <div class="rb-vol-calc__calc-value-wrap">
+                    <span class="rb-vol-calc__calc-value" style="color:var(--rb-savings-color,#16a34a)">${escapeHtml(trimMoney(formatMoney(initSavings)))}</span>
+                    <span class="rb-vol-calc__calc-sub"><s>${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</s></span>
+                </div>
+            </div>
+            <div class="rb-vol-calc__calc-row" data-calc-cpu${initHasSavings ? "" : ' style="display:none"'}>
+                <span class="rb-vol-calc__calc-label">Cost Per Unit</span>
+                <div class="rb-vol-calc__calc-value-wrap">
+                    <span class="rb-vol-calc__calc-value">${escapeHtml(trimMoney(formatMoney(initDiscounted)))}</span>
+                    <span class="rb-vol-calc__calc-sub">Regular price <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s></span>
+                </div>
+            </div>`
+        : "";
+
+    container.innerHTML = `
+        <div class="rb-vol-calc__wrap">
+            ${imageHtml}
+            <div class="rb-vol-calc__product-title">${escapeHtml(productTitle)}</div>
+            <div class="rb-vol-calc__qty-section">
+                <label class="rb-vol-calc__qty-label" for="rb-calc-qty-input">Enter Quantity</label>
+                <div class="rb-vol-calc__qty-wrap">
+                    <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-dec aria-label="Decrease quantity">−</button>
+                    <input
+                        class="rb-vol-calc__qty-input"
+                        id="rb-calc-qty-input"
+                        type="number"
+                        min="1"
+                        value="${initQty}"
+                        step="1"
+                        aria-label="Quantity"
+                    />
+                    <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-inc aria-label="Increase quantity">+</button>
+                </div>
+            </div>
+            ${calcRows}
+            <div class="rb-vol-calc__pills" role="group" aria-label="Quantity discount tiers">
+                ${pillsHtml}
+            </div>
+        </div>
+    `;
+}
+
+/** Wire calculator interactions: qty input ↔ tier pills ↔ calc rows */
+export function initVolumeCalculator(
+    widgetContainer: HTMLElement,
+    config: VolumeTiersConfig,
+    bundleStructure: BundleStructure,
+    variantId: string,
+    unitPriceCents: number,
+    redirectAfterCart: string,
+    enableAnalytics: boolean,
+    maxBundlesPerOrder: number,
+): void {
+    // Hide the Liquid qty selector — calculator replaces it
+    const qtySelector = widgetContainer.querySelector<HTMLElement>(
+        ".rb-vol__action-bar .rb-vol__qty-selector",
+    );
+    if (qtySelector) qtySelector.style.display = "none";
+
+    const qtyInput = widgetContainer.querySelector<HTMLInputElement>(".rb-vol-calc__qty-input");
+    const atcBtn = widgetContainer.querySelector<HTMLButtonElement>("[data-bundle-add-to-cart]");
+    if (!qtyInput || !atcBtn) return;
+
+    const btnTextEl = atcBtn.querySelector<HTMLElement>("[data-button-text]");
+
+    function el<T extends HTMLElement>(sel: string): T | null {
+        return widgetContainer.querySelector<T>(sel);
+    }
+
+    function getPills(): NodeListOf<HTMLElement> {
+        return widgetContainer.querySelectorAll<HTMLElement>(".rb-vol-calc__pill");
+    }
+
+    /** Activate a pill by index; -1 = first (no-discount) pill */
+    function setActivePill(activeIndex: number): void {
+        getPills().forEach((p, i) => {
+            const isActive = i === activeIndex;
+            p.classList.toggle("rb-vol-calc__pill--active", isActive);
+            p.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
+    }
+
+    /** Find pill index matching a qty — -1 = no tier active */
+    function pillIndexForQty(qty: number): number {
+        const tier = activeTierForQty(qty, config);
+        if (!tier) return -1;
+        return config.tiers.indexOf(tier);
+    }
+
+    function updateCalc(qty: number): void {
+        const clampedQty = Math.max(1, qty);
+
+        // Update ATC button text
+        if (btnTextEl) {
+            const base = bundleStructure.labels?.addToCartText || bundleStructure.labels?.buttonText || "Add to Cart";
+            btnTextEl.textContent = `${base} (${clampedQty})`;
+        }
+
+        if (unitPriceCents <= 0) return;
+
+        const tier = activeTierForQty(clampedQty, config);
+        const discounted = tier
+            ? calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType)
+            : unitPriceCents;
+        const total = discounted * clampedQty;
+        const origTotal = unitPriceCents * clampedQty;
+        const savings = origTotal - total;
+        const hasSavings = tier !== null && savings > 0;
+
+        const totalEl = el("[data-calc-total] .rb-vol-calc__calc-value");
+        if (totalEl) totalEl.textContent = trimMoney(formatMoney(total));
+
+        const savingsRow = el<HTMLElement>(".rb-vol-calc__calc-row--savings");
+        const cpuRow = el<HTMLElement>("[data-calc-cpu]");
+
+        if (savingsRow) {
+            savingsRow.style.display = hasSavings ? "" : "none";
+            if (hasSavings) {
+                const savingsVal = savingsRow.querySelector(".rb-vol-calc__calc-value");
+                if (savingsVal) savingsVal.textContent = trimMoney(formatMoney(savings));
+                const savingsSub = savingsRow.querySelector(".rb-vol-calc__calc-sub");
+                if (savingsSub) savingsSub.innerHTML = `<s>${escapeHtml(trimMoney(formatMoney(origTotal)))}</s>`;
+            }
+        }
+
+        if (cpuRow) {
+            cpuRow.style.display = hasSavings ? "" : "none";
+            if (hasSavings) {
+                const cpuVal = cpuRow.querySelector(".rb-vol-calc__calc-value");
+                if (cpuVal) cpuVal.textContent = trimMoney(formatMoney(discounted));
+                const cpuSub = cpuRow.querySelector(".rb-vol-calc__calc-sub");
+                if (cpuSub) cpuSub.innerHTML = `Regular price <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s>`;
+            }
+        }
+
+        // Sync pill
+        setActivePill(pillIndexForQty(clampedQty));
+    }
+
+    // Initial update
+    updateCalc(parseInt(qtyInput.value, 10) || 1);
+
+    // Qty input change
+    qtyInput.addEventListener("input", () => {
+        const qty = parseInt(qtyInput.value, 10) || 1;
+        updateCalc(qty);
+    });
+
+    // Pill clicks — each pill maps to a tier
+    getPills().forEach((pill, i) => {
+        pill.addEventListener("click", () => {
+            const targetQty = config.tiers[i]?.minQuantity ?? 1;
+            qtyInput.value = String(targetQty);
+            updateCalc(targetQty);
+        });
+    });
+
+    // +/− buttons
+    const decBtn = widgetContainer.querySelector<HTMLButtonElement>("[data-calc-qty-dec]");
+    const incBtn = widgetContainer.querySelector<HTMLButtonElement>("[data-calc-qty-inc]");
+    if (decBtn) {
+        decBtn.addEventListener("click", () => {
+            const qty = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1);
+            qtyInput.value = String(qty);
+            updateCalc(qty);
+        });
+    }
+    if (incBtn) {
+        incBtn.addEventListener("click", () => {
+            const qty = (parseInt(qtyInput.value, 10) || 1) + 1;
+            qtyInput.value = String(qty);
+            updateCalc(qty);
+        });
+    }
+
+    // ATC — guard with data-volume-bound
+    if (atcBtn.dataset.volumeBound === "true") return;
+    atcBtn.dataset.volumeBound = "true";
+    atcBtn.disabled = false;
+
+    atcBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const qty = Math.max(1, parseInt(qtyInput.value, 10) || 1);
+        const tier = activeTierForQty(qty, config);
+
+        const numericVariantId = extractNumericId(variantId);
+        if (!numericVariantId) {
+            showToast("No product variant available", "error");
+            return;
+        }
+
+        atcBtn.classList.add("is-loading");
+        atcBtn.disabled = true;
+        atcBtn.setAttribute("aria-busy", "true");
+        const origText = btnTextEl?.textContent || "";
+        if (btnTextEl) btnTextEl.textContent = bundleStructure.labels?.addingText ?? "Adding...";
+
+        try {
+            const resp = await fetch(getLocalePath("/cart/add.js"), {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items: [
+                        {
+                            id: parseInt(numericVariantId, 10),
+                            quantity: qty,
+                            properties: {
+                                _bundle_id: bundleStructure.id,
+                                _bundle_name: bundleStructure.name,
+                            },
+                        },
+                    ],
+                }),
+            });
+
+            if (!resp.ok) {
+                const errData = await resp.json().catch(() => ({}));
+                showToast(errData.description || "Failed to add to cart", "error");
+                return;
+            }
+
+            await enqueueCartAttributeWrite(bundleStructure.id, {
+                bundleId: bundleStructure.id,
+                bundleName: bundleStructure.name,
+                discountType: tier ? config.discountType : "NO_DISCOUNT",
+                discountValue: tier ? tier.discount : 0,
+                requiredLineCount: 1,
+                minOrderValue: bundleStructure.minOrderValue || 0,
+                maxDiscountAmount: bundleStructure.maxDiscountAmount || 0,
+                discountApplication: bundleStructure.discountApplication || "bundle",
+                discountedProductIds: bundleStructure.discountedProductIds || [],
+                freeShipping: bundleStructure.freeShipping || false,
+            });
+
+            if (enableAnalytics && tier) {
+                const discountedCents = calcDiscountedPricePerUnit(
+                    unitPriceCents,
+                    tier,
+                    config.discountType,
+                );
+                const totalValue = unitPriceCents * qty;
+                const discountValue = totalValue - discountedCents * qty;
+                widgetContainer.dispatchEvent(
+                    new CustomEvent("bundle:addedToCart", {
+                        detail: {
+                            bundleId: bundleStructure.id,
+                            productIds: [numericVariantId],
+                            totalValue,
+                            discountValue,
+                        },
+                        bubbles: true,
+                    }),
+                );
+            }
+
+            showToast("Added to cart!", "success");
+            await updateCartCount();
+            handleCartRedirect(redirectAfterCart, null, true);
+        } catch (err) {
+            console.error("[RadiusBundle] Volume Calculator ATC error:", err);
+            showToast("Failed to add to cart", "error");
+        } finally {
+            atcBtn.classList.remove("is-loading");
+            atcBtn.setAttribute("aria-busy", "false");
+            if (btnTextEl) btnTextEl.textContent = bundleStructure.labels?.addedText ?? "Added!";
+            atcBtn.classList.add("is-added");
+            setTimeout(() => {
+                if (btnTextEl) btnTextEl.textContent = origText;
+                atcBtn.classList.remove("is-added");
+                atcBtn.disabled = false;
+            }, 1500);
+        }
+    });
+}
+
 /** Wire tier selection + qty selector interaction (two-way binding) */
 export function initVolumeTierSelection(
     widgetContainer: HTMLElement,

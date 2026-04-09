@@ -748,7 +748,7 @@
 {% assign product_count = 3 %}
 {% endif %}
 {% assign layout = layout | downcase %}
-{% if layout == 'volume_tier_list' or layout == 'volume_pricing_cards' %}
+{% if layout == 'volume_tier_list' or layout == 'volume_pricing_cards' or layout == 'volume_slider' or layout == 'volume_calculator' %}
 {% assign volume_tier_count = bundle.volumeTiers.tiers.size | default: 3 %}
 {% render 'radius-bundle-layout-volume', bundle_id: bundle_id, name: bundle_heading, subtitle: bundle_subtitle, savings_badge_text: savings_badge_text, show_savings_badge: show_savings_badge, tier_count: volume_tier_count, button_text: button_text %}
 {% elsif layout == 'classic_card' or layout == 'compact_grid' or layout == 'minimalist' or layout == 'sleek' or layout == 'checklist' or layout == 'split_deal' %}

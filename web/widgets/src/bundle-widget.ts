@@ -39,9 +39,13 @@ import {
     validateStock,
 } from "./lib/fixed-renderer";
 import {
+    initVolumeCalculator,
     initVolumeTierSelection,
+    initVolumeSlider,
     parseVolumeTiers,
+    renderVolumeCalculator,
     renderVolumePricingCards,
+    renderVolumeSlider,
     renderVolumeTable,
 } from "./lib/volume-renderer";
 import type { VolumeContext } from "./lib/types";
@@ -1002,7 +1006,27 @@ import type { VolumeContext } from "./lib/types";
             const ctx = this.getVolumeContext();
             const layout = getLayout(this.container);
 
-            if (layout === "volume_pricing_cards") {
+            if (layout === "volume_calculator") {
+                renderVolumeCalculator(
+                    productsContainer,
+                    config,
+                    productImageSrc,
+                    productTitle,
+                    unitPriceCents,
+                    ctx.showPrices,
+                    ctx.lazyLoadImages,
+                );
+                initVolumeCalculator(
+                    this.container,
+                    config,
+                    this.bundleStructure,
+                    variantId,
+                    unitPriceCents,
+                    ctx.redirectAfterCart,
+                    ctx.enableAnalytics,
+                    ctx.maxBundlesPerOrder,
+                );
+            } else if (layout === "volume_pricing_cards") {
                 renderVolumePricingCards(
                     productsContainer,
                     config,
@@ -1014,6 +1038,36 @@ import type { VolumeContext } from "./lib/types";
                     ctx.showPrices,
                     ctx.showSavings,
                     ctx.lazyLoadImages,
+                );
+                initVolumeTierSelection(
+                    this.container,
+                    config,
+                    this.bundleStructure,
+                    variantId,
+                    unitPriceCents,
+                    ctx.redirectAfterCart,
+                    ctx.enableAnalytics,
+                    ctx.maxBundlesPerOrder,
+                );
+            } else if (layout === "volume_slider") {
+                renderVolumeSlider(
+                    productsContainer,
+                    config,
+                    productImageSrc,
+                    productTitle,
+                    unitPriceCents,
+                    ctx.showPrices,
+                    ctx.lazyLoadImages,
+                );
+                initVolumeSlider(
+                    this.container,
+                    config,
+                    this.bundleStructure,
+                    variantId,
+                    unitPriceCents,
+                    ctx.redirectAfterCart,
+                    ctx.enableAnalytics,
+                    ctx.maxBundlesPerOrder,
                 );
             } else {
                 renderVolumeTable(
@@ -1028,18 +1082,17 @@ import type { VolumeContext } from "./lib/types";
                     ctx.showSavings,
                     ctx.lazyLoadImages,
                 );
+                initVolumeTierSelection(
+                    this.container,
+                    config,
+                    this.bundleStructure,
+                    variantId,
+                    unitPriceCents,
+                    ctx.redirectAfterCart,
+                    ctx.enableAnalytics,
+                    ctx.maxBundlesPerOrder,
+                );
             }
-
-            initVolumeTierSelection(
-                this.container,
-                config,
-                this.bundleStructure,
-                variantId,
-                unitPriceCents,
-                ctx.redirectAfterCart,
-                ctx.enableAnalytics,
-                ctx.maxBundlesPerOrder,
-            );
         }
 
         private renderProducts(bundle: Bundle): void {
