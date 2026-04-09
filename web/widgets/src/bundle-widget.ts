@@ -41,6 +41,7 @@ import {
 import {
     initVolumeTierSelection,
     parseVolumeTiers,
+    renderVolumePricingCards,
     renderVolumeTable,
 } from "./lib/volume-renderer";
 import type { VolumeContext } from "./lib/types";
@@ -999,19 +1000,35 @@ import type { VolumeContext } from "./lib/types";
             const variantId = currentProduct?.variantId ?? "";
 
             const ctx = this.getVolumeContext();
+            const layout = getLayout(this.container);
 
-            renderVolumeTable(
-                productsContainer,
-                config,
-                this.bundleStructure,
-                productImageSrc,
-                productTitle,
-                unitPriceCents,
-                ctx.showImages,
-                ctx.showPrices,
-                ctx.showSavings,
-                ctx.lazyLoadImages,
-            );
+            if (layout === "volume_pricing_cards") {
+                renderVolumePricingCards(
+                    productsContainer,
+                    config,
+                    this.bundleStructure,
+                    productImageSrc,
+                    productTitle,
+                    unitPriceCents,
+                    ctx.showImages,
+                    ctx.showPrices,
+                    ctx.showSavings,
+                    ctx.lazyLoadImages,
+                );
+            } else {
+                renderVolumeTable(
+                    productsContainer,
+                    config,
+                    this.bundleStructure,
+                    productImageSrc,
+                    productTitle,
+                    unitPriceCents,
+                    ctx.showImages,
+                    ctx.showPrices,
+                    ctx.showSavings,
+                    ctx.lazyLoadImages,
+                );
+            }
 
             initVolumeTierSelection(
                 this.container,

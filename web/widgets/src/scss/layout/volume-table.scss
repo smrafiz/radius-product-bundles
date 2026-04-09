@@ -168,6 +168,13 @@
         transition: color 0.15s ease;
     }
 
+    &__tier-subtitle {
+        font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+        color: var(--rb-text-color, #333);
+        opacity: 0.55;
+        line-height: 1.3;
+    }
+
     &__tier-savings-line {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
         font-weight: 500;
@@ -310,6 +317,153 @@
     &__atc-wrap {
         flex: 1;
     }
+}
+
+// ── Pricing Cards Layout ──────────────────────────────────────────────────
+
+.radius-bundle {
+    &--volume_pricing_cards {
+        > .radius-bundle__actions {
+            display: none;
+        }
+        .radius-bundle__pricing {
+            display: none;
+        }
+    }
+}
+
+.rb-vol__cards-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--rb-gap-spacing, 12px);
+    align-items: stretch;
+}
+
+.rb-vol__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 120px;
+    min-width: 110px;
+    padding: 20px 14px 16px;
+    border: 2px solid var(--rb-border-color, #e5e7eb);
+    border-radius: var(--rb-border-radius, 8px);
+    background: var(--rb-product-bg-color, #fff);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.15s ease, background 0.15s ease;
+    user-select: none;
+
+    &:hover {
+        border-color: var(--rb-primary-color, #303030);
+        box-shadow: var(--rb-shadow, 0 2px 8px rgba(0, 0, 0, 0.08));
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--rb-primary-color, #303030);
+        outline-offset: 2px;
+    }
+
+    // Selected state
+    &.rb-vol__tier--selected,
+    &--popular.rb-vol__tier--selected {
+        border-color: var(--rb-primary-color, #303030);
+        background: color-mix(
+            in srgb,
+            var(--rb-primary-color, #303030) 8%,
+            var(--rb-background-color, #fff)
+        );
+
+        .rb-vol__card-select-btn {
+            background: var(--rb-primary-color, #303030);
+            color: #fff;
+            border-color: var(--rb-primary-color, #303030);
+        }
+    }
+
+    // Popular/default card — slightly elevated
+    &--popular {
+        padding-top: 28px;
+        box-shadow: var(--rb-shadow, 0 2px 8px rgba(0, 0, 0, 0.08));
+    }
+}
+
+.rb-vol__card-popular-badge {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--rb-primary-color, #303030);
+    color: #fff;
+    font-size: calc(var(--rb-body-font-size, 14px) - 4px);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.rb-vol__card-title {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 700;
+    color: var(--rb-text-color, #333);
+    line-height: 1.2;
+}
+
+.rb-vol__card-subtitle {
+    font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+    color: var(--rb-text-color, #333);
+    opacity: 0.55;
+    line-height: 1.3;
+}
+
+.rb-vol__card-price {
+    font-size: calc(var(--rb-body-font-size, 14px) + 4px);
+    font-weight: 700;
+    color: var(--rb-text-color, #333);
+    line-height: 1.1;
+    margin-top: 4px;
+}
+
+.rb-vol__card-per-unit {
+    font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+    font-weight: 400;
+    opacity: 0.6;
+    margin-left: 1px;
+}
+
+.rb-vol__card-savings {
+    display: inline-block;
+    background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 12%, transparent);
+    color: var(--rb-savings-color, #16a34a);
+    font-size: calc(var(--rb-body-font-size, 14px) - 3px);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.rb-vol__card-select-btn {
+    width: 100%;
+    margin-top: auto;
+    padding: 8px 12px;
+    background: transparent;
+    color: var(--rb-primary-color, #303030);
+    border: 2px solid var(--rb-primary-color, #303030);
+    border-radius: calc(var(--rb-border-radius, 8px) - 2px);
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    pointer-events: none; // card itself handles click
 }
 
 // ── Responsive ────────────────────────────────────────────────────────────

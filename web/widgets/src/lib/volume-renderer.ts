@@ -153,6 +153,7 @@ function renderTierRow(
                     <span class="rb-vol__tier-title">${resolvedTitle}</span>
                     ${badgeHtml}
                 </div>
+                ${tier.subtitle ? `<span class="rb-vol__tier-subtitle">${escapeHtml(resolvePlaceholders(tier.subtitle, tier, config.discountType))}</span>` : ""}
                 ${savingsLineHtml}
             </div>
             ${priceColHtml}
@@ -199,6 +200,112 @@ export function renderVolumeTable(
             ${productInfoHtml}
             <ul class="rb-vol__tiers" role="list" aria-label="Volume discount tiers">
                 ${tiersHtml}
+            </ul>
+        </div>
+    `;
+}
+
+function renderPricingCard(
+    tier: VolumeTier,
+    index: number,
+    config: VolumeTiersConfig,
+    unitPriceCents: number,
+    showPrices: boolean,
+    showSavings: boolean,
+): string {
+    const isDefault = !!tier.isDefault;
+    const isLast = index === config.tiers.length - 1;
+    const qtyLabel = config.openEnded || !isLast
+        ? `${tier.minQuantity}+`
+        : `${tier.minQuantity}`;
+
+    const discountedCents = calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType);
+    const hasDiscount = config.discountType !== "NO_DISCOUNT" && tier.discount > 0;
+    const savingsText = showSavings && hasDiscount
+        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType)
+        : "";
+
+    const resolvedTitle = tier.title
+        ? escapeHtml(resolvePlaceholders(tier.title, tier, config.discountType))
+        : (index === 0 ? "Standard" : index === 1 ? "Value Pack" : index === 2 ? "Bulk Deal" : `Tier ${index + 1}`);
+
+    const badgeText = tier.badge?.text;
+    const badgeHtml = badgeText
+        ? `<div class="rb-vol__card-popular-badge ${badgeClass(tier.badge?.style)}" aria-hidden="true">${escapeHtml(badgeText).toUpperCase()}</div>`
+        : "";
+
+    const subtitleText = tier.subtitle
+        ? escapeHtml(resolvePlaceholders(tier.subtitle, tier, config.discountType))
+        : `Buy ${escapeHtml(qtyLabel)} Units`;
+    const subtitleHtml = `<div class="rb-vol__card-subtitle">${subtitleText}</div>`;
+
+    const priceHtml = showPrices && unitPriceCents > 0
+        ? `<div class="rb-vol__card-price">${trimMoney(formatMoney(discountedCents))}</div>`
+        : "";
+
+    const savingsPillHtml = savingsText
+        ? `<div class="rb-vol__card-savings">SAVE ${escapeHtml(savingsText.toUpperCase())}</div>`
+        : "";
+
+    const btnLabel = "Select";
+
+    return `
+        <li class="rb-vol__tier rb-vol__card${isDefault ? " rb-vol__tier--default" : ""}${badgeText ? " rb-vol__card--popular" : ""}"
+            data-tier-index="${index}"
+            data-tier-qty="${tier.minQuantity}"
+            role="button"
+            tabindex="0"
+            aria-pressed="${isDefault ? "true" : "false"}"
+            aria-label="${resolvedTitle}, Buy ${escapeHtml(qtyLabel)} units">
+            ${badgeHtml}
+            <div class="rb-vol__card-title">${resolvedTitle}</div>
+            ${subtitleHtml}
+            ${priceHtml}
+            ${savingsPillHtml}
+            <button class="rb-vol__card-select-btn" tabindex="-1" aria-hidden="true">${btnLabel}</button>
+        </li>
+    `;
+}
+
+/** Render the pricing cards layout into the products container */
+export function renderVolumePricingCards(
+    container: Element,
+    config: VolumeTiersConfig,
+    bundleStructure: BundleStructure,
+    productImageSrc: string | null,
+    productTitle: string,
+    unitPriceCents: number,
+    showImages: boolean,
+    showPrices: boolean,
+    showSavings: boolean,
+    lazyLoadImages: boolean,
+): void {
+    const imageHtml =
+        showImages && productImageSrc
+            ? `<div class="rb-vol__product-image">${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "thumb" })}</div>`
+            : "";
+
+    const cardsHtml = config.tiers
+        .map((tier, i) =>
+            renderPricingCard(tier, i, config, unitPriceCents, showPrices, showSavings),
+        )
+        .join("");
+
+    const productInfoHtml = `
+        <div class="rb-vol__product-header">
+            ${imageHtml}
+            <div class="rb-vol__product-meta">
+                <span class="rb-vol__product-title">${escapeHtml(productTitle)}</span>
+                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / unit</span>` : ""}
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = `
+        <div class="rb-vol__wrap">
+            ${productInfoHtml}
+            <ul class="rb-vol__cards-grid" role="list" aria-label="Volume discount tiers">
+                ${cardsHtml}
             </ul>
         </div>
     `;
@@ -251,13 +358,20 @@ export function initVolumeTierSelection(
     }
 
     // ── Tier selection ─────────────────────────────────────────────────
+    function updateCardBtnText(tierEl: HTMLElement, selected: boolean) {
+        const btn = tierEl.querySelector(".rb-vol__card-select-btn");
+        if (btn) btn.textContent = selected ? "Applied" : "Select";
+    }
+
     function selectTier(tierEl: HTMLElement, updateQtyInput = true) {
         getTiers().forEach((t) => {
             t.classList.remove("rb-vol__tier--selected");
             t.setAttribute("aria-pressed", "false");
+            updateCardBtnText(t, false);
         });
         tierEl.classList.add("rb-vol__tier--selected");
         tierEl.setAttribute("aria-pressed", "true");
+        updateCardBtnText(tierEl, true);
 
         if (updateQtyInput) {
             const tierQty = parseInt(tierEl.dataset.tierQty || "1", 10);
@@ -269,6 +383,7 @@ export function initVolumeTierSelection(
         getTiers().forEach((t) => {
             t.classList.remove("rb-vol__tier--selected");
             t.setAttribute("aria-pressed", "false");
+            updateCardBtnText(t, false);
         });
     }
 

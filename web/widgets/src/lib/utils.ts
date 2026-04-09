@@ -159,6 +159,8 @@ export function getLayout(container: HTMLElement): string {
         return "split_deal";
     if (container.classList.contains("radius-bundle--volume_tier_list"))
         return "volume_tier_list";
+    if (container.classList.contains("radius-bundle--volume_pricing_cards"))
+        return "volume_pricing_cards";
     return "list";
 }
 
