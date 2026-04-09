@@ -493,9 +493,10 @@ export function initVolumeSlider(
     );
     if (qtySelector) qtySelector.style.display = "none";
 
-    const sliderEl = widgetContainer.querySelector<HTMLInputElement>(".rb-vol-slider__slider-track");
+    const maybeSlider = widgetContainer.querySelector<HTMLInputElement>(".rb-vol-slider__slider-track");
     const atcBtn = widgetContainer.querySelector<HTMLButtonElement>("[data-bundle-add-to-cart]");
-    if (!sliderEl || !atcBtn) return;
+    if (!maybeSlider || !atcBtn) return;
+    const sliderEl = maybeSlider;
 
     const btnTextEl = atcBtn.querySelector<HTMLElement>("[data-button-text]");
 
@@ -513,7 +514,7 @@ export function initVolumeSlider(
 
         // Update ATC button text
         if (btnTextEl) {
-            const base = bundleStructure.labels?.addToCartText || bundleStructure.labels?.buttonText || "Add to Cart";
+            const base = bundleStructure.labels?.buttonText || "Add to Cart";
             btnTextEl.textContent = `${base} (${qty})`;
         }
 
@@ -870,7 +871,7 @@ export function initVolumeCalculator(
 
         // Update ATC button text
         if (btnTextEl) {
-            const base = bundleStructure.labels?.addToCartText || bundleStructure.labels?.buttonText || "Add to Cart";
+            const base = bundleStructure.labels?.buttonText || "Add to Cart";
             btnTextEl.textContent = `${base} (${clampedQty})`;
         }
 
