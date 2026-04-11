@@ -10,11 +10,13 @@ export async function getRecentActiveBundlesAction(
     limit: number = 5,
 ): Promise<ApiResponse<TopBundle[]>> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { session } = await handleSessionToken(sessionToken);
 
-        const data = await getRecentBundlesService({ shop, limit });
+        const data = await getRecentBundlesService({
+            shop: session.shop,
+            accessToken: session.accessToken,
+            limit,
+        });
 
         return { status: "success", data };
     } catch (error) {

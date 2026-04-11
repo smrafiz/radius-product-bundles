@@ -147,6 +147,12 @@ export interface CreateBundleWithValidationInput {
 export interface GetBundlesInput {
     shop: string;
     sessionToken: string;
+    /**
+     * Pre-resolved Shopify access token. When provided, fetchProductsFromShopify
+     * uses { shop, accessToken } directly, skipping the second handleSessionToken
+     * call that would otherwise happen inside executeGraphQLQuery.
+     */
+    accessToken?: string;
     pagination: {
         page: number;
         itemsPerPage: number;

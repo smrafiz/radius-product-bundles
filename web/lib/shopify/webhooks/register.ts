@@ -5,6 +5,8 @@ import {
     handleAppUninstalled,
     handleOrdersCreate,
     handleProductsDelete,
+    handleProductsUpdate,
+    handleProductsCreate,
     handleShopUpdate,
     handleAppSubscriptionUpdate,
 } from "@/features/webhooks/handlers";
@@ -45,6 +47,20 @@ export function addHandlers() {
                 callbackUrl: "/api/webhooks",
                 callback: async (_topic, shop, body) => {
                     await handleProductsDelete(shop, body);
+                },
+            },
+            PRODUCTS_UPDATE: {
+                deliveryMethod: DeliveryMethod.Http,
+                callbackUrl: "/api/webhooks",
+                callback: async (_topic, shop, body) => {
+                    await handleProductsUpdate(shop, body);
+                },
+            },
+            PRODUCTS_CREATE: {
+                deliveryMethod: DeliveryMethod.Http,
+                callbackUrl: "/api/webhooks",
+                callback: async (_topic, shop, body) => {
+                    await handleProductsCreate(shop, body);
                 },
             },
             APP_SUBSCRIPTIONS_UPDATE: {

@@ -15,7 +15,12 @@ export const setupGuideQueries = (app: ReturnType<typeof useAppBridge>) => ({
 
             return result.data!;
         },
-        staleTime: 0, // Always refetch on mount — server cache handles dedup
+        // 5 min client-side stale time — the server action uses `use cache`
+        // with a 10 min TTL so repeat fetches within that window are instant.
+        // Step mutations and dismiss call invalidateSetupGuideCache + invalidate
+        // the React Query key, so freshness is maintained on writes.
+        staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
     }),
 });

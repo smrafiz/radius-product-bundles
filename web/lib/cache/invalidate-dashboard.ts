@@ -2,11 +2,10 @@
  * Dashboard cache invalidation helpers.
  *
  * Call these from server actions to bust stale dashboard caches.
- * Uses `updateTag` for read-your-own-writes semantics — the response
- * from the same server action will already reflect the fresh data.
+ * Uses `revalidateTag` for on-demand invalidation.
  */
 
-import { updateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { cacheTags } from "./cache-tags";
 
 /**
@@ -15,7 +14,7 @@ import { cacheTags } from "./cache-tags";
  */
 export function invalidateDashboardCache(shop: string) {
     for (const tag of cacheTags.allAnalytics(shop)) {
-        updateTag(tag);
+        revalidateTag(tag);
     }
 }
 
@@ -24,5 +23,23 @@ export function invalidateDashboardCache(shop: string) {
  * Call after setup step updates or guide dismiss/show.
  */
 export function invalidateSetupGuideCache(shop: string) {
-    updateTag(cacheTags.setupGuide(shop));
+    revalidateTag(cacheTags.setupGuide(shop));
+}
+
+/**
+ * Invalidate cached Shopify product data for a shop.
+ * Call from PRODUCTS_UPDATE, PRODUCTS_CREATE, and PRODUCTS_DELETE webhook handlers
+ * so the next bundle list request fetches fresh product titles, images, and prices.
+ */
+export function invalidateProductCache(shop: string) {
+    revalidateTag(cacheTags.shopifyProducts(shop));
+}
+
+/**
+ * Invalidate cached widget block status for a shop.
+ * Call when the user explicitly clicks "Verify" in the setup guide so the
+ * next check re-scans the theme rather than serving a cached result.
+ */
+export function invalidateWidgetBlockCache(shop: string) {
+    revalidateTag(cacheTags.widgetBlockStatus(shop));
 }

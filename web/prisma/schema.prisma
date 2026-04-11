@@ -106,6 +106,8 @@ model Bundle {
 
     @@unique([shop, name])
     @@index([shop, status, type])
+    @@index([shop, status, deletedAt])
+    @@index([deletedAt])
     @@index([shop, createdAt])
     @@index([mainProductId])
     @@index([status, startDate])

@@ -22,7 +22,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { invalidateBundleCache } from "@/features/bundles/utils/bundle-cache";
 import { getSetupGuideSteps } from "@/features/dashboard/constants/dashboard.constants";
-import { checkWidgetBlockStatusAction } from "@/features/dashboard/actions/widget-block-status.action";
+import {
+    checkWidgetBlockStatusAction,
+    recheckWidgetBlockStatusAction,
+} from "@/features/dashboard/actions/widget-block-status.action";
 
 /**
  * Custom hook for managing the setup guide.
@@ -131,7 +134,7 @@ export function useSetupGuide() {
                 .catch(() => {});
         }
 
-        // Check app-block via REST API (template-level — App Bridge unreliable for this)
+        // Check app-block via cached action (2-3 Shopify API calls, 5 min cache)
         if (needsBlockCheck) {
             app.idToken()
                 .then((token) => {
@@ -303,8 +306,9 @@ export function useSetupGuide() {
                     });
                 }
             } else if (item.stepKey === SETUP_STEP_KEYS.WIDGET_BLOCK_ADDED) {
+                // "Verify" button — bust the cache and force a live recheck
                 const token = await app.idToken();
-                const result = await checkWidgetBlockStatusAction(token);
+                const result = await recheckWidgetBlockStatusAction(token);
                 if (result.status === "success" && result.data) {
                     widgetStatusStore.setWidgetStatus(result.data);
                 }

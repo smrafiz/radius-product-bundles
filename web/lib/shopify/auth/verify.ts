@@ -14,7 +14,9 @@ import { registerWebhooks } from "../webhooks/register";
 import { markWebhooksRegistered } from "@/features/webhooks";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
 import {
+    areWebhooksRegistered,
     claimSetupLock,
+    isSetupComplete,
     releaseSetupLock,
     markSetupComplete,
 } from "@/features/webhooks/repositories/webhook.repository";
@@ -106,13 +108,21 @@ export async function handleSessionToken(
     // Ensure Shop record exists and run first-time setup if needed
     if (store !== false) {
         try {
+            const setupAlreadyComplete = await isSetupComplete(shop);
+            const webhooksAlreadyRegistered = await areWebhooksRegistered(shop);
+
+            if (setupAlreadyComplete && webhooksAlreadyRegistered) {
+                return { shop, session };
+            }
+
             await upsertShop(shop);
 
-            // Atomically claim setup lock in DB to prevent concurrent/duplicate setup
             if (session.accessToken && (await claimSetupLock(shop))) {
                 let setupSucceeded = false;
                 try {
-                    await runAppSetup(session.accessToken!, shop);
+                    if (!setupAlreadyComplete) {
+                        await runAppSetup(session.accessToken!, shop);
+                    }
                     setupSucceeded = true;
                 } catch (setupErr) {
                     console.error(
@@ -123,8 +133,10 @@ export async function handleSessionToken(
 
                 let webhooksSucceeded = false;
                 try {
-                    await registerWebhooks(session);
-                    await markWebhooksRegistered(shop);
+                    if (!webhooksAlreadyRegistered) {
+                        await registerWebhooks(session);
+                        await markWebhooksRegistered(shop);
+                    }
                     webhooksSucceeded = true;
                 } catch (webhookErr) {
                     console.error(

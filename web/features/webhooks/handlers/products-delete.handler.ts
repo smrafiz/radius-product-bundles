@@ -1,4 +1,5 @@
 import { clearMainProductByGid } from "@/features/bundles/repositories";
+import { invalidateProductCache } from "@/lib/cache";
 
 export async function handleProductsDelete(
     shop: string,
@@ -16,6 +17,9 @@ export async function handleProductsDelete(
         const gid = `gid://shopify/Product/${numericId}`;
         const clearedCount = await clearMainProductByGid(shop, gid);
 
+        // Bust cached Shopify product data so the next bundle list
+        // request reflects the deleted product immediately.
+        invalidateProductCache(shop);
     } catch (error) {
         console.error("[Products Delete] Error:", error);
     }
