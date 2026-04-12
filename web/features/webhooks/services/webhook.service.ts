@@ -1,8 +1,7 @@
 import { Session } from "@shopify/shopify-api";
 import { ensureAppSetup } from "@/lib/shopify/setup/ensure-setup";
 import {
-    isSetupComplete,
-    areWebhooksRegistered,
+    getShopSetupStatus,
     markSetupComplete,
     markWebhooksRegistered,
     updateLastSetupCheck,
@@ -17,20 +16,17 @@ import {
  */
 
 /**
- * Check if initialization is needed
+ * Check if initialization is needed (single DB query)
  */
 export async function checkInitializationNeeded(shop: string): Promise<{
     setupNeeded: boolean;
     webhooksNeeded: boolean;
 }> {
-    const [setupDone, webhooksDone] = await Promise.all([
-        isSetupComplete(shop),
-        areWebhooksRegistered(shop),
-    ]);
+    const { setupComplete, webhooksRegistered } = await getShopSetupStatus(shop);
 
     return {
-        setupNeeded: !setupDone,
-        webhooksNeeded: !webhooksDone,
+        setupNeeded: !setupComplete,
+        webhooksNeeded: !webhooksRegistered,
     };
 }
 
@@ -166,18 +162,30 @@ export async function initializeApp(
     const errors: string[] = [];
 
     try {
-        // Check current status
+        // Single DB query for both flags — passed down to avoid re-querying
         const status = await checkInitializationNeeded(shop);
 
         // Step 1: Run setup
-        const setupResult = await runSetupIfNeeded(sessionToken, shop);
-        if (!setupResult.success && setupResult.errors) {
-            errors.push(...setupResult.errors);
+        if (status.setupNeeded) {
+            const setupResult = await ensureAppSetup(sessionToken);
+            if (setupResult.success) {
+                await markSetupComplete(shop);
+            } else {
+                if (setupResult.errors) errors.push(...setupResult.errors);
+                console.warn("[Webhook Service] Setup warnings:", setupResult.errors);
+            }
         }
 
         // Step 2: Register webhooks
         try {
-            await registerWebhooksIfNeeded(session, shop);
+            if (status.webhooksNeeded) {
+                const sessionToUse = await getBestSession(session, shop);
+                if (!sessionToUse?.accessToken) {
+                    throw new Error("No valid session for webhook registration");
+                }
+                await registerWebhooksWithShopify(sessionToUse);
+                await markWebhooksRegistered(shop);
+            }
         } catch (webhookError) {
             const errorMsg =
                 webhookError instanceof Error
