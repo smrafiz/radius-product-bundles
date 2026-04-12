@@ -383,21 +383,22 @@ export async function getBundleActivity(
 ) {
     const since = new Date(Date.now() - hoursToCheck * 60 * 60 * 1000);
 
-    const createdCount = await prisma.bundle.count({
-        where: {
-            shop,
-            status: { not: "DELETED" as const },
-            createdAt: { gte: since },
-        },
-    });
-
-    const deletedCount = await prisma.bundle.count({
-        where: {
-            shop,
-            status: "DELETED",
-            deletedAt: { gte: since },
-        },
-    });
+    const [createdCount, deletedCount] = await Promise.all([
+        prisma.bundle.count({
+            where: {
+                shop,
+                status: { not: "DELETED" as const },
+                createdAt: { gte: since },
+            },
+        }),
+        prisma.bundle.count({
+            where: {
+                shop,
+                status: "DELETED",
+                deletedAt: { gte: since },
+            },
+        }),
+    ]);
 
     return {
         created: createdCount,
