@@ -1,12 +1,10 @@
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { keepPreviousData } from "@tanstack/react-query";
-import { getAnalyticsMetricsAction } from "@/features/analytics/actions";
 import { getBundleAction, getBundlesAction } from "@/features/bundles/actions";
 import {
     BundleDetail,
     BundleFilters,
     BundleListItem,
-    BundleMetricsData,
     bundlesQueryKeys,
 } from "@/features/bundles";
 
@@ -62,21 +60,4 @@ export const bundlesQueries = (
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
     }),
-
-    metrics: {
-        queryKey: bundlesQueryKeys.metrics(),
-        queryFn: async () => {
-            const token = await app.idToken();
-            const result = await getAnalyticsMetricsAction(token, 30);
-
-            if (result.status === "error") {
-                throw new Error(result.message);
-            }
-
-            return result.data as BundleMetricsData;
-        },
-        staleTime: 10 * 60 * 1000,
-        gcTime: 15 * 60 * 1000,
-        refetchOnWindowFocus: false,
-    },
 });
