@@ -138,7 +138,7 @@ export function useEditBundle(bundleId: string) {
                 {},
             );
 
-            const productNodes = (products || []).filter(isProductNode);
+            const productNodes = (products || []).filter(isProductNode) as ProductNode[];
 
             const selectedItems: SelectedItem[] = Object.values(grouped).map(
                 (bp: any, index: number) => {

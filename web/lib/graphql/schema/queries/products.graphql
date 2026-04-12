@@ -27,7 +27,33 @@ query GetProductById($id: ID!) {
 query GetProductsByIds($ids: [ID!]!) {
     nodes(ids: $ids) {
         ... on Product {
-            ...ProductFields
+            id
+            title
+            handle
+            vendor
+            productType
+            featuredMedia {
+                ... on MediaImage {
+                    id
+                    image {
+                        ...ImageFields
+                    }
+                }
+            }
+            variants(first: 100) {
+                nodes {
+                    id
+                    title
+                    price
+                    compareAtPrice
+                    sku
+                    inventoryQuantity
+                    availableForSale
+                    image {
+                        ...ImageFields
+                    }
+                }
+            }
         }
     }
 }

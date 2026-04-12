@@ -1,36 +1,3 @@
-fragment ProductFields on Product {
-    id
-    title
-    handle
-    status
-    vendor
-    productType
-    tags
-    totalInventory
-    createdAt
-    updatedAt
-    featuredMedia {
-        ... on MediaImage {
-            id
-            image {
-                ...ImageFields
-            }
-        }
-    }
-    variants(first: 100) {
-        nodes {
-            ...VariantFields
-        }
-    }
-    collections(first: 10) {
-        edges {
-            node {
-                ...CollectionFields
-            }
-        }
-    }
-}
-
 fragment ProductCardFields on Product {
     id
     title
@@ -54,20 +21,3 @@ fragment ProductCardFields on Product {
     }
 }
 
-fragment VariantFields on ProductVariant {
-    id
-    title
-    price
-    compareAtPrice
-    sku
-    barcode
-    inventoryQuantity
-    availableForSale
-    selectedOptions {
-        name
-        value
-    }
-    inventoryItem {
-        tracked
-    }
-}
