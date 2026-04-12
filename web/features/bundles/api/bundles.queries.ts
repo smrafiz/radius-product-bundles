@@ -1,4 +1,5 @@
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { keepPreviousData } from "@tanstack/react-query";
 import { getAnalyticsMetricsAction } from "@/features/analytics/actions";
 import { getBundleAction, getBundlesAction } from "@/features/bundles/actions";
 import {
@@ -56,6 +57,7 @@ export const bundlesQueries = (
             return result.data as BundleDetail;
         },
         enabled: !!bundleId,
+        placeholderData: keepPreviousData,
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
         refetchOnWindowFocus: false,
