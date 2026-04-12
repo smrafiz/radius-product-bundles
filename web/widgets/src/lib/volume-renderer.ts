@@ -377,10 +377,14 @@ function nudgeText(qty: number, next: VolumeTier, config: VolumeTiersConfig): st
 export function renderVolumeSlider(
     container: Element,
     config: VolumeTiersConfig,
+    showImages: boolean,
     productImageSrc: string | null,
     productTitle: string,
     unitPriceCents: number,
     showPrices: boolean,
+    showSavings: boolean,
+    showComparePrices: boolean,
+    showQuantity: boolean,
     lazyLoadImages: boolean,
 ): void {
     const max = sliderMax(config);
@@ -405,26 +409,26 @@ export function renderVolumeSlider(
         })
         .join("");
 
-    const imageHtml = productImageSrc
+    const imageHtml = showImages && productImageSrc
         ? `<div class="rb-vol-slider__hero-image">
             ${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "hero" })}
             <div class="rb-vol-slider__savings-badge"${hasSavings ? "" : ' style="display:none"'}>${hasSavings && initTier ? escapeHtml(tierSavingsBadgeText(initTier, config)) : ""}</div>
         </div>`
         : "";
 
-    const priceSavingsHtml = showPrices
+    const priceSavingsHtml = showSavings
         ? `<div class="rb-vol-slider__price-savings"${hasSavings ? "" : ' style="display:none"'}>
             <span class="rb-vol-slider__price-savings-amount" style="color:var(--rb-savings-color,#16a34a)">-${escapeHtml(trimMoney(formatMoney(initSavingsAmt)))}</span>
             <span class="rb-vol-slider__price-savings-label">You save</span>
         </div>`
         : "";
 
-    const priceBoxHtml = showPrices && unitPriceCents > 0
+    const priceBoxHtml = unitPriceCents > 0
         ? `<div class="rb-vol-slider__price-box">
             <div class="rb-vol-slider__price-left">
-                <span class="rb-vol-slider__price-total">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
-                <span class="rb-vol-slider__price-unit">${escapeHtml(trimMoney(formatMoney(initDiscounted)))} / unit</span>
-                ${hasSavings ? `<span class="rb-vol-slider__price-original">${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</span>` : `<span class="rb-vol-slider__price-original" style="display:none"></span>`}
+                ${showPrices ? `<span class="rb-vol-slider__price-total">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
+                <span class="rb-vol-slider__price-unit">${escapeHtml(trimMoney(formatMoney(initDiscounted)))} / unit</span>` : ""}
+                ${hasSavings && showComparePrices ? `<span class="rb-vol-slider__price-original">${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</span>` : ""}
             </div>
             ${priceSavingsHtml}
         </div>`
@@ -449,33 +453,34 @@ export function renderVolumeSlider(
         </div>
     </div>`;
 
+    const sliderQuantityHtml = showQuantity ? `<div class="rb-vol-slider__slider-section">
+        <div class="rb-vol-slider__slider-header">
+            <span class="rb-vol-slider__qty-label">Select Quantity</span>
+            <span class="rb-vol-slider__qty-counter" style="color:var(--rb-primary-color,#303030)">${initQty} units</span>
+        </div>
+        <input
+            class="rb-vol-slider__slider-track"
+            type="range"
+            min="1"
+            max="${max}"
+            value="${initQty}"
+            step="1"
+            aria-label="Select quantity"
+            aria-valuemin="1"
+            aria-valuemax="${max}"
+            aria-valuenow="${initQty}"
+        />
+        <div class="rb-vol-slider__slider-markers" aria-hidden="true">
+            ${markerHtml}
+        </div>
+    </div>`: "";
+
     container.innerHTML = `
         <div class="rb-vol-slider__wrap">
-            <div class="sr-only" aria-live="polite" data-vol-slider-live></div>
             ${imageHtml}
             <div class="rb-vol-slider__product-title">${escapeHtml(productTitle)}</div>
             ${priceBoxHtml}
-            <div class="rb-vol-slider__slider-section">
-                <div class="rb-vol-slider__slider-header">
-                    <span class="rb-vol-slider__qty-label">Select Quantity</span>
-                    <span class="rb-vol-slider__qty-counter" style="color:var(--rb-primary-color,#303030)">${initQty} units</span>
-                </div>
-                <input
-                    class="rb-vol-slider__slider-track"
-                    type="range"
-                    min="1"
-                    max="${max}"
-                    value="${initQty}"
-                    step="1"
-                    aria-label="Select quantity"
-                    aria-valuemin="1"
-                    aria-valuemax="${max}"
-                    aria-valuenow="${initQty}"
-                />
-                <div class="rb-vol-slider__slider-markers" aria-hidden="true">
-                    ${markerHtml}
-                </div>
-            </div>
+            ${sliderQuantityHtml}
             ${nudgeHtml}
         </div>
     `;
@@ -740,10 +745,14 @@ export function renderVolumeCalculator(
     productImageSrc: string | null,
     productTitle: string,
     unitPriceCents: number,
+    showImages: boolean,
     showPrices: boolean,
+    showSavings: boolean,
+    showComparePrices: boolean,
+    showQuantity: boolean,
     lazyLoadImages: boolean,
 ): void {
-    const imageHtml = productImageSrc
+    const imageHtml = showImages && productImageSrc
         ? `<div class="rb-vol-calc__hero-image">
             ${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "hero" })}
           </div>`
@@ -785,48 +794,50 @@ export function renderVolumeCalculator(
     const initSavings = initOrigTotal - initTotal;
     const initHasSavings = initTier !== null && initSavings > 0;
 
-    const calcRows = showPrices && unitPriceCents > 0
-        ? `<div class="rb-vol-calc__calc-row" data-calc-total>
+    const calcQuantityHtml = showQuantity ? `<div class="rb-vol-calc__qty-section">
+        <label class="rb-vol-calc__qty-label" for="rb-calc-qty-input">Enter Quantity</label>
+        <div class="rb-vol-calc__qty-wrap">
+            <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-dec aria-label="Decrease quantity">−</button>
+            <input
+                class="rb-vol-calc__qty-input"
+                id="rb-calc-qty-input"
+                type="number"
+                min="1"
+                value="${initQty}"
+                step="1"
+            />
+            <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-inc aria-label="Increase quantity">+</button>
+        </div>
+    </div>` : "";
+
+    const calcRows = unitPriceCents > 0
+        ? `${showPrices ? `<div class="rb-vol-calc__calc-row" data-calc-total>
                 <span class="rb-vol-calc__calc-label">Total Cost</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value" style="color:var(--rb-primary-color,#303030)">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
                 </div>
-            </div>
-            <div class="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"${initHasSavings ? "" : ' style="display:none"'}>
+            </div>` : ""}
+            ${showSavings ? `<div class="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"${initHasSavings ? "" : ' style="display:none"'}>
                 <span class="rb-vol-calc__calc-label">You Save</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value" style="color:var(--rb-savings-color,#16a34a)">${escapeHtml(trimMoney(formatMoney(initSavings)))}</span>
                     <span class="rb-vol-calc__calc-sub"><s>${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</s></span>
                 </div>
-            </div>
-            <div class="rb-vol-calc__calc-row" data-calc-cpu${initHasSavings ? "" : ' style="display:none"'}>
+            </div>` : ""}
+            ${showComparePrices ? `<div class="rb-vol-calc__calc-row" data-calc-cpu${initHasSavings ? "" : ' style="display:none"'}>
                 <span class="rb-vol-calc__calc-label">Cost Per Unit</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value">${escapeHtml(trimMoney(formatMoney(initDiscounted)))}</span>
                     <span class="rb-vol-calc__calc-sub">Regular price <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s></span>
                 </div>
-            </div>`
+            </div>` : ""}`
         : "";
 
     container.innerHTML = `
         <div class="rb-vol-calc__wrap">
             ${imageHtml}
             <div class="rb-vol-calc__product-title">${escapeHtml(productTitle)}</div>
-            <div class="rb-vol-calc__qty-section">
-                <label class="rb-vol-calc__qty-label" for="rb-calc-qty-input">Enter Quantity</label>
-                <div class="rb-vol-calc__qty-wrap">
-                    <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-dec aria-label="Decrease quantity">−</button>
-                    <input
-                        class="rb-vol-calc__qty-input"
-                        id="rb-calc-qty-input"
-                        type="number"
-                        min="1"
-                        value="${initQty}"
-                        step="1"
-                    />
-                    <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-inc aria-label="Increase quantity">+</button>
-                </div>
-            </div>
+            ${calcQuantityHtml}
             ${calcRows}
             <div class="rb-vol-calc__pills" role="group" aria-label="Quantity discount tiers">
                 ${pillsHtml}

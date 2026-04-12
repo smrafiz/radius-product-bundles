@@ -191,6 +191,7 @@ export interface VolumeContext {
     showPrices: boolean;
     showComparePrices: boolean;
     showSavings: boolean;
+    showQuantity: boolean;
     lazyLoadImages: boolean;
     redirectAfterCart: string;
     enableAnalytics: boolean;
