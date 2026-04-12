@@ -38,6 +38,34 @@ export async function findSettingsByShopDomain(
 }
 
 /**
+ * Find app settings + shop metadata in a single query.
+ * Avoids the double-fetch pattern of findSettingsByShopDomain + findShopByDomain.
+ */
+export async function findSettingsWithShop(
+    shopDomain: string,
+    tx?: Prisma.TransactionClient,
+) {
+    const client = tx || prisma;
+
+    const shop = await client.shop.findUnique({
+        where: { domain: shopDomain },
+        select: {
+            id: true,
+            primaryLocale: true,
+            appSettings: true,
+        },
+    });
+
+    if (!shop) return null;
+
+    return {
+        shopId: shop.id,
+        primaryLocale: shop.primaryLocale,
+        appSettings: shop.appSettings,
+    };
+}
+
+/**
  * Find shop by domain (returns only id for FK lookups)
  */
 export async function findShopByDomain(
