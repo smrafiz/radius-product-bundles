@@ -54,6 +54,7 @@ import {
 import {
     clearMainProductByGid,
     findBundleByIdWithAllRelations,
+    findBundleProductIds,
     findBundlesByIdsWithAllRelations,
 } from "@/features/bundles/repositories";
 import { createBundleProductAction } from "@/features/bundles/actions/product-mutations.action";
@@ -214,7 +215,7 @@ export async function deleteBundleAction(
     try {
         const { shop, session } = await handleSessionToken(sessionToken);
 
-        const bundle = await findBundleByIdWithAllRelations(bundleId, shop);
+        const bundle = await findBundleProductIds(bundleId, shop);
         const productIds =
             bundle?.bundleProducts?.map((bp) => bp.productId) || [];
 

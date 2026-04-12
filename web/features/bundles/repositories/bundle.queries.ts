@@ -33,6 +33,20 @@ export async function findBundleStatusById(id: string, shop: string) {
 }
 
 /**
+ * Find only mainProductId and bundleProduct IDs for a bundle.
+ * Use instead of findBundleByIdWithAllRelations when only product IDs are needed.
+ */
+export async function findBundleProductIds(id: string, shop: string) {
+    return prisma.bundle.findFirst({
+        where: { id, shop },
+        select: {
+            mainProductId: true,
+            bundleProducts: { select: { productId: true } },
+        },
+    });
+}
+
+/**
  * Find bundle by ID
  */
 export async function findBundleById(
