@@ -31,7 +31,7 @@ export async function getSetupProgress(domain: string) {
 }
 
 export async function getAutoDetectData(domain: string) {
-    const [bundleCount, appSettings, viewCount] = await Promise.all([
+    const [bundleCount, appSettings] = await Promise.all([
         prisma.bundle.count({
             where: { shop: domain, status: { not: "DELETED" as const } },
         }),
@@ -39,15 +39,11 @@ export async function getAutoDetectData(domain: string) {
             where: { shop: { domain } },
             select: { id: true },
         }),
-        prisma.bundleView.count({
-            where: { bundle: { shop: domain } },
-        }),
     ]);
 
     return {
         bundleCount,
         settingsExist: appSettings !== null,
-        viewCount,
     };
 }
 

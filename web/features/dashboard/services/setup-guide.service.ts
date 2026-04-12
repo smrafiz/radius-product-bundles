@@ -44,9 +44,7 @@ export async function getSetupGuideService({
         widgetCustomized:
             persisted.progress.widgetCustomized ||
             autoDetected.widgetCustomized,
-        storefrontPreviewed:
-            persisted.progress.storefrontPreviewed ||
-            autoDetected.storefrontPreviewed,
+        storefrontPreviewed: persisted.progress.storefrontPreviewed,
         analyticsViewed: persisted.progress.analyticsViewed,
     };
 
@@ -64,14 +62,12 @@ export async function getSetupGuideService({
 }
 
 async function autoDetectProgress(shop: string) {
-    const { bundleCount, settingsExist, viewCount } =
-        await getAutoDetectData(shop);
+    const { bundleCount, settingsExist } = await getAutoDetectData(shop);
 
     const firstBundleCreated = bundleCount > 0;
     const widgetCustomized = settingsExist;
-    const storefrontPreviewed = viewCount > 0;
 
-    return { firstBundleCreated, widgetCustomized, storefrontPreviewed };
+    return { firstBundleCreated, widgetCustomized };
 }
 
 export async function updateSetupStepService({

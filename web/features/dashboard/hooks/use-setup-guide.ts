@@ -254,6 +254,13 @@ export function useSetupGuide() {
                 });
                 setButtonLoading(null);
             } else if (item.primaryButton?.internalUrl) {
+                // Mark step complete on click for navigation-only steps (e.g. analytics)
+                if (!item.complete && !AUTO_DETECTED_STEPS.has(item.stepKey)) {
+                    await completeStepMutation.mutateAsync({
+                        key: item.stepKey as SetupStepKey,
+                        value: true,
+                    });
+                }
                 setButtonLoading(null);
                 if (item.primaryButton.internalUrl === ROUTES.BUNDLE_CREATE) {
                     createBundle()();
