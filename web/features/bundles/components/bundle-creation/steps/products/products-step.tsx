@@ -285,7 +285,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                                   })}
                         </s-banner>
                     )}
-                    <ProductList isBxgy={isBxgy} isBogo={isBogo} />
+                    <ProductList isBxgy={isBxgy} isBogo={isBogo} isVolume={isVolume} />
                     {isBxgy && (
                         <s-switch
                             label={t("sameProductLabel")}

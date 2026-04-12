@@ -37,9 +37,11 @@ function buildBxgyGroups(items: SelectedItem[]): ProductGroup[] {
 export function ProductList({
     isBxgy,
     isBogo,
+    isVolume,
 }: {
     isBxgy?: boolean;
     isBogo?: boolean;
+    isVolume?: boolean;
 }) {
     const t = useTranslations("Bundles.Creation.Products");
     const { getGroupedItems, selectedItems, setItemRole, removeItemById } =
@@ -215,6 +217,7 @@ export function ProductList({
                         <ProductItem
                             key={group.product.productId}
                             group={group}
+                            quantityLocked={isVolume}
                         />
                     ))}
                 </s-stack>
