@@ -209,7 +209,7 @@ export async function aggregateBundleMetrics(
                 COALESCE(SUM(ba."bundleRevenue"), 0) AS "alltimeRevenue"
             FROM bundle_analytics ba
             JOIN bundles b ON ba."bundleId" = b.id
-            WHERE b.shop = ${shop}
+            WHERE b.shop = ${shop} AND b.status != 'DELETED'
         `,
         // Single query: total + active bundle counts
         prisma.$queryRaw<RawBundleCountRow[]>`
@@ -273,7 +273,7 @@ export async function aggregateBundleMetricsByRange(
                 COALESCE(SUM(ba."bundleRevenue"), 0) AS "alltimeRevenue"
             FROM bundle_analytics ba
             JOIN bundles b ON ba."bundleId" = b.id
-            WHERE b.shop = ${shop}
+            WHERE b.shop = ${shop} AND b.status != 'DELETED'
         `,
         prisma.$queryRaw<RawBundleCountRow[]>`
             SELECT

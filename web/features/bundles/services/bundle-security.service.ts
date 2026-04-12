@@ -9,6 +9,10 @@ import {
     getBundleActivity,
 } from "@/features/bundles/repositories";
 import { getShop, getShopStatus } from "@/shared/repositories";
+import {
+    checkBundleTypeAllowed,
+    checkBundleStatusAllowed,
+} from "@/shared/services/plan.service";
 
 /**
  * Perform all security checks for bundle operations
@@ -266,9 +270,6 @@ export async function validateShopPermissions(
     bundleStatus?: string,
 ): Promise<SecurityCheckResult> {
     if (operation === "create" && bundleType) {
-        const { checkBundleTypeAllowed } = await import(
-            "@/shared/services/plan.service"
-        );
         const result = await checkBundleTypeAllowed(shop, bundleType);
         if (!result.allowed) {
             return {
@@ -279,9 +280,6 @@ export async function validateShopPermissions(
     }
 
     if ((operation === "create" || operation === "update") && bundleStatus) {
-        const { checkBundleStatusAllowed } = await import(
-            "@/shared/services/plan.service"
-        );
         const result = await checkBundleStatusAllowed(shop, bundleStatus);
         if (!result.allowed) {
             return {

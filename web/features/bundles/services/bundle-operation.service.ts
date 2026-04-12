@@ -12,7 +12,6 @@ import {
 } from "@/features/bundles/repositories";
 import { getShop } from "@/shared/repositories";
 import { checkBundleQuota } from "@/shared/services/plan.service";
-import { performSecurityChecks } from "@/features/bundles/services";
 import { getShopWithLimits } from "@/shared/repositories/shop.queries";
 
 /**
@@ -122,30 +121,6 @@ export async function fetchBundlePreflight(
     };
 }
 
-/**
- * Perform security checks (rate limit, abuse, shop status)
- */
-export async function checkBundleSecurity(shop: string): Promise<{
-    success: boolean;
-    message?: string;
-    errors?: Record<string, { _errors: string[] }>;
-}> {
-    const securityCheck = await performSecurityChecks(shop);
-
-    if (!securityCheck.passed) {
-        return {
-            success: false,
-            message: securityCheck.reason || "Security check failed",
-            errors: {
-                security: {
-                    _errors: [securityCheck.reason || "Security check failed"],
-                },
-            },
-        };
-    }
-
-    return { success: true };
-}
 
 /**
  * Fetch shop settings for validation context
