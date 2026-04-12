@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { useProductPicker } from "@/shared";
 import { useSortable } from "@dnd-kit/sortable";
 import { ProductGroup, useBundleStore } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 
 // Sortable wrapper component
@@ -60,7 +61,13 @@ export function ProductItem({
         updateSelectedItemQuantity,
         removeProductAndAllVariants,
         getVariantInfo,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            updateSelectedItemQuantity: s.updateSelectedItemQuantity,
+            removeProductAndAllVariants: s.removeProductAndAllVariants,
+            getVariantInfo: s.getVariantInfo,
+        })),
+    );
 
     const ROLE_LABELS: Record<string, string> = {
         TRIGGER: t("roleBuy"),

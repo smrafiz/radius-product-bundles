@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
 import { useBundleStore } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 import {
     WIDGET_LAYOUTS,
@@ -13,7 +14,13 @@ export function WidgetLayout() {
     const t = useTranslations("Bundles.Creation.Appearance");
     const tl = useTranslations("Bundles.DetailsConstants.layouts");
     const { displaySettings, updateDisplaySettings, bundleData } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                displaySettings: s.displaySettings,
+                updateDisplaySettings: s.updateDisplaySettings,
+                bundleData: s.bundleData,
+            })),
+        );
     const { plan } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
     const allLayouts = useMemo(

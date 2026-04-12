@@ -8,6 +8,7 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useCallback, useEffect, useRef } from "react";
 import { useProductPicker } from "@/shared";
 import { useFormContext } from "react-hook-form";
@@ -23,7 +24,16 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
         bundleData,
         setSameProductMode,
         setItemRole,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            selectedItems: s.selectedItems,
+            setSelectedItems: s.setSelectedItems,
+            validationAttempted: s.validationAttempted,
+            bundleData: s.bundleData,
+            setSameProductMode: s.setSameProductMode,
+            setItemRole: s.setItemRole,
+        })),
+    );
     const { getAllErrors } = useBundleValidation();
     const { openProductPicker, isLoading } = useProductPicker();
     const { clearErrors } = useFormContext();

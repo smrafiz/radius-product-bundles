@@ -8,7 +8,7 @@ import { useBundleStore } from "@/features/bundles";
  */
 export function useProductMediaPicker() {
     const [isLoading, setIsLoading] = useState(false);
-    const { addPendingUrls } = useBundleStore();
+    const addPendingUrls = useBundleStore((s) => s.addPendingUrls);
 
     /**
      * Add selected images

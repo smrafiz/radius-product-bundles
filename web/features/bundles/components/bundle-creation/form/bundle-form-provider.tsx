@@ -10,6 +10,7 @@ import {
     setStoreInitializing,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import type { z } from "zod";
 import { useEffect, useMemo, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,7 +38,16 @@ export function BundleFormProvider({
         resetDirty,
         setStep,
         setValidationAttempted,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            selectedItems: s.selectedItems,
+            setBundleData: s.setBundleData,
+            resetBundle: s.resetBundle,
+            resetDirty: s.resetDirty,
+            setStep: s.setStep,
+            setValidationAttempted: s.setValidationAttempted,
+        })),
+    );
 
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);

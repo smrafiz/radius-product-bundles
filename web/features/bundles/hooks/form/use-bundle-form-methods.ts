@@ -5,6 +5,7 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -12,7 +13,13 @@ import { useTranslations } from "@/lib/i18n/provider";
 export function useBundleFormMethods() {
     const v = useTranslations("Validation");
     const form = useFormContext<BundleFormData>();
-    const { nextStep, setValidationAttempted, markDirty } = useBundleStore();
+    const { nextStep, setValidationAttempted, markDirty } = useBundleStore(
+        useShallow((s) => ({
+            nextStep: s.nextStep,
+            setValidationAttempted: s.setValidationAttempted,
+            markDirty: s.markDirty,
+        })),
+    );
     const { validateCurrentStep, canProceedToNextStep, getFieldError } =
         useBundleValidation();
 

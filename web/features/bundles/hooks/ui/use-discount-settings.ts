@@ -9,6 +9,7 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useCallback, useMemo } from "react";
 import { useFormContext } from "react-hook-form";
 import { getCurrencySymbol, triggerSaveBar, usePlan, useShopSettings } from "@/shared";
@@ -19,7 +20,14 @@ import { getCurrencySymbol, triggerSaveBar, usePlan, useShopSettings } from "@/s
 export function useDiscountSettings() {
     const { getFieldError } = useBundleValidation();
     const { markDirty, bundleData, setBundleData, markFieldTouched } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                markDirty: s.markDirty,
+                bundleData: s.bundleData,
+                setBundleData: s.setBundleData,
+                markFieldTouched: s.markFieldTouched,
+            })),
+        );
     const { isLoading, currencyCode } = useShopSettings();
     const { plan } = usePlan();
     const { watch, setValue } = useBundleFormMethods();

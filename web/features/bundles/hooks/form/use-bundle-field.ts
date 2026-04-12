@@ -10,7 +10,8 @@ import { useBundleFormMethods, useBundleStore } from "@/features/bundles";
  */
 export function useBundleField<T = string>(fieldName: string) {
     const { watch, setValue } = useBundleFormMethods();
-    const { markDirty, markFieldTouched } = useBundleStore();
+    const markDirty = useBundleStore((s) => s.markDirty);
+    const markFieldTouched = useBundleStore((s) => s.markFieldTouched);
     const { clearErrors, trigger } = useFormContext();
 
     const value = watch(fieldName as any) as T;

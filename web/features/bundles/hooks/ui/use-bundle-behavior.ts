@@ -7,6 +7,7 @@ import {
     useBundleFormMethods,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 
 /**
  * Hook for managing bundle behavior state and actions
@@ -18,7 +19,15 @@ export function useBundleBehavior() {
         setBundleData,
         markDirty,
         markFieldTouched,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            selectedItems: s.selectedItems,
+            bundleData: s.bundleData,
+            setBundleData: s.setBundleData,
+            markDirty: s.markDirty,
+            markFieldTouched: s.markFieldTouched,
+        })),
+    );
     const { setValue } = useBundleFormMethods();
 
     const [discountApplication, setDiscountApplication] =

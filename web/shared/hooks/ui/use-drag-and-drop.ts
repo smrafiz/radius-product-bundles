@@ -9,7 +9,7 @@ import {
 import { useBundleStore } from "@/features/bundles";
 
 export function useDragAndDrop() {
-    const { reorderItems } = useBundleStore();
+    const reorderItems = useBundleStore((s) => s.reorderItems);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {

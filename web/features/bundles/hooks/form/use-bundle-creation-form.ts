@@ -15,6 +15,7 @@ import {
     useBundleFormManager,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import {
     deleteBundleAction,
     duplicateBundleAction,
@@ -54,7 +55,16 @@ export function useBundleCreationForm({
         resetBundle,
         selectedItems,
         bundleData: storeBundleData,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            isSaving: s.isSaving,
+            isDirty: s.isDirty,
+            resetDirty: s.resetDirty,
+            resetBundle: s.resetBundle,
+            selectedItems: s.selectedItems,
+            bundleData: s.bundleData,
+        })),
+    );
     const { settings } = useShopSettingsStore();
     const myshopifyDomain = settings?.myshopifyDomain;
     const app = useAppBridge();

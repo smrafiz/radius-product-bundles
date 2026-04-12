@@ -6,6 +6,7 @@ import {
 import { useCallback } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useSettingsStore } from "@/features/settings";
+import { useShallow } from "zustand/react/shallow";
 
 export function useProductPicker() {
     const app = useAppBridge();
@@ -15,7 +16,15 @@ export function useProductPicker() {
         setSelectedItems,
         updateProductVariants,
         setLoading,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            selectedItems: s.selectedItems,
+            getGroupedItems: s.getGroupedItems,
+            setSelectedItems: s.setSelectedItems,
+            updateProductVariants: s.updateProductVariants,
+            setLoading: s.setLoading,
+        })),
+    );
 
     const openProductPicker = useCallback(async () => {
         if (!app) {
@@ -180,6 +189,6 @@ export function useProductPicker() {
     return {
         openProductPicker,
         editProductVariants,
-        isLoading: useBundleStore((state) => state.isLoading),
+        isLoading: useBundleStore((s) => s.isLoading),
     };
 }

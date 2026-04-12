@@ -7,6 +7,7 @@ import {
     useBundleFormMethods,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useEffect, useMemo } from "react";
 import { useAppNavigation } from "@/shared";
 import { usePathname } from "next/navigation";
@@ -15,7 +16,9 @@ export function useBundleFormManager({
     bundleType,
     bundleName,
 }: UseBundleFormManagerOptions) {
-    const { bundleData, setBundleData } = useBundleStore();
+    const { bundleData, setBundleData } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, setBundleData: s.setBundleData })),
+    );
     const { bundleData: navigationData } = useAppNavigation();
     const { setValue, watch } = useBundleFormMethods();
 

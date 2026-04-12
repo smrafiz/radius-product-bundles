@@ -12,6 +12,7 @@ import {
     useEditBundle,
     useEditBundleTransform,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useCallback, useMemo } from "react";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -62,7 +63,18 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
         clearPendingMedia,
         clearRemovedMediaIds,
         clearTouchedFields,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            setStep: s.setStep,
+            setValidationAttempted: s.setValidationAttempted,
+            setBundleData: s.setBundleData,
+            setDisplaySettings: s.setDisplaySettings,
+            setSelectedItems: s.setSelectedItems,
+            clearPendingMedia: s.clearPendingMedia,
+            clearRemovedMediaIds: s.clearRemovedMediaIds,
+            clearTouchedFields: s.clearTouchedFields,
+        })),
+    );
     const initialData = useEditBundleTransform(bundleData);
     useBundleDataSync(bundleData);
 

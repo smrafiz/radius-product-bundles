@@ -6,6 +6,7 @@ import {
     SelectedItem,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import {
     GetProductsByIdsDocument,
     GetProductsByIdsQuery,
@@ -32,7 +33,14 @@ const isProductNode = (node: any): node is ProductNode => {
 export function useEditBundle(bundleId: string) {
     const app = useAppBridge();
     const { setDisplaySettings, setSelectedItems, setBundleData, resetBundle } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                setDisplaySettings: s.setDisplaySettings,
+                setSelectedItems: s.setSelectedItems,
+                setBundleData: s.setBundleData,
+                resetBundle: s.resetBundle,
+            })),
+        );
 
     // Reset store when bundleId changes to prevent data bleed from previous bundle
     useEffect(() => {

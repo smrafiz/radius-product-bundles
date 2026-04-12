@@ -14,12 +14,15 @@ import {
     getAvailableStatuses,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function BundlePreviewStatus() {
     const t = useTranslations("Bundles.Schedule");
     const ts = useTranslations("Bundles.Statuses");
-    const { bundleData, updateBundleField } = useBundleStore();
+    const { bundleData, updateBundleField } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, updateBundleField: s.updateBundleField })),
+    );
     const { plan } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
     const mode = bundleData.id ? "edit" : "create";

@@ -10,6 +10,7 @@ import {
     useBundleStore,
     useBundleSubmit,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { GlobalForm } from "@/shared";
 import { BUNDLE_STEP_FIELD_MAP } from "@/features/bundles/constants/bundle-details.constants";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -51,7 +52,14 @@ export function CreateBundlePage({
 
     const { handleSubmit, resetDirty } = useBundleSubmit("create");
     const { setStep, setValidationAttempted, resetBundle, setBundleData } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                setStep: s.setStep,
+                setValidationAttempted: s.setValidationAttempted,
+                resetBundle: s.resetBundle,
+                setBundleData: s.setBundleData,
+            })),
+        );
 
     const handleDiscard = useCallback(() => {
         resetBundle(bundleType);

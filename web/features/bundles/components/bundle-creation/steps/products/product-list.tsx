@@ -20,6 +20,7 @@ import {
     SelectedItem,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 
 function buildBxgyGroups(items: SelectedItem[]): ProductGroup[] {
@@ -42,7 +43,14 @@ export function ProductList({
 }) {
     const t = useTranslations("Bundles.Creation.Products");
     const { getGroupedItems, selectedItems, setItemRole, removeItemById } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                getGroupedItems: s.getGroupedItems,
+                selectedItems: s.selectedItems,
+                setItemRole: s.setItemRole,
+                removeItemById: s.removeItemById,
+            })),
+        );
     const sameProductMode = useBundleStore((s) => s.bundleData.sameProductMode);
     const { sensors, handleDragEnd } = useDragAndDrop();
     const { openProductPicker, isLoading } = useProductPicker();

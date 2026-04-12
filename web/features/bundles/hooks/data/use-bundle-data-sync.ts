@@ -2,12 +2,14 @@
 
 import { useEffect } from "react";
 import { useBundleStore } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 
 /**
  * Hook to sync query data to Zustand store
  */
 export function useBundleDataSync(bundleData: any | undefined) {
-    const { setBundleData, setSavedProductSnapshot } = useBundleStore();
+    const setBundleData = useBundleStore((s) => s.setBundleData);
+    const setSavedProductSnapshot = useBundleStore((s) => s.setSavedProductSnapshot);
 
     useEffect(() => {
         if (bundleData) {

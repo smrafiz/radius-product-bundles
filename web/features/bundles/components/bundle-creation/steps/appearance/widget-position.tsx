@@ -3,12 +3,19 @@
 import React, { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import { useBundleStore, useBundleValidation } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetPosition() {
     const t = useTranslations("Bundles.Creation.Appearance");
     const { displaySettings, updateDisplaySettings, markFieldTouched } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                displaySettings: s.displaySettings,
+                updateDisplaySettings: s.updateDisplaySettings,
+                markFieldTouched: s.markFieldTouched,
+            })),
+        );
     const { getFieldError } = useBundleValidation();
     const { setValue, trigger } = useFormContext();
 

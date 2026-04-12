@@ -6,6 +6,7 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useState } from "react";
 import { fetchProductByIdAction } from "@/features/bundles/actions";
 import { useBundleFormMethods, useBundleStore } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 
 /**
  * Hook for managing bundle product creation state
@@ -29,7 +30,26 @@ export function useBundleProduct(mode: "create" | "edit") {
         setHasManuallyEditedTitle,
         markDirty,
         markFieldTouched,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            bundleData: s.bundleData,
+            pendingMedia: s.pendingMedia,
+            existingMedia: s.existingMedia,
+            removedMediaIds: s.removedMediaIds,
+            addPendingFiles: s.addPendingFiles,
+            setExistingMedia: s.setExistingMedia,
+            removeExistingMedia: s.removeExistingMedia,
+            removePendingMedia: s.removePendingMedia,
+            clearPendingMedia: s.clearPendingMedia,
+            setPendingProductDeletion: s.setPendingProductDeletion,
+            hasLoadedProduct: s.hasLoadedProduct,
+            hasManuallyEditedTitle: s.hasManuallyEditedTitle,
+            setHasLoadedProduct: s.setHasLoadedProduct,
+            setHasManuallyEditedTitle: s.setHasManuallyEditedTitle,
+            markDirty: s.markDirty,
+            markFieldTouched: s.markFieldTouched,
+        })),
+    );
     const { trigger } = useFormContext();
     const { openModal } = useModalStore();
     const app = useAppBridge();

@@ -6,12 +6,15 @@ import {
     useBundlePreviewPricingProps,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 
 /**
  * Hook for calculating bundle preview pricing
  */
 export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
-    const { bundleData, selectedItems } = useBundleStore();
+    const { bundleData, selectedItems } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, selectedItems: s.selectedItems })),
+    );
     const isBxgy =
         bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 

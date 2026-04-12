@@ -8,9 +8,12 @@ import {
     ReviewStep,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 
 export function StepContent({ bundleType }: { bundleType: BundleType }) {
-    const { currentStep, previousStep } = useBundleStore();
+    const { currentStep, previousStep } = useBundleStore(
+        useShallow((s) => ({ currentStep: s.currentStep, previousStep: s.previousStep })),
+    );
 
     const direction = currentStep > previousStep ? 1 : -1;
     const animName = direction > 0 ? "rpbStepSlideLeft" : "rpbStepSlideRight";

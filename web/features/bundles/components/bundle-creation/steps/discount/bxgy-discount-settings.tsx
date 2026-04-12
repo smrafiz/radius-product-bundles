@@ -1,6 +1,7 @@
 "use client";
 
 import { useDiscountSettings, useBundleStore } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 import { ProBadge, useCrossSellStore, usePlan, triggerSaveBar } from "@/shared";
 import { useState } from "react";
@@ -23,7 +24,13 @@ export function BxgyDiscountSettings() {
     } = useDiscountSettings();
     const { open: openCrossSell } = useCrossSellStore();
     const { canUse } = usePlan();
-    const { bundleData, setBundleData, markDirty } = useBundleStore();
+    const { bundleData, setBundleData, markDirty } = useBundleStore(
+        useShallow((s) => ({
+            bundleData: s.bundleData,
+            setBundleData: s.setBundleData,
+            markDirty: s.markDirty,
+        })),
+    );
     const canFreeShipping = canUse("bundle_behavior");
     const [isOpen, setIsOpen] = useState(false);
     const popoverId = "bxgy-discount-type-popover";

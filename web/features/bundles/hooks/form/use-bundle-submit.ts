@@ -12,6 +12,7 @@ import {
     useCreateBundleProduct,
     useMediaUpload,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useState } from "react";
 import {
     attachMediaToProductAction,
@@ -46,7 +47,15 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         setStep,
         setPendingProductDeletion,
         setBundleData,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            setSaving: s.setSaving,
+            resetDirty: s.resetDirty,
+            setStep: s.setStep,
+            setPendingProductDeletion: s.setPendingProductDeletion,
+            setBundleData: s.setBundleData,
+        })),
+    );
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
     const { refreshPlan } = usePlan();

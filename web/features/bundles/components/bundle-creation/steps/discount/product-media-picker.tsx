@@ -14,7 +14,7 @@ export function ProductMediaPicker({
 }) {
     const t = useTranslations("Bundles.Creation.BundleAsProduct");
     const td = useTranslations("Bundles.Creation.Discount");
-    const { selectedItems } = useBundleStore();
+    const selectedItems = useBundleStore((s) => s.selectedItems);
     const [selectedImages, setSelectedImages] = useState<Set<string>>(
         new Set(),
     );

@@ -29,6 +29,7 @@ import {
     useBundleStore,
     VolumeDiscountConfig,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import {
     CustomizerStyles,
     getCardRadius,
@@ -114,7 +115,9 @@ function useWidgetStyles(): CustomizerStyles {
 }
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
-    const { selectedItems, bundleData } = useBundleStore();
+    const { selectedItems, bundleData } = useBundleStore(
+        useShallow((s) => ({ selectedItems: s.selectedItems, bundleData: s.bundleData })),
+    );
     const isBxgy =
         bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 
@@ -240,7 +243,7 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
 }
 
 function useWidgetDisplayOptions(): WidgetDisplayOptions {
-    const { displaySettings } = useBundleStore();
+    const displaySettings = useBundleStore((s) => s.displaySettings);
     return {
         showImages: displaySettings.showImages,
         showPrices: displaySettings.showPrices,
@@ -283,7 +286,9 @@ function useWidgetLabels(): WidgetLabels {
 }
 
 function useBadgeText(labels: WidgetLabels): string {
-    const { bundleData, selectedItems } = useBundleStore();
+    const { bundleData, selectedItems } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, selectedItems: s.selectedItems })),
+    );
     const { currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
 
@@ -450,7 +455,9 @@ export function BundlePreview() {
     const t = useTranslations("Bundles.Creation.Preview");
     const ta = useTranslations("Bundles.Creation.Appearance");
     const { appWindowRef } = useCustomizerModal();
-    const { displaySettings, bundleData } = useBundleStore();
+    const { displaySettings, bundleData } = useBundleStore(
+        useShallow((s) => ({ displaySettings: s.displaySettings, bundleData: s.bundleData })),
+    );
     const { currencyCode } = useShopSettings();
     const isVolume = bundleData.type === "VOLUME_DISCOUNT";
     const volumeConfig = bundleData.volumeTiers as VolumeDiscountConfig | undefined;

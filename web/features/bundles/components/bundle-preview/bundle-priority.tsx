@@ -7,13 +7,21 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useSettingsStore } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function BundlePriority() {
     const t = useTranslations("Bundles.Creation.Preview");
     const { bundleData, updateBundleField, markDirty, markFieldTouched } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                bundleData: s.bundleData,
+                updateBundleField: s.updateBundleField,
+                markDirty: s.markDirty,
+                markFieldTouched: s.markFieldTouched,
+            })),
+        );
     const { setValue, trigger } = useBundleFormMethods();
     const { getFieldError } = useBundleValidation();
     const { settings } = useAppNavigation();

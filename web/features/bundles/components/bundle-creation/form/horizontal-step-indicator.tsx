@@ -5,6 +5,7 @@ import {
     useBundleStore,
     useStepIndicator,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { submitForm } from "@/shared";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -23,7 +24,15 @@ export function HorizontalStepIndicator() {
     } = useStepIndicator();
 
     const { currentStep, totalSteps, prevStep, canGoPrevious, isSaving } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                currentStep: s.currentStep,
+                totalSteps: s.totalSteps,
+                prevStep: s.prevStep,
+                canGoPrevious: s.canGoPrevious,
+                isSaving: s.isSaving,
+            })),
+        );
     const { handleNextStep } = useBundleFormMethods();
     const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");

@@ -9,6 +9,7 @@ import {
     useBundleField,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useMemo, useState } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 import { formatDateLong, useShopSettings } from "@/shared";
@@ -17,7 +18,13 @@ export function BxgyReviewSection() {
     const ts = useTranslations("Bundles.Statuses");
     const t = useTranslations("Bundles.Creation.Review");
     const { bundleData, getTriggerProducts, getRewardProducts } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                bundleData: s.bundleData,
+                getTriggerProducts: s.getTriggerProducts,
+                getRewardProducts: s.getRewardProducts,
+            })),
+        );
     const { isLoading, currencyCode } = useShopSettings();
     const currencyFormatter = bundleCurrencyFormatter(currencyCode, isLoading);
 

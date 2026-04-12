@@ -6,7 +6,7 @@ import { useTranslations } from "@/lib/i18n/provider";
 
 export function SelectedProducts() {
     const t = useTranslations("Bundles.Creation.Review");
-    const { getGroupedItems } = useBundleStore();
+    const getGroupedItems = useBundleStore((s) => s.getGroupedItems);
     const [open, setOpen] = useState(true);
 
     const groupedItems = getGroupedItems();
