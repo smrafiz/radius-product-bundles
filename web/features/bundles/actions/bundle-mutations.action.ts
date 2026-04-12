@@ -115,7 +115,7 @@ export async function updateBundleStatusAction(
             }
         }
 
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        await syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop);
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
@@ -179,7 +179,7 @@ export async function bulkToggleBundleStatusAction(
             );
         }
 
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        await syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop);
 
         revalidatePath("/bundles");
         invalidateDashboardCache(shop);
@@ -220,7 +220,7 @@ export async function deleteBundleAction(
 
         const result = await deleteSingleBundleService({ bundleId, shop });
 
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        await syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop);
 
         if (productIds.length > 0) {
             const metafieldResult = await removeBundleIdFromProducts(
@@ -311,7 +311,7 @@ export async function deleteBundlesAction(
         const result = await deleteMultipleBundles({ bundleIds, shop });
 
         const deleteMetafieldResults = await Promise.allSettled([
-            syncActiveBundlesToMetafield(sessionToken, shop),
+            syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop),
             ...[...bundleProductMap.entries()].map(([bundleId, productIds]) =>
                 removeBundleIdFromProducts(sessionToken, bundleId, productIds),
             ),
@@ -461,9 +461,7 @@ export async function createBundleAction(
     bundleData: CreateBundleActionInput,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         const schemaValidation = bundleSchema.safeParse(bundleData);
         if (!schemaValidation.success) {
@@ -513,7 +511,7 @@ export async function createBundleAction(
         }
 
         const createMetafieldResults = await Promise.allSettled([
-            syncActiveBundlesToMetafield(sessionToken, shop),
+            syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop),
             allProductIds.length > 0 && result.bundle?.id
                 ? addBundleIdToProducts(
                       sessionToken,
@@ -564,9 +562,7 @@ export async function updateBundleAction(
     bundleData: BundleFormData,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         if (!bundleId) {
             return {
@@ -638,7 +634,7 @@ export async function updateBundleAction(
             : newProductIds;
 
         const updateMetafieldResults = await Promise.allSettled([
-            syncActiveBundlesToMetafield(sessionToken, shop),
+            syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop),
             syncBundleProductMetafields(
                 sessionToken,
                 bundleId,

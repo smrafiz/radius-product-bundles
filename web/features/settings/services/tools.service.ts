@@ -42,10 +42,9 @@ export async function clearCacheService(): Promise<ClearCacheResult> {
 }
 
 export async function syncMetafieldsService(
-    sessionToken: string,
-    shop: string,
+    auth: { shop: string; accessToken: string },
 ): Promise<SyncMetafieldResult> {
-    const result = await syncAllSettingsToMetafields(sessionToken, shop);
+    const result = await syncAllSettingsToMetafields(auth, auth.shop);
 
     const syncedItems: string[] = ["Global settings (shop metafield)"];
     if (result.bundleCount) {

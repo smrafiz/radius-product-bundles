@@ -67,9 +67,7 @@ export async function saveSettingsAction(
     locale?: string,
 ): Promise<ApiResponse<AppSettingsFormData>> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         // Save to database
         const savedSettings = await saveSettingsService({ shop, data, locale });
@@ -77,7 +75,7 @@ export async function saveSettingsAction(
         const syncOps: Promise<any>[] = [
             // Don't pass savedSettings here because it may contain partial labels (only for current locale)
             // We want syncAllSettingsToMetafields to fetch the full merged settings from DB
-            syncAllSettingsToMetafields(sessionToken, shop),
+            syncAllSettingsToMetafields({ shop, accessToken: session.accessToken! }, shop),
         ];
         if (
             data.allowDiscountStacking !== undefined &&
@@ -247,16 +245,14 @@ export async function resetSettingsAction(
     sessionToken: string,
 ): Promise<ApiResponse<null>> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         // Reset in database
         await resetSettingsService({ shop });
 
         // Sync to Shopify metafields (will use default values)
         const syncResult = await syncAllSettingsToMetafields(
-            sessionToken,
+            { shop, accessToken: session.accessToken! },
             shop,
         );
 

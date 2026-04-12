@@ -42,11 +42,9 @@ export async function syncMetafieldsAction(
     sessionToken: string,
 ): Promise<ApiResponse<SyncMetafieldResult>> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
-        const data = await syncMetafieldsService(sessionToken, shop);
+        const data = await syncMetafieldsService({ shop, accessToken: session.accessToken! });
 
         return { status: "success", data };
     } catch (error) {
