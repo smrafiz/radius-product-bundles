@@ -240,11 +240,11 @@ export function BundleFormProvider({
 
         const subscription = watch((value, { name, type }) => {
             if (name && type === "change") {
-                const updatedData = {
-                    [name]: value[name as keyof BundleFormData],
-                    type: bundleType,
-                };
-                setBundleData(updatedData as any);
+                const newValue = value[name as keyof BundleFormData];
+                const currentValue = (useBundleStore.getState().bundleData as any)[name];
+                // Skip store update if value hasn't actually changed
+                if (newValue === currentValue) return;
+                setBundleData({ [name]: newValue, type: bundleType } as any);
             }
         });
         return () => subscription.unsubscribe();
