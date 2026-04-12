@@ -14,7 +14,7 @@ module.exports = {
             max_memory_restart: "1G",
 	    listen_timeout: 10000,
             kill_timeout: 5000,
-            exp_backoff_restart_delay: 100
+            exp_backoff_restart_delay: 100,
             log_date_format: "YYYY-MM-DD HH:mm:ss Z",
         }
     ]
