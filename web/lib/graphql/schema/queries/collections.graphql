@@ -1,25 +1,3 @@
-query GetCollectionsForFilters($query: String, $first: Int!, $after: String) {
-    collections(first: $first, after: $after, query: $query, sortKey: TITLE) {
-        edges {
-            node {
-                ...CollectionFilterFields
-            }
-            cursor
-        }
-        pageInfo {
-            ...PageInfoFields
-        }
-    }
-    products(first: 100) {
-        edges {
-            node {
-                productType
-                status
-            }
-        }
-    }
-}
-
 query GetCollections($first: Int!, $after: String, $query: String) {
     collections(first: $first, after: $after, query: $query) {
         edges {
