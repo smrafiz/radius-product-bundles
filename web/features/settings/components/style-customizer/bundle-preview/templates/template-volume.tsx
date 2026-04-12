@@ -19,8 +19,7 @@ const VOLUME_TIERS: ReadonlyArray<VolumeTier> = [
 export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
     const { styles } = useCustomizerStore();
     const gap = getSpacing(styles.spacing);
-    const highlightColor =
-        styles.volumeTierHighlightColor || styles.primaryColor;
+    const highlightColor = styles.primaryColor;
 
     return (
         <div

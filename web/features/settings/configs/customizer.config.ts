@@ -685,44 +685,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     bundleTypes: ["BUY_X_GET_Y", "BOGO"],
                 },
 
-                // Volume Discount Specific
-                {
-                    type: "heading",
-                    label: "Volume Discount Settings",
-                    bundleTypes: ["VOLUME_DISCOUNT"],
-                },
-                {
-                    type: "buttonGroup",
-                    name: "buyGetTierStyle",
-                    label: "Tier display",
-                    options: [
-                        { value: "cards", label: "Cards" },
-                        { value: "list", label: "List" },
-                        { value: "tabs", label: "Tabs" },
-                    ],
-                    defaultValue: "cards",
-                    bundleTypes: ["VOLUME_DISCOUNT"],
-                },
-                {
-                    type: "color",
-                    name: "volumeTierHighlightColor",
-                    label: "Tier highlight color",
-                    details: "Color for the active/popular tier",
-                    defaultValue: "#303030",
-                    bundleTypes: ["VOLUME_DISCOUNT"],
-                },
-                {
-                    type: "buttonGroup",
-                    name: "volumeTierStyle",
-                    label: "Tier display",
-                    options: [
-                        { value: "table", label: "Table" },
-                        { value: "cards", label: "Cards" },
-                    ],
-                    defaultValue: "table",
-                    bundleTypes: ["VOLUME_DISCOUNT"],
-                },
-
                 // Mix & Match Specific
                 {
                     type: "heading",

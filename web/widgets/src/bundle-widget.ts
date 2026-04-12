@@ -930,6 +930,7 @@ import type { VolumeContext } from "./lib/types";
                 showPrices: this.showPrices,
                 showComparePrices: this.showComparePrices,
                 showSavings: this.showSavings,
+                showQuantity: this.showQuantity,
                 lazyLoadImages: this.lazyLoadImages,
                 redirectAfterCart: this.redirectAfterCart,
                 enableAnalytics: this.enableAnalytics,
@@ -1014,7 +1015,11 @@ import type { VolumeContext } from "./lib/types";
                     productImageSrc,
                     productTitle,
                     unitPriceCents,
+                    ctx.showImages,
                     ctx.showPrices,
+                    ctx.showSavings,
+                    ctx.showComparePrices,
+                    ctx.showQuantity,
                     ctx.lazyLoadImages,
                 );
                 initVolumeCalculator(
@@ -1054,10 +1059,14 @@ import type { VolumeContext } from "./lib/types";
                 renderVolumeSlider(
                     productsContainer,
                     config,
+                    ctx.showImages,
                     productImageSrc,
                     productTitle,
                     unitPriceCents,
                     ctx.showPrices,
+                    ctx.showSavings,
+                    ctx.showComparePrices,
+                    ctx.showQuantity,
                     ctx.lazyLoadImages,
                 );
                 initVolumeSlider(

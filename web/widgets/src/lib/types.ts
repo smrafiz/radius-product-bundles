@@ -70,7 +70,7 @@ export interface BundleStructure {
         }>;
     } | string | null;
     labels: {
-        buttonText: string;
+        addToCartText: string;
         regularPriceLabel: string;
         bundlePriceLabel: string;
         youSaveLabel: string;
@@ -191,6 +191,7 @@ export interface VolumeContext {
     showPrices: boolean;
     showComparePrices: boolean;
     showSavings: boolean;
+    showQuantity: boolean;
     lazyLoadImages: boolean;
     redirectAfterCart: string;
     enableAnalytics: boolean;
