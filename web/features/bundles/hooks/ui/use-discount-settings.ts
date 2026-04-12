@@ -11,7 +11,7 @@ import {
 } from "@/features/bundles";
 import { useShallow } from "zustand/react/shallow";
 import { useCallback, useMemo } from "react";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { getCurrencySymbol, triggerSaveBar, usePlan, useShopSettings } from "@/shared";
 
 /**
@@ -30,14 +30,14 @@ export function useDiscountSettings() {
         );
     const { isLoading, currencyCode } = useShopSettings();
     const { plan } = usePlan();
-    const { watch, setValue } = useBundleFormMethods();
-    const { trigger } = useFormContext();
+    const { setValue } = useBundleFormMethods();
+    const { trigger, control } = useFormContext();
 
-    // Watch form fields directly
-    const discountType = watch("discountType") as string | undefined;
-    const discountValue = watch("discountValue") as number | undefined;
-    const minOrderValue = watch("minOrderValue") as number | undefined;
-    const maxDiscountAmount = watch("maxDiscountAmount") as number | undefined;
+    // Watch form fields — useWatch only re-renders when these specific fields change
+    const discountType = useWatch({ control, name: "discountType" }) as string | undefined;
+    const discountValue = useWatch({ control, name: "discountValue" }) as number | undefined;
+    const minOrderValue = useWatch({ control, name: "minOrderValue" }) as number | undefined;
+    const maxDiscountAmount = useWatch({ control, name: "maxDiscountAmount" }) as number | undefined;
 
     // Derived values
     const currencySymbol = getCurrencySymbol(currencyCode);

@@ -1,7 +1,7 @@
 "use client";
 
 import { ProBadge, triggerSaveBar, useCrossSellStore, usePlan } from "@/shared";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { AppSettingsFormData, FieldConfig } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -66,12 +66,12 @@ function DynamicFieldInner({
 }) {
     const {
         setValue,
-        watch,
+        control,
         formState: { errors },
     } = useFormContext<AppSettingsFormData>();
 
     const fieldPath = parentPath ? `${parentPath}.${config.name}` : config.name;
-    const value = watch(fieldPath as any);
+    const value = useWatch({ control, name: fieldPath as any });
     const error = getNestedError(errors, fieldPath);
     const defaultValue = (config as any).defaultValue;
     const t = useTranslations("Settings.Tabs");

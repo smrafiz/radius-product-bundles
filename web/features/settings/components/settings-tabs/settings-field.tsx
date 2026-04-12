@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { AppSettingsFormData, FieldConfig } from "@/features/settings";
 
 /**
@@ -9,10 +9,10 @@ import { AppSettingsFormData, FieldConfig } from "@/features/settings";
 export function SettingsField({ config }: { config: FieldConfig }) {
     const {
         setValue,
-        watch,
+        control,
         formState: { errors },
     } = useFormContext<AppSettingsFormData>();
-    const value = watch(config.name as keyof AppSettingsFormData);
+    const value = useWatch({ control, name: config.name as keyof AppSettingsFormData });
     const error = (errors as any)[config.name]?.message as string | undefined;
 
     /**

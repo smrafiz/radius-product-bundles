@@ -105,7 +105,7 @@ export function BundleFormProvider({
                 layout: getDefaultLayout(bundleType),
             },
         },
-        mode: "onChange",
+        mode: "onTouched",
     });
 
     const { setValue, watch } = form;

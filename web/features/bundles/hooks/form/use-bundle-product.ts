@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { triggerSaveBar, useModalStore } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useState } from "react";
@@ -12,7 +12,8 @@ import { useShallow } from "zustand/react/shallow";
  * Hook for managing bundle product creation state
  */
 export function useBundleProduct(mode: "create" | "edit") {
-    const { watch, setValue } = useBundleFormMethods();
+    const { setValue } = useBundleFormMethods();
+    const { control } = useFormContext();
     const {
         bundleData,
         pendingMedia,
@@ -54,10 +55,10 @@ export function useBundleProduct(mode: "create" | "edit") {
     const { openModal } = useModalStore();
     const app = useAppBridge();
 
-    const bundleName = watch("name");
-    const createProduct = watch("createProduct");
-    const productTitle = watch("productTitle");
-    const productDescription = watch("productDescription");
+    const bundleName = useWatch({ control, name: "name" });
+    const createProduct = useWatch({ control, name: "createProduct" });
+    const productTitle = useWatch({ control, name: "productTitle" });
+    const productDescription = useWatch({ control, name: "productDescription" });
     const mainProductId = bundleData.mainProductId;
 
     const [isEnabled, setIsEnabled] = useState<boolean>(() => {

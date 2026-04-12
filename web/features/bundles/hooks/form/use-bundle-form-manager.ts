@@ -9,6 +9,7 @@ import {
 } from "@/features/bundles";
 import { useShallow } from "zustand/react/shallow";
 import { useEffect, useMemo } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
 import { useAppNavigation } from "@/shared";
 import { usePathname } from "next/navigation";
 
@@ -20,7 +21,8 @@ export function useBundleFormManager({
         useShallow((s) => ({ bundleData: s.bundleData, setBundleData: s.setBundleData })),
     );
     const { bundleData: navigationData } = useAppNavigation();
-    const { setValue, watch } = useBundleFormMethods();
+    const { setValue } = useBundleFormMethods();
+    const { control } = useFormContext();
 
     const pathname = usePathname();
     const isEditMode = pathname.includes("/edit");
@@ -34,7 +36,7 @@ export function useBundleFormManager({
         isEditMode,
     );
 
-    const currentName = watch("name");
+    const currentName = useWatch({ control, name: "name" });
 
     useEffect(() => {
         if (!bundleData.type) {
