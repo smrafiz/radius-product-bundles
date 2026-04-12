@@ -32,6 +32,7 @@ import {
     deleteBundlesWithRelations,
     deleteBundleWithRelations,
     findBundleByIdWithAllRelations,
+    findBundleStatusById,
     generateUniqueBundleName,
     updateBundleStatusById,
     updateBundleWithRelations,
@@ -160,7 +161,7 @@ export async function updateBundleStatusService(
         throw new Error("Use the delete action to delete bundles");
     }
 
-    const currentBundle = await findBundleByIdWithAllRelations(bundleId, shop);
+    const currentBundle = await findBundleStatusById(bundleId, shop);
     if (currentBundle?.status === "DELETED") {
         throw new Error("Cannot modify a deleted bundle");
     }
