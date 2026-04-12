@@ -25,7 +25,6 @@ import { shuffleArray } from "@/shared";
 import { fetchProductsFromShopify } from "@/lib";
 import { getBundlesAction } from "@/features/bundles/actions";
 import { transformBundle, transformBundles } from "@/features/bundles/services";
-import { prisma } from "@/shared/repositories/prisma-connect";
 
 /**
  * Check if a bundle exists and whether it's deleted
@@ -57,7 +56,7 @@ export async function getBundlesListService(
         orderDirection: filters?.sortDirection || "desc",
     };
 
-    const [bundles, totalCount] = await prisma.$transaction([
+    const [bundles, totalCount] = await Promise.all([
         findBundlesByShop(shop, {
             limit: itemsPerPage,
             offset: (page - 1) * itemsPerPage,

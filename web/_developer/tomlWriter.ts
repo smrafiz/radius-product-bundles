@@ -50,6 +50,8 @@ try {
                     "app/uninstalled",
                     "shop/update",
                     "orders/create",
+                    "products/create",
+                    "products/update",
                     "products/delete",
                     "app_subscriptions/update",
                 ],

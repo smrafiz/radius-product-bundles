@@ -61,33 +61,38 @@ export async function registerWebhooksWithShopify(session: Session) {
  * Check if setup is complete for a shop
  */
 export async function isSetupComplete(shop: string): Promise<boolean> {
-    try {
-        const shopRecord = await prisma.shop.findUnique({
-            where: { domain: shop },
-            select: { setupComplete: true },
-        });
-
-        return shopRecord?.setupComplete ?? false;
-    } catch (error) {
-        console.error("[Webhook Repository] Error checking setup:", error);
-        return false;
-    }
+    const status = await getShopSetupStatus(shop);
+    return status.setupComplete;
 }
 
 /**
  * Check if webhooks are registered for a shop
  */
 export async function areWebhooksRegistered(shop: string): Promise<boolean> {
+    const status = await getShopSetupStatus(shop);
+    return status.webhooksRegistered;
+}
+
+/**
+ * Single query returning both setup and webhook status.
+ * Used by handleSessionToken fast path to avoid 2 DB round-trips.
+ */
+export async function getShopSetupStatus(
+    shop: string,
+): Promise<{ setupComplete: boolean; webhooksRegistered: boolean }> {
     try {
         const shopRecord = await prisma.shop.findUnique({
             where: { domain: shop },
-            select: { webhooksRegistered: true },
+            select: { setupComplete: true, webhooksRegistered: true },
         });
 
-        return shopRecord?.webhooksRegistered ?? false;
+        return {
+            setupComplete: shopRecord?.setupComplete ?? false,
+            webhooksRegistered: shopRecord?.webhooksRegistered ?? false,
+        };
     } catch (error) {
-        console.error("[Webhook Repository] Error checking webhooks:", error);
-        return false;
+        console.error("[Webhook Repository] Error checking shop status:", error);
+        return { setupComplete: false, webhooksRegistered: false };
     }
 }
 

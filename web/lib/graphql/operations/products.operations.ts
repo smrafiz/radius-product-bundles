@@ -1,12 +1,13 @@
 "use server";
 
+import { createHash } from "crypto";
 import {
     GetBundleProductsDocument,
     GetBundleProductsQuery,
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLQuery } from "@/lib";
-import { Product, ProductVariant } from "@/shared";
 import { unstable_cache } from "next/cache";
+import { Product, ProductVariant } from "@/shared";
 import { cacheTags, cacheDurations } from "@/lib/cache/cache-tags";
 
 /**
@@ -131,6 +132,10 @@ export async function fetchProductsFromShopify(
     if (typeof auth === "object" && auth.shop) {
         const { shop, accessToken } = auth;
         const sortedIds = [...allProductIds].sort();
+        const idsHash = createHash("sha256")
+            .update(sortedIds.join(","))
+            .digest("hex")
+            .slice(0, 16);
 
         const cachedFetcher = unstable_cache(
             async () => {
@@ -140,8 +145,7 @@ export async function fetchProductsFromShopify(
                 );
                 return serializeProductMaps(maps);
             },
-            // Cache key: scoped to shop + exact product ID set
-            [`shopify-products`, shop, sortedIds.join(",")],
+            [`shopify-products`, shop, idsHash],
             {
                 tags: [cacheTags.shopifyProducts(shop)],
                 revalidate: cacheDurations.shopifyProducts,

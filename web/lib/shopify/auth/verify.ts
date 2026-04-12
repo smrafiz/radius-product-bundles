@@ -14,9 +14,8 @@ import { registerWebhooks } from "../webhooks/register";
 import { markWebhooksRegistered } from "@/features/webhooks";
 import { RequestedTokenType, Session } from "@shopify/shopify-api";
 import {
-    areWebhooksRegistered,
     claimSetupLock,
-    isSetupComplete,
+    getShopSetupStatus,
     releaseSetupLock,
     markSetupComplete,
 } from "@/features/webhooks/repositories/webhook.repository";
@@ -108,8 +107,12 @@ export async function handleSessionToken(
     // Ensure Shop record exists and run first-time setup if needed
     if (store !== false) {
         try {
-            const setupAlreadyComplete = await isSetupComplete(shop);
-            const webhooksAlreadyRegistered = await areWebhooksRegistered(shop);
+            // Single query for both flags — avoids 2 DB round-trips on every request.
+            // Note: if Shopify externally invalidates webhooks, the DB flag stays true
+            // and re-registration won't happen until the flag is manually reset via
+            // resetSetupStatus() or the "Force Register" admin action.
+            const { setupComplete: setupAlreadyComplete, webhooksRegistered: webhooksAlreadyRegistered } =
+                await getShopSetupStatus(shop);
 
             if (setupAlreadyComplete && webhooksAlreadyRegistered) {
                 return { shop, session };

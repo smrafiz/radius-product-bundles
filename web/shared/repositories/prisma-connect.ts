@@ -1,6 +1,6 @@
+import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/prisma/generated/client";
-import { Pool } from "pg";
 
 /**
  * Connection pool configuration.
