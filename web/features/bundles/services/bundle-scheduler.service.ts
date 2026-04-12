@@ -15,8 +15,8 @@ import {
     updateBundleStatusById,
 } from "@/features/bundles/repositories";
 import {
-    ProductUpdateDocument,
-    ProductUpdateMutation,
+    ProductStatusUpdateDocument,
+    ProductStatusUpdateMutation,
 } from "@/lib/graphql/generated/graphql";
 import {
     findOfflineSessionByShop,
@@ -34,8 +34,8 @@ async function updateShopifyProductStatus(
     bundleStatus: "ACTIVE" | "PAUSED",
 ) {
     const productStatus = getShopifyProductStatus(bundleStatus);
-    const result = await executeGraphQLMutation<ProductUpdateMutation>({
-        query: ProductUpdateDocument,
+    const result = await executeGraphQLMutation<ProductStatusUpdateMutation>({
+        query: ProductStatusUpdateDocument,
         variables: { id: productId, status: productStatus },
         shop,
         accessToken,

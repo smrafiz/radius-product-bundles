@@ -35,8 +35,8 @@ import { ApiResponse } from "@/shared";
 import {
     ProductDeleteDocument,
     ProductDeleteMutation,
-    ProductUpdateDocument,
-    ProductUpdateMutation,
+    ProductStatusUpdateDocument,
+    ProductStatusUpdateMutation,
 } from "@/lib/graphql/generated/graphql";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/shared/repositories";
@@ -98,8 +98,8 @@ export async function updateBundleStatusAction(
 
         if (result.bundle?.mainProductId) {
             const updateResult =
-                await executeGraphQLMutation<ProductUpdateMutation>({
-                    query: ProductUpdateDocument,
+                await executeGraphQLMutation<ProductStatusUpdateMutation>({
+                    query: ProductStatusUpdateDocument,
                     variables: {
                         id: result.bundle.mainProductId,
                         status: getShopifyProductStatus(status),
@@ -163,8 +163,8 @@ export async function bulkToggleBundleStatusAction(
             await Promise.all(
                 batch.map(async (productId) => {
                     const updateResult =
-                        await executeGraphQLMutation<ProductUpdateMutation>({
-                            query: ProductUpdateDocument,
+                        await executeGraphQLMutation<ProductStatusUpdateMutation>({
+                            query: ProductStatusUpdateDocument,
                             variables: { id: productId, status: productStatus },
                             shop,
                             accessToken: session.accessToken,
