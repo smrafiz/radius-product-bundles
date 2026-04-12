@@ -70,7 +70,7 @@ export interface BundleStructure {
         }>;
     } | string | null;
     labels: {
-        buttonText: string;
+        addToCartText: string;
         regularPriceLabel: string;
         bundlePriceLabel: string;
         youSaveLabel: string;
