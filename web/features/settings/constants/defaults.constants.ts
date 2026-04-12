@@ -341,14 +341,7 @@ export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BUY X GET Y SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
-    buyGetTierStyle: "cards",
     splitDealStyle: "row",
-
-    // ═══════════════════════════════════════════════════════════════════
-    // ADVANCED - VOLUME DISCOUNT SPECIFIC
-    // ═══════════════════════════════════════════════════════════════════
-    volumeTierHighlightColor: "#303030",
-    volumeTierStyle: "table",
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - MIX & MATCH SPECIFIC

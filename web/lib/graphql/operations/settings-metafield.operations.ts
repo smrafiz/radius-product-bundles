@@ -347,10 +347,7 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
             // Bundle-type specific
             "bogoFreeTagColor",
             "bogoCardBorderStyle",
-            "buyGetTierStyle",
             "splitDealStyle",
-            "volumeTierHighlightColor",
-            "volumeTierStyle",
             "mixMatchGroupHeaderColor",
             "mixMatchSelectionStyle",
             "fbtSeparatorStyle",
