@@ -38,7 +38,7 @@
     &__banner-text {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 5px;
         min-width: 0;
     }
 
@@ -223,7 +223,7 @@
     &__tile-price {
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 600;
-        color: var(--rb-text-color, #1a1a2e);
+        color: var(--rb-text-color, #333);
 
         &--reward {
             color: var(--rb-savings-color, #16a34a);
@@ -232,9 +232,8 @@
 
     &__tile-compare {
         font-size: calc(var(--rb-body-font-size) - 2px);
-        color: var(--rb-text-color);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
-        opacity: 0.5;
         font-weight: 500;
     }
 
@@ -310,7 +309,7 @@
         justify-content: center;
         font-size: 16px;
         font-weight: 700;
-        color: var(--rb-text-color, #9ca3af);
+        color: var(--rb-text-color, #333);
         flex-shrink: 0;
         align-self: center;
     }
@@ -332,14 +331,14 @@
 
     &__footer-label {
         font-size: calc(var(--rb-body-font-size) - 3px);
-        color: var(--rb-text-color, #1a1a2e);
+        color: var(--rb-text-color, #333);
         font-weight: 500;
     }
 
     &__footer-total {
         font-size: var(--rb-heading-font-size, 16px);
         font-weight: 600;
-        color: var(--rb-text-color, #1a1a2e);
+        color: var(--rb-text-color, #333);
         display: flex;
         align-items: baseline;
         flex-wrap: wrap;

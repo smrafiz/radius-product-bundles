@@ -584,6 +584,7 @@ export const LABELS_TAB: SettingsTabConfig = {
                     placeholder: "Regular price",
                     details:
                         "Label before the original price in the volume calculator.",
+                    fullWidth: true,
                     validation: {
                         maxLength: {
                             value: 30,

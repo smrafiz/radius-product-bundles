@@ -191,7 +191,7 @@ export function renderVolumeTable(
         <div class="rb-vol__product-header">
             ${imageHtml}
             <div class="rb-vol__product-meta">
-                <span class="rb-vol__product-title">${escapeHtml(productTitle)}</span>
+                <h3 class="rb-vol__product-title">${escapeHtml(productTitle)}</h3>
                 ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / ${escapeHtml(bundleStructure.labels?.volumeUnitLabel || "unit")}</span>` : ""}
             </div>
         </div>
@@ -299,7 +299,7 @@ export function renderVolumePricingCards(
         <div class="rb-vol__product-header">
             ${imageHtml}
             <div class="rb-vol__product-meta">
-                <span class="rb-vol__product-title">${escapeHtml(productTitle)}</span>
+                <h3 class="rb-vol__product-title">${escapeHtml(productTitle)}</h3>
                 ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / ${escapeHtml(bundleStructure.labels?.volumeUnitLabel || "unit")}</span>` : ""}
             </div>
         </div>
@@ -484,7 +484,7 @@ export function renderVolumeSlider(
     container.innerHTML = `
         <div class="rb-vol-slider__wrap">
             ${imageHtml}
-            <div class="rb-vol-slider__product-title">${escapeHtml(productTitle)}</div>
+            <h3 class="rb-vol-slider__product-title">${escapeHtml(productTitle)}</h3>
             ${priceBoxHtml}
             ${sliderQuantityHtml}
             ${nudgeHtml}
@@ -847,7 +847,7 @@ export function renderVolumeCalculator(
     container.innerHTML = `
         <div class="rb-vol-calc__wrap">
             ${imageHtml}
-            <div class="rb-vol-calc__product-title">${escapeHtml(productTitle)}</div>
+            <h3 class="rb-vol-calc__product-title">${escapeHtml(productTitle)}</h3>
             ${calcQuantityHtml}
             ${calcRows}
             <div class="rb-vol-calc__pills" role="group" aria-label="Quantity discount tiers">
