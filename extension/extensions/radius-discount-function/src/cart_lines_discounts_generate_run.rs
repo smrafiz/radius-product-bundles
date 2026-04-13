@@ -221,6 +221,12 @@ fn calculate_volume_discount(
             continue;
         }
 
+        // Cap percentage at 100% to prevent over-discount
+        if tier_config.discount_type == "PERCENTAGE" && tier.discount > 100.0 {
+            log!("[RadiusDiscount] Volume tier percentage exceeds 100%: {}", tier.discount);
+            continue;
+        }
+
         let line_qty = *bl.line.quantity() as u64;
         let unit_price = bl.line.cost().amount_per_quantity().amount().0;
 
@@ -291,6 +297,12 @@ fn build_bxgy_candidate(
     }
 
     if bundle_settings.discount_value < 0.0 {
+        return None;
+    }
+
+    // Cap percentage at 100% to prevent over-discount
+    if bundle_settings.discount_type == "PERCENTAGE" && bundle_settings.discount_value > 100.0 {
+        log!("[RadiusDiscount] BXGY percentage exceeds 100%: {}", bundle_settings.discount_value);
         return None;
     }
 
@@ -641,6 +653,12 @@ fn calculate_bxgy_discount(
 
     // Reject negative discount values (prevents price increases via compromised data)
     if bundle_settings.discount_value < 0.0 {
+        return None;
+    }
+
+    // Cap percentage at 100% to prevent over-discount
+    if bundle_settings.discount_type == "PERCENTAGE" && bundle_settings.discount_value > 100.0 {
+        log!("[RadiusDiscount] BXGY percentage exceeds 100%: {}", bundle_settings.discount_value);
         return None;
     }
 
@@ -1048,6 +1066,12 @@ fn cart_lines_discounts_generate_run(
             .sum();
 
         if bundle_settings.discount_value < 0.0 {
+            continue;
+        }
+
+        // Cap percentage at 100% to prevent over-discount
+        if bundle_settings.discount_type == "PERCENTAGE" && bundle_settings.discount_value > 100.0 {
+            log!("[RadiusDiscount] Percentage exceeds 100%: {}", bundle_settings.discount_value);
             continue;
         }
 
