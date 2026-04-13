@@ -5,6 +5,7 @@ import {
     TransformedBundle,
     TransformedBundleBase,
     TransformedBundleListing,
+    VolumeDiscountConfig,
 } from "@/features/bundles";
 import { removeNulls } from "@/shared";
 import type { Bundle, BundleProduct } from "@/prisma/generated/client";
@@ -32,6 +33,13 @@ export function transformBundleCore(
         createdAt: bundle.createdAt.toISOString(),
         discountType: bundle.discountType as DiscountType,
         discountValue: bundle.discountValue,
+        volumeTiers: bundle.volumeTiers
+            ? ((typeof bundle.volumeTiers === "string"
+                  ? JSON.parse(bundle.volumeTiers)
+                  : bundle.volumeTiers) as VolumeDiscountConfig)
+            : undefined,
+        buyQuantity: bundle.buyQuantity ?? undefined,
+        getQuantity: bundle.getQuantity ?? undefined,
         products: bundle.bundleProducts
             .map((bp) => {
                 const product = productMap?.get(bp.productId);
@@ -110,9 +118,6 @@ export function transformBundle(
         discountedProductIds: bundle.discountedProductIds ?? [],
         freeShipping: bundle.freeShipping ?? false,
         priority: bundle.priority ?? 0,
-        volumeTiers: bundle.volumeTiers ?? undefined,
-        buyQuantity: bundle.buyQuantity ?? undefined,
-        getQuantity: bundle.getQuantity ?? undefined,
         usesPerOrderLimit: bundle.usesPerOrderLimit ?? undefined,
         settings: bundle.settings ?? undefined,
     };

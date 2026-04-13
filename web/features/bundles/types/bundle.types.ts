@@ -51,6 +51,9 @@ export interface BundleListItem {
 
     discountType: DiscountType;
     discountValue: number;
+    volumeTiers?: VolumeDiscountConfig;
+    buyQuantity?: number;
+    getQuantity?: number;
 
     products: Array<{
         id: string;

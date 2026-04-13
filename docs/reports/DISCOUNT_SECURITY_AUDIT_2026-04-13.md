@@ -1,6 +1,7 @@
 # Discount Function Security Audit Report
 
 **Date:** 2026-04-13
+**Status:** 8 of 21 findings fixed (S-3, S-4, S-5, S-6, S-8, S-9/M-1, S-12/S-13, S-14)
 **Scope:** Rust discount function (all 4 bundle types) + Frontend AJAX manipulation vectors
 **Files Audited:**
 - `extension/extensions/radius-discount-function/src/main.rs`
