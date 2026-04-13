@@ -192,8 +192,11 @@ fn calculate_volume_discount(
     let mut product_qty: HashMap<String, u64> = HashMap::new();
     for bl in bundle_lines {
         if let Some(ref pid) = bl.product_id {
-            let qty = *bl.line.quantity() as u64;
-            *product_qty.entry(pid.clone()).or_insert(0) += qty;
+            let qty = *bl.line.quantity();
+            if qty <= 0 {
+                continue;
+            }
+            *product_qty.entry(pid.clone()).or_insert(0) += qty as u64;
         }
     }
 
@@ -226,7 +229,11 @@ fn calculate_volume_discount(
             continue;
         }
 
-        let line_qty = *bl.line.quantity() as u64;
+        let raw_qty = *bl.line.quantity();
+        if raw_qty <= 0 {
+            continue;
+        }
+        let line_qty = raw_qty as u64;
         let unit_price = bl.line.cost().amount_per_quantity().amount().0;
 
         let line_discount = match tier_config.discount_type.as_str() {
@@ -384,11 +391,13 @@ fn calculate_bxgy_discount(
     // BOGO quantities
     let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
     let get_qty = bundle_settings.get_quantity.unwrap_or(1);
-    let items_per_deal = buy_qty + get_qty;
-
-    if items_per_deal <= 0 || buy_qty <= 0 || get_qty <= 0 {
+    if buy_qty <= 0 || get_qty <= 0 {
         return None;
     }
+    let items_per_deal = match buy_qty.checked_add(get_qty) {
+        Some(v) if v > 0 => v,
+        _ => return None,
+    };
 
     // When variant_roles is set, use variantId for TRIGGER/REWARD classification.
     // This handles same-product BOGO with different variants (e.g., Buy Blue / Get Black).
@@ -429,6 +438,7 @@ fn calculate_bxgy_discount(
 
         let mut targets: Vec<ProductDiscountCandidateTarget> = Vec::new();
         let mut reward_total: f64 = 0.0;
+        let mut total_reward_qty: i32 = 0;
 
         for bl in &reward_lines {
             let qty_to_discount = std::cmp::min(
@@ -437,6 +447,7 @@ fn calculate_bxgy_discount(
             );
             if qty_to_discount <= 0 { continue; }
             reward_total += bl.line.cost().amount_per_quantity().amount().0 * qty_to_discount as f64;
+            total_reward_qty += qty_to_discount;
             targets.push(ProductDiscountCandidateTarget::CartLine(CartLineTarget {
                 id: bl.line.id().clone(),
                 quantity: Some(qty_to_discount),
@@ -446,14 +457,6 @@ fn calculate_bxgy_discount(
         if targets.is_empty() {
             return None;
         }
-
-        let total_reward_qty: i32 = reward_lines
-            .iter()
-            .map(|bl| std::cmp::min(
-                safe_mul(deal_count, get_qty).unwrap_or(0),
-                *bl.line.quantity(),
-            ))
-            .sum();
 
         return build_bxgy_candidate(
             bundle_settings,
@@ -904,7 +907,7 @@ fn cart_lines_discounts_generate_run(
 
         let complete_sets: i32 = if let Some(qty_map) = product_quantities {
             if qty_map.is_empty() {
-                1
+                0 // No products defined → no complete sets
             } else {
                 let mut min_sets: Option<i32> = None;
 
