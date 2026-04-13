@@ -155,6 +155,35 @@ export interface VolumeTiersProps {
     highlightColor: string;
 }
 
+/**
+ * Tier entry for the 4 volume layout components.
+ */
+export interface VolumeLayoutTier {
+    qty: number;
+    discount: number;
+    price: string;
+    comparePrice?: string;
+    savings?: string;
+    title?: string;
+    subtitle?: string;
+    badge?: { text: string; style?: string };
+    isDefault?: boolean;
+}
+
+/**
+ * Props shared across all 4 volume layout preview components.
+ */
+export interface VolumeLayoutProps {
+    tiers: ReadonlyArray<VolumeLayoutTier>;
+    product?: {
+        title: string;
+        image?: string;
+        basePrice: string;
+    };
+    highlightColor: string;
+    styles: CustomizerStyles;
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // BUY X GET Y TYPES
 // ═══════════════════════════════════════════════════════════════════

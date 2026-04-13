@@ -1,199 +1,231 @@
 "use client";
 
 import {
+    type VolumeLayoutProps,
+    type VolumeLayoutTier,
+    getCardBgColor,
     getCardRadius,
     getFontSize,
+    getImageSize,
+    getShadow,
     getSpacing,
 } from "@/features/settings";
-import type { VolumeLayoutProps } from "@/features/settings/types/template.types";
+import { useCallback, useState } from "react";
 
-export function VolumeCalculator({ tiers, product, highlightColor, styles }: VolumeLayoutProps) {
-    const cardRadius = getCardRadius(styles.cornerStyle);
-    const fontSize = getFontSize(styles.bodySize);
-    const gap = getSpacing(styles.spacing);
+import "@/styles/components/volume-preview.css";
 
-    const defaultTier = tiers.find((t) => t.isDefault) ?? tiers[1] ?? tiers[0];
-    const initQty = defaultTier?.qty ?? 5;
+function parseCurrencyPrefix(priceStr: string): string {
+    const match = priceStr.match(/^[^0-9]*/);
+    return match ? match[0] : "$";
+}
+
+function parsePriceValue(priceStr: string): number {
+    return parseFloat(priceStr.replace(/[^0-9.]/g, "")) || 0;
+}
+
+function formatPrice(prefix: string, value: number): string {
+    return `${prefix}${value.toFixed(2)}`;
+}
+
+function activeTierForQty(
+    qty: number,
+    tiers: ReadonlyArray<VolumeLayoutTier>,
+): VolumeLayoutTier | null {
+    let best: VolumeLayoutTier | null = null;
+    for (const t of tiers) {
+        if (qty >= t.qty) best = t;
+    }
+    return best;
+}
+
+function pillLabel(tier: VolumeLayoutTier): string {
+    return `${tier.qty}+ (-${Math.round(tier.discount)}%)`;
+}
+
+export function VolumeCalculator({
+    tiers,
+    product,
+    styles,
+}: VolumeLayoutProps) {
+    const [qty, setQty] = useState<number>(1);
+
+    const basePrice = product?.basePrice ?? "$30.00";
+    const currencyPrefix = parseCurrencyPrefix(basePrice);
+    const unitPrice = parsePriceValue(basePrice);
+
+    const activeTier = activeTierForQty(qty, tiers);
+    const discountedUnit = activeTier
+        ? unitPrice * (1 - activeTier.discount / 100)
+        : unitPrice;
+    const total = discountedUnit * qty;
+    const origTotal = unitPrice * qty;
+    const savings = origTotal - total;
+    const hasSavings = activeTier !== null && savings > 0.001;
+
+    const activePillIndex = activeTier ? tiers.indexOf(activeTier) : -1;
+
+    const decrement = useCallback(() => {
+        setQty((q) => Math.max(1, q - 1));
+    }, []);
+
+    const increment = useCallback(() => {
+        setQty((q) => q + 1);
+    }, []);
+
+    const handleInputChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const v = parseInt(e.target.value, 10);
+            if (!isNaN(v) && v >= 1) setQty(v);
+        },
+        [],
+    );
+
+    const handlePillClick = useCallback((tierQty: number) => {
+        setQty(tierQty);
+    }, []);
+
+    const cssVars = {
+        "--rb-primary-color": styles.primaryColor,
+        "--rb-border-color": styles.borderColor,
+        "--rb-text-color": styles.textColor,
+        "--rb-savings-color": styles.savingsColor,
+        "--rb-background-color": styles.backgroundColor,
+        "--rb-border-radius": getCardRadius(styles.cornerStyle),
+        "--rb-body-font-size": getFontSize(styles.bodySize),
+        "--rb-gap-spacing": getSpacing(styles.spacing),
+        "--rb-shadow": getShadow(styles.shadow),
+        "--rb-product-bg-color": getCardBgColor(styles),
+        "--rb-image-size": getImageSize(styles.imageSize),
+        "--rb-image-fit": styles.imageFit || "cover",
+        "--rb-button-bg-color": styles.buttonBgColor || styles.primaryColor,
+    } as React.CSSProperties;
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                gap,
-                fontSize,
-                color: styles.textColor,
-            }}
-        >
+        <div className="rb-vol-calc__wrap" style={cssVars}>
             {product?.image && (
-                <div
-                    style={{
-                        borderRadius: cardRadius,
-                        overflow: "hidden",
-                        height: 100,
-                        backgroundColor: "#f3f4f6",
-                    }}
-                >
-                    <img
-                        src={product.image}
-                        alt={product.title}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover" as const,
-                        }}
-                    />
+                <div className="rb-vol-calc__hero-image">
+                    <img src={product.image} alt={product.title} />
                 </div>
             )}
 
-            <div style={{ fontWeight: 600 }}>{product?.title ?? "Product"}</div>
+            <div className="rb-vol-calc__product-title">
+                {product?.title ?? "Product"}
+            </div>
 
-            <div>
-                <div style={{ fontSize: "0.85em", opacity: 0.7, marginBottom: 6 }}>
-                    Enter Quantity
-                </div>
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        border: `1px solid ${styles.borderColor}`,
-                        borderRadius: cardRadius,
-                        overflow: "hidden",
-                        width: "fit-content",
-                    }}
+            <div className="rb-vol-calc__qty-section">
+                <label
+                    className="rb-vol-calc__qty-label"
+                    htmlFor="rb-calc-qty-input"
                 >
-                    <div
-                        style={{
-                            width: 34,
-                            height: 34,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "1.2em",
-                            borderRight: `1px solid ${styles.borderColor}`,
-                            color: styles.textColor,
-                            cursor: "default",
-                        }}
+                    Enter Quantity
+                </label>
+                <div className="rb-vol-calc__qty-wrap">
+                    <button
+                        className="rb-vol-calc__qty-btn"
+                        type="button"
+                        aria-label="Decrease quantity"
+                        onClick={decrement}
                     >
                         −
-                    </div>
-                    <div
-                        style={{
-                            width: 48,
-                            height: 34,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontWeight: 600,
-                            color: highlightColor,
-                        }}
-                    >
-                        {initQty}
-                    </div>
-                    <div
-                        style={{
-                            width: 34,
-                            height: 34,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "1.2em",
-                            borderLeft: `1px solid ${styles.borderColor}`,
-                            color: styles.textColor,
-                            cursor: "default",
-                        }}
+                    </button>
+                    <input
+                        className="rb-vol-calc__qty-input"
+                        id="rb-calc-qty-input"
+                        type="number"
+                        min={1}
+                        value={qty}
+                        step={1}
+                        onChange={handleInputChange}
+                    />
+                    <button
+                        className="rb-vol-calc__qty-btn"
+                        type="button"
+                        aria-label="Increase quantity"
+                        onClick={increment}
                     >
                         +
-                    </div>
+                    </button>
                 </div>
             </div>
 
-            {defaultTier && (
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 6,
-                    }}
-                >
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "8px 12px",
-                            border: `1px solid ${styles.borderColor}`,
-                            borderRadius: cardRadius,
-                        }}
-                    >
-                        <span style={{ opacity: 0.7 }}>Total Cost</span>
+            {unitPrice > 0 && (
+                <div className="rb-vol-calc__calc-row" data-calc-total="">
+                    <span className="rb-vol-calc__calc-label">Total Cost</span>
+                    <div className="rb-vol-calc__calc-value-wrap">
                         <span
+                            className="rb-vol-calc__calc-value"
                             style={{
-                                fontWeight: 700,
-                                color: highlightColor,
+                                color: `var(--rb-primary-color, #303030)`,
                             }}
                         >
-                            {defaultTier.price}
+                            {formatPrice(currencyPrefix, total)}
                         </span>
                     </div>
+                </div>
+            )}
 
-                    {defaultTier.savings && (
-                        <div
+            {unitPrice > 0 && (
+                <div
+                    className="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"
+                    style={{ display: hasSavings ? undefined : "none" }}
+                >
+                    <span className="rb-vol-calc__calc-label">You Save</span>
+                    <div className="rb-vol-calc__calc-value-wrap">
+                        <span
+                            className="rb-vol-calc__calc-value"
                             style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                padding: "8px 12px",
-                                border: `1px solid ${styles.savingsColor}30`,
-                                borderRadius: cardRadius,
-                                backgroundColor: `${styles.savingsColor}08`,
+                                color: `var(--rb-savings-color, #16a34a)`,
                             }}
                         >
-                            <span style={{ opacity: 0.7 }}>You Save</span>
-                            <span
-                                style={{
-                                    fontWeight: 700,
-                                    color: styles.savingsColor,
-                                }}
-                            >
-                                {defaultTier.savings}
-                            </span>
-                        </div>
-                    )}
+                            {formatPrice(currencyPrefix, savings)}
+                        </span>
+                        <span className="rb-vol-calc__calc-sub">
+                            <s>{formatPrice(currencyPrefix, origTotal)}</s>
+                        </span>
+                    </div>
+                </div>
+            )}
+
+            {unitPrice > 0 && (
+                <div
+                    className="rb-vol-calc__calc-row"
+                    data-calc-cpu=""
+                    style={{ display: hasSavings ? undefined : "none" }}
+                >
+                    <span className="rb-vol-calc__calc-label">
+                        Cost Per Unit
+                    </span>
+                    <div className="rb-vol-calc__calc-value-wrap">
+                        <span className="rb-vol-calc__calc-value">
+                            {formatPrice(currencyPrefix, discountedUnit)}
+                        </span>
+                        <span className="rb-vol-calc__calc-sub">
+                            Regular price{" "}
+                            <s>{formatPrice(currencyPrefix, unitPrice)}</s>
+                        </span>
+                    </div>
                 </div>
             )}
 
             <div
-                style={{
-                    display: "flex",
-                    flexWrap: "wrap" as const,
-                    gap: 6,
-                }}
+                className="rb-vol-calc__pills"
                 role="group"
                 aria-label="Quantity discount tiers"
             >
                 {tiers.map((tier, i) => {
-                    const isActive = tier === defaultTier;
-                    const label = `${tier.qty}+ (${tier.discount}% off)`;
+                    const isActive = i === activePillIndex;
+                    const label = pillLabel(tier);
                     return (
-                        <div
+                        <button
                             key={i}
-                            style={{
-                                padding: "4px 10px",
-                                borderRadius: "12px",
-                                border: `1px solid ${isActive ? highlightColor : styles.borderColor}`,
-                                backgroundColor: isActive
-                                    ? `${highlightColor}15`
-                                    : "transparent",
-                                color: isActive
-                                    ? highlightColor
-                                    : styles.textColor,
-                                fontSize: "11px",
-                                fontWeight: isActive ? 600 : 400,
-                                cursor: "default",
-                                whiteSpace: "nowrap" as const,
-                            }}
+                            className={`rb-vol-calc__pill${isActive ? " rb-vol-calc__pill--active" : ""}`}
+                            type="button"
+                            aria-pressed={isActive}
+                            aria-label={label}
+                            onClick={() => handlePillClick(tier.qty)}
                         >
                             {label}
-                        </div>
+                        </button>
                     );
                 })}
             </div>

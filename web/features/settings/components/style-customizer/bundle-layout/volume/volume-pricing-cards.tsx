@@ -1,148 +1,165 @@
 "use client";
 
 import {
-    getButtonRadius,
-    getCardRadius,
+    type VolumeLayoutProps,
     getCardBgColor,
+    getCardRadius,
     getFontSize,
+    getImageSize,
+    getShadow,
     getSpacing,
 } from "@/features/settings";
-import type { VolumeLayoutProps } from "@/features/settings/types/template.types";
+import { useCallback, useState } from "react";
 
-export function VolumePricingCards({ tiers, highlightColor, styles }: VolumeLayoutProps) {
-    const cardRadius = getCardRadius(styles.cornerStyle);
-    const btnRadius = getButtonRadius(styles.cornerStyle);
-    const fontSize = getFontSize(styles.bodySize);
-    const gap = getSpacing(styles.spacing);
-    const cardBg = getCardBgColor(styles);
+import "@/styles/components/volume-preview.css";
+
+function badgeClass(style?: string): string {
+    switch (style) {
+        case "popular":
+            return "rb-vol__tier-badge--popular";
+        case "best-value":
+            return "rb-vol__tier-badge--best-value";
+        case "new":
+            return "rb-vol__tier-badge--new";
+        default:
+            return "rb-vol__tier-badge--default";
+    }
+}
+
+export function VolumePricingCards({
+    tiers,
+    product,
+    styles,
+}: VolumeLayoutProps) {
+    const defaultIndex = tiers.findIndex((t) => t.isDefault);
+    const [selectedIndex, setSelectedIndex] = useState<number>(
+        defaultIndex >= 0 ? defaultIndex : 0,
+    );
+
+    const selectTier = useCallback((i: number) => setSelectedIndex(i), []);
+
+    const cssVars = {
+        "--rb-primary-color": styles.primaryColor,
+        "--rb-border-color": styles.borderColor,
+        "--rb-text-color": styles.textColor,
+        "--rb-savings-color": styles.savingsColor,
+        "--rb-background-color": styles.backgroundColor,
+        "--rb-border-radius": getCardRadius(styles.cornerStyle),
+        "--rb-body-font-size": getFontSize(styles.bodySize),
+        "--rb-gap-spacing": getSpacing(styles.spacing),
+        "--rb-shadow": getShadow(styles.shadow),
+        "--rb-product-bg-color": getCardBgColor(styles),
+        "--rb-image-size": getImageSize(styles.imageSize),
+        "--rb-image-fit": styles.imageFit || "contain",
+        "--rb-button-bg-color": styles.buttonBgColor || styles.primaryColor,
+    } as React.CSSProperties;
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "row",
-                gap,
-                fontSize,
-                color: styles.textColor,
-                flexWrap: "wrap" as const,
-            }}
-        >
-            {tiers.map((tier, i) => {
-                const isHighlighted = !!tier.isDefault;
-                const qtyLabel = `Buy ${tier.qty}+`;
-
-                return (
-                    <div
-                        key={i}
-                        style={{
-                            flex: "1 1 0",
-                            minWidth: 80,
-                            position: "relative" as const,
-                            backgroundColor: cardBg,
-                            border: `${isHighlighted ? "2px" : "1px"} solid ${isHighlighted ? highlightColor : styles.borderColor}`,
-                            borderRadius: cardRadius,
-                            padding: "12px 10px 10px",
-                            display: "flex",
-                            flexDirection: "column" as const,
-                            alignItems: "center",
-                            gap: "6px",
-                            boxShadow: isHighlighted
-                                ? `0 2px 10px ${highlightColor}28`
-                                : "none",
-                        }}
-                    >
-                        {tier.badge?.text && (
-                            <div
-                                style={{
-                                    position: "absolute" as const,
-                                    top: -10,
-                                    left: "50%",
-                                    transform: "translateX(-50%)",
-                                    backgroundColor: highlightColor,
-                                    color: "#fff",
-                                    fontSize: "10px",
-                                    fontWeight: 700,
-                                    padding: "2px 8px",
-                                    borderRadius: "10px",
-                                    textTransform: "uppercase" as const,
-                                    letterSpacing: "0.4px",
-                                    whiteSpace: "nowrap" as const,
-                                }}
-                            >
-                                {tier.badge.text}
-                            </div>
-                        )}
-
-                        <div
-                            style={{
-                                fontWeight: 600,
-                                fontSize: "1em",
-                                color: isHighlighted
-                                    ? highlightColor
-                                    : styles.textColor,
-                                textAlign: "center" as const,
-                            }}
-                        >
-                            {tier.title || qtyLabel}
+        <div className="rb-vol__wrap" style={cssVars}>
+            {product && (
+                <div className="rb-vol__product-header">
+                    {product.image && (
+                        <div className="rb-vol__product-image">
+                            <img src={product.image} alt={product.title} />
                         </div>
-
-                        <div
-                            style={{
-                                fontSize: "0.85em",
-                                opacity: 0.65,
-                                textAlign: "center" as const,
-                            }}
-                        >
-                            {tier.subtitle || qtyLabel}
-                        </div>
-
-                        <div
-                            style={{
-                                fontWeight: 700,
-                                fontSize: "1.05em",
-                                color: styles.textColor,
-                            }}
-                        >
-                            {tier.price}
-                        </div>
-
-                        {tier.savings && (
-                            <div
-                                style={{
-                                    backgroundColor: `${styles.savingsColor}18`,
-                                    color: styles.savingsColor,
-                                    fontSize: "10px",
-                                    fontWeight: 600,
-                                    padding: "2px 8px",
-                                    borderRadius: "10px",
-                                    textTransform: "uppercase" as const,
-                                }}
-                            >
-                                {tier.savings}
-                            </div>
-                        )}
-
-                        <div
-                            style={{
-                                marginTop: 2,
-                                backgroundColor: isHighlighted
-                                    ? highlightColor
-                                    : styles.buttonBgColor || styles.primaryColor,
-                                color: "#fff",
-                                fontSize: "11px",
-                                fontWeight: 600,
-                                padding: "5px 10px",
-                                borderRadius: btnRadius,
-                                width: "100%",
-                                textAlign: "center" as const,
-                                cursor: "default",
-                            }}
-                        >
-                            Select
-                        </div>
+                    )}
+                    <div className="rb-vol__product-meta">
+                        <span className="rb-vol__product-title">
+                            {product.title}
+                        </span>
+                        <span className="rb-vol__product-base-price">
+                            {product.basePrice} / unit
+                        </span>
                     </div>
-                );
-            })}
+                </div>
+            )}
+
+            <ul
+                className="rb-vol__cards-grid"
+                role="list"
+                aria-label="Volume discount tiers"
+            >
+                {tiers.map((tier, i) => {
+                    const isSelected = i === selectedIndex;
+                    const isLast = i === tiers.length - 1;
+                    const qtyLabel = !isLast
+                        ? `Buy ${tier.qty}+`
+                        : `Buy ${tier.qty}`;
+                    const resolvedTitle =
+                        tier.title ||
+                        (i === 0
+                            ? "Standard"
+                            : i === 1
+                              ? "Value Pack"
+                              : i === 2
+                                ? "Bulk Deal"
+                                : `Tier ${i + 1}`);
+                    const subtitleText =
+                        tier.subtitle || `Buy ${qtyLabel} Units`;
+                    const hasBadge = !!tier.badge?.text;
+
+                    return (
+                        <li
+                            key={i}
+                            className={[
+                                "rb-vol__tier",
+                                "rb-vol__card",
+                                hasBadge ? "rb-vol__card--popular" : "",
+                                isSelected ? "rb-vol__tier--selected" : "",
+                            ]
+                                .filter(Boolean)
+                                .join(" ")}
+                            role="button"
+                            tabIndex={0}
+                            aria-pressed={isSelected}
+                            aria-label={`${resolvedTitle}, ${subtitleText}${tier.savings ? `, ${tier.savings}` : ""}${tier.badge?.text ? `, ${tier.badge.text}` : ""}`}
+                            onClick={() => selectTier(i)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    selectTier(i);
+                                }
+                            }}
+                        >
+                            {hasBadge && (
+                                <div
+                                    className={`rb-vol__card-popular-badge ${badgeClass(tier.badge?.style)}`}
+                                    aria-hidden="true"
+                                >
+                                    {tier.badge!.text.toUpperCase()}
+                                </div>
+                            )}
+
+                            <div className="rb-vol__card-title">
+                                {resolvedTitle}
+                            </div>
+                            <div className="rb-vol__card-subtitle">
+                                {subtitleText}
+                            </div>
+
+                            {tier.price && (
+                                <div className="rb-vol__card-price">
+                                    {tier.price}
+                                </div>
+                            )}
+
+                            {tier.savings && (
+                                <div className="rb-vol__card-savings">
+                                    {tier.savings.toUpperCase()}
+                                </div>
+                            )}
+
+                            <button
+                                className="rb-vol__card-select-btn"
+                                tabIndex={-1}
+                                aria-hidden="true"
+                            >
+                                {isSelected ? "Applied" : "Select"}
+                            </button>
+                        </li>
+                    );
+                })}
+            </ul>
         </div>
     );
 }
