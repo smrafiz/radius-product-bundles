@@ -259,11 +259,11 @@ fn cart_delivery_options_discounts_generate_run(
         None => return Ok(no_discount),
     };
 
-    // Get first delivery group
-    let first_delivery_group = match input.cart().delivery_groups().first() {
-        Some(group) => group,
-        None => return Ok(no_discount),
-    };
+    // Target ALL delivery groups, not just the first
+    let delivery_groups = input.cart().delivery_groups();
+    if delivery_groups.is_empty() {
+        return Ok(no_discount);
+    }
 
     let bundle_name = matched_bundle_name
         .clone()
@@ -276,16 +276,21 @@ fn cart_delivery_options_discounts_generate_run(
 
     let message = message_template.replace("{name}", &bundle_name);
 
+    let targets: Vec<DeliveryDiscountCandidateTarget> = delivery_groups
+        .iter()
+        .map(|group| {
+            DeliveryDiscountCandidateTarget::DeliveryGroup(DeliveryGroupTarget {
+                id: group.id().clone(),
+            })
+        })
+        .collect();
+
     Ok(CartDeliveryOptionsDiscountsGenerateRunResult {
         operations: vec![DeliveryOperation::DeliveryDiscountsAdd(
             DeliveryDiscountsAddOperation {
                 selection_strategy: DeliveryDiscountSelectionStrategy::All,
                 candidates: vec![DeliveryDiscountCandidate {
-                    targets: vec![DeliveryDiscountCandidateTarget::DeliveryGroup(
-                        DeliveryGroupTarget {
-                            id: first_delivery_group.id().clone(),
-                        },
-                    )],
+                    targets,
                     value: DeliveryDiscountCandidateValue::Percentage(Percentage {
                         value: Decimal(100.0),
                     }),
