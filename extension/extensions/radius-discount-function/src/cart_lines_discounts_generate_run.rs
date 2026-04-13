@@ -516,12 +516,9 @@ fn calculate_bxgy_discount(
 
     // Calculate deal count
     let deal_count: i32 = if is_same_product {
-        // Same product (BOGO): guard check — at least one product must have enough qty
-        reward_lines
-            .iter()
-            .map(|bl| *bl.line.quantity() / items_per_deal)
-            .max()
-            .unwrap_or(0)
+        // Same product: sum all quantities across lines, divide by items_per_deal
+        let total_qty: i32 = reward_lines.iter().map(|bl| *bl.line.quantity()).sum();
+        total_qty / items_per_deal
     } else {
         // Different products: use per-product expected quantities from product_quantities.
         // deal_count = min across all products of (cart_qty / expected_qty).
@@ -592,13 +589,18 @@ fn calculate_bxgy_discount(
     let mut targets: Vec<ProductDiscountCandidateTarget> = Vec::new();
     let mut reward_total: f64 = 0.0;
 
+    // For same-product: track remaining discountable qty across lines
+    let mut remaining_reward_qty = match safe_mul(deal_count, get_qty) {
+        Some(v) => v,
+        None => return None,
+    };
+
     for bl in &reward_lines {
         let qty_to_discount = if is_same_product {
-            let per_product_deals = *bl.line.quantity() / items_per_deal;
-            match safe_mul(per_product_deals, get_qty) {
-                Some(v) => v,
-                None => continue,
-            }
+            // Distribute deal_count * get_qty across lines, capped by each line's qty
+            let qty = std::cmp::min(remaining_reward_qty, *bl.line.quantity());
+            remaining_reward_qty -= qty;
+            qty
         } else {
             let expected = match bl
                 .product_id
