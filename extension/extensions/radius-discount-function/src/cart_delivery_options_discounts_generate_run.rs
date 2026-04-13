@@ -115,7 +115,7 @@ fn extract_bundles_from_lines(
 
     for line in lines {
         let bundle_id = match line.attribute().and_then(|a| a.value()) {
-            Some(id) if !id.is_empty() => id.to_string(),
+            Some(id) if !id.is_empty() && id.len() <= 100 => id.to_string(),
             _ => continue,
         };
 
@@ -171,7 +171,16 @@ fn cart_delivery_options_discounts_generate_run(
     if let Some(attr) = input.cart().attribute() {
         if let Some(attr_value) = attr.value() {
             if let Ok(cart_configs) = serde_json::from_str::<Vec<CartBundleConfig>>(attr_value) {
+                // Limit cart configs to prevent DoS
+                if cart_configs.len() > 50 {
+                    log!("[RadiusDiscount] Too many delivery bundle configs: {}", cart_configs.len());
+                    return Ok(no_discount);
+                }
                 for config in cart_configs {
+                    // Validate bundle ID length
+                    if config.bundle_id.is_empty() || config.bundle_id.len() > 100 {
+                        continue;
+                    }
                     bundles_by_id
                         .entry(config.bundle_id)
                         .or_insert_with(|| (config.bundle_name, Vec::new(), Vec::new()));
