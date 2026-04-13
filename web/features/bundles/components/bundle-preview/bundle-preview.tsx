@@ -7,6 +7,7 @@ import {
     PreviewProduct,
     ROUTES,
     useShopSettings,
+    WidgetAddToCart,
     WidgetCarousel,
     WidgetChecklist,
     WidgetClassicCard,
@@ -78,13 +79,25 @@ function buildVolumeLayoutTiers(
             ? { text: tier.badge.text, style: tier.badge.style }
             : undefined;
 
+        const resolvedTitle = (tier.title || "")
+            .replace("{quantity}", String(tier.minQuantity))
+            .replace("{discount}", config.discountType === "PERCENTAGE"
+                ? `${Math.round(tier.discount)}%`
+                : formatPrice(tier.discount, currencyCode));
+
+        const resolvedSubtitle = (tier.subtitle || "")
+            .replace("{quantity}", String(tier.minQuantity))
+            .replace("{discount}", config.discountType === "PERCENTAGE"
+                ? `${Math.round(tier.discount)}%`
+                : formatPrice(tier.discount, currencyCode));
+
         return {
             qty: tier.minQuantity,
             discount: tier.discount,
             price,
             savings,
-            title: tier.title,
-            subtitle: tier.subtitle,
+            title: resolvedTitle || undefined,
+            subtitle: resolvedSubtitle || undefined,
             badge,
             isDefault: !!tier.isDefault,
         };
@@ -98,7 +111,6 @@ function VolumeAddToCart({
     styles: CustomizerStyles;
     cartButtonText?: string;
 }) {
-    const ta = useTranslations("BundleWidget");
     const bgColor = styles.buttonBgColor || styles.primaryColor;
     const isOutline = styles.buttonStyle === "outline";
     const isFullWidth = styles.buttonWidth === "full";
@@ -189,7 +201,7 @@ function VolumeAddToCart({
                     border: isOutline ? `2px solid ${bgColor}` : "none",
                 }}
             >
-                {cartButtonText || ta("cartButtonTextPlaceholder")}
+                {cartButtonText || PREVIEW_LABELS.addToCartText}
             </button>
         </div>
     );
@@ -733,7 +745,20 @@ export function BundlePreview() {
                             />
                         </s-stack>
                     </s-stack>
-                    {isVolume ? (
+                    {products.length === 0 ? (
+                        <div
+                            style={{
+                                minHeight: 200,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: styles.textColor,
+                                fontSize: 14,
+                            }}
+                        >
+                            {t("emptyState")}
+                        </div>
+                    ) : isVolume ? (
                         volumeConfig && volumeConfig.tiers.length > 0 ? (
                             <div className="radius-bundle-widget">
                                 <div className="radius-bundle">
@@ -771,8 +796,16 @@ export function BundlePreview() {
                                             currencyCode={currencyCode}
                                             firstProduct={products[0]}
                                         />
-                                        {displaySettings.layout !== "VOLUME_SLIDER" &&
-                                            displaySettings.layout !== "VOLUME_CALCULATOR" && (
+                                        {displaySettings.layout === "VOLUME_SLIDER" ||
+                                        displaySettings.layout === "VOLUME_CALCULATOR" ? (
+                                            <WidgetAddToCart
+                                                styles={styles}
+                                                cartButtonText={
+                                                    displaySettings.cartButtonText ||
+                                                    PREVIEW_LABELS.addToCartText
+                                                }
+                                            />
+                                        ) : (
                                             <VolumeAddToCart
                                                 styles={styles}
                                                 cartButtonText={
@@ -797,19 +830,6 @@ export function BundlePreview() {
                                 Configure discount tiers to see a preview.
                             </div>
                         )
-                    ) : products.length === 0 ? (
-                        <div
-                            style={{
-                                minHeight: 200,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                color: styles.textColor,
-                                fontSize: 14,
-                            }}
-                        >
-                            {t("emptyState")}
-                        </div>
                     ) : (
                         <div className="radius-bundle-widget">
                             <div className="radius-bundle">
@@ -869,11 +889,11 @@ export function BundlePreview() {
                                             pricing={pricing}
                                             cartButtonText={
                                                 displaySettings.cartButtonText ||
-                                                ta("cartButtonTextPlaceholder")
+                                                PREVIEW_LABELS.addToCartText
                                             }
                                             title={
                                                 displaySettings.title ||
-                                                ta("titlePlaceholder")
+                                                PREVIEW_LABELS.headingLabel
                                             }
                                             subtitle={displaySettings.subtitle}
                                             badgeText={badgeText}
