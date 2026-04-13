@@ -551,9 +551,12 @@
         "customerBuys": "Customer Buys",
         "customerGets": "Customer Gets",
         "free": "FREE",
+        "atFullPrice": "at full price",
         "deal": "Deal",
         "sameProductDeal": "Same product deal",
-        "mode": "Mode"
+        "mode": "Mode",
+        "freeShipping": "Free Shipping",
+        "enabled": "Enabled"
       },
       "Preview": {
         "heading": "Preview",

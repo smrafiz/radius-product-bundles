@@ -66,14 +66,18 @@ export function BxgyReviewSection() {
         ? BUNDLE_STATUSES[bundleData.status]
         : BUNDLE_STATUSES.DRAFT;
 
-    let discountLabel = "at a discount";
-    if (discountType === "PERCENTAGE" && discountValue) {
+    let discountLabel = "";
+    if (discountType === "NO_DISCOUNT" || !discountType) {
+        discountLabel = t("atFullPrice");
+    } else if (discountType === "PERCENTAGE" && discountValue) {
         discountLabel =
             discountValue === 100 ? t("free") : `at ${discountValue}% off`;
     } else if (discountType === "FIXED_AMOUNT" && discountValue) {
         discountLabel = `at ${currencyFormatter(discountValue)} off`;
     } else if (discountType === "CUSTOM_PRICE" && discountValue) {
         discountLabel = `for ${currencyFormatter(discountValue)} each`;
+    } else {
+        discountLabel = "at a discount";
     }
 
     const round = (n: number) => Math.round(n * 100) / 100;
@@ -297,17 +301,30 @@ export function BxgyReviewSection() {
                                 : t("notSet")}
                         </s-text>
                     </s-stack>
-                    <s-stack
-                        alignItems="center"
-                        justifyContent="space-between"
-                        direction="inline"
-                        gap="small-300"
-                    >
-                        <s-heading>{t("discountValue")}</s-heading>
-                        <s-text color="subdued">
-                            {isLoading ? "•" : formatDiscount()}
-                        </s-text>
-                    </s-stack>
+                    {discountType !== "NO_DISCOUNT" && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                            gap="small-300"
+                        >
+                            <s-heading>{t("discountValue")}</s-heading>
+                            <s-text color="subdued">
+                                {isLoading ? "•" : formatDiscount()}
+                            </s-text>
+                        </s-stack>
+                    )}
+                    {bundleData.freeShipping && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                            gap="small-300"
+                        >
+                            <s-heading>{t("freeShipping")}</s-heading>
+                            <s-text color="subdued">Yes</s-text>
+                        </s-stack>
+                    )}
                 </s-stack>
             </s-section>
 

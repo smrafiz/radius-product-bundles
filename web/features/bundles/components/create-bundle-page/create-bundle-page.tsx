@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import {
     BundleCreationForm,
     BundleFormData,
@@ -60,6 +60,13 @@ export function CreateBundlePage({
                 setBundleData: s.setBundleData,
             })),
         );
+
+    // Clean up store on unmount (navigating away)
+    useEffect(() => {
+        return () => {
+            resetBundle();
+        };
+    }, [resetBundle]);
 
     const handleDiscard = useCallback(() => {
         resetBundle(bundleType);

@@ -127,17 +127,30 @@ export function BundleSummary() {
                                 : t("notSet")}
                         </s-text>
                     </s-stack>
-                    <s-stack
-                        alignItems="center"
-                        justifyContent="space-between"
-                        direction="inline"
-                        gap="small-300"
-                    >
-                        <s-heading>{t("discountValue")}</s-heading>
-                        <s-text color="subdued">
-                            {isLoading ? "•" : formatDiscount()}
-                        </s-text>
-                    </s-stack>
+                    {discountTypeField.value !== "NO_DISCOUNT" && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                            gap="small-300"
+                        >
+                            <s-heading>{t("discountValue")}</s-heading>
+                            <s-text color="subdued">
+                                {isLoading ? "•" : formatDiscount()}
+                            </s-text>
+                        </s-stack>
+                    )}
+                    {bundleData.freeShipping && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                            gap="small-300"
+                        >
+                            <s-heading>{t("freeShipping")}</s-heading>
+                            <s-text color="subdued">Yes</s-text>
+                        </s-stack>
+                    )}
                 </s-stack>
             </s-section>
 
