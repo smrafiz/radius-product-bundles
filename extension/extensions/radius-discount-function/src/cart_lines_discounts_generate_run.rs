@@ -29,7 +29,6 @@ fn safe_mul(a: i32, b: i32) -> Option<i32> {
 struct CartBundleConfig {
     bundle_id: String,
     bundle_name: Option<String>,
-    required_line_count: Option<usize>,
 }
 
 /// Bundle config from metafield (trusted - source of truth).
@@ -887,16 +886,8 @@ fn cart_lines_discounts_generate_run(
             continue;
         }
 
-        // For non-BXGY bundles, validate required line count.
-        // Skip for BXGY because same-product BOGO merges into one cart line;
-        // calculate_bxgy_discount validates quantities instead.
-        if !is_bxgy {
-            if let Some(required) = cart_config.required_line_count {
-                if bundle_lines.len() < required {
-                    continue;
-                }
-            }
-        }
+        // Removed required_line_count check — it came from untrusted cart attribute.
+        // Product presence is validated by complete_sets (from metafield product_quantities).
 
         if is_bxgy {
             let bxgy_bundle_name = cart_config.bundle_name.as_deref().unwrap_or("Bundle");

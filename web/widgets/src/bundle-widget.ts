@@ -531,7 +531,6 @@ import type { VolumeContext } from "./lib/types";
                 bundleName: structure?.name || "Bundle",
                 discountType: "NO_DISCOUNT",
                 discountValue: 0,
-                requiredLineCount: 1,
                 minOrderValue: structure?.minOrderValue || 0,
                 maxDiscountAmount: 0,
                 discountApplication: "bundle",
@@ -1334,9 +1333,6 @@ import type { VolumeContext } from "./lib/types";
                     bundleName: this.bundle.name,
                     discountType: structure.discountType || "PERCENTAGE",
                     discountValue: structure.discountValue || 0,
-                    requiredLineCount: this.bundle.products.filter((p) =>
-                        validRoles.includes(p.role),
-                    ).length,
                     minOrderValue: structure.minOrderValue || 0,
                     maxDiscountAmount: structure.maxDiscountAmount || 0,
                     discountApplication:

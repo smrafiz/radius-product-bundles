@@ -142,7 +142,6 @@ export interface DiscountConfig {
     bundleName: string;
     discountType: string;
     discountValue: number;
-    requiredLineCount: number;
     minOrderValue: number;
     maxDiscountAmount: number;
     discountApplication: string;

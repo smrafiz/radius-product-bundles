@@ -96,7 +96,6 @@ import "./scss/radius-bundles.scss";
         bundleName: string;
         discountType: string;
         discountValue: number;
-        requiredLineCount: number;
         minOrderValue: number;
         maxDiscountAmount: number;
         discountApplication: string;
@@ -266,8 +265,7 @@ import "./scss/radius-bundles.scss";
 
                 for (const bundle of bundles) {
                     const itemCount = bundleItemCounts[bundle.bundleId] || 0;
-                    const required = bundle.requiredLineCount || 1;
-                    const hasItems = itemCount >= required;
+                    const hasItems = itemCount >= 1;
                     const isActive = this.isBundleActive(bundle.bundleId);
 
                     if (!hasItems || !isActive) {
@@ -579,11 +577,9 @@ import "./scss/radius-bundles.scss";
 
             bundles.forEach((bundle) => {
                 const itemCount = itemCounts[bundle.bundleId] || 0;
-                const required = bundle.requiredLineCount || 0;
 
                 if (
-                    itemCount >= required &&
-                    required > 0 &&
+                    itemCount >= 1 &&
                     this.cartCleanup.isBundleActive(bundle.bundleId)
                 ) {
                     const name = bundle.bundleName || "this bundle";
