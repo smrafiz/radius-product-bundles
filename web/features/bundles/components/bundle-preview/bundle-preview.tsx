@@ -29,7 +29,6 @@ import {
     useBundleStore,
     VolumeDiscountConfig,
 } from "@/features/bundles";
-import { useShallow } from "zustand/react/shallow";
 import {
     CustomizerStyles,
     getCardRadius,
@@ -38,64 +37,200 @@ import {
     useCustomizerModal,
     useCustomizerStore,
     useSettingsStore,
+    VolumeCalculator,
+    type VolumeLayoutTier,
+    VolumePricingCards,
+    VolumeSlider,
+    VolumeTierList,
 } from "@/features/settings";
 import { useCallback, useMemo } from "react";
-import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
-import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
-import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
-
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
+import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
+import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
+import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
+
 import "@/styles/components/bundle.css";
 
-function VolumePreviewWidget({ config }: { config: VolumeDiscountConfig }) {
-    const { currencyCode } = useShopSettings();
-    const currencySymbol = getCurrencySymbol(currencyCode);
-    const suffix = config.discountType === "PERCENTAGE" ? "%" : currencySymbol;
-    const position = config.discountType === "PERCENTAGE" ? "suffix" : "prefix";
+function buildVolumeLayoutTiers(
+    config: VolumeDiscountConfig,
+    currencyCode: string | undefined,
+): ReadonlyArray<VolumeLayoutTier> {
+    return config.tiers.map((tier, index) => {
+        const isLast = index === config.tiers.length - 1;
+        const qtyLabel =
+            config.openEnded || !isLast
+                ? `${tier.minQuantity}+`
+                : `${tier.minQuantity}`;
+
+        let price = "";
+        let savings: string | undefined;
+
+        if (config.discountType === "PERCENTAGE") {
+            savings = `Save ${Math.round(tier.discount)}%`;
+            price = `${Math.round(tier.discount)}% off`;
+        } else {
+            savings = `Save ${formatPrice(tier.discount, currencyCode)} off`;
+            price = `-${formatPrice(tier.discount, currencyCode)}`;
+        }
+
+        const badge = tier.badge?.text
+            ? { text: tier.badge.text, style: tier.badge.style }
+            : undefined;
+
+        return {
+            qty: tier.minQuantity,
+            discount: tier.discount,
+            price,
+            savings,
+            title: tier.title,
+            subtitle: tier.subtitle,
+            badge,
+            isDefault: !!tier.isDefault,
+        };
+    });
+}
+
+function VolumeAddToCart({
+    styles,
+    cartButtonText,
+}: {
+    styles: CustomizerStyles;
+    cartButtonText?: string;
+}) {
+    const ta = useTranslations("BundleWidget");
+    const bgColor = styles.buttonBgColor || styles.primaryColor;
+    const isOutline = styles.buttonStyle === "outline";
+    const isFullWidth = styles.buttonWidth === "full";
+    const borderRadius = styles.cornerStyle === "modern" ? "8px" : "4px";
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {config.tiers.map((tier, index) => {
-                const isLast = index === config.tiers.length - 1;
-                const nextMin = config.tiers[index + 1]?.minQuantity;
-                const rangeLabel = isLast
-                    ? config.openEnded
-                        ? `${tier.minQuantity}+ units`
-                        : `${tier.minQuantity} units`
-                    : `${tier.minQuantity}–${(nextMin ?? 0) - 1} units`;
-                const discountLabel = position === "suffix"
-                    ? `${tier.discount}${suffix} off`
-                    : `${suffix}${tier.discount} off`;
-
-                return (
-                    <div
-                        key={index}
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            padding: "10px 14px",
-                            borderRadius: 6,
-                            border: "1px solid #e1e3e5",
-                            background: tier.isDefault ? "#f0f7ff" : "#fff",
-                        }}
-                    >
-                        <div>
-                            <div style={{ fontWeight: 600, fontSize: 14 }}>
-                                {tier.title || rangeLabel}
-                            </div>
-                            <div style={{ fontSize: 12, color: "#6d7175" }}>
-                                {rangeLabel}
-                            </div>
-                        </div>
-                        <div style={{ fontWeight: 700, color: "#008060" }}>
-                            {discountLabel}
-                        </div>
-                    </div>
-                );
-            })}
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginTop: "16px",
+                justifyContent: isFullWidth ? "stretch" : "flex-start",
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    border: `1px solid ${styles.borderColor || "#d1d5db"}`,
+                    borderRadius,
+                    overflow: "hidden",
+                    flexShrink: 0,
+                }}
+            >
+                <button
+                    style={{
+                        width: 32,
+                        height: 36,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 16,
+                        color: styles.textColor,
+                    }}
+                    aria-label="Decrease quantity"
+                >
+                    −
+                </button>
+                <span
+                    style={{
+                        width: 32,
+                        height: 36,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: styles.textColor,
+                        borderLeft: `1px solid ${styles.borderColor || "#d1d5db"}`,
+                        borderRight: `1px solid ${styles.borderColor || "#d1d5db"}`,
+                    }}
+                >
+                    1
+                </span>
+                <button
+                    style={{
+                        width: 32,
+                        height: 36,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 16,
+                        color: styles.textColor,
+                    }}
+                    aria-label="Increase quantity"
+                >
+                    +
+                </button>
+            </div>
+            <button
+                style={{
+                    flex: isFullWidth ? 1 : undefined,
+                    padding: "10px 24px",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    borderRadius,
+                    cursor: "pointer",
+                    transition: "opacity 0.2s ease",
+                    backgroundColor: isOutline ? "transparent" : bgColor,
+                    color: isOutline ? bgColor : "#ffffff",
+                    border: isOutline ? `2px solid ${bgColor}` : "none",
+                }}
+            >
+                {cartButtonText || ta("cartButtonTextPlaceholder")}
+            </button>
         </div>
     );
+}
+
+function RenderVolumeLayout({
+    layout,
+    config,
+    styles,
+    currencyCode,
+    firstProduct,
+}: {
+    layout: DisplaySettings["layout"];
+    config: VolumeDiscountConfig;
+    styles: CustomizerStyles;
+    currencyCode?: string;
+    firstProduct?: PreviewProduct;
+}) {
+    const tiers = buildVolumeLayoutTiers(config, currencyCode);
+    const highlightColor = styles.primaryColor;
+    const product = firstProduct
+        ? {
+              title: firstProduct.title,
+              image: firstProduct.image,
+              basePrice: firstProduct.price,
+          }
+        : undefined;
+
+    const layoutProps = { tiers, product, highlightColor, styles };
+
+    switch (layout) {
+        case "VOLUME_PRICING_CARDS":
+            return <VolumePricingCards {...layoutProps} />;
+        case "VOLUME_SLIDER":
+            return <VolumeSlider {...layoutProps} />;
+        case "VOLUME_CALCULATOR":
+            return <VolumeCalculator {...layoutProps} />;
+        case "VOLUME_TIER_LIST":
+        default:
+            return <VolumeTierList {...layoutProps} />;
+    }
 }
 
 function useWidgetStyles(): CustomizerStyles {
@@ -116,7 +251,10 @@ function useWidgetStyles(): CustomizerStyles {
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
     const { selectedItems, bundleData } = useBundleStore(
-        useShallow((s) => ({ selectedItems: s.selectedItems, bundleData: s.bundleData })),
+        useShallow((s) => ({
+            selectedItems: s.selectedItems,
+            bundleData: s.bundleData,
+        })),
     );
     const isBxgy =
         bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
@@ -287,7 +425,10 @@ function useWidgetLabels(): WidgetLabels {
 
 function useBadgeText(labels: WidgetLabels): string {
     const { bundleData, selectedItems } = useBundleStore(
-        useShallow((s) => ({ bundleData: s.bundleData, selectedItems: s.selectedItems })),
+        useShallow((s) => ({
+            bundleData: s.bundleData,
+            selectedItems: s.selectedItems,
+        })),
     );
     const { currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
@@ -346,7 +487,13 @@ function RenderLayout({
     activeDevice?: "desktop" | "tablet" | "mobile";
     bundleType?: string;
 }) {
-    const layoutProps = { products, styles, displayOptions, bundleType, labels };
+    const layoutProps = {
+        products,
+        styles,
+        displayOptions,
+        bundleType,
+        labels,
+    };
 
     // Default values if empty or undefined
     const safeTitle = title?.trim() ? title : "Bundle & Save";
@@ -456,11 +603,16 @@ export function BundlePreview() {
     const ta = useTranslations("Bundles.Creation.Appearance");
     const { appWindowRef } = useCustomizerModal();
     const { displaySettings, bundleData } = useBundleStore(
-        useShallow((s) => ({ displaySettings: s.displaySettings, bundleData: s.bundleData })),
+        useShallow((s) => ({
+            displaySettings: s.displaySettings,
+            bundleData: s.bundleData,
+        })),
     );
     const { currencyCode } = useShopSettings();
     const isVolume = bundleData.type === "VOLUME_DISCOUNT";
-    const volumeConfig = bundleData.volumeTiers as VolumeDiscountConfig | undefined;
+    const volumeConfig = bundleData.volumeTiers as
+        | VolumeDiscountConfig
+        | undefined;
 
     const { setCustomizerSource } = useCustomizerStore();
     const styles = useWidgetStyles();
@@ -583,7 +735,54 @@ export function BundlePreview() {
                     </s-stack>
                     {isVolume ? (
                         volumeConfig && volumeConfig.tiers.length > 0 ? (
-                            <VolumePreviewWidget config={volumeConfig} />
+                            <div className="radius-bundle-widget">
+                                <div className="radius-bundle">
+                                    <div
+                                        className="radius-bundle__inner"
+                                        style={{
+                                            position: "relative",
+                                            backgroundColor:
+                                                styles.backgroundColor,
+                                            borderRadius,
+                                            borderStyle: styles.showBorder
+                                                ? "solid"
+                                                : "none",
+                                            borderWidth: styles.showBorder
+                                                ? "1px"
+                                                : 0,
+                                            borderColor: styles.borderColor,
+                                            boxShadow: shadow,
+                                            padding,
+                                            marginInlineStart: styles.showBorder
+                                                ? "-17px"
+                                                : "-16px",
+                                            marginInlineEnd: styles.showBorder
+                                                ? "-17px"
+                                                : "-16px",
+                                            marginBlockEnd: styles.showBorder
+                                                ? "-17px"
+                                                : "-16px",
+                                        }}
+                                    >
+                                        <RenderVolumeLayout
+                                            layout={displaySettings.layout}
+                                            config={volumeConfig}
+                                            styles={styles}
+                                            currencyCode={currencyCode}
+                                            firstProduct={products[0]}
+                                        />
+                                        {displaySettings.layout !== "VOLUME_SLIDER" &&
+                                            displaySettings.layout !== "VOLUME_CALCULATOR" && (
+                                            <VolumeAddToCart
+                                                styles={styles}
+                                                cartButtonText={
+                                                    displaySettings.cartButtonText
+                                                }
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
                         ) : (
                             <div
                                 style={{

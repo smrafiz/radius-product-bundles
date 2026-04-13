@@ -70,8 +70,12 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
                             labels={previewLabels}
                             hideFooter={
                                 bundleType === "BOGO" ||
-                                bundleType === "BUY_X_GET_Y"
+                                bundleType === "BUY_X_GET_Y" ||
+                                (bundleType === "VOLUME_DISCOUNT" &&
+                                    activeLayout !== "VOLUME_SLIDER" &&
+                                    activeLayout !== "VOLUME_CALCULATOR")
                             }
+                            hidePricing={bundleType === "VOLUME_DISCOUNT"}
                             hideHeader={
                                 bundleType === "BOGO" ||
                                 bundleType === "BUY_X_GET_Y"

@@ -1,44 +1,169 @@
 "use client";
 
 import {
-    BundleTemplateProps,
-    getSpacing,
-    useCustomizerStore,
-    VolumeTier,
+    type BundleTemplateProps,
+    getButtonBgColor,
+    getButtonFontSize,
+    getButtonPadding,
+    getButtonRadius,
+    useEffectiveStyles,
+    usePreviewProducts,
+    VolumeCalculator,
+    VolumePricingCards,
+    VolumeSlider,
+    VolumeTierList,
 } from "@/features/settings";
-import { ProductCard } from "../../bundle-layout/cards/product-card";
-import { SectionDivider } from "../../bundle-layout/elements/section-divider";
-import { VolumeTiers } from "../../bundle-layout/elements/volume-tiers";
+import type { CustomizerStyles } from "@/features/settings";
+import { DEMO_TIERS } from "@/features/settings/constants/customizer.constants";
+import { PLACEHOLDER_PRODUCTS, PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
-const VOLUME_TIERS: ReadonlyArray<VolumeTier> = [
-    { qty: 2, discount: 10, price: "$27.00" },
-    { qty: 5, discount: 20, price: "$24.00" },
-    { qty: 10, discount: 30, price: "$21.00" },
-];
-
-export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
-    const { styles } = useCustomizerStore();
-    const gap = getSpacing(styles.spacing);
-    const highlightColor = styles.primaryColor;
+function VolumeFooter({ styles }: { styles: CustomizerStyles }) {
+    const radius = getButtonRadius(styles.cornerStyle);
+    const fontSize = getButtonFontSize(styles.buttonSize);
+    const padding = getButtonPadding(styles.buttonSize);
+    const bgColor = getButtonBgColor(styles);
+    const isOutline = styles.buttonStyle === "outline";
+    const isFullWidth = styles.buttonWidth === "full";
+    const borderColor = styles.borderColor || "#d1d5db";
 
     return (
         <div
             style={{
                 display: "flex",
-                flexDirection: "column",
-                gap,
+                alignItems: "center",
+                gap: "10px",
+                marginTop: "16px",
+                justifyContent: isFullWidth ? "stretch" : "flex-start",
             }}
         >
-            <ProductCard label="Volume Product" price="$30.00 each" />
-
-            <SectionDivider
-                label="Quantity Tiers"
-                color={styles.textColor}
-                borderColor={styles.borderColor}
-                opacity={0.6}
-            />
-
-            <VolumeTiers tiers={VOLUME_TIERS} highlightColor={highlightColor} />
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    border: `1px solid ${borderColor}`,
+                    borderRadius: radius,
+                    overflow: "hidden",
+                    flexShrink: 0,
+                }}
+            >
+                <button
+                    style={{
+                        width: 32,
+                        height: 36,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 16,
+                        color: styles.textColor,
+                    }}
+                    aria-label="Decrease quantity"
+                >
+                    −
+                </button>
+                <span
+                    style={{
+                        width: 32,
+                        height: 36,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: styles.textColor,
+                        borderLeft: `1px solid ${borderColor}`,
+                        borderRight: `1px solid ${borderColor}`,
+                    }}
+                >
+                    1
+                </span>
+                <button
+                    style={{
+                        width: 32,
+                        height: 36,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 16,
+                        color: styles.textColor,
+                    }}
+                    aria-label="Increase quantity"
+                >
+                    +
+                </button>
+            </div>
+            <button
+                style={{
+                    flex: isFullWidth ? 1 : undefined,
+                    padding,
+                    fontSize,
+                    fontWeight: 600,
+                    borderRadius: radius,
+                    cursor: "pointer",
+                    transition: "opacity 0.2s ease",
+                    backgroundColor: isOutline ? "transparent" : bgColor,
+                    color: isOutline ? bgColor : "#ffffff",
+                    border: isOutline ? `2px solid ${bgColor}` : "none",
+                }}
+            >
+                {PREVIEW_LABELS.addToCartText}
+            </button>
         </div>
+    );
+}
+
+export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
+    const styles = useEffectiveStyles();
+    const highlightColor = styles.primaryColor;
+
+    const products = usePreviewProducts({
+        placeholderProducts: PLACEHOLDER_PRODUCTS,
+        maxCount: 1,
+    });
+
+    const firstProduct = products[0];
+    const productProp = firstProduct
+        ? {
+              title: firstProduct.title,
+              image: firstProduct.image,
+              basePrice: firstProduct.price,
+          }
+        : undefined;
+
+    const layoutProps = {
+        tiers: DEMO_TIERS,
+        product: productProp,
+        highlightColor,
+        styles,
+    };
+
+    const renderLayout = () => {
+        switch (activeLayout) {
+            case "VOLUME_PRICING_CARDS":
+                return <VolumePricingCards {...layoutProps} />;
+            case "VOLUME_SLIDER":
+                return <VolumeSlider {...layoutProps} />;
+            case "VOLUME_CALCULATOR":
+                return <VolumeCalculator {...layoutProps} />;
+            case "VOLUME_TIER_LIST":
+            default:
+                return <VolumeTierList {...layoutProps} />;
+        }
+    };
+
+    const showQtySelector =
+        activeLayout !== "VOLUME_SLIDER" &&
+        activeLayout !== "VOLUME_CALCULATOR";
+
+    return (
+        <>
+            {renderLayout()}
+            {showQtySelector && <VolumeFooter styles={styles} />}
+        </>
     );
 }

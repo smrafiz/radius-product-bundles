@@ -105,6 +105,7 @@ export interface BundleWidgetProps {
     labels?: WidgetLabels;
     hideFooter?: boolean;
     hideHeader?: boolean;
+    hidePricing?: boolean;
     hideOriginalPrice?: boolean;
     children: ReactNode;
 }
