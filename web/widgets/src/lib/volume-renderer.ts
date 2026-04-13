@@ -192,7 +192,7 @@ export function renderVolumeTable(
             ${imageHtml}
             <div class="rb-vol__product-meta">
                 <span class="rb-vol__product-title">${escapeHtml(productTitle)}</span>
-                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / unit</span>` : ""}
+                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / ${escapeHtml(bundleStructure.labels?.volumeUnitLabel || "unit")}</span>` : ""}
             </div>
         </div>
     `;
@@ -300,7 +300,7 @@ export function renderVolumePricingCards(
             ${imageHtml}
             <div class="rb-vol__product-meta">
                 <span class="rb-vol__product-title">${escapeHtml(productTitle)}</span>
-                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / unit</span>` : ""}
+                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / ${escapeHtml(bundleStructure.labels?.volumeUnitLabel || "unit")}</span>` : ""}
             </div>
         </div>
     `;
@@ -386,7 +386,13 @@ export function renderVolumeSlider(
     showComparePrices: boolean,
     showQuantity: boolean,
     lazyLoadImages: boolean,
+    selectQuantityLabel?: string,
+    youSaveLabel?: string,
+    unitLabel?: string,
+    unitsLabel?: string,
 ): void {
+    const u = unitLabel || "unit";
+    const us = unitsLabel || "units";
     const max = sliderMax(config);
     const firstTier = config.tiers[0];
     const initQty = firstTier.minQuantity;
@@ -419,7 +425,7 @@ export function renderVolumeSlider(
     const priceSavingsHtml = showSavings
         ? `<div class="rb-vol-slider__price-savings"${hasSavings ? "" : ' style="display:none"'}>
             <span class="rb-vol-slider__price-savings-amount" style="color:var(--rb-savings-color,#16a34a)">-${escapeHtml(trimMoney(formatMoney(initSavingsAmt)))}</span>
-            <span class="rb-vol-slider__price-savings-label">You save</span>
+            <span class="rb-vol-slider__price-savings-label">${escapeHtml(youSaveLabel || "You save")}</span>
         </div>`
         : "";
 
@@ -427,7 +433,7 @@ export function renderVolumeSlider(
         ? `<div class="rb-vol-slider__price-box">
             <div class="rb-vol-slider__price-left">
                 ${showPrices ? `<span class="rb-vol-slider__price-total">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
-                <span class="rb-vol-slider__price-unit">${escapeHtml(trimMoney(formatMoney(initDiscounted)))} / unit</span>` : ""}
+                <span class="rb-vol-slider__price-unit">${escapeHtml(trimMoney(formatMoney(initDiscounted)))} / ${escapeHtml(u)}</span>` : ""}
                 ${hasSavings && showComparePrices ? `<span class="rb-vol-slider__price-original">${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</span>` : ""}
             </div>
             ${priceSavingsHtml}
@@ -455,8 +461,8 @@ export function renderVolumeSlider(
 
     const sliderQuantityHtml = showQuantity ? `<div class="rb-vol-slider__slider-section">
         <div class="rb-vol-slider__slider-header">
-            <span class="rb-vol-slider__qty-label">Select Quantity</span>
-            <span class="rb-vol-slider__qty-counter" style="color:var(--rb-primary-color,#303030)">${initQty} units</span>
+            <span class="rb-vol-slider__qty-label">${escapeHtml(selectQuantityLabel || "Select Quantity")}</span>
+            <span class="rb-vol-slider__qty-counter" style="color:var(--rb-primary-color,#303030)">${initQty} ${escapeHtml(us)}</span>
         </div>
         <input
             class="rb-vol-slider__slider-track"
@@ -522,7 +528,7 @@ export function initVolumeSlider(
 
         // Update counter
         const counter = el(".rb-vol-slider__qty-counter");
-        if (counter) counter.textContent = `${qty} units`;
+        if (counter) counter.textContent = `${qty} ${bundleStructure.labels?.volumeUnitsLabel || "units"}`;
 
         // Update ATC button text
         if (btnTextEl) {
@@ -557,7 +563,7 @@ export function initVolumeSlider(
 
         // Per unit
         const priceUnit = el(".rb-vol-slider__price-unit");
-        if (priceUnit) priceUnit.textContent = `${trimMoney(formatMoney(discounted))} / unit`;
+        if (priceUnit) priceUnit.textContent = `${trimMoney(formatMoney(discounted))} / ${bundleStructure.labels?.volumeUnitLabel || "unit"}`;
 
         // Original total (strikethrough)
         const priceOrig = el<HTMLElement>(".rb-vol-slider__price-original");
@@ -751,6 +757,11 @@ export function renderVolumeCalculator(
     showComparePrices: boolean,
     showQuantity: boolean,
     lazyLoadImages: boolean,
+    selectQuantityLabel?: string,
+    youSaveLabel?: string,
+    totalCostLabel?: string,
+    costPerUnitLabel?: string,
+    regularPriceLabel?: string,
 ): void {
     const imageHtml = showImages && productImageSrc
         ? `<div class="rb-vol-calc__hero-image">
@@ -795,7 +806,7 @@ export function renderVolumeCalculator(
     const initHasSavings = initTier !== null && initSavings > 0;
 
     const calcQuantityHtml = showQuantity ? `<div class="rb-vol-calc__qty-section">
-        <label class="rb-vol-calc__qty-label" for="rb-calc-qty-input">Enter Quantity</label>
+        <label class="rb-vol-calc__qty-label" for="rb-calc-qty-input">${escapeHtml(selectQuantityLabel || "Select Quantity")}</label>
         <div class="rb-vol-calc__qty-wrap">
             <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-dec aria-label="Decrease quantity">−</button>
             <input
@@ -812,23 +823,23 @@ export function renderVolumeCalculator(
 
     const calcRows = unitPriceCents > 0
         ? `${showPrices ? `<div class="rb-vol-calc__calc-row" data-calc-total>
-                <span class="rb-vol-calc__calc-label">Total Cost</span>
+                <span class="rb-vol-calc__calc-label">${escapeHtml(totalCostLabel || "Total Cost")}</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value" style="color:var(--rb-primary-color,#303030)">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
                 </div>
             </div>` : ""}
             ${showSavings ? `<div class="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"${initHasSavings ? "" : ' style="display:none"'}>
-                <span class="rb-vol-calc__calc-label">You Save</span>
+                <span class="rb-vol-calc__calc-label">${escapeHtml(youSaveLabel || "You Save")}</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value" style="color:var(--rb-savings-color,#16a34a)">${escapeHtml(trimMoney(formatMoney(initSavings)))}</span>
                     <span class="rb-vol-calc__calc-sub"><s>${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</s></span>
                 </div>
             </div>` : ""}
             ${showComparePrices ? `<div class="rb-vol-calc__calc-row" data-calc-cpu${initHasSavings ? "" : ' style="display:none"'}>
-                <span class="rb-vol-calc__calc-label">Cost Per Unit</span>
+                <span class="rb-vol-calc__calc-label">${escapeHtml(costPerUnitLabel || "Cost Per Unit")}</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value">${escapeHtml(trimMoney(formatMoney(initDiscounted)))}</span>
-                    <span class="rb-vol-calc__calc-sub">Regular price <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s></span>
+                    <span class="rb-vol-calc__calc-sub">${escapeHtml(regularPriceLabel || "Regular price dd")} <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s></span>
                 </div>
             </div>` : ""}`
         : "";
@@ -935,7 +946,7 @@ export function initVolumeCalculator(
                 const cpuVal = cpuRow.querySelector(".rb-vol-calc__calc-value");
                 if (cpuVal) cpuVal.textContent = trimMoney(formatMoney(discounted));
                 const cpuSub = cpuRow.querySelector(".rb-vol-calc__calc-sub");
-                if (cpuSub) cpuSub.innerHTML = `Regular price <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s>`;
+                if (cpuSub) cpuSub.innerHTML = `${escapeHtml(bundleStructure.labels?.volumeRegularPriceLabel || "Regular price")} <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s>`;
             }
         }
 

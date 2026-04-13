@@ -1021,6 +1021,11 @@ import type { VolumeContext } from "./lib/types";
                     ctx.showComparePrices,
                     ctx.showQuantity,
                     ctx.lazyLoadImages,
+                    this.bundleStructure.labels?.volumeSelectQuantityLabel,
+                    this.bundleStructure.labels?.volumeYouSaveLabel,
+                    this.bundleStructure.labels?.volumeTotalCostLabel,
+                    this.bundleStructure.labels?.volumeCostPerUnitLabel,
+                    this.bundleStructure.labels?.volumeRegularPriceLabel,
                 );
                 initVolumeCalculator(
                     this.container,
@@ -1068,6 +1073,10 @@ import type { VolumeContext } from "./lib/types";
                     ctx.showComparePrices,
                     ctx.showQuantity,
                     ctx.lazyLoadImages,
+                    this.bundleStructure.labels?.volumeSelectQuantityLabel,
+                    this.bundleStructure.labels?.volumeYouSaveLabel,
+                    this.bundleStructure.labels?.volumeUnitLabel,
+                    this.bundleStructure.labels?.volumeUnitsLabel,
                 );
                 initVolumeSlider(
                     this.container,

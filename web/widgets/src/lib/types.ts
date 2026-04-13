@@ -97,6 +97,13 @@ export interface BundleStructure {
         checklistLockedLabel?: string;
         checklistUnlockedLabel?: string;
         checklistPricingLockedText?: string;
+        volumeSelectQuantityLabel?: string;
+        volumeYouSaveLabel?: string;
+        volumeUnitLabel?: string;
+        volumeUnitsLabel?: string;
+        volumeTotalCostLabel?: string;
+        volumeCostPerUnitLabel?: string;
+        volumeRegularPriceLabel?: string;
     };
 }
 

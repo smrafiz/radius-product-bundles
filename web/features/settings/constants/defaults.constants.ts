@@ -126,6 +126,15 @@ export const DEFAULT_LABELS = {
     checklistUnlockedLabel: "",
     checklistPricingLockedText: "",
 
+    // Volume Discount Labels
+    volumeSelectQuantityLabel: "",
+    volumeYouSaveLabel: "",
+    volumeUnitLabel: "",
+    volumeUnitsLabel: "",
+    volumeTotalCostLabel: "",
+    volumeCostPerUnitLabel: "",
+    volumeRegularPriceLabel: "",
+
     // Cart Banner
     bannerSavingText: "",
     bannerCustomPriceText: "",
@@ -167,6 +176,13 @@ export const LABEL_PLACEHOLDERS: Record<string, string> = {
     checklistLockedLabel: "Unlock by adding all items above",
     checklistUnlockedLabel: "Reward Unlocked",
     checklistPricingLockedText: "Select all items to see your price",
+    volumeSelectQuantityLabel: "Select Quantity",
+    volumeYouSaveLabel: "You save",
+    volumeUnitLabel: "unit",
+    volumeUnitsLabel: "units",
+    volumeTotalCostLabel: "Total Cost",
+    volumeCostPerUnitLabel: "Cost Per Unit",
+    volumeRegularPriceLabel: "Regular price",
     bannerSavingText: "You're saving {discount} with {name}",
     bannerCustomPriceText: "Special price: {price} for {name}",
     bannerFreeShippingQualifyText: "{name} qualifies for free shipping!",
