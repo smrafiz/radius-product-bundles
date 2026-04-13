@@ -752,6 +752,15 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
+    // Limit cart configs to prevent DoS via crafted cart attributes
+    if cart_configs.len() > 50 {
+        log!(
+            "[RadiusDiscount] Too many bundle configs in cart attribute: {}",
+            cart_configs.len()
+        );
+        return Ok(no_discount);
+    }
+
     let metafield = match input.discount().metafield() {
         Some(mf) => mf,
         None => return Ok(no_discount),
