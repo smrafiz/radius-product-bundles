@@ -51,6 +51,15 @@ export interface AppSettingsLabels {
     checklistUnlockedLabel: string;
     checklistPricingLockedText: string;
 
+    // Volume Discount Labels
+    volumeSelectQuantityLabel: string;
+    volumeYouSaveLabel: string;
+    volumeUnitLabel: string;
+    volumeUnitsLabel: string;
+    volumeTotalCostLabel: string;
+    volumeCostPerUnitLabel: string;
+    volumeRegularPriceLabel: string;
+
     // Cart Banner
     bannerSavingText: string;
     bannerCustomPriceText: string;

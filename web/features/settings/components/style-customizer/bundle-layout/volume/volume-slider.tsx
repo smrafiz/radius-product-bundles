@@ -13,6 +13,7 @@ import {
 import { useCallback, useState } from "react";
 
 import "@/styles/components/volume-preview.css";
+import { PREVIEW_LABELS } from "@/shared";
 
 function parseCurrencyPrefix(priceStr: string): string {
     const match = priceStr.match(/^[^0-9]*/);
@@ -52,7 +53,7 @@ function tierSavingsBadgeText(tier: VolumeLayoutTier): string {
     return `Save ${Math.round(tier.discount)}%`;
 }
 
-export function VolumeSlider({ tiers, product, styles, displayOptions }: VolumeLayoutProps) {
+export function VolumeSlider({ tiers, product, styles, displayOptions, labels }: VolumeLayoutProps) {
     const firstTier = tiers[0];
     const initQty = firstTier?.qty ?? 1;
 
@@ -171,7 +172,7 @@ export function VolumeSlider({ tiers, product, styles, displayOptions }: VolumeL
                             -{formatPrice(currencyPrefix, savingsAmt)}
                         </span>
                         <span className="rb-vol-slider__price-savings-label">
-                            You save
+                            {labels?.volumeYouSaveLabel || PREVIEW_LABELS.volumeYouSaveLabel}
                         </span>
                     </div>
                     )}
@@ -182,10 +183,10 @@ export function VolumeSlider({ tiers, product, styles, displayOptions }: VolumeL
             <div className="rb-vol-slider__slider-section">
                 <div className="rb-vol-slider__slider-header">
                     <span className="rb-vol-slider__qty-label">
-                        Select Quantity
+                        {labels?.volumeSelectQuantityLabel || PREVIEW_LABELS.volumeSelectQuantityLabel}
                     </span>
                     <span className="rb-vol-slider__qty-counter">
-                        {qty} units
+                        {qty} {labels?.volumeUnitsLabel || PREVIEW_LABELS.volumeUnitsLabel}
                     </span>
                 </div>
 

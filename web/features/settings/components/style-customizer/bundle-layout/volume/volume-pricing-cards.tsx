@@ -13,6 +13,7 @@ import {
 import { useCallback, useState } from "react";
 
 import "@/styles/components/volume-preview.css";
+import { PREVIEW_LABELS } from "@/shared";
 
 function badgeClass(style?: string): string {
     switch (style) {
@@ -32,6 +33,7 @@ export function VolumePricingCards({
     product,
     styles,
     displayOptions,
+    labels,
 }: VolumeLayoutProps) {
     const defaultIndex = tiers.findIndex((t) => t.isDefault);
     const [selectedIndex, setSelectedIndex] = useState<number>(
@@ -99,7 +101,7 @@ export function VolumePricingCards({
                             {product.title}
                         </span>
                         <span className="rb-vol__product-base-price">
-                            {product.basePrice} / unit
+                            {product.basePrice} / {labels?.volumeUnitLabel || PREVIEW_LABELS.volumeUnitLabel}
                         </span>
                     </div>
                 </div>

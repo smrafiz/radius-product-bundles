@@ -229,6 +229,7 @@ function RenderVolumeLayout({
     currencyCode,
     firstProduct,
     displayOptions,
+    labels,
 }: {
     layout: DisplaySettings["layout"];
     config: VolumeDiscountConfig;
@@ -236,6 +237,7 @@ function RenderVolumeLayout({
     currencyCode?: string;
     firstProduct?: PreviewProduct;
     displayOptions: WidgetDisplayOptions;
+    labels?: WidgetLabels;
 }) {
     const rawBasePrice = firstProduct?.compareAtPrice || firstProduct?.price;
     const numericBasePrice = rawBasePrice
@@ -251,7 +253,7 @@ function RenderVolumeLayout({
           }
         : undefined;
 
-    const layoutProps = { tiers, product, highlightColor, styles, displayOptions };
+    const layoutProps = { tiers, product, highlightColor, styles, displayOptions, labels };
 
     switch (layout) {
         case "VOLUME_PRICING_CARDS":
@@ -827,6 +829,7 @@ export function BundlePreview() {
                                                 currencyCode={currencyCode}
                                                 firstProduct={products[0]}
                                                 displayOptions={displayOptions}
+                                                labels={labels}
                                             />
                                         </BundleWidget>
                                         {displaySettings.layout === "VOLUME_SLIDER" ||

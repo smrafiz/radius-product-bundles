@@ -1,7 +1,7 @@
 import type { BundleType } from "@/features/bundles";
 import type { ComponentType, ReactNode } from "react";
 import { CustomizerStyles, type WidgetLayout } from "@/features/settings";
-import { WidgetDisplayOptions } from "@/shared";
+import { WidgetDisplayOptions, WidgetLabels } from "@/shared";
 
 /**
  * Extended template identifier — BundleType + UI-only templates.
@@ -185,6 +185,7 @@ export interface VolumeLayoutProps {
     highlightColor: string;
     styles: CustomizerStyles;
     displayOptions: WidgetDisplayOptions;
+    labels?: WidgetLabels;
 }
 
 // ═══════════════════════════════════════════════════════════════════

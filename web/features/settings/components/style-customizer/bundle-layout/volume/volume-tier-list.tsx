@@ -13,6 +13,8 @@ import {
 import { useCallback, useState } from "react";
 
 import "@/styles/components/volume-preview.css";
+import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
+
 
 function badgeClass(style?: string): string {
     switch (style) {
@@ -27,7 +29,7 @@ function badgeClass(style?: string): string {
     }
 }
 
-export function VolumeTierList({ tiers, product, styles, displayOptions }: VolumeLayoutProps) {
+export function VolumeTierList({ tiers, product, styles, displayOptions, labels }: VolumeLayoutProps) {
     const defaultIndex = tiers.findIndex((t) => t.isDefault);
     const [selectedIndex, setSelectedIndex] = useState<number>(
         defaultIndex >= 0 ? defaultIndex : 0,
@@ -93,7 +95,7 @@ export function VolumeTierList({ tiers, product, styles, displayOptions }: Volum
                             {product?.title || "Product"}
                         </span>
                         <span className="rb-vol__product-base-price">
-                            {product?.basePrice || "0.00"} / unit
+                            {product?.basePrice || "0.00"} / {labels?.volumeUnitLabel || PREVIEW_LABELS.volumeUnitLabel}
                         </span>
                     </div>
                 </div>

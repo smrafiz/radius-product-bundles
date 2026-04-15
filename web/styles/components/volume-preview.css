@@ -657,8 +657,7 @@
 .rb-vol-calc__qty-label {
     font-size: calc(var(--rb-body-font-size, 14px) - 1px);
     font-weight: 500;
-    color: var(--rb-text-color, #333);
-    opacity: 0.7;
+    color: color-mix(in srgb, var(--rb-text-color,#333) 80%, transparent);
 }
 
 .rb-vol-calc__qty-wrap {

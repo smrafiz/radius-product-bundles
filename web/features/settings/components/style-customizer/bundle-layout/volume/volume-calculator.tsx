@@ -13,6 +13,7 @@ import {
 import { useCallback, useState } from "react";
 
 import "@/styles/components/volume-preview.css";
+import { PREVIEW_LABELS } from "@/shared";
 
 function parseCurrencyPrefix(priceStr: string): string {
     const match = priceStr.match(/^[^0-9]*/);
@@ -47,6 +48,7 @@ export function VolumeCalculator({
     product,
     styles,
     displayOptions,
+    labels,
 }: VolumeLayoutProps) {
     const [qty, setQty] = useState<number>(1);
 
@@ -119,7 +121,7 @@ export function VolumeCalculator({
                     className="rb-vol-calc__qty-label"
                     htmlFor="rb-calc-qty-input"
                 >
-                    Select Quantity
+                    {labels?.volumeSelectQuantityLabel || PREVIEW_LABELS.volumeSelectQuantityLabel}
                 </label>
                 <div className="rb-vol-calc__qty-wrap">
                     <button
@@ -153,7 +155,7 @@ export function VolumeCalculator({
 
             {unitPrice > 0 && (
                 <div className="rb-vol-calc__calc-row" data-calc-total="">
-                    <span className="rb-vol-calc__calc-label">Total Cost</span>
+                    <span className="rb-vol-calc__calc-label">{labels?.volumeTotalCostLabel || PREVIEW_LABELS.volumeTotalCostLabel}</span>
                     <div className="rb-vol-calc__calc-value-wrap">
                         <span
                             className="rb-vol-calc__calc-value"
@@ -172,7 +174,7 @@ export function VolumeCalculator({
                     className="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"
                     style={{ display: hasSavings ? undefined : "none" }}
                 >
-                    <span className="rb-vol-calc__calc-label">You Save</span>
+                    <span className="rb-vol-calc__calc-label">{labels?.volumeYouSaveLabel || PREVIEW_LABELS.volumeYouSaveLabel}</span>
                     <div className="rb-vol-calc__calc-value-wrap">
                         <span
                             className="rb-vol-calc__calc-value"
@@ -196,14 +198,14 @@ export function VolumeCalculator({
                     style={{ display: hasSavings ? undefined : "none" }}
                 >
                     <span className="rb-vol-calc__calc-label">
-                        Cost Per Unit
+                        {labels?.volumeCostPerUnitLabel || PREVIEW_LABELS.volumeCostPerUnitLabel}
                     </span>
                     <div className="rb-vol-calc__calc-value-wrap">
                         <span className="rb-vol-calc__calc-value">
                             {formatPrice(currencyPrefix, discountedUnit)}
                         </span>
                         <span className="rb-vol-calc__calc-sub">
-                            Regular price{" "}
+                            {labels?.volumeRegularPriceLabel || PREVIEW_LABELS.volumeRegularPriceLabel}{" "}
                             <s>{formatPrice(currencyPrefix, unitPrice)}</s>
                         </span>
                     </div>

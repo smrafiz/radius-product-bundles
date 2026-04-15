@@ -8,6 +8,7 @@ import {
     getButtonRadius,
     useEffectiveStyles,
     usePreviewProducts,
+    useSettingsStore,
     VolumeCalculator,
     VolumePricingCards,
     VolumeSlider,
@@ -124,6 +125,14 @@ function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; di
 export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
     const highlightColor = styles.primaryColor;
+    const serverData = useSettingsStore((s) => s.serverData);
+    const savedLabels = serverData?.labels as Record<string, string> | undefined;
+    const labels = {
+        ...PREVIEW_LABELS,
+        ...Object.fromEntries(
+            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
+        ),
+    };
 
     const products = usePreviewProducts({
         placeholderProducts: PLACEHOLDER_PRODUCTS,
@@ -145,6 +154,7 @@ export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
         highlightColor,
         styles,
         displayOptions: DEFAULT_DISPLAY_OPTIONS,
+        labels,
     };
 
     const renderLayout = () => {
