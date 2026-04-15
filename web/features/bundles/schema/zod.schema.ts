@@ -27,7 +27,11 @@ const volumeTierSchema = z.object({
         (v) => (typeof v === "number" && isNaN(v) ? undefined : v),
         z.number({ error: "Discount is required" })
             .min(0, "Discount cannot be negative")
-            .max(999999.99, "Discount exceeds maximum"),
+            .max(999999.99, "Discount exceeds maximum")
+            .refine(
+                (v) => /^\d+(\.\d{1,2})?$/.test(String(v)),
+                "Maximum 2 decimal places allowed",
+            ),
     ),
     title: z
         .string()
@@ -303,6 +307,30 @@ export function createBundleSchema(v: T) {
                         path: ["discountValue"],
                     });
                 }
+            }
+
+            if (!/^\d+(\.\d{1,2})?$/.test(String(discountValue))) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("MAX_DECIMAL_PLACES"),
+                    path: ["discountValue"],
+                });
+            }
+
+            if (data.minOrderValue != null && !/^\d+(\.\d{1,2})?$/.test(String(data.minOrderValue))) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("MAX_DECIMAL_PLACES"),
+                    path: ["minOrderValue"],
+                });
+            }
+
+            if (data.maxDiscountAmount != null && !/^\d+(\.\d{1,2})?$/.test(String(data.maxDiscountAmount))) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("MAX_DECIMAL_PLACES"),
+                    path: ["maxDiscountAmount"],
+                });
             }
         })
         .superRefine((data, ctx) => {

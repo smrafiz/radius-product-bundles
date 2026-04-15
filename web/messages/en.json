@@ -138,7 +138,8 @@
     "SCHEDULED_DATES_REQUIRED": "Scheduled bundles require both start and end dates",
     "MAX_PRODUCTS_20": "Cannot have more than 20 products in a bundle",
     "GROUP_NAME_REQUIRED": "Group name is required",
-    "FILL_REQUIRED_FIELDS": "Please fill in all required fields"
+    "FILL_REQUIRED_FIELDS": "Please fill in all required fields",
+    "MAX_DECIMAL_PLACES": "Maximum 2 decimal places allowed"
   },
   "Dashboard": {
     "title": "Welcome to Radius Bundles",

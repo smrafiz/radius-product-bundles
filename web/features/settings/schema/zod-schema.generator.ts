@@ -105,10 +105,12 @@ function buildFieldSchema(field: FieldConfig): z.ZodTypeAny {
     }
 }
 
+type Translator = (key: string) => string;
+
 /**
  * Generates the complete app settings Zod schema from config
  */
-export function generateSettingsSchema() {
+export function generateSettingsSchema(v?: Translator) {
     const schemaShape: Record<string, z.ZodTypeAny> = {};
     const nestedSchemas: Record<string, Record<string, z.ZodTypeAny>> = {};
 
@@ -142,7 +144,31 @@ export function generateSettingsSchema() {
     // Add globalStyles
     schemaShape.globalStyles = globalStylesSchema.optional();
 
-    return z.object(schemaShape);
+    return z.object(schemaShape).superRefine((data, ctx) => {
+        const discountValue = (data as any).defaultDiscountValue;
+        const discountType = (data as any).defaultDiscountType;
+
+        if (typeof discountValue === "number") {
+            if (!/^\d+(\.\d{1,2})?$/.test(String(discountValue))) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: v?.("MAX_DECIMAL_PLACES") ?? "Maximum 2 decimal places allowed",
+                    path: ["defaultDiscountValue"],
+                });
+            }
+
+            if (discountType === "PERCENTAGE" && discountValue > 100) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.too_big,
+                    maximum: 100,
+                    type: "number",
+                    inclusive: true,
+                    message: v?.("INVALID_PERCENTAGE") ?? "Percentage discount cannot exceed 100%",
+                    path: ["defaultDiscountValue"],
+                });
+            }
+        }
+    });
 }
 
 /**

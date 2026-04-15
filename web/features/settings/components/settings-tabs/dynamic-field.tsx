@@ -149,6 +149,7 @@ function DynamicFieldInner({
                     onInput={handleChange}
                     min={config.min}
                     max={config.max}
+                    step={config.step}
                     details={details}
                     readOnly={config.readOnly}
                     error={error}

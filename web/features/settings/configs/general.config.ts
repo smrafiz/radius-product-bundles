@@ -40,15 +40,11 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     details: "Default percentage or fixed amount",
                     defaultValue: 10,
                     min: 0,
-                    max: 100,
+                    step: 0.01,
                     validation: {
                         min: {
                             value: 0,
                             message: "Discount value must be at least 0",
-                        },
-                        max: {
-                            value: 100,
-                            message: "Discount value cannot exceed 100",
                         },
                     },
                 },

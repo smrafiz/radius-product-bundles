@@ -182,7 +182,7 @@ export function BxgyDiscountSettings() {
                             : getDiscountValueLabel()
                     }
                     value={discountValue?.toString() || ""}
-                    step={discountType === "PERCENTAGE" ? 0.01 : 1}
+                    step={0.01}
                     min={0}
                     placeholder="0"
                     prefix={getPrefix()}
@@ -190,26 +190,7 @@ export function BxgyDiscountSettings() {
                     max={discountType === "PERCENTAGE" ? 99.99 : undefined}
                     onInput={(event: Event) => {
                         const target = event.target as HTMLInputElement;
-                        const raw = target.value;
-                        const value =
-                            discountType === "PERCENTAGE" && raw !== ""
-                                ? String(
-                                      Math.trunc(parseFloat(raw) * 100) / 100,
-                                  )
-                                : raw;
-                        handleDiscountValueChange(value);
-                    }}
-                    onBlur={(event: Event) => {
-                        if (discountType === "PERCENTAGE") {
-                            const target = event.target as HTMLInputElement;
-                            const raw = target.value;
-                            if (raw !== "") {
-                                const truncated = String(
-                                    Math.trunc(parseFloat(raw) * 100) / 100,
-                                );
-                                handleDiscountValueChange(truncated);
-                            }
-                        }
+                        handleDiscountValueChange(target.value);
                         createBlurHandler("discountValue")();
                     }}
                     error={getFieldError("discountValue")}

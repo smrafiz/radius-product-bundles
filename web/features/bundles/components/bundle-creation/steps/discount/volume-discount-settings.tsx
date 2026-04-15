@@ -130,6 +130,8 @@ function VolumeTierCard({
                                                     ? String(tier.discount)
                                                     : ""
                                             }
+                                            step={0.01}
+                                            min={0}
                                             suffix={suffix}
                                             details="Discount applied when this tier is activated."
                                             error={discountError}

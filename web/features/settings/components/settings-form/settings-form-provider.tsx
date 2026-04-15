@@ -2,13 +2,14 @@
 
 import {
     AppSettingsFormData,
-    appSettingsSchema,
     mergeWithDefaults,
     SettingsFormProviderProps,
 } from "@/features/settings";
-import { useEffect, useRef } from "react";
+import { generateSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
+import { useEffect, useMemo, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Provides form context for app settings.
@@ -19,14 +20,14 @@ export function SettingsFormProvider({
     onDirtyChange,
 }: SettingsFormProviderProps) {
     const isInitialized = useRef(false);
+    const v = useTranslations("Validation");
+    const schema = useMemo(() => generateSettingsSchema(v), [v]);
 
     // Merge initial data with config-driven defaults
     const defaultValues = mergeWithDefaults(initialData);
 
     const form = useForm<AppSettingsFormData>({
-        resolver: zodResolver(
-            appSettingsSchema,
-        ) as Resolver<AppSettingsFormData>,
+        resolver: zodResolver(schema) as Resolver<AppSettingsFormData>,
         defaultValues,
         mode: "onChange",
     });

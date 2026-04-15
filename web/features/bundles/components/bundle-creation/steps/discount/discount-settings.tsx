@@ -168,7 +168,7 @@ export function DiscountSettings() {
                     <s-number-field
                         label={getDiscountValueLabel()}
                         value={discountValue?.toString() || ""}
-                        step={discountType === "PERCENTAGE" ? 0.01 : 1}
+                        step={0.01}
                         min={0}
                         placeholder="0"
                         prefix={getPrefix()}
@@ -176,29 +176,7 @@ export function DiscountSettings() {
                         max={discountType === "PERCENTAGE" ? 99.99 : undefined}
                         onInput={(event: Event) => {
                             const target = event.target as HTMLInputElement;
-                            const raw = target.value;
-                            const value =
-                                discountType === "PERCENTAGE" && raw !== ""
-                                    ? String(
-                                          Math.trunc(parseFloat(raw) * 100) /
-                                              100,
-                                      )
-                                    : raw;
-                            handleDiscountValueChange(value);
-                        }}
-                        onBlur={(event: Event) => {
-                            if (discountType === "PERCENTAGE") {
-                                const target =
-                                    event.target as HTMLInputElement;
-                                const raw = target.value;
-                                if (raw !== "") {
-                                    const truncated = String(
-                                        Math.trunc(parseFloat(raw) * 100) /
-                                            100,
-                                    );
-                                    handleDiscountValueChange(truncated);
-                                }
-                            }
+                            handleDiscountValueChange(target.value);
                             createBlurHandler("discountValue")();
                         }}
                         error={getFieldError("discountValue")}
@@ -213,7 +191,7 @@ export function DiscountSettings() {
                         <s-number-field
                             label={t("minOrderValue")}
                             value={minOrderValue?.toString() || ""}
-                            step={1}
+                            step={0.01}
                             min={0}
                             placeholder="0.00"
                             prefix={getCurrency()}
@@ -221,8 +199,8 @@ export function DiscountSettings() {
                                 const target =
                                     event.target as HTMLInputElement;
                                 handleMinOrderValueChange(target.value);
+                                createBlurHandler("minOrderValue")();
                             }}
-                            onBlur={createBlurHandler("minOrderValue")}
                             error={getFieldError("minOrderValue")}
                         />
                         <s-text tone="neutral">
@@ -235,18 +213,16 @@ export function DiscountSettings() {
                             <s-number-field
                                 label={t("maxDiscount")}
                                 value={maxDiscountAmount?.toString() || ""}
-                                step={1}
+                                step={0.01}
                                 min={0}
                                 placeholder={t("noLimit")}
                                 prefix={getCurrency()}
                                 onInput={(event: Event) => {
                                     const target =
                                         event.target as HTMLInputElement;
-                                    handleMaxDiscountAmountChange(
-                                        target.value,
-                                    );
+                                    handleMaxDiscountAmountChange(target.value);
+                                    createBlurHandler("maxDiscountAmount")();
                                 }}
-                                onBlur={createBlurHandler("maxDiscountAmount")}
                                 error={getFieldError("maxDiscountAmount")}
                             />
                             <s-text tone="neutral">

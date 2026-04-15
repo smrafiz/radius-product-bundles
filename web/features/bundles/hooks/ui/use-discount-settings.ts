@@ -85,7 +85,10 @@ export function useDiscountSettings() {
     const handleDiscountValueChange = useCallback(
         (value: string) => {
             const numValue = value === "" ? undefined : parseFloat(value);
-            setValue("discountValue", numValue, { shouldDirty: true });
+            setValue("discountValue", numValue, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
             setBundleData({ discountValue: numValue });
             markDirty();
             triggerSaveBar();
@@ -99,7 +102,10 @@ export function useDiscountSettings() {
     const handleMinOrderValueChange = useCallback(
         (value: string) => {
             const numValue = value === "" ? undefined : parseFloat(value);
-            setValue("minOrderValue", numValue, { shouldDirty: true });
+            setValue("minOrderValue", numValue, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
             setBundleData({ minOrderValue: numValue });
             markDirty();
             triggerSaveBar();
@@ -113,7 +119,10 @@ export function useDiscountSettings() {
     const handleMaxDiscountAmountChange = useCallback(
         (value: string) => {
             const numValue = value === "" ? undefined : parseFloat(value);
-            setValue("maxDiscountAmount", numValue, { shouldDirty: true });
+            setValue("maxDiscountAmount", numValue, {
+                shouldDirty: true,
+                shouldValidate: true,
+            });
             setBundleData({ maxDiscountAmount: numValue });
             markDirty();
             triggerSaveBar();
@@ -180,6 +189,7 @@ export function useDiscountSettings() {
         },
         [markFieldTouched, trigger],
     );
+
 
     return {
         // Field values

@@ -137,7 +137,8 @@
         "SCHEDULED_DATES_REQUIRED": "Offres groupées programmées : dates de début et de fin requises",
         "MAX_PRODUCTS_20": "Une offre groupée ne peut pas contenir plus de 20 produits",
         "GROUP_NAME_REQUIRED": "Nom du groupe requis",
-        "FILL_REQUIRED_FIELDS": "Veuillez remplir tous les champs obligatoires."
+        "FILL_REQUIRED_FIELDS": "Veuillez remplir tous les champs obligatoires.",
+        "MAX_DECIMAL_PLACES": "2 décimales maximum autorisées"
     },
     "Dashboard": {
         "title": "Bienvenue dans Radius Bundles",
