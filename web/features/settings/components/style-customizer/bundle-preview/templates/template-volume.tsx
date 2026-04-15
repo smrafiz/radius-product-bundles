@@ -4,6 +4,7 @@ import {
     type BundleTemplateProps,
     getButtonBgColor,
     getButtonFontSize,
+    getButtonHeight,
     getButtonPadding,
     getButtonRadius,
     useEffectiveStyles,
@@ -24,6 +25,7 @@ function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; di
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
     const padding = getButtonPadding(styles.buttonSize);
+    const btnHeight = getButtonHeight(styles.buttonSize);
     const bgColor = getButtonBgColor(styles);
     const isOutline = styles.buttonStyle === "outline";
     const isFullWidth = styles.buttonWidth === "full";
@@ -52,8 +54,8 @@ function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; di
             >
                 <button
                     style={{
-                        width: 32,
-                        height: 36,
+                        width: 36,
+                        height: btnHeight,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -69,8 +71,8 @@ function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; di
                 </button>
                 <span
                     style={{
-                        width: 32,
-                        height: 36,
+                        width: 36,
+                        height: btnHeight,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -85,8 +87,8 @@ function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; di
                 </span>
                 <button
                     style={{
-                        width: 32,
-                        height: 36,
+                        width: 36,
+                        height: btnHeight,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",

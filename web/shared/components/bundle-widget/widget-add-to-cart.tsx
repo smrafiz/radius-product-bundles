@@ -6,6 +6,7 @@ import {
     getButtonFontSize,
     getButtonPadding,
     getButtonRadius,
+    getButtonHeight,
 } from "@/features/settings";
 import { PREVIEW_LABELS } from "@/shared";
 
@@ -19,6 +20,7 @@ export function WidgetAddToCart({
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
     const padding = getButtonPadding(styles.buttonSize);
+    const btnHeight = getButtonHeight(styles.buttonSize);
     const bgColor = getButtonBgColor(styles);
 
     const textColor = "#ffffff";
@@ -34,7 +36,7 @@ export function WidgetAddToCart({
                     justifyContent: "center",
                     alignItems: "center",
                     width: isFullWidth ? "100%" : "auto",
-                    padding,
+                    height: btnHeight,
                     fontSize,
                     fontWeight: 600,
                     borderRadius: radius,

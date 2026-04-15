@@ -631,7 +631,7 @@ export const TEXT_SIZE_VALUES = {
  * Maps button size presets to styles.
  */
 export const BUTTON_SIZE_VALUES = {
-    small: { padding: "8px 16px", fontSize: 14 },
-    medium: { padding: "12px 24px", fontSize: 16 },
-    large: { padding: "16px 32px", fontSize: 18 },
+    small: { padding: "8px 16px", fontSize: 14, height: 36 },
+    medium: { padding: "12px 24px", fontSize: 16, height: 44 },
+    large: { padding: "16px 32px", fontSize: 18, height: 52 },
 } as const;

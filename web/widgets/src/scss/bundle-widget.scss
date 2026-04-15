@@ -128,12 +128,13 @@
 
     &__add-to-cart {
         width: var(--rb-button-width, auto);
-        padding: var(--rb-button-padding);
+        height: var(--rb-button-height, 44px);
         background: var(--rb-button-bg);
         color: var(--rb-button-text);
         border: var(--rb-button-border);
         border-radius: var(--rb-border-radius);
         font-size: var(--rb-button-font-size);
+        padding: var(--rb-button-padding);
         font-weight: 600;
         cursor: pointer;
         transition: all var(--rb-transition);

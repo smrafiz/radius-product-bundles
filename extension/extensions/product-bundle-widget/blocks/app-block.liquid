@@ -678,12 +678,15 @@
 {% when 'small' %}
 --rb-button-padding:8px 16px;
 --rb-button-font-size:14px;
+--rb-button-height:36px;
 {% when 'large' %}
 --rb-button-padding:16px 32px;
 --rb-button-font-size:18px;
+--rb-button-height:52px;
 {% else %}
 --rb-button-padding:12px 24px;
 --rb-button-font-size:16px;
+--rb-button-height:44px;
 {% endcase %}
 {% if button_style == 'outline' %}
 --rb-button-bg:transparent;
@@ -751,7 +754,7 @@
 {% if g_tablet.gridColumns %}--rb-grid-columns: {{ g_tablet.gridColumns }};{% endif %}
 {% if g_tablet.slidesPerView %}--rb-slides-per-view: {{ g_tablet.slidesPerView }};{% endif %}
 {% if g_tablet.splitDealStyle %}--rb-split-deal-direction: {{ g_tablet.splitDealStyle }};{% if g_tablet.splitDealStyle == 'column' %}--rb-split-deal-grid-cols:1;{% else %}--rb-split-deal-grid-cols:2;{% endif %}{% endif %}
-{% if g_tablet.buttonSize %}{% case g_tablet.buttonSize %}{% when 'small' %}--rb-button-padding:8px 16px;--rb-button-font-size:14px;{% when 'large' %}--rb-button-padding:16px 32px;--rb-button-font-size:18px;{% else %}--rb-button-padding:12px 24px;--rb-button-font-size:16px;{% endcase %}{% endif %}
+{% if g_tablet.buttonSize %}{% case g_tablet.buttonSize %}{% when 'small' %}--rb-button-padding:8px 16px;--rb-button-font-size:14px;--rb-button-height:36px;{% when 'large' %}--rb-button-padding:16px 32px;--rb-button-font-size:18px;--rb-button-height:52px;{% else %}--rb-button-padding:12px 24px;--rb-button-font-size:16px;--rb-button-height:44px;{% endcase %}{% endif %}
 }
 }
 {% endif %}
@@ -768,7 +771,7 @@
 {% if g_mobile.gridColumns %}--rb-grid-columns: {{ g_mobile.gridColumns }};{% endif %}
 {% if g_mobile.slidesPerView %}--rb-slides-per-view: {{ g_mobile.slidesPerView }};{% endif %}
 {% if g_mobile.splitDealStyle %}--rb-split-deal-direction: {{ g_mobile.splitDealStyle }};{% if g_mobile.splitDealStyle == 'column' %}--rb-split-deal-grid-cols:1;{% else %}--rb-split-deal-grid-cols:2;{% endif %}{% endif %}
-{% if g_mobile.buttonSize %}{% case g_mobile.buttonSize %}{% when 'small' %}--rb-button-padding:8px 16px;--rb-button-font-size:14px;{% when 'large' %}--rb-button-padding:16px 32px;--rb-button-font-size:18px;{% else %}--rb-button-padding:12px 24px;--rb-button-font-size:16px;{% endcase %}{% endif %}
+{% if g_mobile.buttonSize %}{% case g_mobile.buttonSize %}{% when 'small' %}--rb-button-padding:8px 16px;--rb-button-font-size:14px;--rb-button-height:36px;{% when 'large' %}--rb-button-padding:16px 32px;--rb-button-font-size:18px;--rb-button-height:52px;{% else %}--rb-button-padding:12px 24px;--rb-button-font-size:16px;--rb-button-height:44px;{% endcase %}{% endif %}
 }
 }
 {% endif %}

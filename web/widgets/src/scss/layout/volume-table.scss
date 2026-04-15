@@ -266,7 +266,7 @@
         border-radius: var(--rb-border-radius, 8px);
         overflow: hidden;
         flex-shrink: 0;
-        height: 44px;
+        height: var(--rb-button-height, 44px);
     }
 
     &__qty-selector:focus-within {
