@@ -89,7 +89,7 @@ export function WidgetPosition() {
                 <s-text-field
                     label={t("offerTitle")}
                     value={displaySettings.title || ""}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
                         handleTitleChange(target.value);
                     }}
@@ -102,7 +102,7 @@ export function WidgetPosition() {
                 <s-text-area
                     label={t("offerSubtitle")}
                     value={displaySettings.subtitle || ""}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
                         handleSubtitleChange(target.value);
                     }}
@@ -116,7 +116,7 @@ export function WidgetPosition() {
                 <s-text-field
                     label={t("addToCartText")}
                     value={displaySettings.cartButtonText || ""}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
                         handleCartButtonTextChange(target.value);
                     }}

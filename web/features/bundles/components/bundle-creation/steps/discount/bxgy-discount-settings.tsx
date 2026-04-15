@@ -188,7 +188,7 @@ export function BxgyDiscountSettings() {
                     prefix={getPrefix()}
                     suffix={getSuffix()}
                     max={discountType === "PERCENTAGE" ? 99.99 : undefined}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.target as HTMLInputElement;
                         const raw = target.value;
                         const value =

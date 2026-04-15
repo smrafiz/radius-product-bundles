@@ -195,7 +195,7 @@ export function ProductItem({
                                     value={(product.quantity || 1).toString()}
                                     step={1}
                                     min={1}
-                                    onChange={(event: Event) => {
+                                    onInput={(event: Event) => {
                                         const target =
                                             event.target as HTMLInputElement;
                                         const value = target.value;

@@ -52,8 +52,6 @@ export function BundleFormProvider({
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);
     const settingsApplied = useRef(false);
-    const hasResetRef = useRef(false);
-
     const serverData = useSettingsStore((s) => s.serverData);
     const isSettingsLoading = useSettingsStore((s) => s.isLoading);
     const settings = useSettingsStore.getState().getEffectiveData();
@@ -144,12 +142,18 @@ export function BundleFormProvider({
                 resetDirty();
             }, 300);
         }
+
+        return () => {
+            isInitialized.current = false;
+        };
     }, []);
 
-    // Reset form once after initial data loads in edit mode
+    // Reset form when initial data is available in edit mode
     useEffect(() => {
-        if (!isEditMode || !initialData || hasResetRef.current) return;
-        hasResetRef.current = true;
+        if (!isEditMode || !initialData) {
+            return;
+        }
+
         form.reset(
             {
                 name: initialData.name || "",

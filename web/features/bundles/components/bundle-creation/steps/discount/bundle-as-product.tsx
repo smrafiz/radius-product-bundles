@@ -141,7 +141,7 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                         name="productTitle"
                         placeholder="Bundle Product #5"
                         value={productTitle || ""}
-                        onChange={(event: Event) => {
+                        onInput={(event: Event) => {
                             const target = event.target as HTMLInputElement;
                             handleTitleChange(target.value);
                         }}

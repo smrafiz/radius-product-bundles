@@ -32,20 +32,18 @@ const isProductNode = (node: any): node is ProductNode => {
 
 export function useEditBundle(bundleId: string) {
     const app = useAppBridge();
-    const { setDisplaySettings, setSelectedItems, setBundleData, resetBundle } =
+    const { setDisplaySettings, setSelectedItems, setBundleData } =
         useBundleStore(
             useShallow((s) => ({
                 setDisplaySettings: s.setDisplaySettings,
                 setSelectedItems: s.setSelectedItems,
                 setBundleData: s.setBundleData,
-                resetBundle: s.resetBundle,
             })),
         );
 
-    // Reset store when bundleId changes to prevent data bleed from previous bundle
-    useEffect(() => {
-        resetBundle();
-    }, [bundleId, resetBundle]);
+    // Note: data bleed between bundles is prevented by key={bundleId} on BundleFormProvider
+    // which remounts the entire form tree. No resetBundle() needed here — it causes
+    // a flash of DRAFT status before useBundleDataSync overwrites with correct data.
 
     // Bundle detail query
     const {

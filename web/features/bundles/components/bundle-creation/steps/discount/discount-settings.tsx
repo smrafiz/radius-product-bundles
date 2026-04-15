@@ -174,7 +174,7 @@ export function DiscountSettings() {
                         prefix={getPrefix()}
                         suffix={getSuffix()}
                         max={discountType === "PERCENTAGE" ? 99.99 : undefined}
-                        onChange={(event: Event) => {
+                        onInput={(event: Event) => {
                             const target = event.target as HTMLInputElement;
                             const raw = target.value;
                             const value =
@@ -217,7 +217,7 @@ export function DiscountSettings() {
                             min={0}
                             placeholder="0.00"
                             prefix={getCurrency()}
-                            onChange={(event: Event) => {
+                            onInput={(event: Event) => {
                                 const target =
                                     event.target as HTMLInputElement;
                                 handleMinOrderValueChange(target.value);
@@ -239,7 +239,7 @@ export function DiscountSettings() {
                                 min={0}
                                 placeholder={t("noLimit")}
                                 prefix={getCurrency()}
-                                onChange={(event: Event) => {
+                                onInput={(event: Event) => {
                                     const target =
                                         event.target as HTMLInputElement;
                                     handleMaxDiscountAmountChange(
