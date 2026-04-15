@@ -4,7 +4,6 @@ import {
     CustomizerStyles,
     getButtonBgColor,
     getButtonFontSize,
-    getButtonPadding,
     getButtonRadius,
     getButtonHeight,
 } from "@/features/settings";
@@ -19,7 +18,6 @@ export function WidgetAddToCart({
 }) {
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
-    const padding = getButtonPadding(styles.buttonSize);
     const btnHeight = getButtonHeight(styles.buttonSize);
     const bgColor = getButtonBgColor(styles);
 

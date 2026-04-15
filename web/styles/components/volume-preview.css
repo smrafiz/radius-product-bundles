@@ -704,11 +704,10 @@
     background: var(--rb-background-color, #fff);
     border: none;
     box-shadow: none;
-    border-left: 1.5px solid var(--rb-border-color, #e5e7eb);
-    border-right: 1.5px solid var(--rb-border-color, #e5e7eb);
+    border-left: 2px solid var(--rb-border-color, #e5e7eb);
+    border-right: 2px solid var(--rb-border-color, #e5e7eb);
     padding: 14px 8px;
     outline: none;
-    -moz-appearance: textfield;
 }
 
 .rb-vol-calc__qty-input::-webkit-outer-spin-button,

@@ -37,22 +37,10 @@ export function VolumeTierList({ tiers, product, styles, displayOptions, labels 
 
     const selectTier = useCallback((i: number) => setSelectedIndex(i), []);
 
-    const placeholderKeys = Object.keys(PLACEHOLDER_IMAGES).map(Number);
-    const stablePlaceholder = product
-        ? PLACEHOLDER_IMAGES[
-                placeholderKeys[
-                product.title
-                    .split("")
-                    .reduce((acc, c) => acc + c.charCodeAt(0), 0) %
-                placeholderKeys.length
-                    ] as keyof typeof PLACEHOLDER_IMAGES
-            ]
-        : PLACEHOLDER_IMAGES[1];
-
     const imageSrc =
         product?.image && product.image.trim() !== ""
             ? product.image
-            : stablePlaceholder;
+            : PLACEHOLDER_IMAGES[3];
 
     const imageEl =
         <img
@@ -60,7 +48,7 @@ export function VolumeTierList({ tiers, product, styles, displayOptions, labels 
             alt={product?.title || "Product"}
             loading="lazy"
             onError={(e) => {
-                e.currentTarget.src = PLACEHOLDER_IMAGES[1];
+                e.currentTarget.src = PLACEHOLDER_IMAGES[3];
             }}
         />;
 

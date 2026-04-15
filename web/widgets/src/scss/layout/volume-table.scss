@@ -311,7 +311,6 @@
         background: transparent;
         height: 100%;
         outline: none;
-        -moz-appearance: textfield;
 
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
@@ -844,11 +843,10 @@
         background: var(--rb-background-color, #fff);
         border: none;
         box-shadow: none;
-        border-left: 1.5px solid var(--rb-border-color, #e5e7eb);
-        border-right: 1.5px solid var(--rb-border-color, #e5e7eb);
+        border-left: 2px solid var(--rb-border-color, #e5e7eb);
+        border-right: 2px solid var(--rb-border-color, #e5e7eb);
         padding: 14px 16px;
         outline: none;
-        -moz-appearance: textfield;
 
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
