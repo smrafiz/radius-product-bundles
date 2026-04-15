@@ -228,6 +228,28 @@ export function BundlePreviewStatus() {
                     </div>
                 </s-popover>
 
+                {mode === "edit" &&
+                    bundleData.status &&
+                    bundleData.status !== "ACTIVE" && (
+                        <s-banner
+                            tone={
+                                bundleData.status === "SCHEDULED"
+                                    ? "info"
+                                    : "warning"
+                            }
+                        >
+                            {t(
+                                bundleData.status === "DRAFT"
+                                    ? "notLiveDraft"
+                                    : bundleData.status === "PAUSED"
+                                      ? "notLivePaused"
+                                      : bundleData.status === "ARCHIVED"
+                                        ? "notLiveArchived"
+                                        : "notLiveScheduled",
+                            )}
+                        </s-banner>
+                    )}
+
                 {bundleData.status === "SCHEDULED" && (
                     <s-stack gap="small">
                         <s-text color="subdued">{t("dateRangeHint")}</s-text>

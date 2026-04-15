@@ -385,6 +385,10 @@
     "Schedule": {
       "status": "Bundle status",
       "statusTooltip": "Shows the current state of this bundle and how it appears in your store.",
+      "notLiveDraft": "This bundle is a draft and will not be displayed on the storefront until its status is set to Active.",
+      "notLivePaused": "This bundle is paused and is hidden from the storefront. Set status to Active to resume.",
+      "notLiveArchived": "This bundle is archived and will not be displayed on the storefront.",
+      "notLiveScheduled": "This bundle will go live automatically on the scheduled start date.",
       "setDates": "Set schedule dates",
       "resetDates": "Reset dates",
       "scheduleBundle": "Schedule bundle",
