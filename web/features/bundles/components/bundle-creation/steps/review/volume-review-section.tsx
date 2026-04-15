@@ -84,11 +84,11 @@ export function VolumeReviewSection() {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>Volume Discount Tiers</s-heading>
+                        <s-heading>{t("volumeTiersHeading")}</s-heading>
                         <s-badge tone="info">
                             {discountType === "PERCENTAGE"
-                                ? "Percentage"
-                                : "Fixed Amount"}
+                                ? t("percentage")
+                                : t("fixedAmount")}
                         </s-badge>
                     </s-stack>
 

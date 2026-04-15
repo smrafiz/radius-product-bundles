@@ -128,11 +128,11 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                         bundleType.features.length > 0 && (
                                             <s-unordered-list>
                                                 {bundleType.features.map(
-                                                    (feature, index) => (
+                                                    (_, index) => (
                                                         <s-list-item
                                                             key={index}
                                                         >
-                                                            {feature}
+                                                            {tt(`${bundleType.id}.features.${index}`)}
                                                         </s-list-item>
                                                     ),
                                                 )}

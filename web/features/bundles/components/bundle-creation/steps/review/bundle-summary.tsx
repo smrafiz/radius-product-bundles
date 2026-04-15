@@ -148,7 +148,7 @@ export function BundleSummary() {
                             gap="small-300"
                         >
                             <s-heading>{t("freeShipping")}</s-heading>
-                            <s-text color="subdued">Yes</s-text>
+                            <s-text color="subdued">{t("yes")}</s-text>
                         </s-stack>
                     )}
                 </s-stack>

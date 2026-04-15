@@ -584,7 +584,13 @@
                 "free": "GRATUIT",
                 "deal": "Offre",
                 "sameProductDeal": "Offre sur le même produit",
-                "mode": "Mode"
+                "mode": "Mode",
+                "freeShipping": "Livraison gratuite",
+                "enabled": "Activé",
+                "yes": "Oui",
+                "volumeTiersHeading": "Paliers de remise sur volume",
+                "percentage": "Pourcentage",
+                "fixedAmount": "Montant fixe"
             },
             "Preview": {
                 "heading": "Aperçu",

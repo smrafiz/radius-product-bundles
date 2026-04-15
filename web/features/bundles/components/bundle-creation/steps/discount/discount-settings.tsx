@@ -10,6 +10,7 @@ import { useState } from "react";
  */
 export function DiscountSettings() {
     const t = useTranslations("Bundles.Creation.Discount");
+    const tdt = useTranslations("Bundles.DiscountTypes");
     const {
         discountType,
         discountValue,
@@ -36,8 +37,9 @@ export function DiscountSettings() {
     const [isOpen, setIsOpen] = useState(false);
     const popoverId = "discount-type-popover";
     const selectedLabel =
-        availableDiscountTypes.find((c) => c.id === discountType)?.label ??
-        t("selectType");
+        availableDiscountTypes.find((c) => c.id === discountType) != null
+            ? tdt(discountType + ".label")
+            : t("selectType");
 
     return (
         <s-stack gap="base">
@@ -116,7 +118,7 @@ export function DiscountSettings() {
                                         borderRadius="base"
                                         onClick={() => {
                                             if (isLocked) {
-                                                openCrossSell(config.label);
+                                                openCrossSell(tdt(config.id + ".label"));
                                             } else {
                                                 handleDiscountTypeChange(
                                                     config.id,
@@ -142,15 +144,15 @@ export function DiscountSettings() {
                                             >
                                                 <s-stack gap="none">
                                                     <s-heading>
-                                                        {config.label}
+                                                        {tdt(config.id + ".label")}
                                                     </s-heading>
                                                     <s-paragraph color="subdued">
-                                                        {config.description}
+                                                        {tdt(config.id + ".description")}
                                                     </s-paragraph>
                                                 </s-stack>
                                                 {isLocked && (
                                                     <ProBadge
-                                                        label={config.label}
+                                                        label={tdt(config.id + ".label")}
                                                     />
                                                 )}
                                             </s-stack>

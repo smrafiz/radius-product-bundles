@@ -8,6 +8,7 @@ import { useState } from "react";
 
 export function BxgyDiscountSettings() {
     const t = useTranslations("Bundles.Creation.Discount");
+    const tdt = useTranslations("Bundles.DiscountTypes");
     const {
         discountType,
         discountValue,
@@ -35,14 +36,12 @@ export function BxgyDiscountSettings() {
     const [isOpen, setIsOpen] = useState(false);
     const popoverId = "bxgy-discount-type-popover";
 
-    const getLabel = (config: { id: string; label: string }) =>
-        config.id === "CUSTOM_PRICE" ? t("rewardPrice") : config.label;
+    const getLabel = (config: { id: string }) =>
+        config.id === "CUSTOM_PRICE" ? t("rewardPrice") : tdt(config.id + ".label");
 
     const selectedLabel =
         availableDiscountTypes.find((c) => c.id === discountType)
-            ? getLabel(
-                  availableDiscountTypes.find((c) => c.id === discountType)!,
-              )
+            ? getLabel(availableDiscountTypes.find((c) => c.id === discountType)!)
             : t("selectType");
 
     return (
@@ -154,7 +153,7 @@ export function BxgyDiscountSettings() {
                                                         {label}
                                                     </s-heading>
                                                     <s-paragraph color="subdued">
-                                                        {config.description}
+                                                        {tdt(config.id + ".description")}
                                                     </s-paragraph>
                                                 </s-stack>
                                                 {isLocked && (
