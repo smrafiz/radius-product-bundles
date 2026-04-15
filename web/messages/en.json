@@ -401,6 +401,7 @@
       "update": "Update",
       "publish": "Publish",
       "duplicate": "Duplicate",
+      "createNew": "Create new",
       "create": "Create bundle",
       "edit": "Edit bundle",
       "error": "Error",

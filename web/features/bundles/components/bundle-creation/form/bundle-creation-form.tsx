@@ -64,6 +64,11 @@ export function BundleCreationForm({
                         >
                             {isEditMode ? tc("update") : tc("publish")}
                         </s-button>
+                        {isEditMode && (
+                            <s-button disabled>
+                                {tc("createNew")}
+                            </s-button>
+                        )}
                         {isEditMode && bundleId && (
                             <s-button
                                 disabled={isDuplicating}
@@ -82,6 +87,11 @@ export function BundleCreationForm({
                         >
                             {isEditMode ? tc("update") : tc("publish")}
                         </button>
+                        {isEditMode && (
+                            <button onClick={bundleData.create()}>
+                                {tc("createNew")}
+                            </button>
+                        )}
                         {isEditMode && bundleId && (
                             <button onClick={handleDuplicate}>
                                 {duplicateLabel}
