@@ -9,6 +9,7 @@ import {
     getImageSize,
     getShadow,
     getSpacing,
+    PLACEHOLDER_IMAGES,
 } from "@/features/settings";
 import { useCallback, useState } from "react";
 
@@ -87,6 +88,33 @@ export function VolumeCalculator({
         setQty(tierQty);
     }, []);
 
+    const placeholderKeys = Object.keys(PLACEHOLDER_IMAGES).map(Number);
+    const stablePlaceholder = product
+        ? PLACEHOLDER_IMAGES[
+            placeholderKeys[
+            product.title
+                .split("")
+                .reduce((acc, c) => acc + c.charCodeAt(0), 0) %
+            placeholderKeys.length
+                ] as keyof typeof PLACEHOLDER_IMAGES
+            ]
+        : PLACEHOLDER_IMAGES[1];
+
+    const imageSrc =
+        product?.image && product.image.trim() !== ""
+            ? product.image
+            : stablePlaceholder;
+
+    const imageEl =
+        <img
+            src={imageSrc}
+            alt={product?.title || "Product"}
+            loading="lazy"
+            onError={(e) => {
+                e.currentTarget.src = PLACEHOLDER_IMAGES[1];
+            }}
+        />;
+
     const cssVars = {
         "--rb-primary-color": styles.primaryColor,
         "--rb-border-color": styles.borderColor,
@@ -105,9 +133,9 @@ export function VolumeCalculator({
 
     return (
         <div className="rb-vol-calc__wrap" style={cssVars}>
-            {displayOptions?.showImages && product?.image && (
+            {displayOptions?.showImages && (
                 <div className="rb-vol-calc__hero-image">
-                    <img src={product.image} alt={product.title} />
+                    {imageEl}
                 </div>
             )}
 

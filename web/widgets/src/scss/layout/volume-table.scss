@@ -26,8 +26,8 @@
     }
 
     &__product-image {
-        width: var(--rb-image-size, 70px);
-        height: var(--rb-image-size, 70px);
+        width: var(--rb-image-size, 80px);
+        height: var(--rb-image-size, 80px);
         flex-shrink: 0;
         border-radius: var(--rb-border-radius, 8px);
         overflow: hidden;
@@ -499,7 +499,7 @@
         overflow: hidden;
         background: var(--rb-product-bg-color, #f9fafb);
         aspect-ratio: 1 / 1;
-        max-height: 300px;
+        max-height: calc(var(--rb-image-size, 80px) + 220px);
 
         img {
             width: 100%;
@@ -767,7 +767,7 @@
         overflow: hidden;
         background: var(--rb-product-bg-color, #f9fafb);
         aspect-ratio: 1 / 1;
-        max-height: 300px;
+        max-height: calc(var(--rb-image-size, 80px) + 220px);
 
         img {
             width: 100%;

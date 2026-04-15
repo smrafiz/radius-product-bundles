@@ -374,7 +374,7 @@
     overflow: hidden;
     background: var(--rb-product-bg-color, #f9fafb);
     aspect-ratio: 1 / 1;
-    max-height: 300px;
+    max-height: calc(var(--rb-image-size, 80px) + 220px);
 }
 
 .rb-vol-slider__hero-image {
@@ -626,7 +626,7 @@
     overflow: hidden;
     background: var(--rb-product-bg-color, #f9fafb);
     aspect-ratio: 1 / 1;
-    max-height: 300px;
+    max-height: calc(var(--rb-image-size, 80px) + 220px);
 }
 
 .rb-vol-calc__hero-image {

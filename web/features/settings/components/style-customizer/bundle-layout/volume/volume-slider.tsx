@@ -7,6 +7,7 @@ import {
     getImageSize,
     getShadow,
     getSpacing,
+    PLACEHOLDER_IMAGES,
     type VolumeLayoutProps,
     type VolumeLayoutTier,
 } from "@/features/settings";
@@ -104,6 +105,33 @@ export function VolumeSlider({ tiers, product, styles, displayOptions, labels }:
         [],
     );
 
+    const placeholderKeys = Object.keys(PLACEHOLDER_IMAGES).map(Number);
+    const stablePlaceholder = product
+        ? PLACEHOLDER_IMAGES[
+            placeholderKeys[
+            product.title
+                .split("")
+                .reduce((acc, c) => acc + c.charCodeAt(0), 0) %
+            placeholderKeys.length
+                ] as keyof typeof PLACEHOLDER_IMAGES
+            ]
+        : PLACEHOLDER_IMAGES[1];
+
+    const imageSrc =
+        product?.image && product.image.trim() !== ""
+            ? product.image
+            : stablePlaceholder;
+
+    const imageEl =
+        <img
+            src={imageSrc}
+            alt={product?.title || "Product"}
+            loading="lazy"
+            onError={(e) => {
+                e.currentTarget.src = PLACEHOLDER_IMAGES[1];
+            }}
+        />;
+
     const cssVars = {
         "--rb-primary-color": styles.primaryColor,
         "--rb-border-color": styles.borderColor,
@@ -123,9 +151,9 @@ export function VolumeSlider({ tiers, product, styles, displayOptions, labels }:
 
     return (
         <div className="rb-vol-slider__wrap" style={cssVars}>
-            {displayOptions?.showImages && product?.image && (
+            {displayOptions?.showImages && (
                 <div className="rb-vol-slider__hero-image">
-                    <img src={product.image} alt={product.title} />
+                    {imageEl}
                     <div
                         className="rb-vol-slider__savings-badge"
                         style={{ display: hasSavings ? undefined : "none" }}

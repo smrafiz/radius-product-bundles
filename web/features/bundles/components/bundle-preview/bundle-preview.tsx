@@ -153,8 +153,8 @@ function VolumeAddToCart({
             >
                 <button
                     style={{
-                        width: 32,
-                        height: 36,
+                        width: 36,
+                        height: 42,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -170,8 +170,8 @@ function VolumeAddToCart({
                 </button>
                 <span
                     style={{
-                        width: 32,
-                        height: 36,
+                        width: 36,
+                        height: 42,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -186,8 +186,8 @@ function VolumeAddToCart({
                 </span>
                 <button
                     style={{
-                        width: 32,
-                        height: 36,
+                        width: 36,
+                        height: 42,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
