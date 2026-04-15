@@ -213,12 +213,14 @@ function RenderVolumeLayout({
     styles,
     currencyCode,
     firstProduct,
+    displayOptions,
 }: {
     layout: DisplaySettings["layout"];
     config: VolumeDiscountConfig;
     styles: CustomizerStyles;
     currencyCode?: string;
     firstProduct?: PreviewProduct;
+    displayOptions?: WidgetDisplayOptions;
 }) {
     const tiers = buildVolumeLayoutTiers(config, currencyCode);
     const highlightColor = styles.primaryColor;
@@ -230,7 +232,7 @@ function RenderVolumeLayout({
           }
         : undefined;
 
-    const layoutProps = { tiers, product, highlightColor, styles };
+    const layoutProps = { tiers, product, highlightColor, styles, displayOptions };
 
     switch (layout) {
         case "VOLUME_PRICING_CARDS":
@@ -795,6 +797,7 @@ export function BundlePreview() {
                                             styles={styles}
                                             currencyCode={currencyCode}
                                             firstProduct={products[0]}
+                                            displayOptions={displayOptions}
                                         />
                                         {displaySettings.layout === "VOLUME_SLIDER" ||
                                         displaySettings.layout === "VOLUME_CALCULATOR" ? (

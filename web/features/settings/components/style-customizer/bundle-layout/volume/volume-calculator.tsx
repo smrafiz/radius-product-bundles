@@ -46,6 +46,7 @@ export function VolumeCalculator({
     tiers,
     product,
     styles,
+    displayOptions,
 }: VolumeLayoutProps) {
     const [qty, setQty] = useState<number>(1);
 
@@ -102,7 +103,7 @@ export function VolumeCalculator({
 
     return (
         <div className="rb-vol-calc__wrap" style={cssVars}>
-            {product?.image && (
+            {displayOptions?.showImages && product?.image && (
                 <div className="rb-vol-calc__hero-image">
                     <img src={product.image} alt={product.title} />
                 </div>

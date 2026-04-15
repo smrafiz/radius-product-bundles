@@ -52,7 +52,7 @@ function tierSavingsBadgeText(tier: VolumeLayoutTier): string {
     return `Save ${Math.round(tier.discount)}%`;
 }
 
-export function VolumeSlider({ tiers, product, styles }: VolumeLayoutProps) {
+export function VolumeSlider({ tiers, product, styles, displayOptions }: VolumeLayoutProps) {
     const firstTier = tiers[0];
     const initQty = firstTier?.qty ?? 1;
 
@@ -122,7 +122,7 @@ export function VolumeSlider({ tiers, product, styles }: VolumeLayoutProps) {
 
     return (
         <div className="rb-vol-slider__wrap" style={cssVars}>
-            {product?.image && (
+            {displayOptions?.showImages && product?.image && (
                 <div className="rb-vol-slider__hero-image">
                     <img src={product.image} alt={product.title} />
                     <div

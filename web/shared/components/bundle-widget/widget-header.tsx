@@ -62,7 +62,6 @@ export function WidgetHeader({
 
             {displayOptions.showSavingsBadge && pricing.hasDiscount && (
                 <div
-                    className="radius-bundle__actions"
                     style={{ alignSelf: isInline ? "center" : undefined }}
                 >
                     <span

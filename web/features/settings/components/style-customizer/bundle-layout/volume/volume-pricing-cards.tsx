@@ -8,6 +8,7 @@ import {
     getImageSize,
     getShadow,
     getSpacing,
+    PLACEHOLDER_IMAGES,
 } from "@/features/settings";
 import { useCallback, useState } from "react";
 
@@ -30,6 +31,7 @@ export function VolumePricingCards({
     tiers,
     product,
     styles,
+    displayOptions,
 }: VolumeLayoutProps) {
     const defaultIndex = tiers.findIndex((t) => t.isDefault);
     const [selectedIndex, setSelectedIndex] = useState<number>(
@@ -37,6 +39,33 @@ export function VolumePricingCards({
     );
 
     const selectTier = useCallback((i: number) => setSelectedIndex(i), []);
+
+    const placeholderKeys = Object.keys(PLACEHOLDER_IMAGES).map(Number);
+    const stablePlaceholder = product
+        ? PLACEHOLDER_IMAGES[
+            placeholderKeys[
+            product.title
+                .split("")
+                .reduce((acc, c) => acc + c.charCodeAt(0), 0) %
+            placeholderKeys.length
+                ] as keyof typeof PLACEHOLDER_IMAGES
+            ]
+        : PLACEHOLDER_IMAGES[1];
+
+    const imageSrc =
+        product?.image && product.image.trim() !== ""
+            ? product.image
+            : stablePlaceholder;
+
+    const imageEl =
+        <img
+            src={imageSrc}
+            alt={product?.title || "Product"}
+            loading="lazy"
+            onError={(e) => {
+                e.currentTarget.src = PLACEHOLDER_IMAGES[1];
+            }}
+        />;
 
     const cssVars = {
         "--rb-primary-color": styles.primaryColor,
@@ -58,11 +87,13 @@ export function VolumePricingCards({
         <div className="rb-vol__wrap" style={cssVars}>
             {product && (
                 <div className="rb-vol__product-header">
-                    {product.image && (
+
+                    {displayOptions?.showImages && (
                         <div className="rb-vol__product-image">
-                            <img src={product.image} alt={product.title} />
+                            {imageEl}
                         </div>
                     )}
+
                     <div className="rb-vol__product-meta">
                         <span className="rb-vol__product-title">
                             {product.title}

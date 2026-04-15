@@ -15,7 +15,7 @@ import {
 } from "@/features/settings";
 import type { CustomizerStyles } from "@/features/settings";
 import { DEMO_TIERS } from "@/features/settings/constants/customizer.constants";
-import { PLACEHOLDER_PRODUCTS, PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
+import { DEFAULT_DISPLAY_OPTIONS, PLACEHOLDER_PRODUCTS, PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
 function VolumeFooter({ styles }: { styles: CustomizerStyles }) {
     const radius = getButtonRadius(styles.cornerStyle);
@@ -140,6 +140,7 @@ export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
         product: productProp,
         highlightColor,
         styles,
+        displayOptions: DEFAULT_DISPLAY_OPTIONS,
     };
 
     const renderLayout = () => {

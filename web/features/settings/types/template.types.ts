@@ -1,6 +1,7 @@
 import type { BundleType } from "@/features/bundles";
 import type { ComponentType, ReactNode } from "react";
 import { CustomizerStyles, type WidgetLayout } from "@/features/settings";
+import { WidgetDisplayOptions } from "@/shared";
 
 /**
  * Extended template identifier — BundleType + UI-only templates.
@@ -33,6 +34,7 @@ export interface PreviewContainerProps {
     activeDevice: "desktop" | "tablet" | "mobile";
     activeLayout?: string;
     styles: CustomizerStyles;
+    displayOptions?: WidgetDisplayOptions;
     isCartBanner?: boolean;
     children: ReactNode;
 }
@@ -182,6 +184,7 @@ export interface VolumeLayoutProps {
     };
     highlightColor: string;
     styles: CustomizerStyles;
+    displayOptions?: WidgetDisplayOptions;
 }
 
 // ═══════════════════════════════════════════════════════════════════
