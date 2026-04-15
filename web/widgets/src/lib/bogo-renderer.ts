@@ -45,6 +45,8 @@ export function calculateBxgyRewardPrice(
         case "FIXED_AMOUNT":
             return Math.round(Math.max(0, originalPrice - dv * 100));
         case "CUSTOM_PRICE":
+            // For single-reward BOGO (primary use case), customPrice = reward price.
+            // Multi-reward proportional distribution is not supported here (no access to all rewards).
             return Math.round(dv * 100);
         default:
             return originalPrice;
@@ -367,13 +369,13 @@ export function renderClassicCardProducts(
     html += `</div>`;
 
     const totalOriginal = [...triggers, ...rewards].reduce(
-        (sum, p) => sum + p.price,
+        (sum, p) => sum + p.price * p.quantity,
         0,
     );
     const totalDiscounted =
-        triggers.reduce((sum, p) => sum + p.price, 0) +
+        triggers.reduce((sum, p) => sum + p.price * p.quantity, 0) +
         rewards.reduce(
-            (sum, p) => sum + calculateBxgyRewardPrice(p.price, structure),
+            (sum, p) => sum + calculateBxgyRewardPrice(p.price, structure) * p.quantity,
             0,
         );
     const savings = totalOriginal - totalDiscounted;
@@ -899,16 +901,17 @@ export function renderBogoCompactGridProducts(
 
         const cgFreeText = labels?.bogoFreeText || "FREE";
         const cgPayLabel = labels?.bogoYouPayLabel || "You Pay";
+        const cgGetLabel = labels?.bogoRewardBadgeText || cgPayLabel;
         let roleLabel = cgPayLabel;
         if (isReward) {
             if (isFree) {
                 roleLabel = cgFreeText;
-            } else if (structure.discountType === "PERCENTAGE") {
+            } else if (structure.discountType === "PERCENTAGE" && structure.discountValue > 0) {
                 roleLabel = `${Math.round(structure.discountValue)}% Off`;
-            } else if (structure.discountType === "FIXED_AMOUNT") {
+            } else if (structure.discountType === "FIXED_AMOUNT" && structure.discountValue > 0) {
                 roleLabel = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
             } else {
-                roleLabel = labels?.bogoRewardBadgeText || cgFreeText;
+                roleLabel = cgGetLabel;
             }
         }
         const tileClass = `rb-cg__tile rb-cg__tile--${isReward ? "reward" : "trigger"}`;

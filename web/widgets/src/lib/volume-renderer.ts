@@ -838,7 +838,7 @@ export function renderVolumeCalculator(
                 <span class="rb-vol-calc__calc-label">${escapeHtml(costPerUnitLabel || "Cost Per Unit")}</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value">${escapeHtml(trimMoney(formatMoney(initDiscounted)))}</span>
-                    <span class="rb-vol-calc__calc-sub">${escapeHtml(regularPriceLabel || "Regular price dd")} <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s></span>
+                    <span class="rb-vol-calc__calc-sub">${escapeHtml(regularPriceLabel || "Regular price")} <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s></span>
                 </div>
             </div>` : ""}`
         : "";

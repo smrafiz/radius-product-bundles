@@ -529,12 +529,12 @@ import type { VolumeContext } from "./lib/types";
             await enqueueCartAttributeWrite(this.bundleId, {
                 bundleId: this.bundleId,
                 bundleName: structure?.name || "Bundle",
-                discountType: "NO_DISCOUNT",
-                discountValue: 0,
+                discountType: structure?.discountType || "NO_DISCOUNT",
+                discountValue: structure?.discountValue || 0,
                 minOrderValue: structure?.minOrderValue || 0,
-                maxDiscountAmount: 0,
-                discountApplication: "bundle",
-                discountedProductIds: [],
+                maxDiscountAmount: structure?.maxDiscountAmount || 0,
+                discountApplication: structure?.discountApplication || "bundle",
+                discountedProductIds: structure?.discountedProductIds || [],
                 freeShipping: structure?.freeShipping || false,
             });
         }
@@ -565,45 +565,53 @@ import type { VolumeContext } from "./lib/types";
             const roles = Array.isArray(structure.productRoles)
                 ? structure.productRoles
                 : [];
-            const buyQty =
-                roles.filter((r) => r === "TRIGGER").length ||
-                structure.buyQuantity ||
-                1;
-            const getQty =
-                roles.filter((r) => r === "REWARD").length ||
-                structure.getQuantity ||
-                1;
+            const triggers = roles.filter((r) => r === "TRIGGER");
+            const rewards = roles.filter((r) => r === "REWARD");
+            const isSameProductBogo =
+                structure.bundleType === "BOGO" && rewards.length === 0;
+            const buyQty = isSameProductBogo
+                ? structure.buyQuantity || 1
+                : triggers.length || structure.buyQuantity || 1;
+            const getQty = isSameProductBogo
+                ? structure.getQuantity || 1
+                : rewards.length || structure.getQuantity || 1;
 
             if (isBxgy) {
+                const buyText = structure.labels?.bogoBuyText || "Buy";
+                const getText = structure.labels?.bogoGetText || "Get";
+                const freeText = structure.labels?.bogoFreeText || "FREE";
                 if (
                     structure.discountType === "PERCENTAGE" &&
                     structure.discountValue === 100
                 ) {
-                    badgeText = `Buy ${buyQty} Get ${getQty} FREE`;
+                    badgeText = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
                 } else if (
                     structure.discountType === "PERCENTAGE" &&
                     structure.discountValue > 0
                 ) {
-                    badgeText = `Buy ${buyQty} Get ${getQty} at ${structure.discountValue}% off`;
+                    badgeText = `${buyText} ${buyQty} ${getText} ${getQty} at ${structure.discountValue}% off`;
                 } else if (
                     structure.discountType === "FIXED_AMOUNT" &&
                     structure.discountValue > 0
                 ) {
-                    badgeText = `Buy ${buyQty} Get ${getQty} - Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
+                    badgeText = `${buyText} ${buyQty} ${getText} ${getQty} - Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
                 } else if (
                     structure.discountType === "CUSTOM_PRICE" &&
                     structure.discountValue > 0
                 ) {
-                    badgeText = `Buy ${buyQty} Get ${getQty} for ${trimMoney(formatMoney(structure.discountValue * 100))}`;
+                    badgeText = `${buyText} ${buyQty} ${getText} ${getQty} for ${trimMoney(formatMoney(structure.discountValue * 100))}`;
                 }
             } else if (structure.bundleType === "VOLUME_DISCOUNT") {
                 const volConfig = parseVolumeTiers(structure);
                 if (volConfig?.tiers?.length) {
+                    const firstTier = volConfig.tiers[0];
                     const maxTier = volConfig.tiers[volConfig.tiers.length - 1];
                     if (volConfig.discountType === "PERCENTAGE") {
                         badgeText = `Up to ${Math.round(maxTier.discount)}% off`;
                     } else if (volConfig.discountType === "FIXED_AMOUNT") {
                         badgeText = `Up to ${trimMoney(formatMoney(maxTier.discount * 100))} off`;
+                    } else if (volConfig.discountType === "CUSTOM_PRICE") {
+                        badgeText = `From ${trimMoney(formatMoney(firstTier.discount * 100))}`;
                     }
                 }
             } else if (structure.discountValue && structure.discountValue > 0) {
@@ -621,21 +629,27 @@ import type { VolumeContext } from "./lib/types";
                         break;
                     }
 
-                    case "FIXED_AMOUNT":
-                        badgeText = formatLabel("Save {amount}", {
-                            amount: trimMoney(
-                                formatMoney(structure.discountValue * 100),
-                            ),
-                        });
+                    case "FIXED_AMOUNT": {
+                        const formattedAmount = trimMoney(
+                            formatMoney(structure.discountValue * 100),
+                        );
+                        badgeText = formatLabel(
+                            structure.labels?.savingsBadgeText ?? "Save {amount}",
+                            { percent: "", amount: formattedAmount },
+                        );
                         break;
+                    }
 
-                    case "CUSTOM_PRICE":
-                        badgeText = formatLabel("Only {amount}", {
-                            amount: trimMoney(
-                                formatMoney(structure.discountValue * 100),
-                            ),
-                        });
+                    case "CUSTOM_PRICE": {
+                        const formattedAmount = trimMoney(
+                            formatMoney(structure.discountValue * 100),
+                        );
+                        badgeText = formatLabel(
+                            structure.labels?.savingsBadgeText || "Only {amount}",
+                            { percent: "", amount: formattedAmount },
+                        );
                         break;
+                    }
                 }
             }
 

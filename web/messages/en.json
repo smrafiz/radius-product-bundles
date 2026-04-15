@@ -1058,7 +1058,7 @@
           "bogoRewardBadgeText": {
             "label": "Reward badge text",
             "details": "Badge on the reward (get) product card.",
-            "placeholder": "You Get FREE"
+            "placeholder": "You Get"
           },
           "bogoTotalLabel": {
             "label": "Total label",
@@ -1272,8 +1272,7 @@
         "CLASSIC_CARD": "Classic Card",
         "DETAILED": "Detailed",
         "MINIMAL": "Minimal",
-        "CART_BANNER_LIST": "Detailed",
-        "CART_BANNER_GRID": "Minimal"
+        "CART_BANNER_LIST": "Standard"
       },
       "openStyleCustomizer": "Open style customizer",
       "heading": "Global Customizer - Manage Bundle Styles",

@@ -96,11 +96,14 @@ export function CustomizerBundleType() {
     const searchParams = useSearchParams();
     const bundleTypeParam = searchParams.get("bundleType");
 
+    const hiddenTypes = new Set(["MIX_AND_MATCH", "FREQUENTLY_BOUGHT_TOGETHER"]);
     const availableTypes: PreviewTemplateId[] =
         customizerSource === "bundle-preview" && bundleTypeParam
             ? [bundleTypeParam as PreviewTemplateId]
             : [
-                  ...(plan.limits.allowedBundleTypes as PreviewTemplateId[]),
+                  ...(plan.limits.allowedBundleTypes as PreviewTemplateId[]).filter(
+                      (t) => !hiddenTypes.has(t),
+                  ),
                   "CART_BANNER",
               ];
 

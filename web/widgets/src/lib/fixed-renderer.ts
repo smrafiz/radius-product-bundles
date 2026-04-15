@@ -331,7 +331,9 @@ export function updatePricing(bundle: Bundle, ctx: FixedContext): void {
                 Math.max(0, discountableTotal - structure.discountValue * 100);
             break;
         case "CUSTOM_PRICE":
-            bundleTotal = nonDiscountableTotal + structure.discountValue * 100;
+            bundleTotal = applyToSpecific
+                ? structure.discountValue * 100 + nonDiscountableTotal
+                : structure.discountValue * 100;
             break;
         default:
             bundleTotal = sellingTotal;

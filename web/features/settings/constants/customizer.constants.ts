@@ -42,9 +42,7 @@ export const CUSTOMIZER_LAYOUTS_MAPPING: Record<
     FREQUENTLY_BOUGHT_TOGETHER: [{ label: "Grid", value: "GRID" }],
 
     CART_BANNER: [
-        { label: "Detailed", value: "LIST" },
-        { label: "Minimal", value: "GRID" },
-        { label: "Compact", value: "COMPACT" },
+        { label: "Standard", value: "LIST" },
     ],
 } as const;
 

@@ -1043,7 +1043,7 @@
                     "bogoRewardBadgeText": {
                         "label": "Texte du badge de récompense",
                         "details": "Badge sur la carte du produit en récompense (à obtenir).",
-                        "placeholder": "Vous obtenez GRATUITEMENT"
+                        "placeholder": "Vous obtenez"
                     },
                     "bogoTotalLabel": {
                         "label": "Étiquette du total",
