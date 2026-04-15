@@ -493,7 +493,41 @@
                 "noProductsYet": "Aucun produit dans l'offre groupée. Veuillez d'abord ajouter des produits.",
                 "cancel": "Annuler",
                 "freeShipping": "Inclure la livraison gratuite",
-                "freeShippingDetails": "Offrir la livraison gratuite pour l'achat de ce lot."
+                "freeShippingDetails": "Offrir la livraison gratuite pour l'achat de ce lot.",
+                "VolumeDiscount": {
+                  "heading": "Paramètres de remise",
+                  "tooltip": "Définissez la progression des remises en fonction de la quantité. Pour chaque palier, une remise s'applique lorsque le client achète au moins la quantité spécifiée.",
+                  "discountType": "Type de remise",
+                  "percentage": "Pourcentage %",
+                  "fixedAmount": "Fixed Amount {currency}",
+                  "openEnded": "Palier supérieur illimité",
+                  "openEndedDetails": "Appliquer la remise du dernier palier à toutes les quantités supérieures au maximum.",
+                  "maxTiersReached": "Nombre maximal de 10 paliers atteint.",
+                  "addTier": "Ajouter un palier",
+                  "tier": "Tier {number}",
+                  "removeTier": "Remove tier {number}",
+                  "minQuantity": "Quantité minimale",
+                  "minQuantityDetails": "Nombre minimum d'articles qu'un client doit ajouter au panier.",
+                  "discount": "Discount ({suffix})",
+                  "discountDetails": "Remise appliquée lorsque ce niveau est activé.",
+                  "tierTitle": "Titre",
+                  "tierTitleDetails": "Shown on the storefront. Use {quantity} and {discount} as dynamic variables.",
+                  "optionalSettings": "Paramètres facultatifs",
+                  "subtitle": "Sous-titre",
+                  "subtitleDetails": "Texte secondaire affiché sous le titre sur la vitrine.",
+                  "badgeStyle": "Style du badge",
+                  "badgeStyleDetails": "Étiquette de mise en évidence affichée sur cette option de niveau.",
+                  "badgeText": "Texte du badge",
+                  "badgeTextDetails": "Texte de l'étiquette affiché à l'intérieur du badge.",
+                  "preselect": "Présélectionner ce niveau pour les clients",
+                  "preselectDetails": "Ce niveau sera sélectionné par défaut lorsque les clients consulteront l'offre groupée.",
+                  "badgeStyles": {
+                    "none": "Aucun",
+                    "popular": "Le plus populaire",
+                    "best-value": "Meilleur rapport qualité-prix",
+                    "custom": "Personnalisé"
+                  }
+                }
             },
             "BundleAsProduct": {
                 "heading": "Offre groupée en tant que produit",

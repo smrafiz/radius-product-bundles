@@ -497,7 +497,41 @@
         "noProductsYet": "No products in bundle. Add products first.",
         "cancel": "Cancel",
         "freeShipping": "Include free shipping",
-        "freeShippingDetails": "Offer free shipping when this bundle is purchased."
+        "freeShippingDetails": "Offer free shipping when this bundle is purchased.",
+        "VolumeDiscount": {
+          "heading": "Discount Settings",
+          "tooltip": "Set how discounts scale with quantity. Each tier applies a discount when the customer buys at least the specified quantity.",
+          "discountType": "Discount Type",
+          "percentage": "Percentage %",
+          "fixedAmount": "Fixed Amount {currency}",
+          "openEnded": "Open-ended top tier",
+          "openEndedDetails": "Apply the last tier's discount to all quantities above the maximum.",
+          "maxTiersReached": "Maximum of 10 tiers reached.",
+          "addTier": "Add Tier",
+          "tier": "Tier {number}",
+          "removeTier": "Remove tier {number}",
+          "minQuantity": "Min Quantity",
+          "minQuantityDetails": "Minimum items a customer must add to cart.",
+          "discount": "Discount ({suffix})",
+          "discountDetails": "Discount applied when this tier is activated.",
+          "tierTitle": "Title",
+          "tierTitleDetails": "Shown on the storefront. Use {quantity} and {discount} as dynamic variables.",
+          "optionalSettings": "Optional Settings",
+          "subtitle": "Subtitle",
+          "subtitleDetails": "Secondary text shown below the title on the storefront.",
+          "badgeStyle": "Badge Style",
+          "badgeStyleDetails": "Highlight label displayed on this tier option.",
+          "badgeText": "Badge Text",
+          "badgeTextDetails": "Label text shown inside the badge.",
+          "preselect": "Pre-select this tier for customers",
+          "preselectDetails": "This tier will be selected by default when customers view the bundle.",
+          "badgeStyles": {
+            "none": "None",
+            "popular": "Most Popular",
+            "best-value": "Best Value",
+            "custom": "Custom"
+          }
+        }
       },
       "BundleAsProduct": {
         "heading": "Bundle as product",
