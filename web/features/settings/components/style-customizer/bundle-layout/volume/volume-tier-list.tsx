@@ -171,12 +171,12 @@ export function VolumeTierList({ tiers, product, styles, displayOptions, labels 
                                 )}
                             </div>
 
-                            {tier.price && (
+                            {tier.price && displayOptions?.showPrices && (
                                 <div className="rb-vol__tier-pricing">
                                     <span className="rb-vol__tier-price">
                                         {tier.price}
                                     </span>
-                                    {tier.comparePrice && (
+                                    {tier.comparePrice && displayOptions?.showComparePrices && (
                                         <span className="rb-vol__tier-original">
                                             {tier.comparePrice}
                                         </span>

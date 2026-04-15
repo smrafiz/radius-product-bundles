@@ -111,11 +111,6 @@
     margin-bottom: 16px;
     padding-bottom: 16px;
     border-bottom: 1px solid #e3e3e3;
-
-    .radius-bundle__title {
-        font-size: 20px;
-        color: #303030;
-    }
 }
 
 .radius-bundle__badge {

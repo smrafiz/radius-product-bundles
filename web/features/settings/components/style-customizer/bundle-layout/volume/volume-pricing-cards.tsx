@@ -170,7 +170,7 @@ export function VolumePricingCards({
                                 {subtitleText}
                             </div>
 
-                            {tier.price && (
+                            {tier.price && displayOptions?.showPrices && (
                                 <div className="rb-vol__card-price">
                                     {tier.price}
                                 </div>

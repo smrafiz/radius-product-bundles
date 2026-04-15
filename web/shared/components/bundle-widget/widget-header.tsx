@@ -1,7 +1,11 @@
 "use client";
 
 import { WidgetHeaderProps } from "@/shared";
-import { getBadgeRadius, getHeadingFontSize } from "@/features/settings";
+import {
+    getBadgeRadius,
+    getFontSize,
+    getHeadingFontSize,
+} from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
 export function WidgetHeader({
@@ -18,6 +22,7 @@ export function WidgetHeader({
     const textColor = styles.textColor || "#333333";
     const isOutline = styles.badgeStyle === "outline";
     const isInline = styles.badgePosition === "inline";
+    const bodyFontSize = getFontSize(styles.bodySize);
 
     return (
         <div
@@ -41,6 +46,7 @@ export function WidgetHeader({
                         fontSize: headingFontSize,
                         color: textColor,
                         fontWeight: 600,
+                        lineHeight: 1.3,
                     }}
                 >
                     {title || DEFAULT_LABELS.headingLabel}
@@ -49,8 +55,9 @@ export function WidgetHeader({
                     <p
                         className="radius-bundle__subtitle"
                         style={{
-                            fontSize: "14px",
-                            color: "#6b7280",
+                            fontSize: parseInt(bodyFontSize) - 2,
+                            color: textColor,
+                            opacity: 0.9,
                             fontWeight: 400,
                             margin: "4px 0 0",
                         }}
