@@ -1,37 +1,27 @@
 "use client";
 
+import { useCallback } from "react";
 import { settingsQueries } from "@/features/settings";
 import { useQueryClient } from "@tanstack/react-query";
+import { settingsQueryKeys } from "@/features/settings";
 import { useAppBridge } from "@shopify/app-bridge-react";
 
-/**
- * Hook to refetch settings from API.
- *
- * Use this to refresh settings after external changes,
- * such as when the customizer modal is closed.
- */
 export function useRefetchSettings() {
     const app = useAppBridge();
     const queryClient = useQueryClient();
     const queries = settingsQueries(app);
 
-    /**
-     * Invalidates and refetches settings query.
-     */
-    const refetch = () => {
+    const refetch = useCallback(() => {
         queryClient.invalidateQueries({
-            queryKey: queries.detail().queryKey,
+            queryKey: settingsQueryKeys.detail(),
         });
-    };
+    }, [queryClient]);
 
-    /**
-     * Resets settings query to loading state and refetches.
-     */
-    const reset = async () => {
+    const reset = useCallback(async () => {
         await queryClient.resetQueries({
-            queryKey: queries.detail().queryKey,
+            queryKey: settingsQueryKeys.detail(),
         });
-    };
+    }, [queryClient]);
 
-    return { refetch, reset };
+    return { refetch, reset, queries };
 }

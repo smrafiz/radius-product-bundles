@@ -252,6 +252,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "buttonSize",
                     label: "Button size",
+                    responsive: true,
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -888,3 +889,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
         },
     ],
 };
+
+export const RESPONSIVE_FIELDS: ReadonlySet<string> = new Set(
+    CUSTOMIZER_CONFIG.sections.flatMap((s) =>
+        s.fields
+            .filter((f) => "responsive" in f && f.responsive === true)
+            .map((f) => (f as any).name as string),
+    ),
+);

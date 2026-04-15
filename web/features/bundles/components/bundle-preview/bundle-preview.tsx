@@ -47,8 +47,9 @@ import {
 import { useCallback, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
-import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
 import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
+import { RESPONSIVE_FIELDS } from "@/features/settings/configs/customizer.config";
+import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
 
 import "@/styles/components/bundle.css";
@@ -268,20 +269,37 @@ function RenderVolumeLayout({
     }
 }
 
-function useWidgetStyles(): CustomizerStyles {
+function useWidgetStyles(
+    device: "desktop" | "tablet" | "mobile" = "mobile",
+): CustomizerStyles {
     const serverData = useSettingsStore((s) => s.serverData);
     const bundleType = useBundleStore((s) => s.bundleData.type);
 
     return useMemo(() => {
+        const globalStyles = serverData?.globalStyles as
+            | Partial<CustomizerStyles>
+            | undefined;
         const base = {
             ...DEFAULT_CUSTOMIZER_STYLES,
-            ...(serverData?.globalStyles as Partial<CustomizerStyles>),
+            ...globalStyles,
         };
         const typeOverride = bundleType
             ? base.bundleTypeOverrides?.[bundleType]
             : null;
-        return typeOverride ? { ...base, ...typeOverride } : base;
-    }, [serverData, bundleType]);
+        const withType = typeOverride ? { ...base, ...typeOverride } : base;
+        if (device !== "desktop") {
+            const deviceMap = globalStyles?.[device];
+            if (deviceMap) {
+                const filtered = Object.fromEntries(
+                    Object.entries(deviceMap).filter(([k]) =>
+                        RESPONSIVE_FIELDS.has(k),
+                    ),
+                );
+                return { ...withType, ...filtered };
+            }
+        }
+        return withType;
+    }, [serverData, bundleType, device]);
 }
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
@@ -636,7 +654,7 @@ function RenderLayout({
 export function BundlePreview() {
     const t = useTranslations("Bundles.Creation.Preview");
     const ta = useTranslations("Bundles.Creation.Appearance");
-    const { appWindowRef } = useCustomizerModal();
+    const { appWindowRef, isSyncing } = useCustomizerModal();
     const { displaySettings, bundleData } = useBundleStore(
         useShallow((s) => ({
             displaySettings: s.displaySettings,
@@ -768,6 +786,24 @@ export function BundlePreview() {
                             />
                         </s-stack>
                     </s-stack>
+                    <div style={{ position: "relative" }}>
+                    {isSyncing ? (
+                        <div
+                            style={{
+                                position: "absolute",
+                                inset: -16,
+                                zIndex: 20,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                borderRadius: 8,
+                                transition: "opacity 0.2s",
+                            }}
+                        >
+                            <s-spinner size="large" />
+                        </div>
+                    ) : null}
                     {products.length === 0 ? (
                         <div
                             style={{
@@ -943,6 +979,7 @@ export function BundlePreview() {
                             </div>
                         </div>
                     )}
+                    </div>
                 </s-stack>
             </s-section>
         </div>

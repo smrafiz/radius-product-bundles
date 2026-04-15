@@ -42,7 +42,7 @@ function PresetCard({
             `}
             onClick={onSelect}
         >
-            {preset.preview && (
+            {preset.preview ? (
                 <s-text interestFor={`${presetKey}-preset-tooltip`}>
                     <div className="flex p-2">
                         <div
@@ -67,7 +67,7 @@ function PresetCard({
                         </s-tooltip>
                     </div>
                 </s-text>
-            )}
+            ) : null}
         </div>
     );
 }
@@ -85,22 +85,29 @@ export function DynamicCustomizerField(props: DynamicCustomizerFieldProps) {
     const isFormField = !["preset", "heading", "divider"].includes(
         props.config.type,
     );
+
+    if (!isFormField) {
+        return <DynamicNonFormField {...props} />;
+    }
+
+    return <DynamicFormFieldWrapper {...props} />;
+}
+
+function DynamicFormFieldWrapper(props: DynamicCustomizerFieldProps) {
     const { activeDevice } = useCustomizerStore();
     const { canUse } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
 
     const proFeature = (props.config as any).proFeature as string | undefined;
     const isResponsiveLocked =
-        isFormField &&
         (props.config as any).responsive === true &&
         activeDevice !== "desktop" &&
         !canUse("responsive_overrides");
     const isProLocked =
-        isFormField &&
         proFeature &&
         !canUse(proFeature as any);
 
-    const inner = <DynamicCustomizerFieldInner {...props} />;
+    const inner = <DynamicFormField {...props} />;
     const isLocked = isResponsiveLocked || isProLocked;
     const lockLabel = isProLocked
         ? ((props.config as any).label ?? proFeature)
@@ -123,16 +130,12 @@ export function DynamicCustomizerField(props: DynamicCustomizerFieldProps) {
     );
 }
 
-function DynamicCustomizerFieldInner({
+function DynamicNonFormField({
     config,
     context,
     onFieldChangeAction,
-    resetKey = 0,
 }: DynamicCustomizerFieldProps) {
-    const t = useTranslations("Settings.Customizer");
     const tc = useTranslations("Settings.Customizer.Config");
-    // For non-form fields, we don't need the hook
-    const isFormField = !["preset", "heading", "divider"].includes(config.type);
 
     const fieldName = (config as any).name as string | undefined;
     const _rawLabel = (config as any).label ?? "";
@@ -146,58 +149,19 @@ function DynamicCustomizerFieldInner({
             : _rawDetails)
         : undefined;
 
-    const fieldHook = isFormField
-        ? useCustomizerField(config as any, onFieldChangeAction)
-        : {
-              value: null,
-              error: null,
-              handleChange: () => {},
-              isInherited: false,
-              isResponsive: false,
-              clearOverride: () => {},
-              activeDevice: "desktop" as const,
-          };
-
-    const {
-        value,
-        error,
-        handleChange,
-        isInherited,
-        isResponsive,
-        clearOverride,
-        activeDevice,
-    } = fieldHook;
-
-    const handleCreateOverride = () => {
-        if (value !== null && value !== undefined) {
-            handleChange(value as any);
-        }
-    };
-
-    // Store access for presets
     const applyPreset = useCustomizerStore((state) => state.applyPreset);
     const activePreset = useCustomizerStore((state) => state.activePreset);
     const activeBundleType = useCustomizerStore(
         (state) => state.activeBundleType,
     );
-
-    // Form context for syncing preset values to RHF
     const { setValue: setFormValue } = useFormContext<CustomizerStyles>();
 
-    // Check visibility conditions (skip for non-conditional types)
-    if (isFormField && !isFieldVisible(config as any, context)) {
-        return null;
-    }
-
-    // Handle heading visibility
     if (config.type === "heading") {
-        // Check layout condition for headings
         if (config.layouts && config.layouts.length > 0) {
             if (!config.layouts.includes(context.activeLayout)) {
                 return null;
             }
         }
-        // Check bundle type condition
         if (config.bundleTypes && config.bundleTypes.length > 0) {
             if (
                 !(config.bundleTypes as string[]).includes(
@@ -209,30 +173,18 @@ function DynamicCustomizerFieldInner({
         }
     }
 
-    /**
-     * Renders error message if present.
-     */
-    const renderError = () =>
-        error ? <s-text tone="critical">{error}</s-text> : null;
-
-    // Use resetKey to force re-mount of web components after discard
-    const fieldKey = `${(config as any).name || config.type}-${resetKey}`;
-
     switch (config.type) {
-        // ═══════════════════════════════════════════════════════════════════
-        // PRESET FIELD - Visual preset cards
-        // ═══════════════════════════════════════════════════════════════════
         case "preset":
             return (
                 <s-stack gap="small-200">
                     <s-heading>{label}</s-heading>
-                    {details && (
+                    {details ? (
                         <s-text tone="neutral">
                             <span className="text-[0.75rem] text-[#616161]">
                                 {details}
                             </span>
                         </s-text>
-                    )}
+                    ) : null}
                     <div className="grid grid-cols-4 gap-2 mt-1 mb-2">
                         {Object.entries(config.presets).map(([key, preset]) => (
                             <PresetCard
@@ -275,26 +227,20 @@ function DynamicCustomizerFieldInner({
                 </s-stack>
             );
 
-        // ═══════════════════════════════════════════════════════════════════
-        // HEADING FIELD - Section subheading
-        // ═══════════════════════════════════════════════════════════════════
         case "heading":
             return (
                 <div className="bg-[#f1f1f1] border-l-4 border-current font-semibold p-2.5">
                     {label}
-                    {details && (
+                    {details ? (
                         <s-text tone="neutral">
                             <span className="text-[0.75rem] text-[#616161]">
                                 {details}
                             </span>
                         </s-text>
-                    )}
+                    ) : null}
                 </div>
             );
 
-        // ═══════════════════════════════════════════════════════════════════
-        // DIVIDER FIELD - Visual separator
-        // ═══════════════════════════════════════════════════════════════════
         case "divider":
             return (
                 <div className="py-2">
@@ -310,9 +256,58 @@ function DynamicCustomizerFieldInner({
                 </div>
             );
 
-        // ═══════════════════════════════════════════════════════════════════
-        // COLOR FIELD
-        // ═══════════════════════════════════════════════════════════════════
+        default:
+            return null;
+    }
+}
+
+function DynamicFormField({
+    config,
+    context,
+    onFieldChangeAction,
+    resetKey = 0,
+}: DynamicCustomizerFieldProps) {
+    const t = useTranslations("Settings.Customizer");
+    const tc = useTranslations("Settings.Customizer.Config");
+
+    const fieldName = (config as any).name as string | undefined;
+    const _rawLabel = (config as any).label ?? "";
+    const _rawDetails = (config as any).details ?? "";
+    const label = fieldName
+        ? tc(`field_${fieldName}_label`, undefined, _rawLabel)
+        : _rawLabel;
+    const details = _rawDetails
+        ? (fieldName
+            ? tc(`field_${fieldName}_details`, undefined, _rawDetails)
+            : _rawDetails)
+        : undefined;
+
+    const {
+        value,
+        error,
+        handleChange,
+        isInherited,
+        isResponsive,
+        clearOverride,
+        activeDevice,
+    } = useCustomizerField(config as any, onFieldChangeAction);
+
+    const handleCreateOverride = () => {
+        if (value !== null && value !== undefined) {
+            handleChange(value as any);
+        }
+    };
+
+    if (!isFieldVisible(config as any, context)) {
+        return null;
+    }
+
+    const renderError = () =>
+        error ? <s-text tone="critical">{error}</s-text> : null;
+
+    const fieldKey = `${(config as any).name || config.type}-${resetKey}`;
+
+    switch (config.type) {
         case "color":
             return (
                 <s-stack gap="small-200">
@@ -344,7 +339,7 @@ function DynamicCustomizerFieldInner({
         case "number":
             return (
                 <s-stack gap="small-200">
-                    {isResponsive && (
+                    {isResponsive ? (
                         <s-stack
                             direction="inline"
                             alignItems="center"
@@ -359,7 +354,7 @@ function DynamicCustomizerFieldInner({
                                 onClearOverride={clearOverride}
                             />
                         </s-stack>
-                    )}
+                    ) : null}
                     <s-number-field
                         key={fieldKey}
                         label={isResponsive ? undefined : label}
@@ -401,14 +396,14 @@ function DynamicCustomizerFieldInner({
                                 gap="small-200"
                             >
                                 <s-text>{label}</s-text>
-                                {isResponsive && (
+                                {isResponsive ? (
                                     <ResponsiveFieldIndicator
                                         activeDevice={activeDevice}
                                         isInherited={isInherited}
                                         onOverride={handleCreateOverride}
                                         onClearOverride={clearOverride}
                                     />
-                                )}
+                                ) : null}
                             </s-stack>
                             <s-text tone="neutral">
                                 {value}
@@ -429,13 +424,13 @@ function DynamicCustomizerFieldInner({
                                 action={(val) => handleChange(val as any)}
                             />
                         </div>
-                        {details && (
+                        {details ? (
                             <s-text tone="neutral">
                                 <span className="text-[0.75rem] text-[#616161]">
                                     {details}
                                 </span>
                             </s-text>
-                        )}
+                        ) : null}
                     </s-stack>
                     {renderError()}
                 </s-stack>
@@ -465,7 +460,7 @@ function DynamicCustomizerFieldInner({
                                 alignItems="center"
                             >
                                 <s-text>{label}</s-text>
-                                {details && (
+                                {details ? (
                                     <>
                                         <s-icon
                                             tone="neutral"
@@ -478,16 +473,16 @@ function DynamicCustomizerFieldInner({
                                             <s-text>{details}</s-text>
                                         </s-tooltip>
                                     </>
-                                )}
+                                ) : null}
                             </s-stack>
-                            {isResponsive && (
+                            {isResponsive ? (
                                 <ResponsiveFieldIndicator
                                     activeDevice={activeDevice}
                                     isInherited={isInherited}
                                     onOverride={handleCreateOverride}
                                     onClearOverride={clearOverride}
                                 />
-                            )}
+                            ) : null}
                         </s-stack>
                         <div
                             style={{
@@ -528,7 +523,7 @@ function DynamicCustomizerFieldInner({
         case "select":
             return (
                 <s-stack gap="small-200">
-                    {isResponsive && (
+                    {isResponsive ? (
                         <s-stack
                             direction="inline"
                             alignItems="center"
@@ -543,7 +538,7 @@ function DynamicCustomizerFieldInner({
                                 onClearOverride={clearOverride}
                             />
                         </s-stack>
-                    )}
+                    ) : null}
                     <s-select
                         key={fieldKey}
                         label={isResponsive ? undefined : label}
@@ -591,14 +586,14 @@ function DynamicCustomizerFieldInner({
                             gap="small-200"
                         >
                             <s-text>{label}</s-text>
-                            {isResponsive && (
+                            {isResponsive ? (
                                 <ResponsiveFieldIndicator
                                     activeDevice={activeDevice}
                                     isInherited={isInherited}
                                     onOverride={handleCreateOverride}
                                     onClearOverride={clearOverride}
                                 />
-                            )}
+                            ) : null}
                         </s-stack>
                         <s-switch
                             key={fieldKey}
@@ -613,11 +608,11 @@ function DynamicCustomizerFieldInner({
                             }}
                         />
                     </s-stack>
-                    {details && (
+                    {details ? (
                         <span className="text-[0.75rem] text-[#616161] -mt-2">
                             {details}
                         </span>
-                    )}
+                    ) : null}
                 </s-stack>
             );
 

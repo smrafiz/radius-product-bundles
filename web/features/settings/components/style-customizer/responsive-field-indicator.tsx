@@ -10,14 +10,14 @@ export function ResponsiveFieldIndicator({
     onOverride,
     onClearOverride,
 }: ResponsiveFieldIndicatorProps) {
-    if (activeDevice === "desktop") {
-        return null;
-    }
-
     const t = useTranslations("Settings.Customizer");
     const { canUse } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
     const canResponsive = canUse("responsive_overrides");
+
+    if (activeDevice === "desktop") {
+        return null;
+    }
 
     const deviceLabel =
         activeDevice.charAt(0).toUpperCase() + activeDevice.slice(1);

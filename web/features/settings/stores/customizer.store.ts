@@ -11,6 +11,7 @@ import {
     DEFAULT_CUSTOMIZER_STYLES,
     STYLE_PRESETS,
 } from "@/features/settings/constants/defaults.constants";
+import { RESPONSIVE_FIELDS } from "@/features/settings/configs/customizer.config";
 
 function deepClone<T>(obj: T): T {
     return structuredClone(obj);
@@ -82,7 +83,10 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
             ) => {
                 const { activeDevice, activeBundleType, styles } = get();
 
-                if (activeDevice !== "desktop") {
+                if (
+                    activeDevice !== "desktop" &&
+                    RESPONSIVE_FIELDS.has(key as string)
+                ) {
                     const currentMap = styles[activeDevice] || {};
                     set((state) => ({
                         styles: {
@@ -278,7 +282,24 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
             /**
              * Gets styles for API submission.
              */
-            getGlobalStyles: () => get().styles,
+            getGlobalStyles: () => {
+                const styles = get().styles;
+                const sanitized = { ...styles };
+                for (const device of ["tablet", "mobile"] as const) {
+                    const map = sanitized[device];
+                    if (!map) continue;
+                    const filtered = Object.fromEntries(
+                        Object.entries(map).filter(([k]) =>
+                            RESPONSIVE_FIELDS.has(k),
+                        ),
+                    );
+                    sanitized[device] =
+                        Object.keys(filtered).length > 0
+                            ? filtered
+                            : undefined;
+                }
+                return sanitized;
+            },
 
             /**
              * Marks store as clean after save.

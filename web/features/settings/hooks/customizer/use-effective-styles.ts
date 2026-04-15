@@ -1,13 +1,9 @@
 "use client";
 
-import { CustomizerStyles, useCustomizerStore } from "@/features/settings";
 import { useMemo } from "react";
+import { useCustomizerStore } from "@/features/settings";
+import { RESPONSIVE_FIELDS } from "@/features/settings/configs/customizer.config";
 
-/**
- * Hook to resolve effective styles considering active device overrides.
- * Used by preview components to ensure the visual widget reflects
- * what the user is currently editing.
- */
 export function useEffectiveStyles() {
     const { styles, activeDevice, activeBundleType } = useCustomizerStore();
 
@@ -25,7 +21,15 @@ export function useEffectiveStyles() {
         }
 
         if (activeDevice !== "desktop") {
-            effective = { ...effective, ...(styles[activeDevice] || {}) };
+            const deviceMap = styles[activeDevice];
+            if (deviceMap) {
+                const filtered = Object.fromEntries(
+                    Object.entries(deviceMap).filter(([k]) =>
+                        RESPONSIVE_FIELDS.has(k),
+                    ),
+                );
+                effective = { ...effective, ...filtered };
+            }
         }
 
         return effective;

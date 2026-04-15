@@ -275,7 +275,7 @@ export function WidgetClassicCard({
                 style={{
                     display: "grid",
                     gridTemplateColumns:
-                        activeDevice === "mobile" ? "1fr" : (styles.splitDealStyle ?? "row") === "column" ? "1fr" : "1fr 1fr",
+                        (styles.splitDealStyle ?? "row") === "column" ? "1fr" : "1fr 1fr",
                     gap: spacingValues.gap + 2,
                     marginTop: 10,
                 }}
