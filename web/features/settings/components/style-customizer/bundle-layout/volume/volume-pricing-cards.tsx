@@ -174,7 +174,7 @@ export function VolumePricingCards({
                                 </div>
                             )}
 
-                            {tier.savings && (
+                            {tier.savings && displayOptions?.showSavings && (
                                 <div className="rb-vol__card-savings">
                                     {tier.savings.toUpperCase()}
                                 </div>

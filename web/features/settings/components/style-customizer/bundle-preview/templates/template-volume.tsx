@@ -17,7 +17,9 @@ import type { CustomizerStyles } from "@/features/settings";
 import { DEMO_TIERS } from "@/features/settings/constants/customizer.constants";
 import { DEFAULT_DISPLAY_OPTIONS, PLACEHOLDER_PRODUCTS, PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
-function VolumeFooter({ styles }: { styles: CustomizerStyles }) {
+import type { WidgetDisplayOptions } from "@/shared";
+
+function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; displayOptions: WidgetDisplayOptions }) {
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
     const padding = getButtonPadding(styles.buttonSize);
@@ -36,6 +38,7 @@ function VolumeFooter({ styles }: { styles: CustomizerStyles }) {
                 justifyContent: isFullWidth ? "stretch" : "flex-start",
             }}
         >
+            {displayOptions?.showQuantity && (
             <div
                 style={{
                     display: "flex",
@@ -97,6 +100,7 @@ function VolumeFooter({ styles }: { styles: CustomizerStyles }) {
                     +
                 </button>
             </div>
+            )}
             <button
                 style={{
                     flex: isFullWidth ? 1 : undefined,
@@ -164,7 +168,7 @@ export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
     return (
         <>
             {renderLayout()}
-            {showQtySelector && <VolumeFooter styles={styles} />}
+            {showQtySelector && <VolumeFooter styles={styles} displayOptions={DEFAULT_DISPLAY_OPTIONS} />}
         </>
     );
 }

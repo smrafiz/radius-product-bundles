@@ -162,7 +162,7 @@ export function VolumeTierList({ tiers, product, styles, displayOptions }: Volum
                                         {tier.subtitle}
                                     </span>
                                 )}
-                                {tier.savings && (
+                                {tier.savings && displayOptions?.showSavings && (
                                     <span className="rb-vol__tier-savings-line">
                                         {tier.savings}
                                     </span>

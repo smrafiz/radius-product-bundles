@@ -157,6 +157,7 @@ export function VolumeSlider({ tiers, product, styles, displayOptions }: VolumeL
                         </span>
                     </div>
 
+                    {displayOptions?.showSavings && (
                     <div
                         className="rb-vol-slider__price-savings"
                         style={{ display: hasSavings ? undefined : "none" }}
@@ -173,9 +174,11 @@ export function VolumeSlider({ tiers, product, styles, displayOptions }: VolumeL
                             You save
                         </span>
                     </div>
+                    )}
                 </div>
             )}
 
+            {displayOptions?.showQuantity && (
             <div className="rb-vol-slider__slider-section">
                 <div className="rb-vol-slider__slider-header">
                     <span className="rb-vol-slider__qty-label">
@@ -220,6 +223,7 @@ export function VolumeSlider({ tiers, product, styles, displayOptions }: VolumeL
                     })}
                 </div>
             </div>
+            )}
 
             {nudgeVisible && (
                 <div className="rb-vol-slider__nudge">

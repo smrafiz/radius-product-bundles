@@ -184,7 +184,7 @@ export interface VolumeLayoutProps {
     };
     highlightColor: string;
     styles: CustomizerStyles;
-    displayOptions?: WidgetDisplayOptions;
+    displayOptions: WidgetDisplayOptions;
 }
 
 // ═══════════════════════════════════════════════════════════════════

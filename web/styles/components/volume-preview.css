@@ -329,7 +329,7 @@
 }
 
 .rb-vol__card-price {
-    font-size: calc(var(--rb-body-font-size, 14px) + 4px);
+    font-size: var(--rb-body-font-size, 14px);
     font-weight: 700;
     color: var(--rb-text-color, #333);
     line-height: 1.1;

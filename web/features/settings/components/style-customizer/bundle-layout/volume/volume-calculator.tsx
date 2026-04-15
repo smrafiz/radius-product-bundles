@@ -113,6 +113,7 @@ export function VolumeCalculator({
                 {product?.title ?? "Product"}
             </div>
 
+            {displayOptions?.showQuantity && (
             <div className="rb-vol-calc__qty-section">
                 <label
                     className="rb-vol-calc__qty-label"
@@ -148,6 +149,7 @@ export function VolumeCalculator({
                     </button>
                 </div>
             </div>
+            )}
 
             {unitPrice > 0 && (
                 <div className="rb-vol-calc__calc-row" data-calc-total="">
@@ -165,7 +167,7 @@ export function VolumeCalculator({
                 </div>
             )}
 
-            {unitPrice > 0 && (
+            {unitPrice > 0 && displayOptions?.showSavings && (
                 <div
                     className="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"
                     style={{ display: hasSavings ? undefined : "none" }}

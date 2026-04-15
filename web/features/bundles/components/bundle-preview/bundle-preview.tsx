@@ -107,9 +107,11 @@ function buildVolumeLayoutTiers(
 function VolumeAddToCart({
     styles,
     cartButtonText,
+    displayOptions,
 }: {
     styles: CustomizerStyles;
     cartButtonText?: string;
+    displayOptions: WidgetDisplayOptions;
 }) {
     const bgColor = styles.buttonBgColor || styles.primaryColor;
     const isOutline = styles.buttonStyle === "outline";
@@ -126,6 +128,7 @@ function VolumeAddToCart({
                 justifyContent: isFullWidth ? "stretch" : "flex-start",
             }}
         >
+            {displayOptions?.showQuantity && (
             <div
                 style={{
                     display: "flex",
@@ -187,6 +190,7 @@ function VolumeAddToCart({
                     +
                 </button>
             </div>
+                )}
             <button
                 style={{
                     flex: isFullWidth ? 1 : undefined,
@@ -220,7 +224,7 @@ function RenderVolumeLayout({
     styles: CustomizerStyles;
     currencyCode?: string;
     firstProduct?: PreviewProduct;
-    displayOptions?: WidgetDisplayOptions;
+    displayOptions: WidgetDisplayOptions;
 }) {
     const tiers = buildVolumeLayoutTiers(config, currencyCode);
     const highlightColor = styles.primaryColor;
@@ -791,14 +795,25 @@ export function BundlePreview() {
                                                 : "-16px",
                                         }}
                                     >
-                                        <RenderVolumeLayout
-                                            layout={displaySettings.layout}
-                                            config={volumeConfig}
+                                        <BundleWidget
                                             styles={styles}
-                                            currencyCode={currencyCode}
-                                            firstProduct={products[0]}
                                             displayOptions={displayOptions}
-                                        />
+                                            pricing={pricing}
+                                            title={displaySettings.title}
+                                            subtitle={displaySettings.subtitle}
+                                            labels={labels}
+                                            hideFooter
+                                            hidePricing
+                                        >
+                                            <RenderVolumeLayout
+                                                layout={displaySettings.layout}
+                                                config={volumeConfig}
+                                                styles={styles}
+                                                currencyCode={currencyCode}
+                                                firstProduct={products[0]}
+                                                displayOptions={displayOptions}
+                                            />
+                                        </BundleWidget>
                                         {displaySettings.layout === "VOLUME_SLIDER" ||
                                         displaySettings.layout === "VOLUME_CALCULATOR" ? (
                                             <WidgetAddToCart
@@ -811,6 +826,7 @@ export function BundlePreview() {
                                         ) : (
                                             <VolumeAddToCart
                                                 styles={styles}
+                                                displayOptions={displayOptions}
                                                 cartButtonText={
                                                     displaySettings.cartButtonText
                                                 }
