@@ -56,45 +56,56 @@ import "@/styles/components/bundle.css";
 function buildVolumeLayoutTiers(
     config: VolumeDiscountConfig,
     currencyCode: string | undefined,
+    basePrice?: number,
 ): ReadonlyArray<VolumeLayoutTier> {
     return config.tiers.map((tier, index) => {
         const isLast = index === config.tiers.length - 1;
-        const qtyLabel =
-            config.openEnded || !isLast
-                ? `${tier.minQuantity}+`
-                : `${tier.minQuantity}`;
 
         let price = "";
+        let comparePrice: string | undefined;
         let savings: string | undefined;
 
         if (config.discountType === "PERCENTAGE") {
             savings = `Save ${Math.round(tier.discount)}%`;
-            price = `${Math.round(tier.discount)}% off`;
+            if (basePrice && basePrice > 0) {
+                const discountedPrice = basePrice * (1 - tier.discount / 100);
+                price = formatPrice(Math.round(discountedPrice * 100) / 100, currencyCode);
+                comparePrice = formatPrice(basePrice, currencyCode);
+            } else {
+                price = `${Math.round(tier.discount)}% off`;
+            }
         } else {
             savings = `Save ${formatPrice(tier.discount, currencyCode)} off`;
-            price = `-${formatPrice(tier.discount, currencyCode)}`;
+            if (basePrice && basePrice > 0) {
+                const discountedPrice = Math.max(0, basePrice - tier.discount);
+                price = formatPrice(Math.round(discountedPrice * 100) / 100, currencyCode);
+                comparePrice = formatPrice(basePrice, currencyCode);
+            } else {
+                price = `-${formatPrice(tier.discount, currencyCode)}`;
+            }
         }
 
         const badge = tier.badge?.text
             ? { text: tier.badge.text, style: tier.badge.style }
             : undefined;
 
+        const discountLabel = config.discountType === "PERCENTAGE"
+            ? `${Math.round(tier.discount)}%`
+            : formatPrice(tier.discount, currencyCode);
+
         const resolvedTitle = (tier.title || "")
             .replace("{quantity}", String(tier.minQuantity))
-            .replace("{discount}", config.discountType === "PERCENTAGE"
-                ? `${Math.round(tier.discount)}%`
-                : formatPrice(tier.discount, currencyCode));
+            .replace("{discount}", discountLabel);
 
         const resolvedSubtitle = (tier.subtitle || "")
             .replace("{quantity}", String(tier.minQuantity))
-            .replace("{discount}", config.discountType === "PERCENTAGE"
-                ? `${Math.round(tier.discount)}%`
-                : formatPrice(tier.discount, currencyCode));
+            .replace("{discount}", discountLabel);
 
         return {
             qty: tier.minQuantity,
             discount: tier.discount,
             price,
+            comparePrice,
             savings,
             title: resolvedTitle || undefined,
             subtitle: resolvedSubtitle || undefined,
@@ -226,13 +237,17 @@ function RenderVolumeLayout({
     firstProduct?: PreviewProduct;
     displayOptions: WidgetDisplayOptions;
 }) {
-    const tiers = buildVolumeLayoutTiers(config, currencyCode);
+    const rawBasePrice = firstProduct?.compareAtPrice || firstProduct?.price;
+    const numericBasePrice = rawBasePrice
+        ? parseFloat(rawBasePrice.replace(/[^0-9.]/g, "")) || undefined
+        : undefined;
+    const tiers = buildVolumeLayoutTiers(config, currencyCode, numericBasePrice);
     const highlightColor = styles.primaryColor;
     const product = firstProduct
         ? {
               title: firstProduct.title,
               image: firstProduct.image,
-              basePrice: firstProduct.price,
+              basePrice: rawBasePrice || firstProduct.price,
           }
         : undefined;
 

@@ -119,7 +119,7 @@ export function VolumeCalculator({
                     className="rb-vol-calc__qty-label"
                     htmlFor="rb-calc-qty-input"
                 >
-                    Enter Quantity
+                    Select Quantity
                 </label>
                 <div className="rb-vol-calc__qty-wrap">
                     <button
