@@ -46,7 +46,7 @@ export function SettingsField({ config }: { config: FieldConfig }) {
                     name={config.name}
                     label={config.label}
                     value={String(value ?? defaultValue ?? "")}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     placeholder={config.placeholder}
                     details={config.details}
                     error={error}
@@ -59,7 +59,7 @@ export function SettingsField({ config }: { config: FieldConfig }) {
                     name={config.name}
                     label={config.label}
                     value={String(value ?? defaultValue ?? "")}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     placeholder={config.placeholder}
                     details={config.details}
                     rows={config.rows ?? 4}
@@ -73,7 +73,7 @@ export function SettingsField({ config }: { config: FieldConfig }) {
                     name={config.name}
                     label={config.label}
                     value={String(value ?? defaultValue ?? 0)}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     min={config.min}
                     max={config.max}
                     details={config.details}

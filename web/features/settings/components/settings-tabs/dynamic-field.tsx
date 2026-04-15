@@ -118,7 +118,7 @@ function DynamicFieldInner({
                     name={fieldPath}
                     label={label}
                     value={String(value ?? defaultValue ?? "")}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     placeholder={placeholder}
                     details={details}
                     error={error}
@@ -132,7 +132,7 @@ function DynamicFieldInner({
                     name={fieldPath}
                     label={label}
                     value={String(value ?? defaultValue ?? "")}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     placeholder={placeholder}
                     details={details}
                     rows={config.rows ?? 4}
@@ -146,7 +146,7 @@ function DynamicFieldInner({
                     name={fieldPath}
                     label={label}
                     value={String(value ?? defaultValue ?? 0)}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     min={config.min}
                     max={config.max}
                     details={details}
