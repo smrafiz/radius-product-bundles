@@ -52,6 +52,7 @@ export function BundleFormProvider({
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);
     const settingsApplied = useRef(false);
+    const hasResetRef = useRef(false);
 
     const serverData = useSettingsStore((s) => s.serverData);
     const isSettingsLoading = useSettingsStore((s) => s.isLoading);
@@ -143,6 +144,46 @@ export function BundleFormProvider({
                 resetDirty();
             }, 300);
         }
+    }, []);
+
+    // Reset form once after initial data loads in edit mode
+    useEffect(() => {
+        if (!isEditMode || !initialData || hasResetRef.current) return;
+        hasResetRef.current = true;
+        form.reset(
+            {
+                name: initialData.name || "",
+                description: initialData.description || "",
+                type: bundleType,
+                status: initialData.status || "DRAFT",
+                products: initialData.products || [],
+                discountType: (initialData.discountType ?? "PERCENTAGE") as DiscountType,
+                discountValue: initialData.discountValue ?? 0,
+                minOrderValue: initialData.minOrderValue || undefined,
+                maxDiscountAmount: initialData.maxDiscountAmount || undefined,
+                startDate: initialData.startDate || undefined,
+                endDate: initialData.endDate || undefined,
+                mainProductId: initialData.mainProductId || undefined,
+                buyQuantity: initialData.buyQuantity ?? (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y" ? 1 : undefined),
+                getQuantity: initialData.getQuantity ?? (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y" ? 1 : undefined),
+                minimumItems: initialData.minimumItems || undefined,
+                maximumItems: initialData.maximumItems || undefined,
+                volumeTiers: initialData.volumeTiers || undefined,
+                allowMixAndMatch: initialData.allowMixAndMatch || false,
+                mixAndMatchPrice: initialData.mixAndMatchPrice || undefined,
+                marketingCopy: initialData.marketingCopy || undefined,
+                seoTitle: initialData.seoTitle || undefined,
+                seoDescription: initialData.seoDescription || undefined,
+                images: initialData.images || [],
+                productGroups: initialData.productGroups || undefined,
+                settings: initialData.settings || {
+                    ...initialDisplaySettings,
+                    layout: getDefaultLayout(bundleType),
+                },
+            },
+            { keepDirty: false },
+        );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Listen for validation errors and navigate to the correct step

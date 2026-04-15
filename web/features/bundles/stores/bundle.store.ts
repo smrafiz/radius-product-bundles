@@ -29,6 +29,10 @@ export const setStoreInitializing = (value: boolean) => {
  * Triggers the save bar by dispatching a custom event.
  */
 const callTriggerSaveBar = () => {
+    if (isInitializing) {
+        return;
+    }
+
     if (typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent(TRIGGER_SAVE_BAR));
     }
