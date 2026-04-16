@@ -137,6 +137,7 @@
         padding: var(--rb-button-padding);
         font-weight: 600;
         cursor: pointer;
+        touch-action: manipulation;
         transition: all var(--rb-transition);
 
         &:hover:not(:disabled) {

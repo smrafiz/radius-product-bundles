@@ -271,7 +271,9 @@ import "./scss/radius-bundles.scss";
 
                 for (const bundle of bundles) {
                     const itemCount = bundleItemCounts[bundle.bundleId] || 0;
-                    const hasItems = itemCount >= 1;
+                    const settings = this.getBundleSettings(bundle.bundleId);
+                    const expectedCount = settings?.productCount || 1;
+                    const hasItems = itemCount >= expectedCount;
                     const isActive = this.isBundleActive(bundle.bundleId);
 
                     if (!hasItems || !isActive) {
@@ -567,7 +569,8 @@ import "./scss/radius-bundles.scss";
             items.forEach((item) => {
                 const bundleId = item.properties?._bundle_id;
                 if (bundleId) {
-                    counts[bundleId] = (counts[bundleId] || 0) + (item.quantity || 1);
+                    // Count unique line items (not total qty) — used to check bundle completeness
+                    counts[bundleId] = (counts[bundleId] || 0) + 1;
                 }
             });
 
@@ -583,9 +586,11 @@ import "./scss/radius-bundles.scss";
 
             bundles.forEach((bundle) => {
                 const itemCount = itemCounts[bundle.bundleId] || 0;
+                const settings = this.cartCleanup.getBundleSettings(bundle.bundleId);
+                const expectedCount = settings?.productCount || 1;
 
                 if (
-                    itemCount >= 1 &&
+                    itemCount >= expectedCount &&
                     this.cartCleanup.isBundleActive(bundle.bundleId)
                 ) {
                     const name = bundle.bundleName || "this bundle";
