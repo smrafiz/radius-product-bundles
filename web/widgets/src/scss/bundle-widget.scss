@@ -289,18 +289,9 @@
     .radius-bundle__title-wrapper {
         width: 100%;
     }
-
-    .radius-bundle__product--list .radius-bundle__product-image {
-        width: 60px;
-        height: 60px;
-    }
 }
 
 .radius-bundle.rb--mobile {
-    .radius-bundle__product--grid .radius-bundle__product-image {
-        height: 160px;
-    }
-
     .radius-bundle__product--list {
         flex-wrap: wrap;
 

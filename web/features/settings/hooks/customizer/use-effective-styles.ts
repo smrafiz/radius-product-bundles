@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useCustomizerStore } from "@/features/settings";
+import { BundleType } from "@/features/bundles";
 import { RESPONSIVE_FIELDS } from "@/features/settings/configs/customizer.config";
 
 export function useEffectiveStyles() {
@@ -12,11 +13,12 @@ export function useEffectiveStyles() {
 
         if (
             activeBundleType &&
-            styles.bundleTypeOverrides?.[activeBundleType]
+            activeBundleType !== "CART_BANNER" &&
+            styles.bundleTypeOverrides?.[activeBundleType as BundleType]
         ) {
             effective = {
                 ...effective,
-                ...styles.bundleTypeOverrides[activeBundleType],
+                ...styles.bundleTypeOverrides[activeBundleType as BundleType],
             };
         }
 

@@ -37,16 +37,19 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
         isResponsive &&
         styles[activeDevice]?.[fieldName] === undefined;
 
+    const isBundleTypeOverrideContext =
+        !!activeBundleType && activeBundleType !== "CART_BANNER";
+
     const isTypeOverridden =
-        !!activeBundleType &&
-        styles.bundleTypeOverrides?.[activeBundleType]?.[fieldName] !==
+        isBundleTypeOverrideContext &&
+        styles.bundleTypeOverrides?.[activeBundleType!]?.[fieldName] !==
             undefined;
 
     // Determine effective path for RHF
     let rhfPath: Path<CustomizerStyles>;
     if (activeDevice !== "desktop") {
         rhfPath = `${activeDevice}.${fieldName}` as Path<CustomizerStyles>;
-    } else if (activeBundleType) {
+    } else if (isBundleTypeOverrideContext) {
         rhfPath =
             `bundleTypeOverrides.${activeBundleType}.${fieldName}` as Path<CustomizerStyles>;
     } else {
@@ -63,9 +66,9 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
     // Resolve value: base -> type override -> device override
     let resolvedValue: any = styles[fieldName];
 
-    if (activeBundleType) {
+    if (isBundleTypeOverrideContext) {
         const typeOverride =
-            styles.bundleTypeOverrides?.[activeBundleType]?.[fieldName];
+            styles.bundleTypeOverrides?.[activeBundleType!]?.[fieldName];
         if (typeOverride !== undefined) {
             resolvedValue = typeOverride;
         }
@@ -116,14 +119,14 @@ export function useCustomizerField<K extends keyof CustomizerStyles>(
     ]);
 
     const clearTypeOverride = useCallback(() => {
-        if (!activeBundleType) return;
+        if (!isBundleTypeOverrideContext) return;
         clearBundleTypeOverride(fieldName);
         setValue(rhfPath, undefined as any, {
             shouldDirty: true,
         });
         onFieldChange?.();
     }, [
-        activeBundleType,
+        isBundleTypeOverrideContext,
         fieldName,
         rhfPath,
         setValue,

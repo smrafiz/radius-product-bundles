@@ -14,7 +14,7 @@ import {
     useSettingsQuery,
     type WidgetLayout,
 } from "@/features/settings";
-import { BundleType } from "@/features/bundles";
+import type { PreviewTemplateId } from "@/features/settings/types/template.types";
 import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Resolver, useForm } from "react-hook-form";
@@ -111,7 +111,7 @@ export function useCustomizerPage() {
     // Initialize active bundle type, layout, and device from URL params
     useEffect(() => {
         if (!activeBundleType) {
-            setActiveBundleType(initialType as BundleType);
+            setActiveBundleType(initialType as PreviewTemplateId);
             if (layoutParam) {
                 setActiveLayout(layoutParam as WidgetLayout);
             }
@@ -250,7 +250,7 @@ export function useCustomizerPage() {
         resetCounter,
 
         // Actions
-        setActiveId: (id: string) => setActiveBundleType(id as BundleType),
+        setActiveId: (id: string) => setActiveBundleType(id as PreviewTemplateId),
         handleClearErrors,
         handleSubmit,
         handleReset,

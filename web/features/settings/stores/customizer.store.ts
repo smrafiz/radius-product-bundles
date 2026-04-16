@@ -6,6 +6,7 @@ import {
     WidgetLayout,
 } from "@/features/settings";
 import { BundleType } from "@/features/bundles";
+import type { PreviewTemplateId } from "@/features/settings/types/template.types";
 import { PreviewProduct } from "@/shared";
 import {
     DEFAULT_CUSTOMIZER_STYLES,
@@ -34,7 +35,7 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
             isInitialized: false,
             activeLayout: "LIST" as WidgetLayout,
             activeDevice: "desktop",
-            activeBundleType: null as BundleType | null,
+            activeBundleType: null as PreviewTemplateId | null,
             activePreset: null,
 
             previewProducts: [],
@@ -95,7 +96,7 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                         },
                         activePreset: null,
                     }));
-                } else if (activeBundleType) {
+                } else if (activeBundleType && activeBundleType !== "CART_BANNER") {
                     const overrides = styles.bundleTypeOverrides || {};
                     const typeMap = overrides[activeBundleType] || {};
                     set((state) => ({
@@ -146,7 +147,7 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
 
             clearBundleTypeOverride: (key: keyof CustomizerStyles) => {
                 const { activeBundleType, styles } = get();
-                if (!activeBundleType) return;
+                if (!activeBundleType || activeBundleType === "CART_BANNER") return;
 
                 const typeMap = styles.bundleTypeOverrides?.[activeBundleType];
                 if (!typeMap || !(key in typeMap)) return;
@@ -196,12 +197,12 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 set({ activeDevice: device });
             },
 
-            setActiveBundleType: (type: BundleType | null) => {
+            setActiveBundleType: (type: PreviewTemplateId | null) => {
                 const { styles } = get();
                 let preset: string | null = null;
-                if (type) {
+                if (type && type !== "CART_BANNER") {
                     preset =
-                        (styles.bundleTypeOverrides?.[type]
+                        (styles.bundleTypeOverrides?.[type as BundleType]
                             ?.stylePreset as string) ??
                         styles.stylePreset ??
                         null;
@@ -220,7 +221,7 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
 
                 const { activeBundleType } = get();
 
-                if (activeBundleType) {
+                if (activeBundleType && activeBundleType !== "CART_BANNER") {
                     set((state) => {
                         const overrides =
                             state.styles.bundleTypeOverrides || {};

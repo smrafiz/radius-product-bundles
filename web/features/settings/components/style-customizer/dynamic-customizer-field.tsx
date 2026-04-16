@@ -195,9 +195,11 @@ function DynamicNonFormField({
                                 onSelect={() => {
                                     applyPreset(key);
 
-                                    const pathPrefix = activeBundleType
-                                        ? (`bundleTypeOverrides.${activeBundleType}.` as const)
-                                        : ("" as const);
+                                    const pathPrefix =
+                                        activeBundleType &&
+                                        activeBundleType !== "CART_BANNER"
+                                            ? (`bundleTypeOverrides.${activeBundleType}.` as const)
+                                            : ("" as const);
 
                                     setFormValue(
                                         `${pathPrefix}stylePreset` as any,

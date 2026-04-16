@@ -5,6 +5,7 @@ import {
 } from "@/features/settings";
 import { BundleType } from "@/features/bundles";
 import type { PreviewProduct } from "@/shared";
+import type { PreviewTemplateId } from "@/features/settings/types/template.types";
 
 export type SettingsStoreState = {
     serverData: AppSettingsFormData | null;
@@ -89,7 +90,7 @@ export interface CustomizerStoreState {
     isInitialized: boolean;
     activeLayout: WidgetLayout;
     activeDevice: "desktop" | "tablet" | "mobile";
-    activeBundleType: BundleType | null;
+    activeBundleType: PreviewTemplateId | null;
     activePreset: string | null;
 
     // Preview products from bundle preview (when opened from bundle edit)
@@ -109,7 +110,7 @@ export interface CustomizerStoreState {
     clearBundleTypeOverride: (key: keyof CustomizerStyles) => void;
     setActiveLayout: (layout: WidgetLayout) => void;
     setActiveDevice: (device: "desktop" | "tablet" | "mobile") => void;
-    setActiveBundleType: (type: BundleType | null) => void;
+    setActiveBundleType: (type: PreviewTemplateId | null) => void;
     applyPreset: (presetKey: string) => void;
     resetToDefaults: () => void;
     discardChanges: () => void;
