@@ -53,6 +53,7 @@ import type { VolumeContext } from "./lib/types";
 (function () {
     "use strict";
 
+    /** Global lock — prevents concurrent add-to-cart across widget instances (window-level for multi-script) */
     const W = window as any;
     if (W.__radiusAtcLock === undefined) W.__radiusAtcLock = false;
 
