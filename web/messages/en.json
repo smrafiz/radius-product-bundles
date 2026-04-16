@@ -389,6 +389,8 @@
       "notLivePaused": "This bundle is paused and is hidden from the storefront. Set status to Active to resume.",
       "notLiveArchived": "This bundle is archived and will not be displayed on the storefront.",
       "notLiveScheduled": "This bundle will go live automatically on the scheduled start date.",
+      "notLiveScheduledOn": "This bundle goes live automatically on {date}.",
+      "setToActive": "Set to Active",
       "setDates": "Set schedule dates",
       "resetDates": "Reset dates",
       "scheduleBundle": "Schedule bundle",

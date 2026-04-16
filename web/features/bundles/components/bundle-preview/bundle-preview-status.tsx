@@ -215,9 +215,7 @@ export function BundlePreviewStatus() {
                                                     </s-paragraph>
                                                 </s-stack>
                                                 {isLocked && (
-                                                    <ProBadge
-                                                        label={ts(key)}
-                                                    />
+                                                    <ProBadge label={ts(key)} />
                                                 )}
                                             </s-stack>
                                         </div>
@@ -238,14 +236,29 @@ export function BundlePreviewStatus() {
                                     : "warning"
                             }
                         >
-                            {t(
-                                bundleData.status === "DRAFT"
-                                    ? "notLiveDraft"
-                                    : bundleData.status === "PAUSED"
-                                      ? "notLivePaused"
-                                      : bundleData.status === "ARCHIVED"
-                                        ? "notLiveArchived"
-                                        : "notLiveScheduled",
+                            {bundleData.status === "SCHEDULED"
+                                ? bundleData.startDate
+                                    ? t("notLiveScheduledOn", {
+                                          date: formatDisplayDate(
+                                              bundleData.startDate,
+                                          ),
+                                      })
+                                    : t("notLiveScheduled")
+                                : t(
+                                      bundleData.status === "DRAFT"
+                                          ? "notLiveDraft"
+                                          : bundleData.status === "PAUSED"
+                                            ? "notLivePaused"
+                                            : "notLiveArchived",
+                                  )}
+                            {(bundleData.status === "DRAFT" ||
+                                bundleData.status === "PAUSED") && (
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() => handleStatusChange("ACTIVE")}
+                                >
+                                    {t("setToActive")}
+                                </s-button>
                             )}
                         </s-banner>
                     )}
