@@ -161,7 +161,7 @@ export function generateSettingsSchema(v?: Translator) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.too_big,
                     maximum: 100,
-                    type: "number",
+                    origin: "number",
                     inclusive: true,
                     message: v?.("INVALID_PERCENTAGE") ?? "Percentage discount cannot exceed 100%",
                     path: ["defaultDiscountValue"],
