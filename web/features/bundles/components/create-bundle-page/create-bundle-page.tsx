@@ -61,12 +61,18 @@ export function CreateBundlePage({
             })),
         );
 
-    // Clean up store on unmount (navigating away)
+    // Reset store when bundleType changes (same-page param change)
+    // and on unmount (navigating away). Belt-and-suspenders: handles both
+    // Next.js route-pattern reuse (no unmount between /new/bogo → /new/fixed)
+    // and full component unmount.
     useEffect(() => {
+        resetBundle(bundleType);
+        setBundleData({ type: bundleType });
+        setStep(1);
         return () => {
             resetBundle();
         };
-    }, [resetBundle]);
+    }, [bundleType, resetBundle, setBundleData, setStep]);
 
     const handleDiscard = useCallback(() => {
         resetBundle(bundleType);

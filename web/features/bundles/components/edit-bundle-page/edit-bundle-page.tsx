@@ -13,7 +13,7 @@ import {
     useEditBundleTransform,
 } from "@/features/bundles";
 import { useShallow } from "zustand/react/shallow";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslations } from "@/lib/i18n/provider";
 import { GlobalForm, useAppNavigation } from "@/shared";
@@ -63,6 +63,7 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
         clearPendingMedia,
         clearRemovedMediaIds,
         clearTouchedFields,
+        resetBundle,
     } = useBundleStore(
         useShallow((s) => ({
             setStep: s.setStep,
@@ -73,8 +74,19 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
             clearPendingMedia: s.clearPendingMedia,
             clearRemovedMediaIds: s.clearRemovedMediaIds,
             clearTouchedFields: s.clearTouchedFields,
+            resetBundle: s.resetBundle,
         })),
     );
+
+    // Reset store when bundleId changes (same-page route change) and on
+    // unmount. useBundleDataSync then repopulates from fresh query data.
+    // Prevents stale bundle data leaking between edit URLs.
+    useEffect(() => {
+        resetBundle();
+        return () => {
+            resetBundle();
+        };
+    }, [bundleId, resetBundle]);
     const initialData = useEditBundleTransform(bundleData);
     useBundleDataSync(bundleData);
 
