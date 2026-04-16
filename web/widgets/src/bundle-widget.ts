@@ -238,6 +238,7 @@ import type { VolumeContext } from "./lib/types";
             this.desktopDataAttrs = {
                 boxAlignment: container.dataset.boxAlign || "center",
                 imagePosition: container.dataset.imagePosition || "left",
+                imageSize: container.dataset.imageSize || "medium",
                 dividerStyle: container.dataset.dividerStyle || "plus",
                 carouselNavigation:
                     container.dataset.carouselNavigation || "both",
@@ -283,6 +284,7 @@ import type { VolumeContext } from "./lib/types";
             const attrMap: Record<string, string> = {
                 boxAlignment: "boxAlign",
                 imagePosition: "imagePosition",
+                imageSize: "imageSize",
                 dividerStyle: "dividerStyle",
                 carouselNavigation: "carouselNavigation",
             };

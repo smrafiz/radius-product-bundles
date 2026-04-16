@@ -186,18 +186,6 @@
         margin-top: 8px;
         background: var(--rb-product-bg-color, #f9fafb);
 
-        &--small {
-            aspect-ratio: 4 / 3;
-        }
-
-        &--medium {
-            aspect-ratio: 1 / 1;
-        }
-
-        &--large {
-            aspect-ratio: 3 / 4;
-        }
-
         img {
             width: 100%;
             height: 100%;
@@ -319,5 +307,21 @@
             width: 100%;
             height: auto;
         }
+    }
+}
+
+.radius-bundle[data-image-size="large"] {
+    .rb-classic__image {
+        aspect-ratio: 3 / 4;
+    }
+}
+.radius-bundle[data-image-size="medium"] {
+    .rb-classic__image {
+        aspect-ratio: 1 / 1;
+    }
+}
+.radius-bundle[data-image-size="small"] {
+    .rb-classic__image {
+        aspect-ratio: 4 / 3;
     }
 }
