@@ -87,7 +87,6 @@ export function DashboardReviewBanner() {
                 id={MODAL_ID}
                 ref={modalRef as any}
                 heading={t("shareYourFeedback")}
-                accessibilityLabel="Share your feedback"
                 accessibilityLabel={t("shareYourFeedback")}
             >
                 <s-stack gap="base">

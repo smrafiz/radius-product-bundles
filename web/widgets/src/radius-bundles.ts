@@ -50,6 +50,7 @@ import "./scss/radius-bundles.scss";
         maxDiscountAmount: number;
         discountApplication: string;
         discountedProductIds: string[];
+        productCount?: number;
         productIds: string[];
         volumeTiers?: {
             discountType: string;

@@ -79,7 +79,6 @@ export function DashboardVideoModal({
             id={MODAL_ID}
             ref={modalRef as any}
             heading={video?.title || t("videoTutorial")}
-            accessibilityLabel="Video tutorial"
             accessibilityLabel={video?.title || t("videoTutorial")}
         >
             <div
