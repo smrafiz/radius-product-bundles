@@ -294,6 +294,7 @@ export function SettingsTools() {
             <s-modal
                 id="reset-confirm-modal"
                 heading={t("modals.reset.heading")}
+                accessibilityLabel="Confirm reset settings"
             >
                 <s-stack gap="base">
                     <s-text>{t("modals.reset.body1")}</s-text>
@@ -339,6 +340,7 @@ export function SettingsTools() {
             <s-modal
                 id="sync-result-modal"
                 heading={t("modals.syncResult.heading")}
+                accessibilityLabel="Sync result"
             >
                 {syncResult ? (
                     <s-stack gap="base">
@@ -404,6 +406,7 @@ export function SettingsTools() {
 
                 <s-button
                     slot="primary-action"
+                    variant="primary"
                     command="--hide"
                     commandFor="sync-result-modal"
                 >
@@ -415,6 +418,7 @@ export function SettingsTools() {
             <s-modal
                 id="webhook-check-modal"
                 heading={t("modals.webhookCheck.heading")}
+                accessibilityLabel="Webhook check result"
             >
                 {webhookCheckResult ? (
                     <s-stack gap="base">
@@ -533,6 +537,7 @@ export function SettingsTools() {
 
                 <s-button
                     slot="primary-action"
+                    variant="primary"
                     command="--hide"
                     commandFor="webhook-check-modal"
                 >
@@ -544,6 +549,7 @@ export function SettingsTools() {
             <s-modal
                 id="webhook-register-modal"
                 heading={t("modals.webhookRegister.heading")}
+                accessibilityLabel="Webhook register result"
             >
                 {webhookRegisterResult ? (
                     <s-stack gap="base">
@@ -646,6 +652,7 @@ export function SettingsTools() {
 
                 <s-button
                     slot="primary-action"
+                    variant="primary"
                     command="--hide"
                     commandFor="webhook-register-modal"
                 >
