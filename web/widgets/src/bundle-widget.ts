@@ -53,6 +53,9 @@ import type { VolumeContext } from "./lib/types";
 (function () {
     "use strict";
 
+    const W = window as any;
+    if (W.__radiusAtcLock === undefined) W.__radiusAtcLock = false;
+
     /**
      * Radius Bundle Widget Class
      */
@@ -1249,7 +1252,7 @@ import type { VolumeContext } from "./lib/types";
          * Handles add to cart.
          */
         private async handleAddToCart(): Promise<void> {
-            if (!this.bundle) {
+            if (!this.bundle || W.__radiusAtcLock) {
                 return;
             }
 
@@ -1261,6 +1264,7 @@ import type { VolumeContext } from "./lib/types";
                 return;
             }
 
+            W.__radiusAtcLock = true;
             button.classList.add("is-loading");
             button.disabled = true;
             button.setAttribute("aria-busy", "true");
@@ -1298,6 +1302,7 @@ import type { VolumeContext } from "./lib/types";
                         button.classList.remove("is-loading");
                         button.disabled = false;
                         button.setAttribute("aria-busy", "false");
+                        W.__radiusAtcLock = false;
                         return;
                     }
                 }
@@ -1319,6 +1324,7 @@ import type { VolumeContext } from "./lib/types";
 
                 if (cartItems.length === 0) {
                     showToast("No valid products to add to cart", "error");
+                    W.__radiusAtcLock = false;
                     return;
                 }
 
@@ -1424,6 +1430,7 @@ import type { VolumeContext } from "./lib/types";
                     }
                     button.classList.remove("is-added");
                     button.disabled = false;
+                    W.__radiusAtcLock = false;
                 }, 1500);
             }
         }
@@ -1448,7 +1455,11 @@ import type { VolumeContext } from "./lib/types";
         );
 
         placeholders.forEach((el) => {
-            if (el.childElementCount > 0) return;
+            if (el.childElementCount > 0) {
+                return;
+            }
+
+            const filterType = el.dataset.filterType ?? "";
 
             const title = document.createElement("div");
             title.className = "radius-bundle-placeholder__title";
@@ -1456,8 +1467,20 @@ import type { VolumeContext } from "./lib/types";
 
             const desc = document.createElement("div");
             desc.className = "radius-bundle-placeholder__desc";
-            desc.textContent =
-                "This widget displays only on products that are part of a bundle. Preview a bundled product to see the widget in action.";
+
+            if (filterType) {
+                const typeLabel: Record<string, string> = {
+                    FIXED_BUNDLE: "Fixed Bundle",
+                    BUY_X_GET_Y: "Buy X Get Y",
+                    BOGO: "BOGO",
+                    VOLUME_DISCOUNT: "Volume Discount",
+                };
+                const label = typeLabel[filterType] ?? filterType;
+                desc.textContent = `No active ${label} bundle found for this product. Create one in the Radius app or change the type filter to "Default".`;
+            } else {
+                desc.textContent =
+                    "This widget displays only on products that are part of a bundle. Preview a bundled product to see the widget in action.";
+            }
 
             el.append(title, desc);
         });

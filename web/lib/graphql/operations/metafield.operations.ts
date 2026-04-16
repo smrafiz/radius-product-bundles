@@ -878,6 +878,19 @@ export async function syncAllSettingsToMetafields(
 
         const primaryLocale = shopRecord?.primaryLocale ?? "en";
 
+        // Resolve Pro status safely — don't let plan query crash the sync
+        let isPro = false;
+        try {
+            const shopPlan = await prisma.shopPlan.findUnique({
+                where: { shop },
+                select: { plan: true, status: true },
+            });
+            isPro =
+                shopPlan?.status === "ACTIVE" && shopPlan?.plan === "PRO";
+        } catch {
+            // No plan record = free plan
+        }
+
         // Fetch product prices for effective savings calculation
         const priceMap = await buildPriceMapForBundles(auth, activeBundles);
 
@@ -896,6 +909,7 @@ export async function syncAllSettingsToMetafields(
         const globalSettingsValue = buildGlobalSettingsMetafieldValue(
             globalSettings,
             primaryLocale,
+            isPro,
         );
         const shopBundlesValue = buildShopBundlesMetafieldValue(
             activeBundles,

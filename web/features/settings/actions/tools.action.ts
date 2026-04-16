@@ -44,7 +44,11 @@ export async function syncMetafieldsAction(
     try {
         const { shop, session } = await handleSessionToken(sessionToken);
 
-        const data = await syncMetafieldsService({ shop, accessToken: session.accessToken! });
+        const data = await syncMetafieldsService(
+            { shop, accessToken: session.accessToken! },
+            sessionToken,
+            session,
+        );
 
         return { status: "success", data };
     } catch (error) {

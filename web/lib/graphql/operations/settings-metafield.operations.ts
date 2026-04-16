@@ -40,6 +40,9 @@ interface MetafieldGlobalSettings {
         cssClass: string;
         css: string;
     };
+
+    // Plan gate — read by Liquid to enable Pro features
+    isPro: boolean;
 }
 
 interface MetafieldBundleConfig {
@@ -203,6 +206,7 @@ function getValidGlobalStyles(styles: any): GlobalStyleSettings {
 export function buildGlobalSettingsMetafieldValue(
     appSettings: AppSettings | null,
     primaryLocale = "en",
+    isPro = false,
 ): string {
     const mergedStyles: CustomizerStyles = {
         ...DEFAULT_CUSTOMIZER_STYLES,
@@ -246,6 +250,7 @@ export function buildGlobalSettingsMetafieldValue(
             cssClass: appSettings?.customCssClass || "",
             css: appSettings?.customCss || "",
         },
+        isPro,
     };
 
     return JSON.stringify(settings);

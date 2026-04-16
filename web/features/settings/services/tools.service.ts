@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { Session } from "@shopify/shopify-api";
 import { syncAllSettingsToMetafields } from "@/lib";
 import { initializeApp } from "@/features/webhooks/services/webhook.service";
+import { resetSetupFlags } from "@/shared/repositories/shop.queries";
 import { getRegisteredWebhooks } from "@/features/webhooks/repositories/webhook.repository";
 
 const SUBSCRIPTION_WEBHOOK_TOPICS = [
@@ -43,8 +44,19 @@ export async function clearCacheService(): Promise<ClearCacheResult> {
 
 export async function syncMetafieldsService(
     auth: { shop: string; accessToken: string },
+    sessionToken?: string,
+    session?: Session,
 ): Promise<SyncMetafieldResult> {
-    const result = await syncAllSettingsToMetafields(auth, auth.shop);
+    let result = await syncAllSettingsToMetafields(auth, auth.shop);
+
+    // Auto-initialize if discount/shop ID missing — reset flags so init actually runs
+    if (!result.success && result.error?.includes("Could not get discount or shop ID") && sessionToken && session) {
+        await resetSetupFlags(auth.shop);
+        const initResult = await initializeApp(sessionToken, session);
+        if (initResult.success) {
+            result = await syncAllSettingsToMetafields(auth, auth.shop);
+        }
+    }
 
     const syncedItems: string[] = ["Global settings (shop metafield)"];
     if (result.bundleCount) {
