@@ -589,18 +589,11 @@ fn calculate_bxgy_discount(
     let mut targets: Vec<ProductDiscountCandidateTarget> = Vec::new();
     let mut reward_total: f64 = 0.0;
 
-    // For same-product: track remaining discountable qty across lines
-    let mut remaining_reward_qty = match safe_mul(deal_count, get_qty) {
-        Some(v) => v,
-        None => return None,
-    };
-
     for bl in &reward_lines {
         let qty_to_discount = if is_same_product {
-            // Distribute deal_count * get_qty across lines, capped by each line's qty
-            let qty = std::cmp::min(remaining_reward_qty, *bl.line.quantity());
-            remaining_reward_qty -= qty;
-            qty
+            // Each line independently: calculate deals from this line's own qty
+            let per_line_deals = *bl.line.quantity() / items_per_deal;
+            per_line_deals * get_qty
         } else {
             let expected = match bl
                 .product_id
