@@ -68,6 +68,7 @@ export interface BundleCreationFormProps {
     bundleType: BundleType;
     bundleName?: string;
     bundleId?: string;
+    updatedAt?: string;
 }
 
 /*

@@ -267,6 +267,13 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                     bundleType={bundleData.type}
                     bundleName={bundleData.name}
                     bundleId={bundleId}
+                    updatedAt={
+                        bundleData.updatedAt
+                            ? typeof bundleData.updatedAt === "string"
+                                ? bundleData.updatedAt
+                                : new Date(bundleData.updatedAt).toISOString()
+                            : undefined
+                    }
                 />
             </GlobalForm>
         </BundleFormProvider>

@@ -404,6 +404,7 @@
       "publish": "Publish",
       "duplicate": "Duplicate",
       "createNew": "Create new",
+      "lastEdited": "Last edited {time}",
       "create": "Create bundle",
       "edit": "Edit bundle",
       "error": "Error",

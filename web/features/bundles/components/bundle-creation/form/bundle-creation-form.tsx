@@ -8,7 +8,12 @@ import {
     useBundleCreationForm,
 } from "@/features/bundles";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { GlobalBanner, usePlan } from "@/shared";
+import {
+    formatRelativeDate,
+    GlobalBanner,
+    useNavigationActions,
+    usePlan,
+} from "@/shared";
 import { WidgetStatusBanner } from "@/features/dashboard";
 
 /**
@@ -18,6 +23,7 @@ export function BundleCreationForm({
     bundleType,
     bundleName,
     bundleId,
+    updatedAt,
 }: BundleCreationFormProps) {
     const {
         tc,
@@ -44,6 +50,9 @@ export function BundleCreationForm({
     } = useBundleCreationForm({ bundleType, bundleName, bundleId });
     const { canUse } = usePlan();
     const canDuplicate = canUse("duplicate_bundle");
+    const { actions: navActions, isLoading: isNavLoading } =
+        useNavigationActions({ createNew: bundleData.create() });
+    const isCreatingNew = isNavLoading("createNew");
     const duplicateLabel = canDuplicate
         ? tc("duplicate")
         : `${tc("duplicate")} (Pro)`;
@@ -64,11 +73,6 @@ export function BundleCreationForm({
                         >
                             {isEditMode ? tc("update") : tc("publish")}
                         </s-button>
-                        {isEditMode && (
-                            <s-button disabled>
-                                {tc("createNew")}
-                            </s-button>
-                        )}
                         {isEditMode && bundleId && (
                             <s-button
                                 disabled={isDuplicating}
@@ -87,11 +91,6 @@ export function BundleCreationForm({
                         >
                             {isEditMode ? tc("update") : tc("publish")}
                         </button>
-                        {isEditMode && (
-                            <button onClick={bundleData.create()}>
-                                {tc("createNew")}
-                            </button>
-                        )}
                         {isEditMode && bundleId && (
                             <button onClick={handleDuplicate}>
                                 {duplicateLabel}
@@ -116,20 +115,43 @@ export function BundleCreationForm({
                         />
                     </s-stack>
 
-                    <div className="flex-1 flex items-center justify-between">
-                        <s-stack
-                            direction="inline"
-                            gap="base"
-                            alignItems="center"
-                        >
-                            <s-heading>
-                                <div className="text-xl">{pageProps.title}</div>
-                            </s-heading>
+                    <div className="flex-1 flex items-start justify-between">
+                        <s-stack gap="none">
+                            <s-stack
+                                direction="inline"
+                                gap="base"
+                                alignItems="center"
+                            >
+                                <s-heading>
+                                    <div className="text-xl">
+                                        {pageProps.title}
+                                    </div>
+                                </s-heading>
 
-                            {isEditMode && (
-                                <s-badge tone="neutral">
-                                    {pageProps.badgeLabel}
-                                </s-badge>
+                                {isEditMode && (
+                                    <s-badge tone="neutral">
+                                        {pageProps.badgeLabel}
+                                    </s-badge>
+                                )}
+
+                                {isEditMode && (
+                                    <s-button
+                                        variant="secondary"
+                                        icon="plus"
+                                        onClick={navActions.createNew}
+                                        loading={isCreatingNew}
+                                        disabled={isCreatingNew}
+                                    >
+                                        {tc("createNew")}
+                                    </s-button>
+                                )}
+                            </s-stack>
+                            {isEditMode && updatedAt && (
+                                <s-text color="subdued">
+                                    {tc("lastEdited", {
+                                        time: formatRelativeDate(updatedAt),
+                                    })}
+                                </s-text>
                             )}
                         </s-stack>
 
