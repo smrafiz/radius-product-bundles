@@ -590,9 +590,9 @@
 {% endif %}
 {% if g_tablet.bodySize %}
 {% case g_tablet.bodySize %}
-{% when 'small' %}{% assign tablet_body_font_size = 13 %}
-{% when 'large' %}{% assign tablet_body_font_size = 16 %}
-{% else %}{% assign tablet_body_font_size = 14 %}
+{% when 'small' %}{% assign tablet_body_font_size = 14 %}
+{% when 'large' %}{% assign tablet_body_font_size = 18 %}
+{% else %}{% assign tablet_body_font_size = 16 %}
 {% endcase %}
 {% endif %}
 {% if g_mobile.spacing %}
@@ -618,9 +618,9 @@
 {% endif %}
 {% if g_mobile.bodySize %}
 {% case g_mobile.bodySize %}
-{% when 'small' %}{% assign mobile_body_font_size = 13 %}
-{% when 'large' %}{% assign mobile_body_font_size = 16 %}
-{% else %}{% assign mobile_body_font_size = 14 %}
+{% when 'small' %}{% assign mobile_body_font_size = 14 %}
+{% when 'large' %}{% assign mobile_body_font_size = 18 %}
+{% else %}{% assign mobile_body_font_size = 16 %}
 {% endcase %}
 {% endif %}
 <style>

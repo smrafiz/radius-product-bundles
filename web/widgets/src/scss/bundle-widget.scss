@@ -276,10 +276,6 @@
 
 .radius-bundle.rb--tablet,
 .radius-bundle.rb--mobile {
-    .radius-bundle__inner {
-        padding: var(--rb-spacing);
-    }
-
     .radius-bundle__header {
         flex-direction: column;
         align-items: flex-start;
