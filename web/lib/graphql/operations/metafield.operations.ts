@@ -886,7 +886,8 @@ export async function syncAllSettingsToMetafields(
                 select: { plan: true, status: true },
             });
             isPro =
-                shopPlan?.status === "ACTIVE" && shopPlan?.plan === "PRO";
+                (shopPlan?.status === "ACTIVE" && shopPlan?.plan === "PRO") ||
+                process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true";
         } catch {
             // No plan record = free plan
         }
