@@ -441,7 +441,7 @@ model AppSettings {
     bundlePriorityType   PriorityType @default(INDEX_BASED)
 
     // Cart Behavior Section
-    redirectAfterCart     String  @default("cart")
+    redirectAfterCart     RedirectAfterCart  @default(DEFAULT)
     hidePaymentButtons    Boolean @default(false)
     enableStockValidation Boolean @default(true)
     maxBundlesPerOrder    Int     @default(0)
@@ -631,6 +631,13 @@ enum DiscountApplication {
 enum PriorityType {
     INDEX_BASED
     DISCOUNT_BASED
+}
+
+enum RedirectAfterCart {
+    DEFAULT
+    CART
+    CHECKOUT
+    NONE
 }
 
 enum BundleLayout {

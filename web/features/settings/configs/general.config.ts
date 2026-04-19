@@ -1,5 +1,5 @@
 import { SettingsTabConfig } from "@/features/settings";
-import { PriorityType } from "@/features/bundles/constants/prisma-enums";
+import { PriorityType, RedirectAfterCart } from "@/features/bundles/constants/prisma-enums";
 
 /**
  * General tab configuration
@@ -88,15 +88,12 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     label: "After add to cart",
                     details:
                         "Select what should happen after a customer adds a bundle to the cart.",
-                    defaultValue: "default",
+                    defaultValue: RedirectAfterCart.DEFAULT,
                     options: [
-                        { value: "default", label: "Default theme behavior" },
-                        { value: "cart", label: "Redirect to cart page" },
-                        { value: "checkout", label: "Redirect to checkout" },
-                        {
-                            value: "none",
-                            label: "Stay on page (show notification)",
-                        },
+                        { value: RedirectAfterCart.DEFAULT, label: "Default theme behavior" },
+                        { value: RedirectAfterCart.CART, label: "Redirect to cart page" },
+                        { value: RedirectAfterCart.CHECKOUT, label: "Redirect to checkout" },
+                        { value: RedirectAfterCart.NONE, label: "Stay on page (show notification)" },
                     ],
                 },
                 {

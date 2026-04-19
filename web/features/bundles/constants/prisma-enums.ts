@@ -18,6 +18,14 @@ export const PriorityType = {
 export type PriorityType =
     (typeof PriorityType)[keyof typeof PriorityType];
 
+export const RedirectAfterCart = {
+    DEFAULT: "DEFAULT",
+    CART: "CART",
+    CHECKOUT: "CHECKOUT",
+    NONE: "NONE",
+} as const;
+export type RedirectAfterCart = (typeof RedirectAfterCart)[keyof typeof RedirectAfterCart];
+
 export const BundleLayout = {
     GRID: "GRID",
     CAROUSEL: "CAROUSEL",

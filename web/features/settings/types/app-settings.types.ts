@@ -2,6 +2,7 @@
  * AppSettings Types
  */
 
+import { RedirectAfterCart } from "@/features/bundles/constants/prisma-enums";
 import { DiscountType } from "@/features/bundles";
 
 /**
@@ -164,7 +165,7 @@ export interface AppSettingsGlobalStyles {
 /**
  * Redirect after cart options
  */
-export type RedirectAfterCart = "default" | "cart" | "checkout" | "none";
+export type { RedirectAfterCart };
 
 /**
  * Complete AppSettings type (matches Prisma model)

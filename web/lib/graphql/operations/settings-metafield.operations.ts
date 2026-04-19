@@ -21,7 +21,7 @@ interface MetafieldGlobalSettings {
 
     // Required for JS cart behavior
     cart: {
-        redirectAfterCart: string;
+        redirectAfterCart: string; // lowercase for widget switch-case compatibility
         hidePaymentButtons: boolean;
         enableStockValidation: boolean;
         maxBundlesPerOrder: number;
@@ -230,7 +230,7 @@ export function buildGlobalSettingsMetafieldValue(
 
         // Cart behavior for JS
         cart: {
-            redirectAfterCart: appSettings?.redirectAfterCart || "default",
+            redirectAfterCart: (appSettings?.redirectAfterCart ?? "DEFAULT").toLowerCase(),
             hidePaymentButtons: appSettings?.hidePaymentButtons ?? false,
             enableStockValidation: appSettings?.enableStockValidation ?? true,
             maxBundlesPerOrder: appSettings?.maxBundlesPerOrder ?? 0,
