@@ -26,6 +26,7 @@ import {
 } from "@/features/analytics/repositories";
 import { formatCurrencyCompact } from "@/shared";
 import { stripDeletedSuffix } from "@/features/bundles";
+import { getStaticTranslations } from "@/lib/i18n/server";
 
 /**
  * Get top performing bundles with all enhancements
@@ -80,13 +81,12 @@ export async function getTopBundlesService(
         trendPercentage: 0,
     };
 
-    return bundleStats
-        .map((stats) => {
+    const results = await Promise.all(bundleStats.map(async (stats) => {
             const details = bundleDetails.find((b) => b.id === stats.bundleId);
             if (!details) return null;
 
             const trend = trendsMap.get(stats.bundleId) || defaultTrend;
-            const badges = generateBundleBadges(stats, trend);
+            const badges = await generateBundleBadges(stats, trend);
 
             return {
                 bundleId: stats.bundleId,
@@ -107,23 +107,24 @@ export async function getTopBundlesService(
                 trendPercentage: trend.trendPercentage,
                 badges,
             };
-        })
-        .filter((b) => b !== null) as TopBundleWithTrend[];
+    }));
+    return results.filter((b) => b !== null) as TopBundleWithTrend[];
 }
 
 /**
  * Generate performance badges for a bundle
  */
-export function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
+export async function generateBundleBadges(stats: any, trend: any): Promise<BundleBadge[]> {
+    const t = await getStaticTranslations("Analytics.Badges");
     const badges: BundleBadge[] = [];
 
     // High Converter Badge
     if (stats.conversionRate >= 15) {
         badges.push({
             icon: "🔥",
-            label: "High Converter",
+            label: t("highConverter"),
             tone: "success",
-            tooltip: `Exceptional ${stats.conversionRate}% conversion rate. This bundle is highly effective at turning views into sales.`,
+            tooltip: t("highConverterTooltip", { rate: stats.conversionRate }),
         });
     }
 
@@ -131,9 +132,9 @@ export function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
     if (stats.revenue >= 5000) {
         badges.push({
             icon: "💰",
-            label: "Revenue Star",
+            label: t("revenueStar"),
             tone: "success",
-            tooltip: `Top revenue performer with ${formatCurrencyCompact(stats.revenue)} earned. A major contributor to your store's income.`,
+            tooltip: t("revenueStarTooltip", { revenue: formatCurrencyCompact(stats.revenue) }),
         });
     }
 
@@ -141,9 +142,9 @@ export function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
     if (stats.views < 100 && stats.conversionRate >= 10) {
         badges.push({
             icon: "💎",
-            label: "Hidden Gem",
+            label: t("hiddenGem"),
             tone: "info",
-            tooltip: `Strong ${stats.conversionRate}% conversion with only ${stats.views} views. Consider promoting this bundle more for greater impact.`,
+            tooltip: t("hiddenGemTooltip", { rate: stats.conversionRate, views: stats.views }),
         });
     }
 
@@ -151,9 +152,9 @@ export function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
     if (trend.trendPercentage >= 25) {
         badges.push({
             icon: "📈",
-            label: "Trending",
+            label: t("trending"),
             tone: "success",
-            tooltip: `Growing fast with ${trend.trendPercentage.toFixed(0)}% revenue increase vs previous period. Momentum is building!`,
+            tooltip: t("trendingTooltip", { growth: trend.trendPercentage.toFixed(0) }),
         });
     }
 
@@ -161,9 +162,9 @@ export function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
     if (trend.trendPercentage <= -25) {
         badges.push({
             icon: "⚠️",
-            label: "Declining",
+            label: t("declining"),
             tone: "attention",
-            tooltip: `Revenue decreased ${Math.abs(trend.trendPercentage).toFixed(0)}% vs previous period. Review pricing, promotion, or bundle composition.`,
+            tooltip: t("decliningTooltip", { drop: Math.abs(trend.trendPercentage).toFixed(0) }),
         });
     }
 
@@ -171,9 +172,9 @@ export function generateBundleBadges(stats: any, trend: any): BundleBadge[] {
     if (stats.addToCartRate >= 30) {
         badges.push({
             icon: "🛒",
-            label: "High Interest",
+            label: t("highInterest"),
             tone: "info",
-            tooltip: `Strong ${stats.addToCartRate.toFixed(0)}% add-to-cart rate shows high customer interest. Focus on improving checkout conversion.`,
+            tooltip: t("highInterestTooltip", { atcRate: stats.addToCartRate.toFixed(0) }),
         });
     }
 

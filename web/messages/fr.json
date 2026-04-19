@@ -1344,8 +1344,11 @@
         "CLASSIC_CARD": "Carte classique",
         "DETAILED": "Détaillé",
         "MINIMAL": "Minimal",
-        "CART_BANNER_LIST": "Détaillé",
-        "CART_BANNER_GRID": "Minimal"
+        "CART_BANNER_LIST": "Standard",
+        "VOLUME_TIER_LIST": "Liste des niveaux",
+        "VOLUME_PRICING_CARDS": "Fiches de prix",
+        "VOLUME_SLIDER": "Curseur de quantité",
+        "VOLUME_CALCULATOR": "Calculateur d'économies"
       },
       "openStyleCustomizer": "Ouvrir le personnalisateur de style",
       "heading": "Outil de personnalisation global - Gérer les styles des offres groupées",
@@ -1613,6 +1616,18 @@
       "cacheSuccess": "Tous les caches ont été vidés",
       "unexpectedError": "Une erreur inattendue s'est produite"
     },
+    "Templates": {
+      "Bogo": {
+        "triggerProduct": "Produit déclencheur",
+        "rewardProduct": "Produit en récompense",
+        "title": "Un acheté, un offert",
+        "subtitle": "Offre promotionnelle à durée limitée",
+        "cartButton": "Ajouter l'offre groupée au panier",
+        "badgeText": "OFFRE « 1 ACHETÉ = 1 OFFERT »",
+        "youBuy": "Vous achetez",
+        "fiftyOff": "50 % de réduction"
+      }
+    },
     "Submit": {
       "createProductFailed": "Impossible de créer le produit Shopify. Veuillez réessayer.",
       "deleteProductFailed": "Impossible de supprimer le produit Shopify.",
@@ -1637,6 +1652,20 @@
     }
   },
   "Analytics": {
+    "Badges": {
+      "highConverter": "Taux de conversion élevé",
+      "highConverterTooltip": "Taux de conversion exceptionnel de {rate} %. Cette offre groupée est très efficace pour convertir les vues en ventes.",
+      "revenueStar": "Revenue Star",
+      "revenueStarTooltip": "Meilleure performance en termes de chiffre d'affaires, avec {revenue} de revenus générés. Un contributeur majeur aux revenus de votre boutique.",
+      "hiddenGem": "Perle rare",
+      "hiddenGemTooltip": "Fort taux de conversion de {rate} % pour seulement {views} vues. Envisagez de promouvoir davantage ce lot pour obtenir un impact plus important.",
+      "trending": "Tendance",
+      "trendingTooltip": "Croissance rapide avec une augmentation du chiffre d'affaires de {growth} % par rapport à la période précédente. La dynamique est en train de s'installer !",
+      "declining": "En baisse",
+      "decliningTooltip": "Le chiffre d'affaires a diminué de {drop} % par rapport à la période précédente. Examinez la tarification, la promotion ou la composition de l'offre groupée.",
+      "highInterest": "Fort intérêt",
+      "highInterestTooltip": "Un taux d'ajout au panier élevé de {atcRate} % témoigne d'un fort intérêt de la part des clients. Concentrez-vous sur l'amélioration du taux de conversion au passage en caisse."
+    },
     "title": "Analyses des offres groupées et informations sur les clients",
     "description": "Analyses complètes des performances de vos offres groupées et du comportement de vos clients",
     "Tabs": {

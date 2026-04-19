@@ -1365,7 +1365,11 @@
         "CLASSIC_CARD": "Classic Card",
         "DETAILED": "Detailed",
         "MINIMAL": "Minimal",
-        "CART_BANNER_LIST": "Standard"
+        "CART_BANNER_LIST": "Standard",
+        "VOLUME_TIER_LIST": "Tier List",
+        "VOLUME_PRICING_CARDS": "Pricing Cards",
+        "VOLUME_SLIDER": "Quantity Slider",
+        "VOLUME_CALCULATOR": "Savings Calculator"
       },
       "openStyleCustomizer": "Open style customizer",
       "heading": "Global Customizer - Manage Bundle Styles",
@@ -1633,6 +1637,18 @@
       "cacheSuccess": "All caches cleared",
       "unexpectedError": "An unexpected error occurred"
     },
+    "Templates": {
+      "Bogo": {
+        "triggerProduct": "Trigger Product",
+        "rewardProduct": "Reward Product",
+        "title": "Buy One Get One Free",
+        "subtitle": "Limited time promotional offer",
+        "cartButton": "Add Bundle to Cart",
+        "badgeText": "BOGO OFFER",
+        "youBuy": "You Buy",
+        "fiftyOff": "50% Off"
+      }
+    },
     "Submit": {
       "createProductFailed": "Could not create Shopify product. Please try again.",
       "deleteProductFailed": "Could not delete the Shopify product.",
@@ -1657,6 +1673,20 @@
     }
   },
   "Analytics": {
+    "Badges": {
+      "highConverter": "High Converter",
+      "highConverterTooltip": "Exceptional {rate}% conversion rate. This bundle is highly effective at turning views into sales.",
+      "revenueStar": "Revenue Star",
+      "revenueStarTooltip": "Top revenue performer with {revenue} earned. A major contributor to your store's income.",
+      "hiddenGem": "Hidden Gem",
+      "hiddenGemTooltip": "Strong {rate}% conversion with only {views} views. Consider promoting this bundle more for greater impact.",
+      "trending": "Trending",
+      "trendingTooltip": "Growing fast with {growth}% revenue increase vs previous period. Momentum is building!",
+      "declining": "Declining",
+      "decliningTooltip": "Revenue decreased {drop}% vs previous period. Review pricing, promotion, or bundle composition.",
+      "highInterest": "High Interest",
+      "highInterestTooltip": "Strong {atcRate}% add-to-cart rate shows high customer interest. Focus on improving checkout conversion."
+    },
     "title": "Bundle Analytics & Customer Insights",
     "description": "Comprehensive insights into your bundle performance and customer behavior.",
     "Tabs": {
