@@ -893,6 +893,18 @@
         "loadFailed": "Failed to load bundle data"
       },
       "selectAll": "Select all bundles"
+    },
+    "Templates": {
+      "Bogo": {
+        "triggerProduct": "Trigger Product",
+        "rewardProduct": "Reward Product",
+        "title": "Buy One Get One Free",
+        "subtitle": "Limited time promotional offer",
+        "cartButton": "Add Bundle to Cart",
+        "badgeText": "BOGO OFFER",
+        "youBuy": "You Buy",
+        "fiftyOff": "50% Off"
+      }
     }
   },
   "Settings": {
@@ -1636,18 +1648,6 @@
       "cachePartialError": "Server cache clear failed, client caches cleared",
       "cacheSuccess": "All caches cleared",
       "unexpectedError": "An unexpected error occurred"
-    },
-    "Templates": {
-      "Bogo": {
-        "triggerProduct": "Trigger Product",
-        "rewardProduct": "Reward Product",
-        "title": "Buy One Get One Free",
-        "subtitle": "Limited time promotional offer",
-        "cartButton": "Add Bundle to Cart",
-        "badgeText": "BOGO OFFER",
-        "youBuy": "You Buy",
-        "fiftyOff": "50% Off"
-      }
     },
     "Submit": {
       "createProductFailed": "Could not create Shopify product. Please try again.",

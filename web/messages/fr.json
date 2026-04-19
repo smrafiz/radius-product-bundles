@@ -876,6 +876,18 @@
         "loadFailed": "Échec du chargement des données de l'offre groupée"
       },
       "selectAll": "Sélectionner toutes les offres groupées"
+    },
+    "Templates": {
+      "Bogo": {
+        "triggerProduct": "Produit déclencheur",
+        "rewardProduct": "Produit en récompense",
+        "title": "Un acheté, un offert",
+        "subtitle": "Offre promotionnelle à durée limitée",
+        "cartButton": "Ajouter l'offre groupée au panier",
+        "badgeText": "OFFRE « 1 ACHETÉ = 1 OFFERT »",
+        "youBuy": "Vous achetez",
+        "fiftyOff": "50 % de réduction"
+      }
     }
   },
   "Settings": {
@@ -1615,18 +1627,6 @@
       "cachePartialError": "Échec de la suppression du cache du serveur ; caches du client supprimés",
       "cacheSuccess": "Tous les caches ont été vidés",
       "unexpectedError": "Une erreur inattendue s'est produite"
-    },
-    "Templates": {
-      "Bogo": {
-        "triggerProduct": "Produit déclencheur",
-        "rewardProduct": "Produit en récompense",
-        "title": "Un acheté, un offert",
-        "subtitle": "Offre promotionnelle à durée limitée",
-        "cartButton": "Ajouter l'offre groupée au panier",
-        "badgeText": "OFFRE « 1 ACHETÉ = 1 OFFERT »",
-        "youBuy": "Vous achetez",
-        "fiftyOff": "50 % de réduction"
-      }
     },
     "Submit": {
       "createProductFailed": "Impossible de créer le produit Shopify. Veuillez réessayer.",
