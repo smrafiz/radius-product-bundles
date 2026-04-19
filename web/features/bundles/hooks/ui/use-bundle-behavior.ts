@@ -32,7 +32,7 @@ export function useBundleBehavior() {
 
     const [discountApplication, setDiscountApplication] =
         useState<DiscountApplication>(
-            bundleData.discountApplication || "bundle",
+            bundleData.discountApplication || DiscountApplication.BUNDLE,
         );
     const [discountedProductIds, setDiscountedProductIds] = useState<
         Set<string>
@@ -74,14 +74,14 @@ export function useBundleBehavior() {
      * Reset to "bundle" when NO_DISCOUNT is selected
      */
     useEffect(() => {
-        if (isDiscountDisabled && discountApplication === "products") {
-            setDiscountApplication("bundle");
+        if (isDiscountDisabled && discountApplication === DiscountApplication.PRODUCTS) {
+            setDiscountApplication(DiscountApplication.BUNDLE);
             setDiscountedProductIds(new Set());
             setBundleData({
-                discountApplication: "bundle",
+                discountApplication: DiscountApplication.BUNDLE,
                 discountedProductIds: [],
             });
-            setValue("discountApplication", "bundle", {
+            setValue("discountApplication", DiscountApplication.BUNDLE, {
                 shouldValidate: true,
             });
             setValue("discountedProductIds", [], { shouldValidate: true });
@@ -133,13 +133,13 @@ export function useBundleBehavior() {
      */
     const handleConfirm = useCallback(() => {
         if (selectedProducts.size === 0) {
-            setDiscountApplication("bundle");
+            setDiscountApplication(DiscountApplication.BUNDLE);
             setDiscountedProductIds(new Set());
             setBundleData({
-                discountApplication: "bundle",
+                discountApplication: DiscountApplication.BUNDLE,
                 discountedProductIds: [],
             });
-            setValue("discountApplication", "bundle", {
+            setValue("discountApplication", DiscountApplication.BUNDLE, {
                 shouldValidate: true,
             });
             setValue("discountedProductIds", [], { shouldValidate: true });
@@ -147,10 +147,10 @@ export function useBundleBehavior() {
             const ids = Array.from(selectedProducts);
             setDiscountedProductIds(new Set(selectedProducts));
             setBundleData({
-                discountApplication: "products",
+                discountApplication: DiscountApplication.PRODUCTS,
                 discountedProductIds: ids,
             });
-            setValue("discountApplication", "products", {
+            setValue("discountApplication", DiscountApplication.PRODUCTS, {
                 shouldValidate: true,
             });
             setValue("discountedProductIds", ids, { shouldValidate: true });
@@ -173,9 +173,9 @@ export function useBundleBehavior() {
     const handleModalHide = useCallback(() => {
         if (
             discountedProductIds.size === 0 &&
-            discountApplication === "products"
+            discountApplication === DiscountApplication.PRODUCTS
         ) {
-            setDiscountApplication("bundle");
+            setDiscountApplication(DiscountApplication.BUNDLE);
         }
         setSelectedProducts(new Set());
     }, [discountedProductIds.size, discountApplication]);
@@ -196,10 +196,10 @@ export function useBundleBehavior() {
             });
             markFieldTouched("discountApplication");
 
-            if (newValue === "bundle") {
+            if (newValue === DiscountApplication.BUNDLE) {
                 setDiscountedProductIds(new Set());
                 setBundleData({
-                    discountApplication: "bundle",
+                    discountApplication: DiscountApplication.BUNDLE,
                     discountedProductIds: [],
                 });
                 setValue("discountedProductIds", [], {

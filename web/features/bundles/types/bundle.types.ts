@@ -9,6 +9,8 @@ import type {
     DiscountType as PrismaDiscountType,
     Prisma,
 } from "@/prisma/generated/client";
+import { DiscountApplication } from "@/prisma/generated/client";
+export { DiscountApplication };
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
 
@@ -281,14 +283,6 @@ export interface CreateBundlePayload {
 }
 
 /*
- * Update bundle payload types
- */
-export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
-    id: string;
-    status?: PrismaBundleStatus;
-}
-
-/*
  * Extended bundle form data types
  */
 export interface ExtendedBundleFormData extends BundleFormData {
@@ -299,7 +293,7 @@ export interface ExtendedBundleFormData extends BundleFormData {
     mainProductId?: string;
     mainProductHandle?: string;
     mainVariantId?: string;
-    discountApplication?: "bundle" | "products";
+    discountApplication?: DiscountApplication;
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
@@ -366,7 +360,7 @@ export interface DisplaySettings {
 }
 
 export interface BundleConfiguration {
-    discountApplication: "bundle" | "products" | "shipping";
+    discountApplication: DiscountApplication;
 }
 
 /*

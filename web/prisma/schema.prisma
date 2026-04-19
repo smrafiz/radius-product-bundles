@@ -77,7 +77,7 @@ model Bundle {
     volumeTiers          Json?
     allowMixAndMatch     Boolean              @default(false)
     mixAndMatchPrice     Float?
-    discountApplication  String?              @default("bundle")
+    discountApplication  DiscountApplication  @default(BUNDLE)
     discountedProductIds String[]             @default([])
     freeShipping         Boolean              @default(false)
     priority             Int                  @default(0)
@@ -621,4 +621,9 @@ enum ShopStatus {
     SUSPENDED
     TRIAL_EXPIRED
     NOT_CONFIGURED
+}
+
+enum DiscountApplication {
+    BUNDLE
+    PRODUCTS
 }

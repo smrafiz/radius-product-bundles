@@ -80,10 +80,6 @@ export interface BundleFormProviderProps {
     initialData?: Partial<BundleFormData>;
 }
 
-/*
- * Discount application types
- */
-export type DiscountApplication = "bundle" | "products";
 
 /*
  * Bundle bulk actions bar components

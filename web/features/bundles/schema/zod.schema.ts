@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DiscountApplication } from "@/prisma/generated/client";
 import { sanitizeText } from "@/shared";
 import { VALIDATION_MESSAGES } from "@/shared/constants";
 
@@ -249,8 +250,8 @@ export function createBundleSchema(v: T) {
             productGroups: z.array(productGroupSchema(v)).optional(),
 
             discountApplication: z
-                .enum(["bundle", "products"])
-                .default("bundle")
+                .nativeEnum(DiscountApplication)
+                .default(DiscountApplication.BUNDLE)
                 .optional(),
             discountedProductIds: z.array(z.string()).optional(),
             freeShipping: z.boolean().default(false).optional(),

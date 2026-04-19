@@ -2,6 +2,7 @@ import {
     Bundle,
     BundleType,
     BundleStatus,
+    DiscountApplication,
     DiscountType,
 } from "@/prisma/generated/client";
 
@@ -16,7 +17,7 @@ export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
         description: "A test bundle for unit testing",
         type: "FIXED_BUNDLE" as BundleType,
         status: "ACTIVE" as BundleStatus,
-        discountApplication: "bundle",
+        discountApplication: DiscountApplication.BUNDLE,
         discountType: "PERCENTAGE" as DiscountType,
         discountValue: 10,
         minOrderValue: null,

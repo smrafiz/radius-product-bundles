@@ -5,6 +5,7 @@ import {
     BundleStatus,
     calculateBundlePrice,
     calculateDiscountAmount,
+    DiscountApplication,
     ExtendedBundleFormData,
     invalidateBundleCache,
     PendingMediaItem,
@@ -113,7 +114,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
         const { discountApplication, discountedProductIds } =
             storeState.bundleData;
-        const applyToSpecific = discountApplication === "products";
+        const applyToSpecific = discountApplication === DiscountApplication.PRODUCTS;
         const discountedIds = new Set(discountedProductIds ?? []);
 
         const discountableItems = applyToSpecific
@@ -253,7 +254,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
      */
     const mergeBundleBehavior = (data: ExtendedBundleFormData) => {
         const storeData = useBundleStore.getState().bundleData;
-        data.discountApplication = storeData.discountApplication ?? "bundle";
+        data.discountApplication = storeData.discountApplication ?? DiscountApplication.BUNDLE;
         data.discountedProductIds = storeData.discountedProductIds ?? [];
         data.freeShipping = storeData.freeShipping ?? false;
         data.priority = storeData.priority ?? 0;

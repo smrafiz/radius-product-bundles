@@ -21,7 +21,7 @@ import {
 } from "@/features/bundles/repositories";
 import { generateBundleId } from "@/shared";
 import { prisma } from "@/shared/repositories/prisma-connect";
-import { BundleProductRole, Prisma } from "@/prisma/generated/client";
+import { BundleProductRole, DiscountApplication, Prisma } from "@/prisma/generated/client";
 
 // ==========================================
 // CREATE Operations
@@ -58,7 +58,7 @@ export async function createBundle(
             volumeTiers: data.volumeTiers ?? Prisma.JsonNull,
             allowMixAndMatch: data.allowMixAndMatch,
             mixAndMatchPrice: data.mixAndMatchPrice,
-            discountApplication: data.discountApplication ?? "bundle",
+            discountApplication: data.discountApplication ?? DiscountApplication.BUNDLE,
             discountedProductIds: data.discountedProductIds ?? [],
             freeShipping: data.freeShipping ?? false,
             priority: data.priority ?? 0,
@@ -350,7 +350,7 @@ export async function updateBundleWithRelations(
             mainProductId: data.mainProductId ?? null,
             mainVariantId: data.mainVariantId ?? null,
             volumeTiers: data.volumeTiers ?? Prisma.JsonNull,
-            discountApplication: data.discountApplication || "bundle",
+            discountApplication: data.discountApplication || DiscountApplication.BUNDLE,
             discountedProductIds: data.discountedProductIds ?? [],
             freeShipping: data.freeShipping ?? false,
             priority: data.priority ?? 0,

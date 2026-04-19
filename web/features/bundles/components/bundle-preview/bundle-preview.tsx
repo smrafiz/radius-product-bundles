@@ -24,6 +24,7 @@ import {
 import {
     BundlePreviewStatus,
     BundlePriority,
+    DiscountApplication,
     DisplaySettings,
     formatPrice,
     useBundlePreviewPricing,
@@ -361,7 +362,7 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
             });
         }
 
-        const applyToSpecific = bundleData.discountApplication === "products";
+        const applyToSpecific = bundleData.discountApplication === DiscountApplication.PRODUCTS;
         const discountedIds = new Set(bundleData.discountedProductIds ?? []);
 
         const totalBundlePrice = selectedItems.reduce(

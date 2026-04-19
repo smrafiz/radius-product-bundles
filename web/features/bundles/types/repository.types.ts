@@ -3,7 +3,7 @@
  */
 
 import { Prisma } from "@/prisma/generated/client";
-import { BundleStatus, BundleType, DiscountType } from "@/features/bundles";
+import { BundleStatus, BundleType, DiscountApplication, DiscountType } from "@/features/bundles";
 
 /*
  * Bundle repository types
@@ -33,7 +33,7 @@ export interface CreateBundleInput {
     volumeTiers?: Prisma.JsonValue;
     allowMixAndMatch?: boolean;
     mixAndMatchPrice?: number | null;
-    discountApplication?: string | null;
+    discountApplication?: DiscountApplication | null;
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
@@ -71,7 +71,7 @@ export interface UpdateBundleInput {
     volumeTiers?: Prisma.NullableJsonNullValueInput | Prisma.InputJsonValue;
     startDate?: Date | null;
     endDate?: Date | null;
-    discountApplication?: string;
+    discountApplication?: DiscountApplication;
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
@@ -104,7 +104,7 @@ export interface UpdateBundleInputWithRelations {
     volumeTiers?: Prisma.NullableJsonNullValueInput | Prisma.InputJsonValue;
     allowMixAndMatch?: boolean | null;
     mixAndMatchPrice?: number | null;
-    discountApplication?: string;
+    discountApplication?: DiscountApplication;
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;

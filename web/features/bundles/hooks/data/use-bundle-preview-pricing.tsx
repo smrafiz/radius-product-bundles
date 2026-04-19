@@ -3,6 +3,7 @@ import {
     calculateBundlePrice,
     calculateDiscountAmount,
     calculateSavingsPercentage,
+    DiscountApplication,
     useBundlePreviewPricingProps,
     useBundleStore,
 } from "@/features/bundles";
@@ -79,7 +80,7 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
         }
 
         // FIXED_BUNDLE: existing logic
-        const applyToSpecific = bundleData.discountApplication === "products";
+        const applyToSpecific = bundleData.discountApplication === DiscountApplication.PRODUCTS;
         const discountedIds = new Set(bundleData.discountedProductIds ?? []);
 
         const discountableItems = applyToSpecific
