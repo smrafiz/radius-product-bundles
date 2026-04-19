@@ -24,7 +24,7 @@ export async function handleAppSubscriptionUpdate(
     const rawStatus = String(sub.status || "").toUpperCase();
     const planName = String(sub.name || "");
 
-    console.log(
+    console.info(
         `[Subscription] Processing APP_SUBSCRIPTIONS_UPDATE for ${shop}:`,
         subscriptionId,
         rawStatus,
@@ -33,7 +33,7 @@ export async function handleAppSubscriptionUpdate(
     try {
         await handleSubscriptionWebhookService(shop, subscriptionId, rawStatus, planName);
 
-        console.log(
+        console.info(
             `[Subscription] Updated for ${shop}: ${subscriptionId} -> ${rawStatus} (${planName})`,
         );
     } catch (error) {
