@@ -78,15 +78,15 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
         })),
     );
 
-    // Reset store when bundleId changes (same-page route change) and on
-    // unmount. useBundleDataSync then repopulates from fresh query data.
-    // Prevents stale bundle data leaking between edit URLs.
+    // Clear store on unmount only. Prevents stale data leaking to the next
+    // bundle edit page. Do NOT reset on mount — resetBundle() fires after
+    // useBundleDataSync/useEditBundle effects and wipes their hydration,
+    // leaving selectedItems permanently empty on second visits.
     useEffect(() => {
-        resetBundle();
         return () => {
             resetBundle();
         };
-    }, [bundleId, resetBundle]);
+    }, [resetBundle]);
     const initialData = useEditBundleTransform(bundleData);
     useBundleDataSync(bundleData);
 
