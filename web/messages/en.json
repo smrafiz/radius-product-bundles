@@ -1765,9 +1765,17 @@
     "plans": {
       "free": {
         "title": "Free",
-        "description": "Perfect for testing and small stores",
+        "description": "Get started with bundle creation at no cost",
         "button": "Current Plan",
-        "currentPlan": "Current Plan"
+        "currentPlan": "Current Plan",
+        "features": {
+          "0": "Up to 5 bundles",
+          "1": "Up to 10 products per bundle",
+          "2": "Fixed bundles, BOGO, Buy X Get Y",
+          "3": "Grid and list layouts",
+          "4": "Basic analytics",
+          "5": "Email support"
+        }
       },
       "starter": {
         "title": "Starter",
@@ -1793,7 +1801,16 @@
         "featured": "Most Popular",
         "description": "Everything you need to grow your bundle revenue",
         "button": "Start Free Trial",
-        "currentPlan": "Current Plan"
+        "currentPlan": "Current Plan",
+        "features": {
+          "0": "Unlimited bundles",
+          "1": "Unlimited products per bundle",
+          "2": "All bundle types",
+          "3": "All layouts",
+          "4": "Full analytics",
+          "5": "Custom CSS",
+          "6": "Priority support"
+        }
       }
     },
     "faqs": {

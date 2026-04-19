@@ -1742,28 +1742,46 @@
     "devStoreDesc": "Vous pouvez utiliser gratuitement toutes les fonctionnalités de BundleSuite (offres groupées illimitées, analyses, etc.) sur votre boutique de développement. Ne choisissez votre formule payante qu'au moment de la mise en ligne !",
     "dismissCard": "Masquer la carte",
     "pleaseWait": "Veuillez patienter…",
+    "billingMonthly": "Mensuel",
+    "billingAnnual": "Annuel",
+    "annualSavings": "Économisez {percent} %",
+    "annualBilledLabel": "{price}/an, facturation annuelle",
+    "currentPlan": "Formule actuelle",
+    "downgradeFree": "Passer à la formule Gratuite",
+    "upgradePro": "Passer à la formule Pro",
+    "toggleBillingInterval": "Modifier la fréquence de facturation",
+    "subscriptionError": "Échec de la mise à jour de l'abonnement. Veuillez réessayer.",
+    "trialBadge": "Essai gratuit de {days} jours",
     "plans": {
-      "0": {
-        "title": "Développement uniquement",
-        "description": "Formule idéale pour les boutiques qui démarrent",
-        "button": "Abonné(e) actuellement"
+      "free": {
+        "title": "Gratuit",
+        "description": "Commencez à créer des offres groupées sans frais",
+        "button": "Formule actuelle",
+        "currentPlan": "Formule actuelle",
+        "features": {
+          "0": "Jusqu'à 5 offres groupées",
+          "1": "Jusqu'à 10 produits par offre groupée",
+          "2": "Offres groupées fixes, un acheté = un offert, Achetez X, obtenez Y",
+          "3": "Mises en page en grille et en liste",
+          "4": "Analyses de base",
+          "5": "Assistance par e-mail"
+        }
       },
-      "1": {
-        "title": "Formule Starter",
+      "pro": {
+        "title": "Pro",
         "featured": "Le plus populaire",
-        "description": "Pour les boutiques en pleine croissance qui ont besoin d'une solution fiable pour évoluer avec elles",
-        "button": "Choisir cette formule"
-      },
-      "2": {
-        "title": "Premium",
-        "description": "Le nec plus ultra, pour les boutiques ayant les besoins les plus élevés en matière de traitement des commandes",
-        "button": "Choisir cette formule"
-      },
-      "features": {
-        "orders": "Traitez jusqu'à 1 000 commandes/mois",
-        "feature1": "Fonctionnalité exceptionnelle",
-        "feature2": "Autre fonctionnalité très intéressante",
-        "support": "Assistance client 24 h/24, 7 j/7"
+        "description": "Tout ce dont vous avez besoin pour développer votre chiffre d'affaires grâce aux offres groupées",
+        "button": "Démarrer l'essai gratuit",
+        "currentPlan": "Formule actuelle",
+        "features": {
+          "0": "Offres groupées illimitées",
+          "1": "Nombre illimité de produits par offre groupée",
+          "2": "Tous les types d'offres groupées",
+          "3": "Toutes les mises en page",
+          "4": "Analyses complètes",
+          "5": "Custom CSS",
+          "6": "Assistance prioritaire"
+        }
       },
       "month": "mois",
       "year": "année"
