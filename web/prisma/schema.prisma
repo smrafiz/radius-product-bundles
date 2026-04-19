@@ -81,7 +81,7 @@ model Bundle {
     discountedProductIds String[]             @default([])
     freeShipping         Boolean              @default(false)
     priority             Int                  @default(0)
-    priorityType         PriorityType         @default(index_based)
+    priorityType         PriorityType         @default(INDEX_BASED)
     images               String[]
     marketingCopy        String?
     seoTitle             String?
@@ -438,7 +438,7 @@ model AppSettings {
     defaultDiscountValue Float        @default(10)
     maxBundleProducts    Int          @default(10)
     maxBundlesPerShop    Int          @default(5)
-    bundlePriorityType   PriorityType @default(index_based)
+    bundlePriorityType   PriorityType @default(INDEX_BASED)
 
     // Cart Behavior Section
     redirectAfterCart     String  @default("cart")
@@ -629,6 +629,6 @@ enum DiscountApplication {
 }
 
 enum PriorityType {
-    index_based
-    discount_based
+    INDEX_BASED
+    DISCOUNT_BASED
 }

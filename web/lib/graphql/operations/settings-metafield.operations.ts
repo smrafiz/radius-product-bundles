@@ -237,7 +237,7 @@ export function buildGlobalSettingsMetafieldValue(
             allowDiscountStacking: appSettings?.allowDiscountStacking ?? false,
             lazyLoadImages: appSettings?.lazyLoadImages ?? true,
             bundlePriorityType:
-                appSettings?.bundlePriorityType ?? PriorityType.index_based,
+                appSettings?.bundlePriorityType ?? PriorityType.INDEX_BASED,
         },
 
         // Privacy settings

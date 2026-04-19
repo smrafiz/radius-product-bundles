@@ -125,7 +125,7 @@ export async function saveSettingsService(
 
     // Strip advanced cart controls — reset to safe defaults
     if (!hasFeature(plan, "advanced_cart_controls")) {
-        validatedData.bundlePriorityType = PriorityType.index_based;
+        validatedData.bundlePriorityType = PriorityType.INDEX_BASED;
         validatedData.hidePaymentButtons = false;
         validatedData.maxBundlesPerOrder = 0;
         validatedData.showSavingsBanner = false;

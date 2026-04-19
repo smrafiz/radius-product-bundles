@@ -242,10 +242,10 @@ export async function GET(request: NextRequest) {
         const productMap = buildProductMap(allProducts);
 
         const globalPriorityType =
-            shopRecord?.appSettings?.bundlePriorityType ?? PriorityType.index_based;
+            shopRecord?.appSettings?.bundlePriorityType ?? PriorityType.INDEX_BASED;
 
         let savingsMap: Map<string, number> | null = null;
-        if (globalPriorityType === PriorityType.discount_based) {
+        if (globalPriorityType === PriorityType.DISCOUNT_BASED) {
             savingsMap = new Map<string, number>();
             bundles.forEach((b) => {
                 const savings = estimateMaxSavings(b, productMap);
@@ -255,11 +255,11 @@ export async function GET(request: NextRequest) {
 
         const sortedBundles = bundles.sort((a, b) => {
             const aScore =
-                globalPriorityType === PriorityType.discount_based
+                globalPriorityType === PriorityType.DISCOUNT_BASED
                     ? (savingsMap?.get(a.id) ?? a.discountValue)
                     : (a.priority ?? 0);
             const bScore =
-                globalPriorityType === PriorityType.discount_based
+                globalPriorityType === PriorityType.DISCOUNT_BASED
                     ? (savingsMap?.get(b.id) ?? b.discountValue)
                     : (b.priority ?? 0);
 

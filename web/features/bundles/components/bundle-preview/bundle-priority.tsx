@@ -29,10 +29,10 @@ export function BundlePriority() {
 
     const globalPriorityType =
         useSettingsStore.getState().getEffectiveData()?.bundlePriorityType ??
-        PriorityType.index_based;
+        PriorityType.INDEX_BASED;
 
     const strategyLabel =
-        globalPriorityType === PriorityType.discount_based
+        globalPriorityType === PriorityType.DISCOUNT_BASED
             ? t("strategyDiscountBased")
             : t("strategyIndexBased");
 
@@ -47,7 +47,7 @@ export function BundlePriority() {
                     <s-heading>{t("priorityHeading")}</s-heading>
                     <s-tooltip id="bundle-priority-tooltip">
                         <s-text>
-                            {globalPriorityType === PriorityType.index_based
+                            {globalPriorityType === PriorityType.INDEX_BASED
                                 ? t("priorityTooltipIndex")
                                 : t("priorityTooltipDiscount")}
                         </s-text>
@@ -76,7 +76,7 @@ export function BundlePriority() {
                         </s-link>
                     </s-stack>
 
-                    {globalPriorityType === PriorityType.index_based && (
+                    {globalPriorityType === PriorityType.INDEX_BASED && (
                         <s-number-field
                             label={t("priority")}
                             details={t("priorityDetails")}
