@@ -1633,6 +1633,15 @@
       "cacheSuccess": "All caches cleared",
       "unexpectedError": "An unexpected error occurred"
     },
+    "Submit": {
+      "createProductFailed": "Could not create Shopify product. Please try again.",
+      "deleteProductFailed": "Could not delete the Shopify product.",
+      "invalidMode": "Invalid mode or missing bundle ID for edit.",
+      "bundleCreated": "Your bundle has been created.",
+      "bundleSaved": "Your changes have been saved.",
+      "checkInputs": "Please check your inputs and try again.",
+      "tryAgainLater": "Please try again later."
+    },
     "ServiceErrors": {
       "rateLimitExceeded": "Rate limit exceeded. Maximum {max} bundles per hour. Please try again later.",
       "shopSuspended": "Shop account is suspended. Please contact support for assistance.",

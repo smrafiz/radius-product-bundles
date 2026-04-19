@@ -1613,6 +1613,15 @@
       "cacheSuccess": "Tous les caches ont été vidés",
       "unexpectedError": "Une erreur inattendue s'est produite"
     },
+    "Submit": {
+      "createProductFailed": "Impossible de créer le produit Shopify. Veuillez réessayer.",
+      "deleteProductFailed": "Impossible de supprimer le produit Shopify.",
+      "invalidMode": "Mode non valide ou identifiant d'offre groupée manquant pour la modification.",
+      "bundleCreated": "Votre offre groupée a été créée.",
+      "bundleSaved": "Vos modifications ont été enregistrées.",
+      "checkInputs": "Veuillez vérifier les données que vous avez saisies et réessayer.",
+      "tryAgainLater": "Veuillez réessayer plus tard."
+    },
     "ServiceErrors": {
       "rateLimitExceeded": "Limite de débit dépassée. Maximum de {max} groupes par heure. Veuillez réessayer plus tard.",
       "shopSuspended": "Le compte de la boutique est suspendu. Veuillez contacter l'assistance pour obtenir de l'aide.",

@@ -58,6 +58,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         })),
     );
     const v = useTranslations("Validation");
+    const bs = useTranslations("Bundles.Submit");
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
     const { refreshPlan } = usePlan();
@@ -304,8 +305,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                         if (!productData) {
                             showError(v("ERROR_CREATE_PRODUCT"), {
-                                content:
-                                    "Could not create Shopify product. Please try again.",
+                                content: bs("createProductFailed"),
                             });
                             return;
                         }
@@ -355,7 +355,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                             showError(v("ERROR_DELETE_PRODUCT"), {
                                 content:
                                     deleteResult.message ||
-                                    "Could not delete the Shopify product.",
+                                    bs("deleteProductFailed"),
                             });
                             return;
                         }
@@ -397,8 +397,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                         if (!productData) {
                             showError(v("ERROR_CREATE_PRODUCT"), {
-                                content:
-                                    "Could not create Shopify product. Please try again.",
+                                content: bs("createProductFailed"),
                             });
                             return;
                         }
@@ -597,7 +596,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     }
                 } else {
                     showError(v("ERROR_UNEXPECTED"), {
-                        content: "Invalid mode or missing bundleId for edit.",
+                        content: bs("invalidMode"),
                     });
                     return;
                 }
@@ -623,27 +622,25 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                     if (mode === "create") {
                         void refreshPlan();
                         showSuccess(v("SUCCESS_BUNDLE_CREATED"), {
-                            content: "Your bundle has been created.",
+                            content: bs("bundleCreated"),
                             autoHide: true,
                         });
                         bundleData.edit(result.data.id);
                     } else {
                         showSuccess(v("SUCCESS_BUNDLE_UPDATED"), {
-                            content: "Your changes have been saved.",
+                            content: bs("bundleSaved"),
                             autoHide: true,
                         });
                     }
                 } else {
                     showError(v("ERROR_SAVE_BUNDLE"), {
-                        content:
-                            result.message ||
-                            "Please check your inputs and try again.",
+                        content: result.message || bs("checkInputs"),
                     });
                 }
             } catch (error) {
                 console.error(error);
                 showError(v("ERROR_UNEXPECTED"), {
-                    content: "Please try again later.",
+                    content: bs("tryAgainLater"),
                 });
             } finally {
                 setIsSubmitting(false);

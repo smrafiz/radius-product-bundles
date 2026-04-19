@@ -761,7 +761,7 @@ import type { VolumeContext } from "./lib/types";
                 } as Bundle;
 
                 if (!this.bundle) {
-                    showError(this.container, "Bundle not available");
+                    showError(this.container, this.bundleStructure?.labels?.bundleNotAvailableText || "Bundle not available");
                     return;
                 }
 
@@ -779,7 +779,7 @@ import type { VolumeContext } from "./lib/types";
                     validateStock(this.getFixedContext());
             } catch (error) {
                 console.error("[RadiusBundle] Load error:", error);
-                showError(this.container, "Failed to load bundle");
+                showError(this.container, this.bundleStructure?.labels?.failedToLoadText || "Failed to load bundle");
             }
         }
 
@@ -907,7 +907,7 @@ import type { VolumeContext } from "./lib/types";
                     data.bundles[0];
 
                 if (!this.bundle) {
-                    showError(this.container, "Bundle not available");
+                    showError(this.container, this.bundleStructure?.labels?.bundleNotAvailableText || "Bundle not available");
                     return;
                 }
 
@@ -924,7 +924,7 @@ import type { VolumeContext } from "./lib/types";
                     validateStock(this.getFixedContext());
             } catch (error) {
                 console.error("[RadiusBundle] Legacy fetch error:", error);
-                showError(this.container, "Failed to load bundle");
+                showError(this.container, this.bundleStructure?.labels?.failedToLoadText || "Failed to load bundle");
             }
         }
 
@@ -1196,7 +1196,7 @@ import type { VolumeContext } from "./lib/types";
                     setTimeout(() => this.initSliderInstance(), 0);
                 }
             } catch {
-                showError(this.container, "Failed to display bundle products");
+                showError(this.container, this.bundleStructure?.labels?.failedToDisplayText || "Failed to display bundle products");
             }
         }
 
