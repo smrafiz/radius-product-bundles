@@ -1,6 +1,13 @@
 jest.unmock("zod");
 jest.unmock("@/shared/constants");
 
+jest.mock("@/prisma/generated/client", () => ({
+    DiscountApplication: {
+        BUNDLE: "BUNDLE",
+        PRODUCTS: "PRODUCTS",
+    },
+}));
+
 jest.mock("@/shared", () => ({
     sanitizeText: (val: string) => val,
 }));
