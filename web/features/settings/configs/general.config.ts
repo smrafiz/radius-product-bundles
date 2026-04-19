@@ -1,4 +1,5 @@
 import { SettingsTabConfig } from "@/features/settings";
+import { PriorityType } from "@/prisma/generated/client";
 
 /**
  * General tab configuration
@@ -67,16 +68,16 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     label: "Bundle priority strategy",
                     details:
                         "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the bundle with the highest effective savings.",
-                    defaultValue: "index_based",
+                    defaultValue: PriorityType.index_based,
                     fullWidth: true,
                     proFeature: "advanced_cart_controls",
                     options: [
                         {
-                            value: "index_based",
+                            value: PriorityType.index_based,
                             label: "Index based (manual priority)",
                         },
                         {
-                            value: "discount_based",
+                            value: PriorityType.discount_based,
                             label: "Discount based (highest savings wins)",
                         },
                     ],

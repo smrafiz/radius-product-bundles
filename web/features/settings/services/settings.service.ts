@@ -22,6 +22,7 @@ import {
     upsertSettings,
 } from "@/features/settings/repositories";
 import { hasFeature, resolveShopPlan } from "@/shared/services/plan.service";
+import { PriorityType } from "@/prisma/generated/client";
 import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
 
 /**
@@ -124,7 +125,7 @@ export async function saveSettingsService(
 
     // Strip advanced cart controls — reset to safe defaults
     if (!hasFeature(plan, "advanced_cart_controls")) {
-        validatedData.bundlePriorityType = "index_based";
+        validatedData.bundlePriorityType = PriorityType.index_based;
         validatedData.hidePaymentButtons = false;
         validatedData.maxBundlesPerOrder = 0;
         validatedData.showSavingsBanner = false;

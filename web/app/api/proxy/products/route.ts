@@ -9,6 +9,7 @@ import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
 import { executeProxyGraphQL } from "@/lib/graphql/client/proxy-client";
 import { findBundlesByProductId } from "@/features/bundles/repositories";
 import { calculateDiscountAmount } from "@/features/bundles/utils/calculators/bundle-calculations";
+import { PriorityType } from "@/prisma/generated/client";
 
 async function getAccessTokenForShop(shop: string): Promise<string | null> {
     try {
@@ -241,10 +242,10 @@ export async function GET(request: NextRequest) {
         const productMap = buildProductMap(allProducts);
 
         const globalPriorityType =
-            shopRecord?.appSettings?.bundlePriorityType ?? "index_based";
+            shopRecord?.appSettings?.bundlePriorityType ?? PriorityType.index_based;
 
         let savingsMap: Map<string, number> | null = null;
-        if (globalPriorityType === "discount_based") {
+        if (globalPriorityType === PriorityType.discount_based) {
             savingsMap = new Map<string, number>();
             bundles.forEach((b) => {
                 const savings = estimateMaxSavings(b, productMap);
@@ -254,11 +255,11 @@ export async function GET(request: NextRequest) {
 
         const sortedBundles = bundles.sort((a, b) => {
             const aScore =
-                globalPriorityType === "discount_based"
+                globalPriorityType === PriorityType.discount_based
                     ? (savingsMap?.get(a.id) ?? a.discountValue)
                     : (a.priority ?? 0);
             const bScore =
-                globalPriorityType === "discount_based"
+                globalPriorityType === PriorityType.discount_based
                     ? (savingsMap?.get(b.id) ?? b.discountValue)
                     : (b.priority ?? 0);
 

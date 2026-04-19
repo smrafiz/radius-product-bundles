@@ -9,8 +9,8 @@ import type {
     DiscountType as PrismaDiscountType,
     Prisma,
 } from "@/prisma/generated/client";
-import { DiscountApplication } from "@/prisma/generated/client";
-export { DiscountApplication };
+import { DiscountApplication, PriorityType } from "@/prisma/generated/client";
+export { DiscountApplication, PriorityType };
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
 

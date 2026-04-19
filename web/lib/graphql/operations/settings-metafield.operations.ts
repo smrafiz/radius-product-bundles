@@ -10,7 +10,7 @@ import {
     StyleOverrides,
     WidgetBehavior,
 } from "@/features/settings";
-import { AppSettings } from "@/prisma/generated/client";
+import { AppSettings, PriorityType } from "@/prisma/generated/client";
 
 interface MetafieldGlobalSettings {
     // Required for Liquid rendering
@@ -237,7 +237,7 @@ export function buildGlobalSettingsMetafieldValue(
             allowDiscountStacking: appSettings?.allowDiscountStacking ?? false,
             lazyLoadImages: appSettings?.lazyLoadImages ?? true,
             bundlePriorityType:
-                appSettings?.bundlePriorityType ?? "index_based",
+                appSettings?.bundlePriorityType ?? PriorityType.index_based,
         },
 
         // Privacy settings

@@ -4,6 +4,7 @@ import {
     BundleStatus,
     DiscountApplication,
     DiscountType,
+    PriorityType,
 } from "@/prisma/generated/client";
 
 /**
@@ -35,7 +36,7 @@ export function createMockBundle(overrides?: Partial<Bundle>): Bundle {
         discountedProductIds: [],
         freeShipping: false,
         priority: 0,
-        priorityType: "index_based",
+        priorityType: PriorityType.index_based,
         images: [],
         marketingCopy: null,
         seoTitle: null,

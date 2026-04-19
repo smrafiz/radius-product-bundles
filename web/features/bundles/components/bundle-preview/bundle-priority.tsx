@@ -10,6 +10,7 @@ import {
 import { useShallow } from "zustand/react/shallow";
 import { useSettingsStore } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
+import { PriorityType } from "@/prisma/generated/client";
 
 export function BundlePriority() {
     const t = useTranslations("Bundles.Creation.Preview");
@@ -28,10 +29,10 @@ export function BundlePriority() {
 
     const globalPriorityType =
         useSettingsStore.getState().getEffectiveData()?.bundlePriorityType ??
-        "index_based";
+        PriorityType.index_based;
 
     const strategyLabel =
-        globalPriorityType === "discount_based"
+        globalPriorityType === PriorityType.discount_based
             ? t("strategyDiscountBased")
             : t("strategyIndexBased");
 
@@ -46,7 +47,7 @@ export function BundlePriority() {
                     <s-heading>{t("priorityHeading")}</s-heading>
                     <s-tooltip id="bundle-priority-tooltip">
                         <s-text>
-                            {globalPriorityType === "index_based"
+                            {globalPriorityType === PriorityType.index_based
                                 ? t("priorityTooltipIndex")
                                 : t("priorityTooltipDiscount")}
                         </s-text>
@@ -75,7 +76,7 @@ export function BundlePriority() {
                         </s-link>
                     </s-stack>
 
-                    {globalPriorityType === "index_based" && (
+                    {globalPriorityType === PriorityType.index_based && (
                         <s-number-field
                             label={t("priority")}
                             details={t("priorityDetails")}
