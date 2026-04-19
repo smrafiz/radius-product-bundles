@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { fetchProductByIdAction } from "@/features/bundles/actions";
 import { useBundleFormMethods, useBundleStore } from "@/features/bundles";
 import { useShallow } from "zustand/react/shallow";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Hook for managing bundle product creation state
@@ -54,6 +55,7 @@ export function useBundleProduct(mode: "create" | "edit") {
     const { trigger } = useFormContext();
     const { openModal } = useModalStore();
     const app = useAppBridge();
+    const t = useTranslations("Bundles.BundleAsProduct");
 
     const bundleName = useWatch({ control, name: "name" });
     const createProduct = useWatch({ control, name: "createProduct" });
@@ -318,8 +320,8 @@ export function useBundleProduct(mode: "create" | "edit") {
                 if (typeof shopify !== "undefined" && shopify.toast?.show) {
                     shopify.toast.show(
                         invalidFiles.length === 1
-                            ? "File too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC"
-                            : `${invalidFiles.length} files too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC`,
+                            ? t("uploadInvalidSingle")
+                            : t("uploadInvalidMultiple", { count: invalidFiles.length }),
                         { isError: true },
                     );
                 }
@@ -352,7 +354,7 @@ export function useBundleProduct(mode: "create" | "edit") {
 
                 if (duplicateCount > 0) {
                     if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                        shopify.toast.show("Duplicate image(s) already added", {
+                        shopify.toast.show(t("uploadDuplicate"), {
                             isError: true,
                             duration: 3000,
                         });

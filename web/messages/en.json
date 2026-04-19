@@ -588,7 +588,10 @@
         "productImageAlt": "Product image",
         "uploadImageTypes": "Upload image of type jpg, png, or gif",
         "uploadingImage": "Uploading image",
-        "productTitlePlaceholder": "Bundle Product #5"
+        "productTitlePlaceholder": "Bundle Product #5",
+        "uploadInvalidSingle": "File too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC",
+        "uploadInvalidMultiple": "{count} files too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC",
+        "uploadDuplicate": "Duplicate image(s) already added"
       },
       "Appearance": {
         "displayHeading": "Display Settings",

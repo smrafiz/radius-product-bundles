@@ -576,7 +576,10 @@
         "productImageAlt": "Image du produit",
         "uploadImageTypes": "Importer une image au format JPG, PNG ou GIF",
         "uploadingImage": "Importation de l'image en cours",
-        "productTitlePlaceholder": "Produit de l'offre groupée n° 5"
+        "productTitlePlaceholder": "Produit de l'offre groupée n° 5",
+        "uploadInvalidSingle": "Fichier trop volumineux ou de type non valide. Taille maximale : 20 Mo. Formats autorisés : JPEG, PNG, WebP, GIF, HEIC",
+        "uploadInvalidMultiple": "{count} fichiers trop volumineux ou de type non valide. Taille maximale : 20 Mo. Formats autorisés : JPEG, PNG, WebP, GIF, HEIC",
+        "uploadDuplicate": "Image(s) en double déjà ajoutée(s)"
       },
       "Appearance": {
         "displayHeading": "Paramètres d'affichage",
