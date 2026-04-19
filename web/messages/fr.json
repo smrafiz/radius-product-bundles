@@ -1770,20 +1770,24 @@
     },
     "faqs": {
       "0": {
-        "title": "Quelle est la formule la plus adaptée pour les offres groupées à prix élevé ?",
-        "description": "Pour les entreprises dont la valeur moyenne des commandes (VMC) est élevée, un paiement sur mesure est essentiel. Nous sommes à votre disposition pour vous aider à développer votre activité grâce à des formules sur mesure conçues pour répondre à vos besoins spécifiques. Veuillez nous contacter afin que nous puissions déterminer la meilleure manière de soutenir votre entreprise."
+        "title": "Que comprend l'offre Gratuite?",
+        "description": "L'offre Gratuite comprend jusqu'à 5 offres groupées, jusqu'à 10 produits par offre groupée, les types d'offres groupées Offre groupée fixe, Un acheté, un offert et Achetez X, obtenez Y, des mises en page sous forme de grille et de liste, des analyses de base et une assistance par e-mail."
       },
       "1": {
-        "title": "Puis-je utiliser l'application gratuitement ?",
-        "description": "Vous pouvez tester l'application gratuitement dans le cadre de l'essai de sept jours proposé pour toutes les formules. En outre, les boutiques de développement et les boutiques de test peuvent accéder à l'application gratuitement, sans avoir à approuver de facturation."
+        "title": "Puis-je passer à une formule supérieure ou inférieure à tout moment?",
+        "description": "Oui. Vous pouvez passer à la formule Pro ou revenir à la formule Gratuite à tout moment. Les surclassements prennent effet immédiatement, et les rétrogradations s'appliquent lors du cycle de facturation suivant."
       },
       "2": {
-        "title": "Les frais d'abonnement sont-ils automatiquement ajustés en fonction de mes ventes d'offres groupées ?",
-        "description": "Les frais d'abonnement restent constants, sauf si vous approuvez expressément des modifications. Si vous prévoyez une baisse de vos ventes, vous pouvez passer à une formule inférieure en conséquence. À l'inverse, si vos ventes dépassent la limite de votre formule, vous recevrez une notification par e-mail et pourrez approuver le passage à une formule supérieure."
+        "title": "Existe-t-il un essai gratuit?",
+        "description": "La formule Pro est proposée avec un essai gratuit de 14 jours. Aucune carte de crédit n'est requise pour commencer votre essai.."
       },
       "3": {
-        "title": "Que se passe-t-il si je souhaite modifier ou résilier mon abonnement ?",
-        "description": "Vous pouvez tester l'application de manière approfondie au cours de la période d'essai de sept jours et la résilier sans aucun frais. Au-delà de cette période, les passages à une formule inférieure sont facturés au prorata, contrairement aux résiliations. Veuillez contacter l'assistance afin d'examiner les possibilités de remboursement."
+        "title": "Quelles sont les options de facturation disponibles?",
+        "description": "Pro est disponible avec un cycle de facturation mensuel (9,99€/mois) ou annuel (99,99€/an). La facturation annuelle vous permet d'économiser environ 17% par rapport à la facturation mensuelle."
+      },
+      "4": {
+        "title": "Que se passe-t-il si je dépasse les limites de mon abonnement?",
+        "description": "Avec l'offre Gratuite, vous recevrez une notification lorsque vous approcherez des limites de votre forfait ou de vos produits. Vous pouvez passer à l'offre Pro à tout moment pour bénéficier d'un accès illimité."
       }
     }
   },

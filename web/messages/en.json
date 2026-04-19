@@ -1798,20 +1798,24 @@
     },
     "faqs": {
       "0": {
-        "title": "What's the best plan for high-priced bundles?",
-        "description": "For businesses with high Average Order Value (AOV), tailored payment is key. We're here to help you grow with customized plans designed to fit your unique needs. Contact us to discuss how we can best support your business."
+        "title": "What's included in the Free plan?",
+        "description": "The Free plan includes up to 5 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support."
       },
       "1": {
-        "title": "Can I use the app for free?",
-        "description": "You can test the app for free within the 7-day trial on all plans. Moreover, development stores and test stores can access the app for free without approving any charges."
+        "title": "Can I upgrade or downgrade anytime?",
+        "description": "Yes. You can upgrade to Pro or downgrade to Free at any time. Upgrades take effect immediately, and downgrades apply at the next billing cycle."
       },
       "2": {
-        "title": "Does the subscription fee automatically adjust based on my bundle sales?",
-        "description": "The subscription fee remains constant unless you explicitly approve changes. If you anticipate a decrease in sales, you can downgrade your plan accordingly. Conversely, if your sales exceed your plan's limit, you'll receive an email notification and can approve the upgrade."
+        "title": "Is there a free trial?",
+        "description": "Pro comes with a 14-day free trial. No credit card required to start your trial."
       },
       "3": {
-        "title": "What if I want to change or cancel my plan?",
-        "description": "You can thoroughly test the app during the 7-day trial and cancel without any charges. After that, downgrades are prorated, but cancellations are not. Contact support to explore refund options."
+        "title": "What billing options are available?",
+        "description": "Pro is available on a monthly ($9.99/month) or annual ($99.99/year) billing cycle. Annual billing saves you about 17% compared to monthly."
+      },
+      "4": {
+        "title": "What happens if I exceed my plan limits?",
+        "description": "On the Free plan, you'll be notified when approaching your bundle or product limits. You can upgrade to Pro at any time for unlimited access."
       }
     },
     "billingMonthly": "Monthly",
