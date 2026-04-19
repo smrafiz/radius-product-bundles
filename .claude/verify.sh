@@ -11,4 +11,4 @@ cd web && bunx tsc --noEmit 2>&1
 cd ..
 
 echo "→ Tests..."
-cd web && bun test 2>&1
+cd web && bunx jest 2>&1
