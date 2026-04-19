@@ -22,7 +22,7 @@ import {
     upsertSettings,
 } from "@/features/settings/repositories";
 import { hasFeature, resolveShopPlan } from "@/shared/services/plan.service";
-import { PriorityType } from "@/prisma/generated/client";
+import { PriorityType } from "@/features/bundles/constants/prisma-enums";
 import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
 
 /**

@@ -10,7 +10,8 @@ import {
     StyleOverrides,
     WidgetBehavior,
 } from "@/features/settings";
-import { AppSettings, PriorityType } from "@/prisma/generated/client";
+import type { AppSettings } from "@/prisma/generated/client";
+import { PriorityType } from "@/features/bundles/constants/prisma-enums";
 
 interface MetafieldGlobalSettings {
     // Required for Liquid rendering
