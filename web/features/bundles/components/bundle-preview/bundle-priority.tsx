@@ -32,8 +32,8 @@ export function BundlePriority() {
 
     const strategyLabel =
         globalPriorityType === "discount_based"
-            ? "Discount based"
-            : "Index based";
+            ? t("strategyDiscountBased")
+            : t("strategyIndexBased");
 
     return (
         <s-section>
@@ -66,7 +66,7 @@ export function BundlePriority() {
                         justifyContent="space-between"
                     >
                         <s-text color="subdued">
-                            Strategy: {strategyLabel}
+                            {t("strategyLabel", { label: strategyLabel })}
                         </s-text>
                         <s-link onClick={settings}>
                             <span className="underline text-[#303030]">

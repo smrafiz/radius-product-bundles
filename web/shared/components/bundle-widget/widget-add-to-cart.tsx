@@ -8,6 +8,7 @@ import {
     getButtonHeight,
 } from "@/features/settings";
 import { PREVIEW_LABELS } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetAddToCart({
     styles,
@@ -16,6 +17,7 @@ export function WidgetAddToCart({
     styles: CustomizerStyles;
     cartButtonText?: string;
 }) {
+    const t = useTranslations("Common");
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
     const btnHeight = getButtonHeight(styles.buttonSize);
@@ -29,7 +31,7 @@ export function WidgetAddToCart({
         <div className="radius-bundle__actions">
             <button
                 type="button"
-                aria-label="Add bundle to cart"
+                aria-label={t("addBundleToCart")}
                 className="radius-bundle__add-to-cart"
                 style={{
                     display: "inline-flex",

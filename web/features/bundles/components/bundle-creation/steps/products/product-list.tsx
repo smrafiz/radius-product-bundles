@@ -121,7 +121,7 @@ export function ProductList({
 
     if (items.length === 0) {
         return (
-            <section aria-label="No products selected">
+            <section aria-label={t("noProductsSelected")}>
                 <s-box
                     padding="base"
                     background="subdued"

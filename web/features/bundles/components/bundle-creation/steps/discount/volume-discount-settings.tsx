@@ -71,7 +71,7 @@ function VolumeTierCard({
                         />
                         <s-heading>{t("tier", { number: index + 1 })}</s-heading>
                         {(qtyError || discountError || titleError) && (
-                            <s-icon type="alert-circle" tone="critical" aria-label="This tier has errors" />
+                            <s-icon type="alert-circle" tone="critical" aria-label={t("tierHasErrors")} />
                         )}
                     </s-stack>
                     <s-stack direction="inline" gap="base" alignItems="center">

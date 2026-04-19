@@ -125,6 +125,7 @@ function VolumeAddToCart({
     cartButtonText?: string;
     displayOptions: WidgetDisplayOptions;
 }) {
+    const t = useTranslations("Bundles.Creation.Preview");
     const bgColor = styles.buttonBgColor || styles.primaryColor;
     const isOutline = styles.buttonStyle === "outline";
     const isFullWidth = styles.buttonWidth === "full";
@@ -164,7 +165,7 @@ function VolumeAddToCart({
                         fontSize: 16,
                         color: styles.textColor,
                     }}
-                    aria-label="Decrease quantity"
+                    aria-label={t("decreaseQuantity")}
                 >
                     −
                 </button>
@@ -197,7 +198,7 @@ function VolumeAddToCart({
                         fontSize: 16,
                         color: styles.textColor,
                     }}
-                    aria-label="Increase quantity"
+                    aria-label={t("increaseQuantity")}
                 >
                     +
                 </button>
@@ -477,6 +478,7 @@ function useWidgetLabels(): WidgetLabels {
 }
 
 function useBadgeText(labels: WidgetLabels): string {
+    const t = useTranslations("Bundles.Creation.Preview");
     const { bundleData, selectedItems } = useBundleStore(
         useShallow((s) => ({
             bundleData: s.bundleData,
@@ -497,9 +499,9 @@ function useBadgeText(labels: WidgetLabels): string {
     const discountType = bundleData.discountType;
     const discountValue = bundleData.discountValue ?? 0;
 
-    const buyWord = labels.bogoBuyText || "Buy";
-    const getWord = labels.bogoGetText || "Get";
-    const freeWord = labels.bogoFreeText || "Free";
+    const buyWord = labels.bogoBuyText || t("bogoBuyFallback");
+    const getWord = labels.bogoGetText || t("bogoGetFallback");
+    const freeWord = labels.bogoFreeText || t("bogoFreeFallback");
 
     if (discountType === "PERCENTAGE" && discountValue === 100) {
         return `${buyWord} ${buy} ${getWord} ${get} ${freeWord}`;
@@ -540,6 +542,7 @@ function RenderLayout({
     activeDevice?: "desktop" | "tablet" | "mobile";
     bundleType?: string;
 }) {
+    const t = useTranslations("Bundles.Creation.Preview");
     const layoutProps = {
         products,
         styles,
@@ -549,10 +552,10 @@ function RenderLayout({
     };
 
     // Default values if empty or undefined
-    const safeTitle = title?.trim() ? title : "Bundle & Save";
+    const safeTitle = title?.trim() ? title : t("defaultTitle");
     const safeButtonText = cartButtonText?.trim()
         ? cartButtonText
-        : "Add Bundle to Cart";
+        : t("defaultAddToCart");
 
     switch (layout) {
         case "GRID":
@@ -752,7 +755,7 @@ export function BundlePreview() {
                             <s-button-group gap="none">
                                 <s-button
                                     interestFor="tooltip-desktop"
-                                    accessibility-label="Open desktop customizer"
+                                    accessibility-label={t("customizerDesktopLabel")}
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("desktop")}
                                 >
@@ -760,7 +763,7 @@ export function BundlePreview() {
                                 </s-button>
                                 <s-button
                                     interestFor="tooltip-tablet"
-                                    accessibility-label="Open tablet customizer"
+                                    accessibility-label={t("customizerTabletLabel")}
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("tablet")}
                                 >
@@ -768,7 +771,7 @@ export function BundlePreview() {
                                 </s-button>
                                 <s-button
                                     interestFor="tooltip-mobile"
-                                    accessibility-label="Open mobile customizer"
+                                    accessibility-label={t("customizerMobileLabel")}
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("mobile")}
                                 >

@@ -5,6 +5,7 @@ import {
     MediaGridProps,
     PendingMediaItem,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Unified media item component
@@ -19,6 +20,7 @@ function MediaItem({
     onHoverEnd,
     onRemove,
 }: MediaGridItemProps) {
+    const t = useTranslations("Bundles.Creation.BundleAsProduct");
     return (
         <div
             className={`relative ${isFirst ? "[grid-area:1/1/span_2/span_2]" : ""}`}
@@ -44,7 +46,7 @@ function MediaItem({
                 <div className="absolute z-10 top-1.5 right-1.5">
                     <s-button
                         icon="delete"
-                        accessibilityLabel="Remove image"
+                        accessibilityLabel={t("removeImage")}
                         variant="secondary"
                         tone="critical"
                         onClick={onRemove}
@@ -83,6 +85,7 @@ export function MediaGrid({
     onRemovePending,
     onUpload,
 }: MediaGridProps) {
+    const t = useTranslations("Bundles.Creation.BundleAsProduct");
     const handleDropzoneChange = (event: Event) => {
         const input = event.currentTarget as HTMLInputElement;
         const files = input.files ? Array.from(input.files) : [];
@@ -112,7 +115,7 @@ export function MediaGrid({
                             <MediaItem
                                 key={media.id}
                                 src={media.url}
-                                alt={media.alt || "Product image"}
+                                alt={media.alt || t("productImageAlt")}
                                 index={index}
                                 isHovered={hoveredIndex === index}
                                 isFirst={index === 0}
@@ -133,7 +136,7 @@ export function MediaGrid({
                                 alt={
                                     item.type === "file"
                                         ? item.file.name
-                                        : "Product image"
+                                        : t("productImageAlt")
                                 }
                                 index={index}
                                 isHovered={hoveredIndex === index}
@@ -149,7 +152,7 @@ export function MediaGrid({
                     {totalMedia > 0 && (
                         <div className="relative">
                             <s-drop-zone
-                                accessibilityLabel="Upload additional images"
+                                accessibilityLabel={t("uploadMore")}
                                 accept="image/*"
                                 multiple
                                 onChange={handleDropzoneChange}
@@ -163,7 +166,7 @@ export function MediaGrid({
                         <s-drop-zone
                             label="Upload image"
                             name="image"
-                            accessibilityLabel="Upload image of type jpg, png, or gif"
+                            accessibilityLabel={t("uploadImageTypes")}
                             labelAccessibilityVisibility="exclusive"
                             accept="image/*"
                             multiple
@@ -175,7 +178,7 @@ export function MediaGrid({
 
             {isUploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-lg z-10">
-                    <s-spinner size="base" accessibilityLabel="Uploading image" />
+                    <s-spinner size="base" accessibilityLabel={t("uploadingImage")} />
                     <div role="status" aria-live="polite" className="sr-only">
                         Uploading image, please wait
                     </div>

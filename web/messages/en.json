@@ -66,7 +66,9 @@
     "emptySearchAlt": "Empty search results",
     "emptyStateAlt": "No bundles created yet",
     "cancel": "Cancel",
-    "delete": "Delete"
+    "delete": "Delete",
+    "back": "Back",
+    "addBundleToCart": "Add bundle to cart"
   },
   "Modals": {
     "confirm": "Confirm",
@@ -476,7 +478,8 @@
         "editVariants": "Edit variants",
         "remove": "Remove",
         "maxReached": "Maximum {count} products reached for this bundle.",
-        "variantsSelected": "{count} of {total} variants selected"
+        "variantsSelected": "{count} of {total} variants selected",
+        "noProductsSelected": "No products selected"
       },
       "Discount": {
         "heading": "Discount Settings",
@@ -539,8 +542,10 @@
             "popular": "Most Popular",
             "best-value": "Best Value",
             "custom": "Custom"
-          }
-        }
+          },
+          "tierHasErrors": "This tier has errors"
+        },
+        "discountTypeLabel": "Discount type"
       },
       "BundleAsProduct": {
         "heading": "Bundle as product",
@@ -560,7 +565,11 @@
         "addMedia": "Add Media",
         "removeImage": "Remove image",
         "uploadImage": "Upload image",
-        "uploadMore": "Upload additional images"
+        "uploadMore": "Upload additional images",
+        "productImageAlt": "Product image",
+        "uploadImageTypes": "Upload image of type jpg, png, or gif",
+        "uploadingImage": "Uploading image",
+        "productTitlePlaceholder": "Bundle Product #5"
       },
       "Appearance": {
         "displayHeading": "Display Settings",
@@ -623,7 +632,20 @@
         "bogoBadgePercent": "Buy {buy} Get {get} at {discount}% Off",
         "bogoBadgeFixed": "Buy {buy} Get {get} - ${amount} Off",
         "bogoBadgeDefault": "Buy {buy} Get {get}",
-        "emptyState": "Please choose products to see the bundle preview"
+        "emptyState": "Please choose products to see the bundle preview",
+        "decreaseQuantity": "Decrease quantity",
+        "increaseQuantity": "Increase quantity",
+        "bogoBuyFallback": "Buy",
+        "bogoGetFallback": "Get",
+        "bogoFreeFallback": "Free",
+        "defaultTitle": "Bundle & Save",
+        "defaultAddToCart": "Add Bundle to Cart",
+        "customizerDesktopLabel": "Open desktop customizer",
+        "customizerTabletLabel": "Open tablet customizer",
+        "customizerMobileLabel": "Open mobile customizer",
+        "strategyDiscountBased": "Discount based",
+        "strategyIndexBased": "Index based",
+        "strategyLabel": "Strategy: {label}"
       }
     },
     "Types": {
@@ -847,7 +869,8 @@
       },
       "errors": {
         "loadFailed": "Failed to load bundle data"
-      }
+      },
+      "selectAll": "Select all bundles"
     }
   },
   "Settings": {
@@ -1908,7 +1931,8 @@
         "feature4": "Automation tools and priority support"
       },
       "maybeLater": "Maybe later",
-      "viewPlans": "View plans"
+      "viewPlans": "View plans",
+      "upgradeAriaLabel": "upgrade to pro"
     }
   }
 }

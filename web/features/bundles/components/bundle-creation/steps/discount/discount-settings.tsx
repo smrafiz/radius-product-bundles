@@ -100,7 +100,7 @@ export function DiscountSettings() {
                 </div>
 
                 <s-popover id={popoverId}>
-                    <div className="p-2 w-100" role="listbox" aria-label="Discount type">
+                    <div className="p-2 w-100" role="listbox" aria-label={t("discountTypeLabel")}>
                         <s-stack gap="small-400">
                             {availableDiscountTypes.map((config) => {
                                 const isSelected = config.id === discountType;
