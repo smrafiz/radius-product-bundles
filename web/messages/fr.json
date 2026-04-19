@@ -153,7 +153,13 @@
     "MAX_TIERS": "10 niveaux maximum autorisés",
     "TIER_ORDER": "Doit être supérieur au niveau {index} ({value})",
     "TIER_PERCENTAGE_MAX": "Le pourcentage de réduction ne peut pas dépasser 99,99 %",
-    "TIER_ONE_DEFAULT": "Un seul niveau peut être présélectionné"
+    "TIER_ONE_DEFAULT": "Un seul niveau peut être présélectionné",
+    "ERROR_CREATE_PRODUCT": "Échec de la création du produit",
+    "ERROR_DELETE_PRODUCT": "Échec de la suppression du produit",
+    "ERROR_UNEXPECTED": "Erreur inattendue",
+    "ERROR_SAVE_BUNDLE": "Échec de l'enregistrement de l'offre groupée",
+    "SUCCESS_BUNDLE_CREATED": "Offre groupée créée avec succès !",
+    "SUCCESS_BUNDLE_UPDATED": "Offre groupée mise à jour avec succès !"
   },
   "Dashboard": {
     "title": "Bienvenue dans Radius Bundles",

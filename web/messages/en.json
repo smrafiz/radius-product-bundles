@@ -154,7 +154,13 @@
     "MAX_TIERS": "Maximum of 10 tiers allowed",
     "TIER_ORDER": "Must be greater than tier {index} ({value})",
     "TIER_PERCENTAGE_MAX": "Percentage discount cannot exceed 99.99%",
-    "TIER_ONE_DEFAULT": "Only one tier can be pre-selected"
+    "TIER_ONE_DEFAULT": "Only one tier can be pre-selected",
+    "ERROR_CREATE_PRODUCT": "Failed to create product",
+    "ERROR_DELETE_PRODUCT": "Failed to delete product",
+    "ERROR_UNEXPECTED": "Unexpected error",
+    "ERROR_SAVE_BUNDLE": "Failed to save bundle",
+    "SUCCESS_BUNDLE_CREATED": "Bundle created successfully!",
+    "SUCCESS_BUNDLE_UPDATED": "Bundle updated successfully!"
   },
   "Dashboard": {
     "title": "Welcome to Radius Bundles",
