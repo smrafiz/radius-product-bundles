@@ -8,8 +8,8 @@ import { BundleWidget } from "@/shared";
 import {
     DEFAULT_DISPLAY_OPTIONS,
     PLACEHOLDER_PRICING,
-    PREVIEW_LABELS,
 } from "@/shared/constants/bundle-widget.constants";
+import { usePreviewLabels } from "@/shared";
 
 import "@/styles/components/bundle.css";
 
@@ -26,12 +26,13 @@ export function PreviewShell({ bundleType, scrollRef }: PreviewShellProps) {
         setActiveLayout,
     } = usePreviewShell(bundleType);
 
+    const translatedLabels = usePreviewLabels();
     const serverData = useSettingsStore((s) => s.serverData);
     const savedLabels = serverData?.labels as
         | Record<string, string>
         | undefined;
     const previewLabels = {
-        ...PREVIEW_LABELS,
+        ...translatedLabels,
         ...Object.fromEntries(
             Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
         ),

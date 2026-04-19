@@ -26,17 +26,19 @@ function ClassicProductItem({
     isReward,
     styles,
     displayOptions,
+    labels,
 }: {
     product: PreviewProduct;
     isReward: boolean;
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
+    labels?: WidgetLayoutProps["labels"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
     const imageSizePx = getImageSize(styles.imageSize);
     const isHorizontal = styles.imagePosition === "left";
-    const freeText = PREVIEW_LABELS.bogoFreeText;
+    const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
 
@@ -342,6 +344,7 @@ export function WidgetClassicCard({
                                     isReward={variant === "reward"}
                                     styles={styles}
                                     displayOptions={displayOptions}
+                                    labels={labels}
                                 />
                             ))}
                         </div>

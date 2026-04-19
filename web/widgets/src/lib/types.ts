@@ -104,6 +104,9 @@ export interface BundleStructure {
         volumeTotalCostLabel?: string;
         volumeCostPerUnitLabel?: string;
         volumeRegularPriceLabel?: string;
+        bundleNotAvailableText?: string;
+        failedToLoadText?: string;
+        failedToDisplayText?: string;
     };
 }
 

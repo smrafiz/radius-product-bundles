@@ -110,7 +110,11 @@ export interface BundleWidgetProps {
     children: ReactNode;
 }
 
-export interface WidgetLabels extends Partial<AppSettingsLabels> {}
+export interface WidgetLabels extends Partial<AppSettingsLabels> {
+    bundleNotAvailableText?: string;
+    failedToLoadText?: string;
+    failedToDisplayText?: string;
+}
 
 export interface WidgetLayoutProps {
     products: PreviewProduct[];

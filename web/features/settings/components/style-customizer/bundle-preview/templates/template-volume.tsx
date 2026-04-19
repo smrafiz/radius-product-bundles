@@ -17,11 +17,12 @@ import {
 } from "@/features/settings";
 import type { CustomizerStyles } from "@/features/settings";
 import { DEMO_TIERS } from "@/features/settings/constants/customizer.constants";
-import { DEFAULT_DISPLAY_OPTIONS, PLACEHOLDER_PRODUCTS, PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
+import { DEFAULT_DISPLAY_OPTIONS, PLACEHOLDER_PRODUCTS } from "@/shared/constants/bundle-widget.constants";
+import { usePreviewLabels } from "@/shared";
 
 import type { WidgetDisplayOptions } from "@/shared";
 
-function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; displayOptions: WidgetDisplayOptions }) {
+function VolumeFooter({ styles, displayOptions, addToCartText }: { styles: CustomizerStyles; displayOptions: WidgetDisplayOptions; addToCartText: string }) {
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
     const padding = getButtonPadding(styles.buttonSize);
@@ -118,7 +119,7 @@ function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; di
                     border: isOutline ? `2px solid ${bgColor}` : "none",
                 }}
             >
-                {PREVIEW_LABELS.addToCartText}
+                {addToCartText}
             </button>
         </div>
     );
@@ -126,11 +127,12 @@ function VolumeFooter({ styles, displayOptions }: { styles: CustomizerStyles; di
 
 export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
+    const previewLabels = usePreviewLabels();
     const highlightColor = styles.primaryColor;
     const serverData = useSettingsStore((s) => s.serverData);
     const savedLabels = serverData?.labels as Record<string, string> | undefined;
     const labels = {
-        ...PREVIEW_LABELS,
+        ...previewLabels,
         ...Object.fromEntries(
             Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
         ),
@@ -180,7 +182,7 @@ export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
     return (
         <>
             {renderLayout()}
-            {showQtySelector && <VolumeFooter styles={styles} displayOptions={DEFAULT_DISPLAY_OPTIONS} />}
+            {showQtySelector && <VolumeFooter styles={styles} displayOptions={DEFAULT_DISPLAY_OPTIONS} addToCartText={labels.addToCartText ?? ""} />}
         </>
     );
 }

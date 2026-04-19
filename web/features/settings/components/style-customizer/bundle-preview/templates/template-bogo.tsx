@@ -16,7 +16,7 @@ import {
     useSettingsStore,
 } from "@/features/settings";
 import { usePreviewProducts } from "@/features/settings/hooks/customizer/use-preview-products";
-import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
+import { usePreviewLabels } from "@/shared";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -33,13 +33,14 @@ export function TemplateBogo({
     activeDevice,
 }: BundleTemplateProps) {
     const t = useTranslations("Bundles.Templates.Bogo");
+    const previewLabels = usePreviewLabels();
     const styles = useEffectiveStyles();
     const serverData = useSettingsStore((s) => s.serverData);
     const savedLabels = serverData?.labels as
         | Record<string, string>
         | undefined;
     const labels = {
-        ...PREVIEW_LABELS,
+        ...previewLabels,
         ...Object.fromEntries(
             Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
         ),

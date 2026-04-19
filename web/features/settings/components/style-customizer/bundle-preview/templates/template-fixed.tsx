@@ -13,19 +13,20 @@ import type { BundleTemplateProps } from "@/features/settings/types/template.typ
 import {
     DEFAULT_DISPLAY_OPTIONS,
     PLACEHOLDER_PRODUCTS,
-    PREVIEW_LABELS,
 } from "@/shared/constants/bundle-widget.constants";
 import { useTranslations } from "@/lib/i18n/provider";
+import { usePreviewLabels } from "@/shared";
 
 export function TemplateFixed({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
     const tc = useTranslations("Settings.Customizer");
+    const previewLabels = usePreviewLabels();
     const serverData = useSettingsStore((s) => s.serverData);
     const savedLabels = serverData?.labels as
         | Record<string, string>
         | undefined;
     const labels = {
-        ...PREVIEW_LABELS,
+        ...previewLabels,
         ...Object.fromEntries(
             Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
         ),
