@@ -1591,6 +1591,24 @@
         "field_cartBannerIconType_option_none": "Aucune icône",
         "field_cartBannerIconColor_label": "Couleur de l’icône"
       }
+    },
+    "Toast": {
+      "resetSuccess": "Paramètres réinitialisés aux valeurs par défaut",
+      "resetError": "Échec de la réinitialisation des paramètres",
+      "saveSuccess": "Paramètres enregistrés avec succès",
+      "saveError": "Échec de l'enregistrement des paramètres",
+      "exportError": "Échec de l'exportation des paramètres",
+      "exportNone": "Aucun paramètre à exporter n'a été trouvé",
+      "exportSuccess": "Paramètres exportés avec succès",
+      "importError": "Échec de l'importation des paramètres",
+      "importSuccess": "Paramètres importés avec succès",
+      "importFileError": "Échec de la lecture du fichier d'importation",
+      "syncError": "Échec de la synchronisation",
+      "webhookCheckError": "Échec de la vérification des webhooks",
+      "webhookRegisterError": "Échec de l'enregistrement des webhooks",
+      "cachePartialError": "Échec de la suppression du cache du serveur ; caches du client supprimés",
+      "cacheSuccess": "Tous les caches ont été vidés",
+      "unexpectedError": "Une erreur inattendue s'est produite"
     }
   },
   "Analytics": {

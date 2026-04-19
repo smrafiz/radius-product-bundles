@@ -1611,6 +1611,24 @@
         "field_cartBannerIconType_option_none": "No Icon",
         "field_cartBannerIconColor_label": "Icon color"
       }
+    },
+    "Toast": {
+      "resetSuccess": "Settings reset to defaults",
+      "resetError": "Failed to reset settings",
+      "saveSuccess": "Settings saved successfully",
+      "saveError": "Failed to save settings",
+      "exportError": "Failed to export settings",
+      "exportNone": "No settings found to export",
+      "exportSuccess": "Settings exported successfully",
+      "importError": "Failed to import settings",
+      "importSuccess": "Settings imported successfully",
+      "importFileError": "Failed to read import file",
+      "syncError": "Sync failed",
+      "webhookCheckError": "Failed to check webhooks",
+      "webhookRegisterError": "Failed to register webhooks",
+      "cachePartialError": "Server cache clear failed, client caches cleared",
+      "cacheSuccess": "All caches cleared",
+      "unexpectedError": "An unexpected error occurred"
     }
   },
   "Analytics": {
