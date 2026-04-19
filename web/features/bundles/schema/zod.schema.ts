@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DiscountApplication } from "@/prisma/generated/client";
+import { DiscountApplication } from "@/features/bundles/constants/prisma-enums";
 import { sanitizeText } from "@/shared";
 import { VALIDATION_MESSAGES } from "@/shared/constants";
 

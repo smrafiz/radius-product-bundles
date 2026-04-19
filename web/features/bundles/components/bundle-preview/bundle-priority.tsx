@@ -10,7 +10,7 @@ import {
 import { useShallow } from "zustand/react/shallow";
 import { useSettingsStore } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
-import { PriorityType } from "@/prisma/generated/client";
+import { PriorityType } from "@/features/bundles/constants/prisma-enums";
 
 export function BundlePriority() {
     const t = useTranslations("Bundles.Creation.Preview");

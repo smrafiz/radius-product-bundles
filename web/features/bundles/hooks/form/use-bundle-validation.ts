@@ -9,7 +9,7 @@ import {
 import { useShallow } from "zustand/react/shallow";
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { BundleProductRole } from "@/prisma/generated/client";
+import { BundleProductRole } from "@/features/bundles/constants/prisma-enums";
 
 export function useBundleValidation() {
     const form = useFormContext<BundleFormData>();

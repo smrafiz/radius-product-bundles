@@ -9,7 +9,7 @@ import type {
     DiscountType as PrismaDiscountType,
     Prisma,
 } from "@/prisma/generated/client";
-import { DiscountApplication, PriorityType } from "@/prisma/generated/client";
+import { DiscountApplication, PriorityType } from "@/features/bundles/constants/prisma-enums";
 export { DiscountApplication, PriorityType };
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";

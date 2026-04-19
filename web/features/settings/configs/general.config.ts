@@ -1,5 +1,5 @@
 import { SettingsTabConfig } from "@/features/settings";
-import { PriorityType } from "@/prisma/generated/client";
+import { PriorityType } from "@/features/bundles/constants/prisma-enums";
 
 /**
  * General tab configuration
