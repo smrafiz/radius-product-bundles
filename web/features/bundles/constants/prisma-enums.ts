@@ -18,6 +18,24 @@ export const PriorityType = {
 export type PriorityType =
     (typeof PriorityType)[keyof typeof PriorityType];
 
+export const BundleLayout = {
+    GRID: "GRID",
+    CAROUSEL: "CAROUSEL",
+    LIST: "LIST",
+    COMPACT: "COMPACT",
+    CLASSIC_CARD: "CLASSIC_CARD",
+    COMPACT_GRID: "COMPACT_GRID",
+    MINIMALIST: "MINIMALIST",
+    SLEEK: "SLEEK",
+    CHECKLIST: "CHECKLIST",
+    SPLIT_DEAL: "SPLIT_DEAL",
+    VOLUME_TIER_LIST: "VOLUME_TIER_LIST",
+    VOLUME_PRICING_CARDS: "VOLUME_PRICING_CARDS",
+    VOLUME_SLIDER: "VOLUME_SLIDER",
+    VOLUME_CALCULATOR: "VOLUME_CALCULATOR",
+} as const;
+export type BundleLayout = (typeof BundleLayout)[keyof typeof BundleLayout];
+
 export const BundleProductRole = {
     TRIGGER: "TRIGGER",
     REWARD: "REWARD",

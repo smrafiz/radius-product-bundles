@@ -160,7 +160,7 @@ model BundleProductGroup {
 model BundleSettings {
     id             String  @id @default(cuid())
     bundleId       String  @unique
-    layout         String  @default("GRID")
+    layout         BundleLayout  @default(GRID)
     title          String?
     subtitle       String?
     cartButtonText String?
@@ -631,4 +631,24 @@ enum DiscountApplication {
 enum PriorityType {
     INDEX_BASED
     DISCOUNT_BASED
+}
+
+enum BundleLayout {
+    // Fixed Bundle / Mix & Match / FBT
+    GRID
+    CAROUSEL
+    LIST
+    COMPACT
+    // BOGO / BXGY
+    CLASSIC_CARD
+    COMPACT_GRID
+    MINIMALIST
+    SLEEK
+    CHECKLIST
+    SPLIT_DEAL
+    // Volume Discount
+    VOLUME_TIER_LIST
+    VOLUME_PRICING_CARDS
+    VOLUME_SLIDER
+    VOLUME_CALCULATOR
 }

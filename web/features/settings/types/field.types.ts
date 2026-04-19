@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { BundleType } from "@/features/bundles";
+import { BundleLayout, BundleType } from "@/features/bundles";
 import { appSettingsSchema, PreviewTemplateId } from "@/features/settings";
 
-export type WidgetLayout = string;
+export type WidgetLayout = BundleLayout;
 
 /**
  * Validation configuration

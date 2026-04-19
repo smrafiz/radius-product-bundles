@@ -9,8 +9,8 @@ import type {
     DiscountType as PrismaDiscountType,
     Prisma,
 } from "@/prisma/generated/client";
-import { DiscountApplication, PriorityType } from "@/features/bundles/constants/prisma-enums";
-export { DiscountApplication, PriorityType };
+import { BundleLayout, DiscountApplication, PriorityType } from "@/features/bundles/constants/prisma-enums";
+export { BundleLayout, DiscountApplication, PriorityType };
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
 
@@ -303,20 +303,10 @@ export interface ExtendedBundleFormData extends BundleFormData {
     displaySettings?: DisplaySettings;
 }
 
-export type FixedBundleLayout = "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
-export type BogoLayout =
-    | "CLASSIC_CARD"
-    | "COMPACT_GRID"
-    | "MINIMALIST"
-    | "SLEEK"
-    | "CHECKLIST"
-    | "SPLIT_DEAL";
-export type VolumeLayout =
-    | "VOLUME_TIER_LIST"
-    | "VOLUME_PRICING_CARDS"
-    | "VOLUME_SLIDER"
-    | "VOLUME_CALCULATOR";
-export type BundleLayoutType = FixedBundleLayout | BogoLayout | VolumeLayout;
+export type FixedBundleLayout = Extract<BundleLayout, "GRID" | "CAROUSEL" | "LIST" | "COMPACT">;
+export type BogoLayout = Extract<BundleLayout, "CLASSIC_CARD" | "COMPACT_GRID" | "MINIMALIST" | "SLEEK" | "CHECKLIST" | "SPLIT_DEAL">;
+export type VolumeLayout = Extract<BundleLayout, "VOLUME_TIER_LIST" | "VOLUME_PRICING_CARDS" | "VOLUME_SLIDER" | "VOLUME_CALCULATOR">;
+export type BundleLayoutType = BundleLayout;
 
 /*
  * Volume Discount types
@@ -345,7 +335,7 @@ export interface VolumeDiscountConfig {
 }
 
 export interface DisplaySettings {
-    layout: BundleLayoutType;
+    layout: BundleLayout;
     title: string;
     subtitle: string;
     cartButtonText: string;
