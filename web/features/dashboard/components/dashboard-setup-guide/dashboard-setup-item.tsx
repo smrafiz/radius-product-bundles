@@ -71,7 +71,17 @@ export const DashboardSetupItem = ({
         >
             <div
                 className="flex items-center gap-3 min-h-10 px-2 py-3 cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-expanded={expanded}
+                aria-controls="setup-item-content"
                 onClick={setExpanded}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setExpanded();
+                    }
+                }}
             >
                 {checkboxLoading ? (
                     <div className="w-5 h-5 flex items-center justify-center shrink-0">
@@ -100,6 +110,7 @@ export const DashboardSetupItem = ({
             </div>
 
             <div
+                id="setup-item-content"
                 className="grid transition-[grid-template-rows] duration-300 ease-in-out"
                 style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}
             >

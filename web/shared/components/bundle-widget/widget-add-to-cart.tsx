@@ -28,6 +28,8 @@ export function WidgetAddToCart({
     return (
         <div className="radius-bundle__actions">
             <button
+                type="button"
+                aria-label="Add bundle to cart"
                 className="radius-bundle__add-to-cart"
                 style={{
                     display: "inline-flex",

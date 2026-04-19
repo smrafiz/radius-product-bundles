@@ -73,6 +73,7 @@ export function WidgetHeader({
                 >
                     <span
                         className="radius-bundle__badge"
+                        aria-label={`Save ${pricing.savingsPercentage}%`}
                         style={{
                             display: "inline-block",
                             borderRadius: badgeRadius,

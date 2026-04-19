@@ -46,6 +46,10 @@ interface ProductItemProps {
     quantityLocked?: boolean;
     onRemove?: (() => void) | null;
     sortableId?: string;
+    onMoveUp?: (id: string) => void;
+    onMoveDown?: (id: string) => void;
+    isFirst?: boolean;
+    isLast?: boolean;
 }
 
 export function ProductItem({
@@ -55,6 +59,10 @@ export function ProductItem({
     quantityLocked,
     onRemove,
     sortableId,
+    onMoveUp,
+    onMoveDown,
+    isFirst,
+    isLast,
 }: ProductItemProps) {
     const t = useTranslations("Bundles.Creation.Products");
     const {
@@ -107,9 +115,33 @@ export function ProductItem({
                 borderRadius="base"
             >
                 <div className="flex items-center gap-2">
-                    {/* Drag handle */}
-                    <div className="cursor-grab flex-shrink-0">
-                        <s-icon type="drag-handle" />
+                    {/* Drag handle + keyboard move buttons */}
+                    <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
+                        {onMoveUp && (
+                            <button
+                                type="button"
+                                aria-label={`Move ${product.title} up`}
+                                disabled={isFirst}
+                                onClick={() => onMoveUp(product.productId)}
+                                className="sr-only focus:not-sr-only focus:static focus:w-auto focus:h-auto focus:p-0.5 focus:rounded"
+                            >
+                                ↑
+                            </button>
+                        )}
+                        <div className="cursor-grab" aria-hidden="true">
+                            <s-icon type="drag-handle" />
+                        </div>
+                        {onMoveDown && (
+                            <button
+                                type="button"
+                                aria-label={`Move ${product.title} down`}
+                                disabled={isLast}
+                                onClick={() => onMoveDown(product.productId)}
+                                className="sr-only focus:not-sr-only focus:static focus:w-auto focus:h-auto focus:p-0.5 focus:rounded"
+                            >
+                                ↓
+                            </button>
+                        )}
                     </div>
 
                     {/* Image */}

@@ -73,6 +73,8 @@ export function DiscountSettings() {
                         padding="small-300"
                         paddingInline="small"
                         type="submit"
+                        aria-haspopup="listbox"
+                        aria-expanded={isOpen}
                         onClick={() => setIsOpen((prev) => !prev)}
                     >
                         <div className="w-full flex justify-between items-center">
@@ -98,7 +100,7 @@ export function DiscountSettings() {
                 </div>
 
                 <s-popover id={popoverId}>
-                    <div className="p-2 w-100">
+                    <div className="p-2 w-100" role="listbox" aria-label="Discount type">
                         <s-stack gap="small-400">
                             {availableDiscountTypes.map((config) => {
                                 const isSelected = config.id === discountType;
@@ -128,6 +130,8 @@ export function DiscountSettings() {
                                         }}
                                     >
                                         <div
+                                            role="option"
+                                            aria-selected={isSelected}
                                             className={`py-1 px-2 rounded-md transition-colors ${
                                                 isLocked
                                                     ? "rtpb-pro-locked"
