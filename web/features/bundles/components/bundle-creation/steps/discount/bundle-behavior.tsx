@@ -1,6 +1,7 @@
 "use client";
 
-import { DiscountApplication, useBundleBehavior } from "@/features/bundles";
+import { DiscountApplication } from "@/features/bundles/constants/prisma-enums";
+import { useBundleBehavior } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
 

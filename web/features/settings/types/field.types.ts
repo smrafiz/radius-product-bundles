@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { BundleLayout, BundleType } from "@/features/bundles";
+import { BundleLayout } from "@/features/bundles/constants/prisma-enums";
+import { BundleType } from "@/features/bundles";
 import { appSettingsSchema, PreviewTemplateId } from "@/features/settings";
 
 export type WidgetLayout = BundleLayout;

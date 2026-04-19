@@ -3,7 +3,8 @@
  */
 
 import { Prisma } from "@/prisma/generated/client";
-import { BundleStatus, BundleType, DiscountApplication, DiscountType } from "@/features/bundles";
+import { DiscountApplication } from "@/features/bundles/constants/prisma-enums";
+import { BundleStatus, BundleType, DiscountType } from "@/features/bundles";
 
 /*
  * Bundle repository types
