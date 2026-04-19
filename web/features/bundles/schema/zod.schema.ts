@@ -15,87 +15,97 @@ const volumeTierBadgeSchema = z.object({
     text: z.string().max(30).optional(),
 });
 
-const volumeTierSchema = z.object({
-    id: z.string().optional(),
-    minQuantity: z.preprocess(
-        (v) => (typeof v === "number" && isNaN(v) ? undefined : v),
-        z.number({ error: "Quantity is required" })
-            .int("Must be a whole number")
-            .min(1, "Minimum quantity must be at least 1"),
-    ),
-    discount: z.preprocess(
-        (v) => (typeof v === "number" && isNaN(v) ? undefined : v),
-        z.number({ error: "Discount is required" })
-            .min(0, "Discount cannot be negative")
-            .max(999999.99, "Discount exceeds maximum")
-            .refine(
-                (v) => /^\d+(\.\d{1,2})?$/.test(String(v)),
-                "Maximum 2 decimal places allowed",
-            ),
-    ),
-    title: z
-        .string()
-        .min(1, "Title is required")
-        .max(50, "Title must be 50 characters or less"),
-    subtitle: z
-        .string()
-        .max(80, "Subtitle must be 80 characters or less")
-        .optional(),
-    badge: volumeTierBadgeSchema.optional(),
-    isDefault: z.boolean().optional(),
-});
+const createVolumeTierSchema = (v: T) =>
+    z.object({
+        id: z.string().optional(),
+        minQuantity: z.preprocess(
+            (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
+            z.number({ error: v("QTY_REQUIRED") })
+                .int(v("WHOLE_NUMBER"))
+                .min(1, v("MIN_QUANTITY")),
+        ),
+        discount: z.preprocess(
+            (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
+            z.number({ error: v("DISCOUNT_REQUIRED") })
+                .min(0, v("DISCOUNT_NEGATIVE"))
+                .max(999999.99, v("DISCOUNT_MAX"))
+                .refine(
+                    (val) => /^\d+(\.\d{1,2})?$/.test(String(val)),
+                    v("MAX_DECIMAL_PLACES"),
+                ),
+        ),
+        title: z
+            .string()
+            .min(1, v("TIER_TITLE_REQUIRED"))
+            .max(50, v("TIER_TITLE_MAX")),
+        subtitle: z
+            .string()
+            .max(80, v("TIER_SUBTITLE_MAX"))
+            .optional(),
+        badge: volumeTierBadgeSchema.optional(),
+        isDefault: z.boolean().optional(),
+    });
 
-export const volumeDiscountConfigSchema = z
-    .object({
-        discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"]),
-        openEnded: z.boolean().default(true),
-        tiers: z
-            .array(volumeTierSchema)
-            .min(1, "At least one tier is required")
-            .max(10, "Maximum of 10 tiers allowed"),
-    })
-    .superRefine((config, ctx) => {
-        config.tiers.forEach((tier, idx) => {
-            if (idx > 0) {
-                const prev = config.tiers[idx - 1];
-                if (tier.minQuantity <= prev.minQuantity) {
-                    ctx.addIssue({
-                        code: "custom",
-                        message: `Must be greater than tier ${idx} (${prev.minQuantity})`,
-                        path: ["tiers", idx, "minQuantity"],
-                    });
+const createVolumeDiscountConfigSchema = (v: T) =>
+    z
+        .object({
+            discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"]),
+            openEnded: z.boolean().default(true),
+            tiers: z
+                .array(createVolumeTierSchema(v))
+                .min(1, v("MIN_TIERS"))
+                .max(10, v("MAX_TIERS")),
+        })
+        .superRefine((config, ctx) => {
+            config.tiers.forEach((tier, idx) => {
+                if (idx > 0) {
+                    const prev = config.tiers[idx - 1];
+                    if (tier.minQuantity <= prev.minQuantity) {
+                        ctx.addIssue({
+                            code: "custom",
+                            message: v("TIER_ORDER")
+                                .replace("{index}", String(idx))
+                                .replace("{value}", String(prev.minQuantity)),
+                            path: ["tiers", idx, "minQuantity"],
+                        });
+                    }
+                    if (tier.discount <= prev.discount) {
+                        ctx.addIssue({
+                            code: "custom",
+                            message: v("TIER_ORDER")
+                                .replace("{index}", String(idx))
+                                .replace("{value}", String(prev.discount)),
+                            path: ["tiers", idx, "discount"],
+                        });
+                    }
                 }
-                if (tier.discount <= prev.discount) {
-                    ctx.addIssue({
-                        code: "custom",
-                        message: `Must be greater than tier ${idx} (${prev.discount})`,
-                        path: ["tiers", idx, "discount"],
-                    });
-                }
+            });
+
+            if (config.discountType === "PERCENTAGE") {
+                config.tiers.forEach((tier, idx) => {
+                    if (tier.discount > 99.99) {
+                        ctx.addIssue({
+                            code: "custom",
+                            message: v("TIER_PERCENTAGE_MAX"),
+                            path: ["tiers", idx, "discount"],
+                        });
+                    }
+                });
+            }
+
+            const defaultTiers = config.tiers.filter((t) => t.isDefault === true);
+            if (defaultTiers.length > 1) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("TIER_ONE_DEFAULT"),
+                    path: ["tiers"],
+                });
             }
         });
 
-        if (config.discountType === "PERCENTAGE") {
-            config.tiers.forEach((tier, idx) => {
-                if (tier.discount > 99.99) {
-                    ctx.addIssue({
-                        code: "custom",
-                        message: "Percentage discount cannot exceed 99.99%",
-                        path: ["tiers", idx, "discount"],
-                    });
-                }
-            });
-        }
-
-        const defaultTiers = config.tiers.filter((t) => t.isDefault === true);
-        if (defaultTiers.length > 1) {
-            ctx.addIssue({
-                code: "custom",
-                message: "Only one tier can be pre-selected",
-                path: ["tiers"],
-            });
-        }
-    });
+export const volumeDiscountConfigSchema = createVolumeDiscountConfigSchema(
+    (key) => (VALIDATION_MESSAGES as Record<string, string>)[key] ?? key,
+);
 
 const productGroupSchema = (v: T) =>
     z.object({
@@ -231,7 +241,7 @@ export function createBundleSchema(v: T) {
             minOrderValue: z.number().min(0).max(999999.99).optional(),
             maxDiscountAmount: z.number().min(0).max(999999.99).optional(),
 
-            volumeTiers: volumeDiscountConfigSchema.optional(),
+            volumeTiers: createVolumeDiscountConfigSchema(v).optional(),
             openEnded: z.boolean().default(true).optional(),
 
             allowMixAndMatch: z.boolean().default(false),

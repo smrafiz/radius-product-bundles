@@ -22,4 +22,17 @@ export const VALIDATION_MESSAGES = {
     VOLUME_TIERS_REQUIRED:
         "Volume discount bundles require at least one tier",
     MAX_PRODUCTS_20: "Bundle cannot have more than 20 products",
+    QTY_REQUIRED: "Quantity is required",
+    WHOLE_NUMBER: "Must be a whole number",
+    DISCOUNT_REQUIRED: "Discount is required",
+    DISCOUNT_NEGATIVE: "Discount cannot be negative",
+    DISCOUNT_MAX: "Discount exceeds maximum",
+    TIER_TITLE_REQUIRED: "Tier title is required",
+    TIER_TITLE_MAX: "Title must be 50 characters or less",
+    TIER_SUBTITLE_MAX: "Subtitle must be 80 characters or less",
+    MIN_TIERS: "At least one tier is required",
+    MAX_TIERS: "Maximum of 10 tiers allowed",
+    TIER_ORDER: "Must be greater than tier {index} ({value})",
+    TIER_PERCENTAGE_MAX: "Percentage discount cannot exceed 99.99%",
+    TIER_ONE_DEFAULT: "Only one tier can be pre-selected",
 } as const;

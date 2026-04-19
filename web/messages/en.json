@@ -141,7 +141,20 @@
     "MAX_PRODUCTS_20": "Cannot have more than 20 products in a bundle",
     "GROUP_NAME_REQUIRED": "Group name is required",
     "FILL_REQUIRED_FIELDS": "Please fill in all required fields",
-    "MAX_DECIMAL_PLACES": "Maximum 2 decimal places allowed"
+    "MAX_DECIMAL_PLACES": "Maximum 2 decimal places allowed",
+    "QTY_REQUIRED": "Quantity is required",
+    "WHOLE_NUMBER": "Must be a whole number",
+    "DISCOUNT_REQUIRED": "Discount is required",
+    "DISCOUNT_NEGATIVE": "Discount cannot be negative",
+    "DISCOUNT_MAX": "Discount exceeds maximum",
+    "TIER_TITLE_REQUIRED": "Tier title is required",
+    "TIER_TITLE_MAX": "Title must be 50 characters or less",
+    "TIER_SUBTITLE_MAX": "Subtitle must be 80 characters or less",
+    "MIN_TIERS": "At least one tier is required",
+    "MAX_TIERS": "Maximum of 10 tiers allowed",
+    "TIER_ORDER": "Must be greater than tier {index} ({value})",
+    "TIER_PERCENTAGE_MAX": "Percentage discount cannot exceed 99.99%",
+    "TIER_ONE_DEFAULT": "Only one tier can be pre-selected"
   },
   "Dashboard": {
     "title": "Welcome to Radius Bundles",

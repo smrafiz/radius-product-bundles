@@ -140,7 +140,20 @@
     "MAX_PRODUCTS_20": "Une offre groupée ne peut pas contenir plus de 20 produits",
     "GROUP_NAME_REQUIRED": "Nom du groupe requis",
     "FILL_REQUIRED_FIELDS": "Veuillez remplir tous les champs obligatoires.",
-    "MAX_DECIMAL_PLACES": "2 décimales maximum autorisées"
+    "MAX_DECIMAL_PLACES": "2 décimales maximum autorisées",
+    "QTY_REQUIRED": "La quantité est obligatoire",
+    "WHOLE_NUMBER": "Doit être un nombre entier",
+    "DISCOUNT_REQUIRED": "La remise est obligatoire",
+    "DISCOUNT_NEGATIVE": "La remise ne peut pas être négative",
+    "DISCOUNT_MAX": "La réduction est supérieure au maximum autorisé",
+    "TIER_TITLE_REQUIRED": "Le titre du niveau est obligatoire",
+    "TIER_TITLE_MAX": "Le titre ne doit pas dépasser 50 caractères",
+    "TIER_SUBTITLE_MAX": "Le sous-titre ne doit pas dépasser 80 caractères",
+    "MIN_TIERS": "Au moins un niveau est requis",
+    "MAX_TIERS": "10 niveaux maximum autorisés",
+    "TIER_ORDER": "Doit être supérieur au niveau {index} ({value})",
+    "TIER_PERCENTAGE_MAX": "Le pourcentage de réduction ne peut pas dépasser 99,99 %",
+    "TIER_ONE_DEFAULT": "Un seul niveau peut être présélectionné"
   },
   "Dashboard": {
     "title": "Bienvenue dans Radius Bundles",
