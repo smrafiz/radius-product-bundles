@@ -13,6 +13,7 @@ import {
     checkBundleTypeAllowed,
     checkBundleStatusAllowed,
 } from "@/shared/services/plan.service";
+import { getStaticTranslations } from "@/lib/i18n/server";
 
 /**
  * Perform all security checks for bundle operations
@@ -65,10 +66,10 @@ export async function checkRateLimit(
         console.warn(
             `[Security] Rate limit exceeded for shop ${shop}: ${recentBundleCount}/${maxPerHour}`,
         );
-
+        const t = await getStaticTranslations("Bundles.ServiceErrors");
         return {
             passed: false,
-            reason: `Rate limit exceeded. Maximum ${maxPerHour} bundles per hour. Please try again later.`,
+            reason: t("rateLimitExceeded", { max: maxPerHour }),
         };
     }
 
@@ -85,32 +86,21 @@ export async function checkShopStatus(
     shop: string,
 ): Promise<SecurityCheckResult> {
     const shopStatus = await getShopStatus(shop);
+    const t = await getStaticTranslations("Bundles.ServiceErrors");
 
     if (shopStatus === "SUSPENDED") {
         console.warn(`[Security] Shop suspended: ${shop}`);
-
-        return {
-            passed: false,
-            reason: "Shop account is suspended. Please contact support for assistance.",
-        };
+        return { passed: false, reason: t("shopSuspended") };
     }
 
     if (shopStatus === "TRIAL_EXPIRED") {
         console.warn(`[Security] Trial expired for shop: ${shop}`);
-
-        return {
-            passed: false,
-            reason: "Trial period has expired. Please upgrade your plan.",
-        };
+        return { passed: false, reason: t("trialExpired") };
     }
 
     if (shopStatus === "NOT_CONFIGURED") {
         console.warn(`[Security] Shop not configured: ${shop}`);
-
-        return {
-            passed: false,
-            reason: "Shop is not properly configured. Please complete setup.",
-        };
+        return { passed: false, reason: t("shopNotConfigured") };
     }
 
     return { passed: true };
@@ -131,12 +121,10 @@ export async function checkAbusivePatterns(
         console.warn(
             `[Security] Abusive pattern detected for shop ${shop}: ${abuseResult.reason}`,
         );
-
+        const t = await getStaticTranslations("Bundles.ServiceErrors");
         return {
             passed: false,
-            reason:
-                abuseResult.reason ||
-                "Suspicious activity detected. Please contact support.",
+            reason: abuseResult.reason || t("suspiciousActivity"),
         };
     }
 
@@ -175,9 +163,10 @@ export async function detectAbusiveBehavior(
             `[Security] Excessive creation detected: ${activity.created} bundles in ${hoursToCheck}h`,
         );
 
+        const t = await getStaticTranslations("Bundles.ServiceErrors");
         return {
             isAbusive: true,
-            reason: `Excessive bundle creation detected (${activity.created} in ${hoursToCheck}h)`,
+            reason: t("excessiveCreation", { count: activity.created, hours: String(hoursToCheck) }),
             details: {
                 created: activity.created,
                 deleted: activity.deleted,
@@ -241,9 +230,10 @@ export async function canCreateBundle(shop: string): Promise<{
     const quota = await checkBundleQuota(shop);
 
     if (!quota.allowed) {
+        const t = await getStaticTranslations("Bundles.ServiceErrors");
         return {
             allowed: false,
-            reason: `Shop has reached maximum bundle limit (${quota.limit})`,
+            reason: t("quotaExceeded", { limit: quota.limit }),
             current: quota.current,
             limit: quota.limit,
         };

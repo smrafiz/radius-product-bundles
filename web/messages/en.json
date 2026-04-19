@@ -1632,6 +1632,19 @@
       "cachePartialError": "Server cache clear failed, client caches cleared",
       "cacheSuccess": "All caches cleared",
       "unexpectedError": "An unexpected error occurred"
+    },
+    "ServiceErrors": {
+      "rateLimitExceeded": "Rate limit exceeded. Maximum {max} bundles per hour. Please try again later.",
+      "shopSuspended": "Shop account is suspended. Please contact support for assistance.",
+      "trialExpired": "Trial period has expired. Please upgrade your plan.",
+      "shopNotConfigured": "Shop is not properly configured. Please complete setup.",
+      "excessiveCreation": "Excessive bundle creation detected ({count} in {hours}h)",
+      "quotaExceeded": "Shop has reached maximum bundle limit ({limit})",
+      "duplicateName": "A bundle with this name already exists",
+      "operationTimedOut": "Operation timed out. Please try again with fewer products.",
+      "operationTimedOutShort": "Operation timed out",
+      "unexpectedError": "An unexpected error occurred",
+      "suspiciousActivity": "Suspicious activity detected. Please contact support."
     }
   },
   "Analytics": {
