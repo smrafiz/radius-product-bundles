@@ -165,9 +165,9 @@ export function BxgyReviewSection() {
                     direction="inline"
                     justifyContent="space-between"
                     alignItems="center"
-                    gap="base"
+                    gap="small-300"
                 >
-                    <s-stack gap="base" direction="inline">
+                    <s-stack gap="small" direction="inline">
                         {p.image ? (
                             <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                                 <s-image
@@ -186,9 +186,10 @@ export function BxgyReviewSection() {
                         )}
                         <s-stack
                             direction="inline"
-                            gap="small"
+                            gap="small-200"
                             alignItems="center"
                         >
+                            <s-text color="subdued">{p.quantity || 1} x</s-text>
                             <s-heading>
                                 {p.title.replace(/ - .+$/, "")}
                             </s-heading>

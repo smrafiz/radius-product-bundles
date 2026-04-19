@@ -85,9 +85,10 @@ export function SelectedProducts() {
 
                                     <s-stack
                                         direction="inline"
-                                        gap="small"
+                                        gap="small-400"
                                         alignItems="center"
                                     >
+                                        <s-text color="subdued">{group.quantity || 1} x</s-text>
                                         <s-heading>
                                             {group.product.title}
                                         </s-heading>
