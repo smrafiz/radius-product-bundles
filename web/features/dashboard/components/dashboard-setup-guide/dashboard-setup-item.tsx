@@ -10,6 +10,7 @@ const DashedCircle = () => (
         viewBox="0 0 20 20"
         fill="none"
         className="shrink-0"
+        aria-hidden="true"
     >
         <circle
             cx="10"
@@ -30,6 +31,7 @@ const CheckCircle = () => (
         viewBox="2 2 20 20"
         fill="none"
         className="shrink-0"
+        aria-hidden="true"
     >
         <circle cx="12" cy="12" r="10" fill="#303030" />
         <path
@@ -91,7 +93,7 @@ export const DashboardSetupItem = ({
                     <div
                         onClick={handleCircleClick}
                         className={canToggle ? "cursor-pointer" : ""}
-                        title={
+                        aria-label={
                             canToggle
                                 ? complete
                                     ? t("markIncomplete")

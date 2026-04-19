@@ -60,6 +60,15 @@ export function BundleCreationForm({
     return (
         <s-page heading={isEditMode ? tc("edit") : tc("create")}>
             <TitleBar title={isEditMode ? tc("edit") : tc("create")}>
+                {/*
+                 * `variant` on these <button> elements is intentional and not a
+                 * standard HTML attribute. App Bridge React's <TitleBar> scans its
+                 * children and reads the `variant` prop to determine button placement
+                 * and styling inside the Shopify Admin chrome (breadcrumb, primary, etc.).
+                 * These are processed by App Bridge — not rendered as plain HTML buttons —
+                 * so the non-standard attribute is correct here.
+                 * See: https://shopify.dev/docs/api/app-bridge-library/react-components/titlebar
+                 */}
                 <button variant="breadcrumb" onClick={bundleData.list()}>
                     {tc("breadcrumb")}
                 </button>

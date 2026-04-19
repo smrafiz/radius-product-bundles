@@ -116,7 +116,7 @@ export function ProductItem({
             >
                 <div className="flex items-center gap-2">
                     {/* Drag handle + keyboard move buttons */}
-                    <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
+                    <div className="flex flex-col items-center gap-0.5 shrink-0">
                         {onMoveUp && (
                             <button
                                 type="button"
@@ -145,7 +145,7 @@ export function ProductItem({
                     </div>
 
                     {/* Image */}
-                    <div className="w-10 h-10 flex-shrink-0 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
+                    <div className="w-10 h-10 shrink-0 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                         {product.image ? (
                             <s-image
                                 src={product.image}
@@ -155,7 +155,8 @@ export function ProductItem({
                                 objectFit="cover"
                             />
                         ) : (
-                            <s-icon type="image" tone="neutral" />
+                            /* Decorative placeholder — image meaning already conveyed by product title */
+                            <s-icon type="image" tone="neutral" aria-hidden="true" />
                         )}
                     </div>
 
@@ -187,10 +188,10 @@ export function ProductItem({
                     </div>
 
                     {/* Controls — fixed width, never wrap */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                         {/* Role dropdown for BOGO */}
                         {role && onRoleChange && (
-                            <div className="w-[80px]">
+                            <div className="w-20">
                                 <s-select
                                     label={t("role")}
                                     labelAccessibilityVisibility="exclusive"
@@ -216,11 +217,11 @@ export function ProductItem({
                         )}
                         {/* Quantity */}
                         {quantityLocked ? (
-                            <div className="w-[40px] text-center">
+                            <div className="w-10 text-center">
                                 <s-text tone="neutral">{t("qty")} 1</s-text>
                             </div>
                         ) : (
-                            <div className="w-[80px]">
+                            <div className="w-20">
                                 <s-number-field
                                     label={t("quantity")}
                                     labelAccessibilityVisibility="exclusive"

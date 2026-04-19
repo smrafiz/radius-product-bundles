@@ -28,6 +28,7 @@ function ProgressRing({
             height="16"
             viewBox={`0 0 16 16`}
             className="shrink-0 -rotate-90"
+            aria-hidden="true"
         >
             <circle
                 cx="8"
