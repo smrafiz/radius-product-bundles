@@ -255,9 +255,11 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                         )}
                     </s-stack>
                     {productErrorMessage && (
-                        <s-banner tone="critical" data-fieldid="products">
-                            {productErrorMessage}
-                        </s-banner>
+                        <div role="alert">
+                            <s-banner tone="critical" data-fieldid="products">
+                                {productErrorMessage}
+                            </s-banner>
+                        </div>
                     )}
                     {showProductHint && (
                         <s-banner tone="info">

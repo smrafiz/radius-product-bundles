@@ -175,7 +175,10 @@ export function MediaGrid({
 
             {isUploading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-lg z-10">
-                    <s-spinner size="base" />
+                    <s-spinner size="base" accessibilityLabel="Uploading image" />
+                    <div role="status" aria-live="polite" className="sr-only">
+                        Uploading image, please wait
+                    </div>
                 </div>
             )}
         </div>

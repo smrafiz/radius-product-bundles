@@ -81,13 +81,18 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                     );
 
                                 return (
-                                    <div
-                                        className={
-                                            isCurrentStatus || isLocked
-                                                ? "cursor-default"
-                                                : "cursor-pointer"
-                                        }
+                                    <s-clickable
                                         key={statusKey}
+                                        disabled={
+                                            isCurrentStatus || undefined
+                                        }
+                                        background={
+                                            isCurrentStatus
+                                                ? "subdued"
+                                                : "base"
+                                        }
+                                        padding="small-300"
+                                        borderRadius="base"
                                         onClick={() => {
                                             if (isLocked) {
                                                 openCrossSell(ts(statusKey));
@@ -98,42 +103,28 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
                                             }
                                         }}
                                     >
-                                        <s-clickable
-                                            disabled={
-                                                isCurrentStatus ||
-                                                isLocked ||
-                                                undefined
-                                            }
-                                            background={
-                                                isCurrentStatus
-                                                    ? "subdued"
-                                                    : "base"
-                                            }
-                                            padding="small-300"
-                                            borderRadius="base"
+                                        <s-stack
+                                            direction="inline"
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            gap="small-100"
                                         >
-                                            <s-stack
-                                                direction="inline"
-                                                justifyContent="space-between"
-                                                alignItems="center"
-                                            >
-                                                {isCurrentStatus ? (
-                                                    <span className="font-semibold">
-                                                        {ts(statusKey)}
-                                                    </span>
-                                                ) : (
-                                                    <s-text>
-                                                        {ts(statusKey)}
-                                                    </s-text>
-                                                )}
-                                                {isLocked && (
-                                                    <ProBadge
-                                                        label={ts(statusKey)}
-                                                    />
-                                                )}
-                                            </s-stack>
-                                        </s-clickable>
-                                    </div>
+                                            {isCurrentStatus ? (
+                                                <span className="font-semibold">
+                                                    {ts(statusKey)}
+                                                </span>
+                                            ) : (
+                                                <s-text>
+                                                    {ts(statusKey)}
+                                                </s-text>
+                                            )}
+                                            {isLocked && (
+                                                <ProBadge
+                                                    label={ts(statusKey)}
+                                                />
+                                            )}
+                                        </s-stack>
+                                    </s-clickable>
                                 );
                             })}
                     </s-stack>

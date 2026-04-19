@@ -19,6 +19,7 @@ export const BundleTableHeader = memo(function BundleTableHeader({
             <s-table-header listSlot="primary">
                 <s-stack direction="inline" gap="small" alignItems="center">
                     <s-checkbox
+                        aria-label="Select all bundles"
                         indeterminate={isIndeterminate}
                         checked={allResourcesSelected}
                         onChange={(e: Event) => {

@@ -121,23 +121,25 @@ export function ProductList({
 
     if (items.length === 0) {
         return (
-            <s-box
-                padding="base"
-                background="subdued"
-                border="base"
-                borderRadius="base"
-            >
-                <s-stack gap="large" alignItems="center">
-                    <s-button
-                        variant="tertiary"
-                        icon="plus"
-                        onClick={openProductPicker}
-                        loading={isLoading}
-                    >
-                        {t("addProducts")}
-                    </s-button>
-                </s-stack>
-            </s-box>
+            <section aria-label="No products selected">
+                <s-box
+                    padding="base"
+                    background="subdued"
+                    border="base"
+                    borderRadius="base"
+                >
+                    <s-stack gap="large" alignItems="center">
+                        <s-button
+                            variant="tertiary"
+                            icon="plus"
+                            onClick={openProductPicker}
+                            loading={isLoading}
+                        >
+                            {t("addProducts")}
+                        </s-button>
+                    </s-stack>
+                </s-box>
+            </section>
         );
     }
 
