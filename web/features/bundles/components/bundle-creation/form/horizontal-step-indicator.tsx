@@ -72,6 +72,11 @@ export function HorizontalStepIndicator() {
 
     return (
         <s-section>
+            {/* Screen reader step announcement */}
+            <div aria-live="polite" aria-atomic="true" className="sr-only">
+                {`Step ${currentStep} of ${totalSteps}: ${ts(STEP_KEYS[currentStep - 1] + ".title")}`}
+            </div>
+
             <s-stack
                 direction="inline"
                 gap="base"
@@ -102,6 +107,7 @@ export function HorizontalStepIndicator() {
                                 >
                                     <div
                                         className="cursor-pointer"
+                                        aria-current={getStepStatus(step.number) === "current" ? "step" : undefined}
                                         onClick={() =>
                                             handleStepClick(step.number)
                                         }

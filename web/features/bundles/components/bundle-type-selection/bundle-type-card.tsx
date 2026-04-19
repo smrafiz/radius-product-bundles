@@ -102,7 +102,10 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                     : t("select")}
                             </s-button>
                         </s-stack>
-                        <s-button commandFor={`modal-${bundleType.id}`}>
+                        <s-button
+                            commandFor={`modal-${bundleType.id}`}
+                            accessibilityLabel={`${tt(bundleType.id + ".label")} — ${t("learnMore")}`}
+                        >
                             <s-icon type="question-circle" />
                         </s-button>
 

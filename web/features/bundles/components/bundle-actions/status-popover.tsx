@@ -53,7 +53,11 @@ export function StatusPopover({ bundle }: StatusPopoverProps) {
     return (
         <>
             {/* Clickable badge */}
-            <s-clickable commandFor={popoverId} type="reset">
+            <s-clickable
+                commandFor={popoverId}
+                type="reset"
+                accessibilityLabel={`${ts(bundle.status)} — ${ts("changeStatus", undefined, "change status")}`}
+            >
                 <s-stack direction="inline" gap="none" alignItems="center">
                     <s-badge tone={statusConfig.tone}>
                         {ts(bundle.status)}
