@@ -1676,7 +1676,13 @@
       "heading": "Top Performing Bundles",
       "tooltip": "Bundles are ranked by total revenue. Low-traffic bundles are excluded to avoid noise. Trends compare current period with previous period of equal length.",
       "noData": "No bundle data yet",
-      "lowSampleSize": "Low sample size - conversion rate may fluctuate"
+      "lowSampleSize": "Low sample size - conversion rate may fluctuate",
+      "columnBundle": "Bundle",
+      "columnAssessment": "Assessment",
+      "columnRevenueAov": "Revenue + AOV",
+      "columnOrders": "Orders",
+      "columnViews": "Views",
+      "columnConversion": "Conversion"
     },
     "AllBundles": {
       "heading": "All Bundles Performance",
@@ -1692,7 +1698,22 @@
       "healthNeedsWork": "Needs Work",
       "healthPoor": "Poor",
       "healthNew": "New",
-      "healthUnknown": "Unknown"
+      "healthUnknown": "Unknown",
+      "columnBundle": "Bundle",
+      "columnStatus": "Status",
+      "columnRevenue": "Revenue",
+      "columnOrders": "Orders",
+      "columnViews": "Views",
+      "columnCart": "Cart %",
+      "columnConv": "Conv %",
+      "columnFunnel": "Funnel",
+      "columnHealth": "Health",
+      "funnelViews": "Views",
+      "funnelCart": "Cart",
+      "funnelOrder": "Order",
+      "loadError": "Failed to load bundle performance data. Please try again.",
+      "showingPage": "Showing page {current} of {total}",
+      "perOrder": "/order"
     },
     "DatePicker": {
       "cancel": "Cancel",

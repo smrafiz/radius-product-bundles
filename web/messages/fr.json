@@ -1656,7 +1656,13 @@
       "heading": "Offres groupées les plus performantes",
       "tooltip": "Offres groupées classées par chiffre d'affaires total. Les offres à faible trafic sont exclues. Tendances : comparaison avec la période précédente de même durée.",
       "noData": "Aucune donnée sur les offres groupées pour le moment",
-      "lowSampleSize": "Échantillon faible – le taux de conversion peut fluctuer"
+      "lowSampleSize": "Échantillon faible – le taux de conversion peut fluctuer",
+      "columnBundle": "Offre groupée",
+      "columnAssessment": "Évaluation",
+      "columnRevenueAov": "Chiffre d'affaires + montant moyen par commande",
+      "columnOrders": "Commandes",
+      "columnViews": "Vues",
+      "columnConversion": "Conversion"
     },
     "AllBundles": {
       "heading": "Performances de tous les packs",
@@ -1672,7 +1678,22 @@
       "healthNeedsWork": "À améliorer",
       "healthPoor": "Médiocre",
       "healthNew": "Nouveau",
-      "healthUnknown": "Inconnu"
+      "healthUnknown": "Inconnu",
+      "columnBundle": "Offre groupée",
+      "columnStatus": "Statut",
+      "columnRevenue": "Chiffre d'affaires",
+      "columnOrders": "Commandes",
+      "columnViews": "Vues",
+      "columnCart": "% panier",
+      "columnConv": "% de conv.",
+      "columnFunnel": "Entonnoir",
+      "columnHealth": "Santé",
+      "funnelViews": "Vues",
+      "funnelCart": "Panier",
+      "funnelOrder": "Commande",
+      "loadError": "Échec du chargement des données de performance du bundle. Veuillez réessayer.",
+      "showingPage": "Page {current} sur {total} affichée",
+      "perOrder": "/order"
     },
     "DatePicker": {
       "cancel": "Annuler",

@@ -61,10 +61,12 @@ function FunnelBar({
     views,
     carts,
     orders,
+    t,
 }: {
     views: number;
     carts: number;
     orders: number;
+    t: (key: string) => string;
 }) {
     if (views === 0) {
         return "-";
@@ -84,7 +86,7 @@ function FunnelBar({
                 {/* Views bar (baseline) */}
                 <s-stack direction="inline" gap="small-100" alignItems="center">
                     <s-text tone="neutral">
-                        <div className="w-8.75 text-[11px]">Views</div>
+                        <div className="w-8.75 text-[11px]">{t("funnelViews")}</div>
                     </s-text>
                     <div
                         style={{
@@ -99,7 +101,7 @@ function FunnelBar({
                 {/* Cart bar */}
                 <s-stack direction="inline" gap="small-100" alignItems="center">
                     <s-text tone="neutral">
-                        <div className="w-8.75 text-[11px]">Cart</div>
+                        <div className="w-8.75 text-[11px]">{t("funnelCart")}</div>
                     </s-text>
                     <div
                         style={{
@@ -115,7 +117,7 @@ function FunnelBar({
                 {/* Order bar */}
                 <s-stack direction="inline" gap="small-100" alignItems="center">
                     <s-text tone="neutral">
-                        <div className="w-8.75 text-[11px]">Order</div>
+                        <div className="w-8.75 text-[11px]">{t("funnelOrder")}</div>
                     </s-text>
                     <div
                         style={{
@@ -193,10 +195,7 @@ export function AllBundlesTable() {
                 <AllBundlesHeader loading={isFetching} />
                 <s-box padding="base">
                     <s-banner tone="critical">
-                        <s-text>
-                            Failed to load bundle performance data. Please try
-                            again.
-                        </s-text>
+                        <s-text>{t("loadError")}</s-text>
                     </s-banner>
                 </s-box>
             </s-section>
@@ -225,10 +224,10 @@ export function AllBundlesTable() {
     const totalPages = pagination?.totalPages ?? 0;
     const currentPage = pagination?.page ?? 1;
 
-    const paginationLabel =
-        totalPages > 0
-            ? `Showing page ${currentPage} of ${totalPages}`
-            : "Showing page 1 of 1";
+    const paginationLabel = t("showingPage", {
+        current: totalPages > 0 ? currentPage : 1,
+        total: totalPages > 0 ? totalPages : 1,
+    });
 
     return (
         <s-section padding="none">
@@ -325,7 +324,7 @@ export function AllBundlesTable() {
                                                     bundle.averageOrderValue,
                                                     "currency",
                                                 )}
-                                                /order
+                                                {t("perOrder")}
                                             </s-text>
                                         )}
                                     </s-stack>
@@ -376,6 +375,7 @@ export function AllBundlesTable() {
                                         views={bundle.views}
                                         carts={bundle.addToCarts}
                                         orders={bundle.purchases}
+                                        t={t}
                                     />
                                 </s-table-cell>
                                 <s-table-cell>
