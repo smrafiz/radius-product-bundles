@@ -1374,6 +1374,9 @@
       },
       "inherit": "Hériter",
       "selectColor": "Sélectionner la couleur",
+      "responsiveOverrides": "Remplacements réactifs",
+      "decreaseQuantity": "Diminuer la quantité",
+      "increaseQuantity": "Augmenter la quantité",
       "Presets": {
         "minimal": {
           "name": "Minimaliste",
@@ -1406,7 +1409,10 @@
         "professional": {
           "name": "Professionnel",
           "description": "Neutre, structuré, axé sur la confiance"
-        }
+        },
+        "primaryTitle": "Principale",
+        "backgroundTitle": "Arrière-plan",
+        "accentTitle": "Accent"
       },
       "cartPageBanner": "Bannière de la page du panier",
       "bundleProduct": "Offre groupée",
@@ -1609,6 +1615,10 @@
         "field_cartBannerIconType_option_none": "Aucune icône",
         "field_cartBannerIconColor_label": "Couleur de l’icône"
       }
+    },
+    "MixMatch": {
+      "groupTop": "Choisir un haut",
+      "groupBottom": "Choisir un bas"
     },
     "PreviewLabels": {
       "headingLabel": "Créer une offre groupée et économiser",

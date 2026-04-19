@@ -26,7 +26,7 @@ export function ResponsiveFieldIndicator({
         return (
             <button
                 type="button"
-                onClick={() => openCrossSell("Responsive Overrides")}
+                onClick={() => openCrossSell(t("responsiveOverrides"))}
                 className="inline-flex items-center gap-0.5 opacity-30 hover:opacity-50 transition-opacity cursor-pointer bg-transparent border-0 p-0"
                 aria-label={`Responsive overrides (Pro)`}
             >

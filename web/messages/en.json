@@ -1395,6 +1395,9 @@
       },
       "inherit": "Inherit",
       "selectColor": "Select color",
+      "responsiveOverrides": "Responsive Overrides",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
       "Presets": {
         "minimal": {
           "name": "Minimal",
@@ -1427,7 +1430,10 @@
         "professional": {
           "name": "Professional",
           "description": "Neutral, structured, and trust-focused"
-        }
+        },
+        "primaryTitle": "Primary",
+        "backgroundTitle": "Background",
+        "accentTitle": "Accent"
       },
       "cartPageBanner": "Cart page banner",
       "bundleProduct": "Bundle product",
@@ -1630,6 +1636,10 @@
         "field_cartBannerIconType_option_none": "No Icon",
         "field_cartBannerIconColor_label": "Icon color"
       }
+    },
+    "MixMatch": {
+      "groupTop": "Choose a Top",
+      "groupBottom": "Choose a Bottom"
     },
     "PreviewLabels": {
       "headingLabel": "Bundle & Save",

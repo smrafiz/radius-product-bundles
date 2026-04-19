@@ -19,10 +19,12 @@ import type { CustomizerStyles } from "@/features/settings";
 import { DEMO_TIERS } from "@/features/settings/constants/customizer.constants";
 import { DEFAULT_DISPLAY_OPTIONS, PLACEHOLDER_PRODUCTS } from "@/shared/constants/bundle-widget.constants";
 import { usePreviewLabels } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 import type { WidgetDisplayOptions } from "@/shared";
 
 function VolumeFooter({ styles, displayOptions, addToCartText }: { styles: CustomizerStyles; displayOptions: WidgetDisplayOptions; addToCartText: string }) {
+    const tc = useTranslations("Settings.Customizer");
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
     const padding = getButtonPadding(styles.buttonSize);
@@ -66,7 +68,7 @@ function VolumeFooter({ styles, displayOptions, addToCartText }: { styles: Custo
                         fontSize: 16,
                         color: styles.textColor,
                     }}
-                    aria-label="Decrease quantity"
+                    aria-label={tc("decreaseQuantity")}
                 >
                     −
                 </button>
@@ -99,7 +101,7 @@ function VolumeFooter({ styles, displayOptions, addToCartText }: { styles: Custo
                         fontSize: 16,
                         color: styles.textColor,
                     }}
-                    aria-label="Increase quantity"
+                    aria-label={tc("increaseQuantity")}
                 >
                     +
                 </button>

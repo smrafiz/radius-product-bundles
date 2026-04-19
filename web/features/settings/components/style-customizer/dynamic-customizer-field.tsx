@@ -48,19 +48,19 @@ function PresetCard({
                         <div
                             className="w-6 h-6 rounded-full border border-gray-200"
                             style={{ backgroundColor: preset.preview.primary }}
-                            title="Primary"
+                            title={tp("primaryTitle")}
                         />
                         <div
                             className="-ml-2 w-6 h-6 rounded-full border border-gray-200"
                             style={{
                                 backgroundColor: preset.preview.background,
                             }}
-                            title="Background"
+                            title={tp("backgroundTitle")}
                         />
                         <div
                             className="-ml-2 w-6 h-6 rounded-full border border-gray-200"
                             style={{ backgroundColor: preset.preview.accent }}
-                            title="Accent"
+                            title={tp("accentTitle")}
                         />
                         <s-tooltip id={`${presetKey}-preset-tooltip`}>
                             <s-text>{tp(`${presetKey}.name`)}</s-text>
@@ -97,6 +97,7 @@ function DynamicFormFieldWrapper(props: DynamicCustomizerFieldProps) {
     const { activeDevice } = useCustomizerStore();
     const { canUse } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
+    const t = useTranslations("Settings.Customizer");
 
     const proFeature = (props.config as any).proFeature as string | undefined;
     const isResponsiveLocked =
@@ -111,7 +112,7 @@ function DynamicFormFieldWrapper(props: DynamicCustomizerFieldProps) {
     const isLocked = isResponsiveLocked || isProLocked;
     const lockLabel = isProLocked
         ? ((props.config as any).label ?? proFeature)
-        : "Responsive Overrides";
+        : t("responsiveOverrides");
 
     if (!isLocked) return inner;
 
