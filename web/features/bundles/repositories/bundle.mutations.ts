@@ -4,6 +4,29 @@
  * Write operations.
  */
 
+/**
+ * Normalize schedule dates: startDate → start of day UTC, endDate → end of day UTC.
+ * Ensures date-only scheduling works correctly with lte comparisons.
+ */
+function normalizeScheduleDates(startDate?: Date | null, endDate?: Date | null) {
+    return {
+        startDate: startDate ? startOfDayUTC(startDate) : startDate,
+        endDate: endDate ? endOfDayUTC(endDate) : endDate,
+    };
+}
+
+function startOfDayUTC(date: Date): Date {
+    const d = new Date(date);
+    d.setUTCHours(0, 0, 0, 0);
+    return d;
+}
+
+function endOfDayUTC(date: Date): Date {
+    const d = new Date(date);
+    d.setUTCHours(23, 59, 59, 999);
+    return d;
+}
+
 import {
     BundleStatus,
     CreateBundleInput,
@@ -66,8 +89,7 @@ export async function createBundle(
             seoTitle: data.seoTitle,
             seoDescription: data.seoDescription,
             images: data.images || [],
-            startDate: data.startDate,
-            endDate: data.endDate,
+            ...normalizeScheduleDates(data.startDate, data.endDate),
             views: 0,
             conversions: 0,
             revenue: 0,
@@ -345,8 +367,7 @@ export async function updateBundleWithRelations(
             buyQuantity: data.buyQuantity ?? null,
             getQuantity: data.getQuantity ?? null,
             usesPerOrderLimit: data.usesPerOrderLimit ?? null,
-            startDate: data.startDate ?? null,
-            endDate: data.endDate ?? null,
+            ...normalizeScheduleDates(data.startDate ?? null, data.endDate ?? null),
             mainProductId: data.mainProductId ?? null,
             mainVariantId: data.mainVariantId ?? null,
             volumeTiers: data.volumeTiers ?? Prisma.JsonNull,
@@ -402,12 +423,13 @@ export async function updateBundleStatusById(
     await verifyBundleOwnership(id, shop);
 
     // Update status (include dates for SCHEDULED)
+    const normalized = normalizeScheduleDates(startDate, endDate);
     return prisma.bundle.update({
         where: { id },
         data: {
             status,
-            ...(startDate !== undefined && { startDate }),
-            ...(endDate !== undefined && { endDate }),
+            ...(startDate !== undefined && { startDate: normalized.startDate }),
+            ...(endDate !== undefined && { endDate: normalized.endDate }),
         },
         select: {
             id: true,
