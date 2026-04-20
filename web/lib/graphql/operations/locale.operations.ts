@@ -69,6 +69,13 @@ export async function getShopLocales(
     return fetchAndCacheShopLocales(sessionToken, domain);
 }
 
+export async function clearLocaleCache(domain: string): Promise<void> {
+    await prisma.shop.update({
+        where: { domain },
+        data: { locales: [], localesUpdatedAt: null },
+    });
+}
+
 export async function getShopPrimaryLocale(domain: string): Promise<string> {
     const shop = await prisma.shop.findUnique({
         where: { domain },

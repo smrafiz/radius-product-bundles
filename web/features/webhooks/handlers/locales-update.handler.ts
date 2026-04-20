@@ -1,4 +1,4 @@
-import prisma from "@/shared/repositories/prisma-connect";
+import { invalidateLocaleCacheService } from "@/features/settings/services/locale.service";
 
 /**
  * Handle LOCALES_CREATE and LOCALES_UPDATE webhooks
@@ -8,13 +8,7 @@ import prisma from "@/shared/repositories/prisma-connect";
  */
 export async function handleLocalesUpdate(shop: string): Promise<void> {
     try {
-        await prisma.shop.update({
-            where: { domain: shop },
-            data: {
-                locales: [],
-                localesUpdatedAt: null,
-            },
-        });
+        await invalidateLocaleCacheService(shop);
     } catch (error) {
         console.error("[Locales Handler] ❌ Error invalidating locale cache:", error);
     }
