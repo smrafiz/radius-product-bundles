@@ -1,4 +1,4 @@
-import { PlanName, ShopifySubscriptionStatus } from "@/prisma/generated/enums";
+import type { PlanName, ShopifySubscriptionStatus } from "@/prisma/generated/client";
 
 /**
  * Pricing card types
