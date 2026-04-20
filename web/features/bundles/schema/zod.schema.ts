@@ -270,8 +270,8 @@ export function createBundleSchema(v: T) {
                 .transform(sanitizeText)
                 .optional(),
 
-            startDate: z.date().optional(),
-            endDate: z.date().optional(),
+            startDate: z.coerce.date().optional(),
+            endDate: z.coerce.date().optional(),
 
             settings: bundleSettingsSchema(v),
         })
@@ -456,12 +456,12 @@ export function createBundleSchema(v: T) {
         .refine(
             (data) => {
                 if (data.status === "SCHEDULED") {
-                    return data.startDate != null && data.endDate != null;
+                    return data.startDate != null;
                 }
                 return true;
             },
             {
-                message: v("SCHEDULED_DATES_REQUIRED"),
+                message: v("SCHEDULED_START_DATE_REQUIRED"),
                 path: ["startDate"],
             },
         );

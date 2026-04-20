@@ -137,6 +137,7 @@
     "VOLUME_TIERS_REQUIRED": "Offres groupées avec remise sur volume : niveaux de volume requis",
     "MIX_MATCH_PRICING": "Offres groupées « Mix and Match » : configuration tarifaire requise",
     "SCHEDULED_DATES_REQUIRED": "Offres groupées programmées : dates de début et de fin requises",
+    "SCHEDULED_START_DATE_REQUIRED": "Les offres groupées programmées nécessitent une date de début",
     "MAX_PRODUCTS_20": "Une offre groupée ne peut pas contenir plus de 20 produits",
     "GROUP_NAME_REQUIRED": "Nom du groupe requis",
     "FILL_REQUIRED_FIELDS": "Veuillez remplir tous les champs obligatoires.",
@@ -408,8 +409,11 @@
       "setDates": "Définir les dates de programmation",
       "resetDates": "Réinitialiser les dates",
       "scheduleBundle": "Programmer l'offre groupée",
-      "dateRangeHint": "Définissez la période d'activation de cette offre groupée.",
-      "dateRequired": "Veuillez définir les dates de début et de fin des offres groupées programmées."
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "optional": "facultatif",
+      "dateRangeHint": "Définissez la période d'activation de cette offre groupée. La date de fin est facultative.",
+      "dateRequired": "Veuillez définir une date de début pour les offres groupées programmées."
     },
     "Common": {
       "breadcrumb": "Offres groupées",
@@ -888,6 +892,15 @@
         "youBuy": "Vous achetez",
         "fiftyOff": "50 % de réduction"
       }
+    },
+    "Submit": {
+      "createProductFailed": "Impossible de créer le produit Shopify. Veuillez réessayer.",
+      "deleteProductFailed": "Impossible de supprimer le produit Shopify.",
+      "invalidMode": "Mode non valide ou identifiant d'offre groupée manquant pour la modification.",
+      "bundleCreated": "Votre offre groupée a été créée.",
+      "bundleSaved": "Vos modifications ont été enregistrées.",
+      "checkInputs": "Veuillez vérifier les informations que vous avez saisies et réessayer.",
+      "tryAgainLater": "Veuillez réessayer plus tard."
     }
   },
   "Settings": {
@@ -1677,7 +1690,7 @@
       "invalidMode": "Mode non valide ou identifiant d'offre groupée manquant pour la modification.",
       "bundleCreated": "Votre offre groupée a été créée.",
       "bundleSaved": "Vos modifications ont été enregistrées.",
-      "checkInputs": "Veuillez vérifier les données que vous avez saisies et réessayer.",
+      "checkInputs": "Veuillez vérifier les informations que vous avez saisies et réessayer.",
       "tryAgainLater": "Veuillez réessayer plus tard."
     },
     "ServiceErrors": {

@@ -138,6 +138,7 @@
     "VOLUME_TIERS_REQUIRED": "Volume discount bundles require volume tiers",
     "MIX_MATCH_PRICING": "Mix and match bundles require pricing configuration",
     "SCHEDULED_DATES_REQUIRED": "Scheduled bundles require both start and end dates",
+    "SCHEDULED_START_DATE_REQUIRED": "Scheduled bundles require a start date",
     "MAX_PRODUCTS_20": "Cannot have more than 20 products in a bundle",
     "GROUP_NAME_REQUIRED": "Group name is required",
     "FILL_REQUIRED_FIELDS": "Please fill in all required fields",
@@ -415,8 +416,11 @@
       "setDates": "Set schedule dates",
       "resetDates": "Reset dates",
       "scheduleBundle": "Schedule bundle",
-      "dateRangeHint": "Set the date range when this bundle will be active.",
-      "dateRequired": "Please set both start and end dates for scheduled bundles."
+      "startDate": "Start date",
+      "endDate": "End date",
+      "optional": "optional",
+      "dateRangeHint": "Set when this bundle will be active. End date is optional.",
+      "dateRequired": "Please set a start date for scheduled bundles."
     },
     "Common": {
       "breadcrumb": "Bundles",
@@ -905,6 +909,15 @@
         "youBuy": "You Buy",
         "fiftyOff": "50% Off"
       }
+    },
+    "Submit": {
+      "createProductFailed": "Could not create Shopify product. Please try again.",
+      "deleteProductFailed": "Could not delete the Shopify product.",
+      "invalidMode": "Invalid mode or missing bundle ID for edit.",
+      "bundleCreated": "Your bundle has been created.",
+      "bundleSaved": "Your changes have been saved.",
+      "checkInputs": "Please check your inputs and try again.",
+      "tryAgainLater": "Please try again later."
     }
   },
   "Settings": {
