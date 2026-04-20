@@ -145,6 +145,8 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                 <s-stack>
                                     <s-button
                                         variant="primary"
+                                        commandFor={`modal-${bundleType.id}`}
+                                        command="--hide"
                                         onClick={
                                             isProLocked
                                                 ? handleSelect
