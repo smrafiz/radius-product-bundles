@@ -225,6 +225,7 @@ model TestResult {
     test        ABTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
 
     @@unique([testId, variant, date])
+    @@index([testId, date])
     @@map("test_results")
 }
 
