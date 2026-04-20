@@ -202,9 +202,9 @@ model ABTest {
     completedAt     DateTime?
     createdAt       DateTime     @default(now())
     updatedAt       DateTime     @updatedAt
-    shopId          String?
+    shopId          String
     controlBundle   Bundle       @relation(fields: [controlBundleId], references: [id])
-    Shop            Shop?        @relation(fields: [shopId], references: [id])
+    Shop            Shop         @relation(fields: [shopId], references: [id])
     results         TestResult[]
     aiInsights      AIInsight[]
 
@@ -243,10 +243,10 @@ model Automation {
     lastTriggered DateTime?
     createdAt     DateTime           @default(now())
     updatedAt     DateTime           @updatedAt
-    shopId        String?
+    shopId        String
     bundles       AutomationBundle[]
     logs          AutomationLog[]
-    Shop          Shop?              @relation(fields: [shopId], references: [id])
+    Shop          Shop               @relation(fields: [shopId], references: [id])
 
     @@index([shopId, status])
     @@map("automations")
@@ -338,8 +338,8 @@ model AIInsight {
     createdAt   DateTime      @default(now())
     updatedAt   DateTime      @updatedAt
     expiresAt   DateTime?
-    shopId      String?
-    Shop        Shop?         @relation(fields: [shopId], references: [id])
+    shopId      String
+    Shop        Shop          @relation(fields: [shopId], references: [id])
     bundle      Bundle?       @relation(fields: [bundleId], references: [id], onDelete: SetNull)
     abTest      ABTest?       @relation(fields: [testId], references: [id], onDelete: SetNull)
 
@@ -362,8 +362,8 @@ model Notification {
     createdAt   DateTime             @default(now())
     updatedAt   DateTime             @updatedAt
     expiresAt   DateTime?
-    shopId      String?
-    Shop        Shop?                @relation(fields: [shopId], references: [id])
+    shopId      String
+    Shop        Shop                 @relation(fields: [shopId], references: [id])
 
     @@index([shopId, read, createdAt])
     @@map("notifications")
@@ -383,8 +383,8 @@ model AlertRule {
     lastTriggered   DateTime?
     createdAt       DateTime         @default(now())
     updatedAt       DateTime         @updatedAt
-    shopId          String?
-    Shop            Shop?            @relation(fields: [shopId], references: [id])
+    shopId          String
+    Shop            Shop             @relation(fields: [shopId], references: [id])
 
     @@index([shopId, status])
     @@map("alert_rules")
