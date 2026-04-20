@@ -16,7 +16,7 @@ import {
     type SubscriptionPlanType,
 } from "@/features/pricing/constants/pricing.constants";
 import { useBillingStatus } from "@/features/pricing/hooks/use-billing-status";
-import type { BillingInterval } from "@/features/pricing/types/pricing.types";
+import type { BillingInterval } from "@/prisma/generated/client";
 
 export function usePricingCard() {
     const t = useTranslations("Pricing");

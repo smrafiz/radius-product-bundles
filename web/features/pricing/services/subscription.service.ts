@@ -26,7 +26,8 @@ import {
     PRO_TRIAL_DAYS,
     BILLING_CURRENCY,
 } from "@/features/pricing/constants/pricing.constants";
-import { BillingInterval, BillingStatusResponse } from "@/features/pricing/types/pricing.types";
+import type { BillingInterval } from "@/prisma/generated/client";
+import { BillingStatusResponse } from "@/features/pricing/types/pricing.types";
 
 const PRO_PLAN_NAME = "Radius Bundles Pro";
 

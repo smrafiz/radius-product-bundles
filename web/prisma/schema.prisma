@@ -190,7 +190,7 @@ model ABTest {
     hypothesis      String?
     type            TestType
     status          TestStatus   @default(DRAFT)
-    trafficSplit    Int          @default(50)
+    trafficSplit    Float        @default(50)
     duration        Int          @default(14)
     minSampleSize   Int          @default(100)
     controlBundleId String
@@ -204,7 +204,7 @@ model ABTest {
     updatedAt       DateTime     @updatedAt
     shopId          String
     controlBundle   Bundle       @relation(fields: [controlBundleId], references: [id], onDelete: Cascade)
-    Shop            Shop         @relation(fields: [shopId], references: [id])
+    shop            Shop         @relation(fields: [shopId], references: [id])
     results         TestResult[]
     aiInsights      AIInsight[]
 
@@ -247,7 +247,7 @@ model Automation {
     shopId        String
     bundles       AutomationBundle[]
     logs          AutomationLog[]
-    Shop          Shop               @relation(fields: [shopId], references: [id])
+    shop          Shop               @relation(fields: [shopId], references: [id])
 
     @@index([shopId, status])
     @@map("automations")
@@ -267,7 +267,7 @@ model AutomationBundle {
 model AutomationLog {
     id           String     @id @default(cuid())
     automationId String
-    event        String
+    event        AutomationEvent
     success      Boolean
     data         Json?
     error        String?
@@ -317,7 +317,6 @@ model BundleView {
     @@unique([bundleId, sessionId, date], name: "unique_session_view")
     @@index([bundleId])
     @@index([customerId])
-    @@index([date])
     @@map("bundle_views")
 }
 
@@ -342,7 +341,7 @@ model AIInsight {
     updatedAt   DateTime      @updatedAt
     expiresAt   DateTime?
     shopId      String
-    Shop        Shop          @relation(fields: [shopId], references: [id])
+    shop        Shop          @relation(fields: [shopId], references: [id])
     bundle      Bundle?       @relation(fields: [bundleId], references: [id], onDelete: SetNull)
     abTest      ABTest?       @relation(fields: [testId], references: [id], onDelete: SetNull)
 
@@ -366,7 +365,7 @@ model Notification {
     updatedAt   DateTime             @updatedAt
     expiresAt   DateTime?
     shopId      String
-    Shop        Shop                 @relation(fields: [shopId], references: [id])
+    shop        Shop                 @relation(fields: [shopId], references: [id])
 
     @@index([shopId, read, createdAt])
     @@map("notifications")
@@ -387,7 +386,7 @@ model AlertRule {
     createdAt       DateTime         @default(now())
     updatedAt       DateTime         @updatedAt
     shopId          String
-    Shop            Shop             @relation(fields: [shopId], references: [id])
+    shop            Shop             @relation(fields: [shopId], references: [id])
 
     @@index([shopId, status])
     @@map("alert_rules")
@@ -492,7 +491,7 @@ model ShopPlan {
     plan             PlanName                   @default(FREE)
     status           ShopifySubscriptionStatus?
     billingId        String?                    @unique
-    billingInterval  String?
+    billingInterval  BillingInterval?
     trialUsed        Boolean                    @default(false)
     trialEndsAt      DateTime?
     currentPeriodEnd DateTime?
@@ -573,6 +572,18 @@ enum AutomationStatus {
     ACTIVE
     PAUSED
     ARCHIVED
+}
+
+enum BillingInterval {
+    EVERY_30_DAYS
+    ANNUAL
+}
+
+enum AutomationEvent {
+    TRIGGERED
+    SKIPPED
+    COMPLETED
+    FAILED
 }
 
 enum TriggerType {

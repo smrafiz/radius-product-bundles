@@ -1,4 +1,4 @@
-import type { PlanName, ShopifySubscriptionStatus } from "@/prisma/generated/client";
+import type { BillingInterval, PlanName, ShopifySubscriptionStatus } from "@/prisma/generated/client";
 
 /**
  * Pricing card types
@@ -24,8 +24,6 @@ export interface PricingCardItemInfo {
     trialBadge?: string;
     onSubscribe?: () => void;
 }
-
-export type BillingInterval = "EVERY_30_DAYS" | "ANNUAL";
 
 export interface BillingStatusResponse {
     subscription: {
@@ -62,7 +60,7 @@ export type ShopPlanUpsertData = {
     plan?: PlanName;
     status?: ShopifySubscriptionStatus;
     billingId?: string;
-    billingInterval?: string;
+    billingInterval?: BillingInterval;
     trialUsed?: boolean;
     trialEndsAt?: Date | null;
     currentPeriodEnd?: Date | null;
