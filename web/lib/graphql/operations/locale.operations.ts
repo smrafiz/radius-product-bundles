@@ -6,12 +6,8 @@ import {
     GetShopLocalesQuery,
 } from "@/lib/graphql/generated/graphql";
 import prisma from "@/shared/repositories/prisma-connect";
-import {
-    CachedLocalesArraySchema,
-    type CachedLocale,
-} from "./locale.validation";
-
-export type { CachedLocale };
+import { CachedLocalesArraySchema } from "./locale.validation";
+import type { CachedLocale } from "./locale.validation";
 
 export async function fetchAndCacheShopLocales(
     sessionToken: string,

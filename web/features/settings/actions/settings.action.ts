@@ -18,8 +18,8 @@ import { AppSettingsFormData } from "@/features/settings";
 import { syncAllSettingsToMetafields, updateDiscountCombinesWith } from "@/lib";
 import type { AppSettingsLabels } from "@/features/settings/types/app-settings.types";
 import { LABEL_PLACEHOLDERS } from "@/features/settings/constants/defaults.constants";
+import type { CachedLocale } from "@/lib/graphql/operations/locale.validation";
 import {
-    CachedLocale,
     fetchAndCacheShopLocales,
     getShopLocales,
 } from "@/lib/graphql/operations/locale.operations";
