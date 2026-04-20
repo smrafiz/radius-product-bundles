@@ -10,10 +10,10 @@
 
 | Severity | Count | Resolved / Closed |
 |----------|-------|-------------------|
-| High     | 9     | 1 closed (F-01 by design) |
-| Medium   | 14    | 3 resolved (F-02, F-03, F-04) |
-| Low      | 8     | — |
-| **Open** | **28**| **4 of 31 closed/resolved** |
+| High     | 6     | F-01 (by design), F-06, F-15, F-28 ✅ — F-16, F-17 deferred |
+| Medium   | 14    | F-02–04, F-09–12, F-21, F-24, F-26, F-27, F-30, F-40 ✅ — F-23, F-29 deferred |
+| Low      | 8     | F-05, F-13, F-14, F-22, F-34 ✅ |
+| **Open** | **13**| **22 of 31 resolved/closed — 4 deferred** |
 
 _Last verified: 2026-04-20_
 
@@ -82,7 +82,7 @@ Already uses `BundleLayout` enum (`layout BundleLayout @default(GRID)`). Resolve
 ---
 
 ### F-05 — `ABTest.trafficSplit` — `Int` instead of `Float`
-**Severity: Low**
+~~**Severity: Low**~~ **→ RESOLVED** ✅
 
 **Problem:**  
 Traffic split is a percentage (0–100). `Int` prevents fractional splits (e.g. 33.3% for three-variant tests).
@@ -99,7 +99,7 @@ trafficSplit Float @default(50.0)
 ---
 
 ### F-06 — `BundleView.date` — `String` instead of `DateTime`
-**Severity: High**
+~~**Severity: High**~~ **→ RESOLVED** ✅
 
 **Problem:**  
 This is the only date field in the entire schema stored as `String`. Consequences:
@@ -124,7 +124,7 @@ date DateTime @db.Date
 ---
 
 ### F-09 — `AIInsight.category` — raw String
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
 **Problem:** AI insight categories are unbounded. Filtering by category (e.g., `WHERE category = 'pricing'`) is fragile — case differences create silent duplicates.
 
@@ -149,7 +149,7 @@ category AIInsightCategory
 ---
 
 ### F-10 — `AIInsight.impact` — raw String
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
 **Problem:** Impact values (`"low"`, `"medium"`, `"high"`) stored as String allow `"LOW"`, `"Low"`, `"low"` as distinct values. Dashboard badge logic depending on this field will silently miss rows.
 
@@ -169,7 +169,7 @@ impact ImpactLevel
 ---
 
 ### F-11 — `AIInsight.actionType` — raw String
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
 **Problem:** The `actionType` field drives what the automation engine does with an insight. An unrecognized string causes a silent no-op or runtime error.
 
@@ -193,7 +193,7 @@ actionType AIActionType?
 ---
 
 ### F-12 — `AlertRule.comparison` — raw String
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
 **Problem:** Comparison operators are a mathematically closed set. Accepting any string means a typo (`"gte"` vs `"gte "`) silently writes an unexecutable rule.
 
@@ -214,7 +214,7 @@ comparison ComparisonOperator?
 ---
 
 ### F-13 — `ShopPlan.billingInterval` — raw String
-**Severity: Low**
+~~**Severity: Low**~~ **→ RESOLVED** ✅
 
 **Problem:** Shopify billing intervals are a fixed set: `EVERY_30_DAYS`, `ANNUAL`. Raw String allows invalid values that would fail at the Shopify Billing API call.
 
@@ -232,7 +232,7 @@ billingInterval BillingInterval?
 ---
 
 ### F-14 — `AutomationLog.event` — raw String
-**Severity: Low**
+~~**Severity: Low**~~ **→ RESOLVED** ✅
 
 **Problem:** Log events are likely a bounded set. Free-form strings make log filtering unreliable.
 
@@ -260,7 +260,7 @@ All findings in this section require **no schema changes** — fixes are code-on
 ---
 
 ### F-15 — `Bundle.volumeTiers` — unvalidated Json
-**Severity: High**
+~~**Severity: High**~~ **→ RESOLVED** ✅
 
 **Problem:**  
 Expected shape: `VolumeDiscountConfig { discountType, openEnded, tiers[] }`. Zod validation (Task 22 in `project_volume_discount.md`) is listed as **incomplete**. Malformed tier data writes silently and crashes the Rust discount function at runtime during checkout.
@@ -273,7 +273,7 @@ Expected shape: `VolumeDiscountConfig { discountType, openEnded, tiers[] }`. Zod
 ---
 
 ### F-16 — `ABTest.variantConfig` — required, unvalidated Json
-**Severity: High**
+~~**Severity: High**~~ **→ DEFERRED** — ABTest is schema-only, no write paths yet
 
 **Problem:**  
 Required field with no documented shape and no Zod validation. Malformed config could corrupt test execution and produce invalid A/B results.
@@ -285,7 +285,7 @@ Required field with no documented shape and no Zod validation. Malformed config 
 ---
 
 ### F-17 — `Automation.triggerConfig`, `conditions`, `actions` — three untyped Json fields
-**Severity: High**
+~~**Severity: High**~~ **→ DEFERRED** — Automation is schema-only, no write paths yet
 
 **Problem:**  
 All three are required fields. The automation execution engine reads them at runtime. Corrupt data causes silent failures logged to `AutomationLog` with no recovery path.
@@ -340,7 +340,7 @@ Shopify locale shape is predictable. Add Zod validation before write.
 ---
 
 ### F-21 — `TestResult` missing `@@index([testId, date])`
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
 **Problem:**  
 A `@@unique([testId, variant, date])` exists but does not efficiently serve date-range queries per test (e.g., "last 7 days of results for test X") because `variant` is interleaved.
@@ -355,7 +355,7 @@ A `@@unique([testId, variant, date])` exists but does not efficiently serve date
 ---
 
 ### F-22 — `BundleView.@@index([date])` — low selectivity
-**Severity: Low**
+~~**Severity: Low**~~ **→ RESOLVED** ✅
 
 **Problem:**  
 `date` is a `String` field with many rows per date — the index will rarely be chosen by the query planner. After F-06 (convert to DateTime), this index should be replaced.
@@ -371,7 +371,7 @@ A `@@unique([testId, variant, date])` exists but does not efficiently serve date
 ---
 
 ### F-23 — `BundleAnalytics` — no shop-level access path
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ DEFERRED** — requires threading `shop` through analytics call chain
 
 **Problem:**  
 Shop-level revenue aggregation queries must join through `Bundle` to get the `shop` domain. At scale (1,000+ shops), this join is expensive.
@@ -389,7 +389,7 @@ shop String
 ---
 
 ### F-24 — Dual shop field index redundancy
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ CLOSED** ✅ — already resolved as side effect of F-28; all 5 models index on `shopId`
 
 **Problem:**  
 5 models have both `@@index([shop, status])` (using raw string) and `@@index([shopId])` (using FK). After F-28 (unify dual shop fields), the raw-string index becomes orphaned.
@@ -421,7 +421,7 @@ Idempotency check queries `WHERE id = ? AND shop = ?` — PK covers `id` but `sh
 ---
 
 ### F-26 — `BundleAnalytics`/`BundleView` `onDelete: Restrict` — undocumented blocker
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
 **Problem:**  
 `onDelete: Restrict` means any bundle with analytics history **cannot be hard-deleted**. The soft-delete plan (status: DELETED) works around this correctly, but the constraint is invisible to future engineers who may attempt hard delete and receive a cryptic FK error.
@@ -438,7 +438,7 @@ bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Restrict
 ---
 
 ### F-27 — `BundleProduct.group` — missing explicit `onDelete`
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅ (`onDelete: SetNull`)
 
 **Problem:**  
 No `onDelete` rule. Prisma defaults to `SetNull` for optional FK — correct behavior, but undocumented.
@@ -453,7 +453,7 @@ group BundleProductGroup? @relation(fields: [groupId], references: [id], onDelet
 ---
 
 ### F-28 — Dual `shop` + `shopId` fields on 5 models
-**Severity: High** ⚠️ Most impactful structural problem
+~~**Severity: High**~~ **→ RESOLVED** ✅ — `shopId` made non-nullable on ABTest, Automation, AIInsight, Notification, AlertRule
 
 **Affected models:** `ABTest`, `Automation`, `AIInsight`, `Notification`, `AlertRule`
 
@@ -491,7 +491,7 @@ Requires all existing rows to have a valid `shopId`. Run data migration: match `
 ---
 
 ### F-29 — `ShopPlan` dual shop fields
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ DEFERRED** — billing hot path; requires auditing all callers before removing `shop` String field
 
 Same pattern as F-28 but isolated to one model. `shopId` should be non-nullable since a plan always belongs to a shop.
 
@@ -506,7 +506,7 @@ shopId String @unique  // remove ?
 ---
 
 ### F-30 — `ABTest.controlBundle` — missing explicit `onDelete`
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅ (`onDelete: Cascade`)
 
 **Problem:**  
 Prisma defaults to `Restrict` for required FK in PostgreSQL — deleting the control bundle of an active test throws a constraint error. This should be explicit.
@@ -527,7 +527,7 @@ controlBundle   Bundle? @relation(fields: [controlBundleId], references: [id], o
 ---
 
 ### F-40 — `AIInsight.bundleId`/`testId` — plain strings with no FK relations
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
 **Problem:**  
 Both fields are raw `String?` with no `@relation` defined. Consequences:
@@ -653,6 +653,7 @@ CREATE INDEX idx_bundle_discounted_products ON "bundles" USING GIN ("discountedP
 ---
 
 ### F-34 — Capitalized relation accessors on 5 models
+~~**Severity: Low**~~ **→ RESOLVED** ✅ — renamed `Shop` → `shop` on all 5 models
 **Severity: Low**
 
 **Problem:**  
