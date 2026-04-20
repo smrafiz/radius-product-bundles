@@ -322,13 +322,13 @@ model BundleView {
 model AIInsight {
     id          String        @id @default(cuid())
     type        AIInsightType
-    category    String
+    category    AIInsightCategory
     title       String
     description String
     confidence  Float
-    impact      String
+    impact      ImpactLevel
     actionable  Boolean       @default(true)
-    actionType  String?
+    actionType  AIActionType?
     actionData  Json?
     implemented Boolean       @default(false)
     views       Int           @default(0)
@@ -377,7 +377,7 @@ model AlertRule {
     status          AlertRuleStatus  @default(ACTIVE)
     conditions      Json
     threshold       Float?
-    comparison      String?
+    comparison      ComparisonOperator?
     deliveryMethods Json
     frequency       AlertFrequency   @default(IMMEDIATE)
     triggerCount    Int              @default(0)
@@ -585,6 +585,41 @@ enum AIInsightType {
     OPTIMIZATION
     PREDICTION
     WARNING
+}
+
+enum AIInsightCategory {
+    PRICING
+    CONVERSION
+    PRODUCT_MIX
+    COPY
+    LAYOUT
+    INVENTORY
+    OTHER
+}
+
+enum ImpactLevel {
+    LOW
+    MEDIUM
+    HIGH
+    CRITICAL
+}
+
+enum AIActionType {
+    ADJUST_PRICE
+    CHANGE_PRODUCTS
+    UPDATE_COPY
+    RUN_AB_TEST
+    PAUSE_BUNDLE
+    ACTIVATE_BUNDLE
+    OTHER
+}
+
+enum ComparisonOperator {
+    GT
+    LT
+    GTE
+    LTE
+    EQ
 }
 
 enum NotificationType {
