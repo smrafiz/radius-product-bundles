@@ -1,11 +1,5 @@
 import { timingSafeEqual } from "crypto";
-import {
-    pruneAnalytics,
-    pruneAutomationLogs,
-} from "@/features/analytics/repositories";
-
-const ANALYTICS_RETENTION_DAYS = 730; // 2 years
-const AUTOMATION_LOG_RETENTION_DAYS = 90;
+import { pruneStaleData } from "@/features/analytics/services";
 
 /**
  * Cron endpoint for data retention pruning.
@@ -34,23 +28,8 @@ export async function GET(request: Request) {
     }
 
     try {
-        const [analyticsDeleted, logsDeleted] = await Promise.all([
-            pruneAnalytics(ANALYTICS_RETENTION_DAYS),
-            pruneAutomationLogs(AUTOMATION_LOG_RETENTION_DAYS),
-        ]);
-
-        console.log(
-            `[Cron/prune] analytics=${analyticsDeleted} automation_logs=${logsDeleted}`,
-        );
-
-        return Response.json({
-            analyticsDeleted,
-            logsDeleted,
-            retentionDays: {
-                analytics: ANALYTICS_RETENTION_DAYS,
-                automationLogs: AUTOMATION_LOG_RETENTION_DAYS,
-            },
-        });
+        const result = await pruneStaleData();
+        return Response.json(result);
     } catch (error) {
         console.error("[Cron/prune] Error:", error);
         return Response.json({ error: "Internal server error" }, { status: 500 });
