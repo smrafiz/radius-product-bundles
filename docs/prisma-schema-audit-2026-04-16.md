@@ -564,7 +564,7 @@ aiInsights AIInsight[]
 ---
 
 ### F-32 — `Bundle.priority` — no range constraint
-**Severity: Low**
+~~**Severity: Low**~~ **→ CLOSED** ✅ — already enforced: `z.number().int().min(0).max(500)` in `zod.schema.ts:259`
 
 Negative priorities and arbitrarily large values are accepted. Prisma doesn't support check constraints natively.
 
