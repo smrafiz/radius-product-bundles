@@ -9,7 +9,7 @@ import type {
     RawAnalyticsRow,
     RawBundleCountRow,
 } from "@/features/analytics";
-import { format, startOfDay } from "date-fns";
+import { startOfDay } from "date-fns";
 import { prisma } from "@/shared/repositories/prisma-connect";
 
 /**
@@ -26,7 +26,6 @@ export async function trackBundleView(
 
     const hour = dateObj.getHours();
     const date = startOfDay(dateObj);
-    const dateKey = format(date, "yyyy-MM-dd");
 
     let isNewView = false;
 
@@ -36,7 +35,7 @@ export async function trackBundleView(
                 data: {
                     bundleId,
                     customerId,
-                    date: dateKey,
+                    date,
                     timestamp: dateObj,
                 },
             });
@@ -52,7 +51,7 @@ export async function trackBundleView(
                 data: {
                     bundleId,
                     sessionId,
-                    date: dateKey,
+                    date,
                     timestamp: dateObj,
                 },
             });

@@ -301,7 +301,7 @@ model BundleView {
     bundleId   String
     customerId String?
     sessionId  String?
-    date       String
+    date       DateTime  @db.Date
     timestamp  DateTime @default(now())
 
     bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Restrict)

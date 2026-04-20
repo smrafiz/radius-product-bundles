@@ -8,12 +8,14 @@
 
 ## Executive Summary
 
-| Severity | Count |
-|----------|-------|
-| High     | 9     |
-| Medium   | 14    |
-| Low      | 8     |
-| **Total**| **31**|
+| Severity | Count | Resolved / Closed |
+|----------|-------|-------------------|
+| High     | 9     | 1 closed (F-01 by design) |
+| Medium   | 14    | 3 resolved (F-02, F-03, F-04) |
+| Low      | 8     | — |
+| **Open** | **28**| **4 of 31 closed/resolved** |
+
+_Last verified: 2026-04-20_
 
 No migration history exists — the schema has been managed exclusively via `prisma db push`. This means **every structural change carries full data-loss risk** unless handled with explicit SQL or a carefully staged push. All implementation plans below account for this constraint.
 
@@ -38,105 +40,44 @@ No migration history exists — the schema has been managed exclusively via `pri
 ---
 
 ### F-01 — `Bundle.id` missing `@default(cuid())`
-**Severity: High**
+~~**Severity: High**~~ **→ CLOSED: By Design** ✅
 
-**Problem:**  
-Every other model uses `@id @default(cuid())`. `Bundle.id` has no default generator. Callers must manually supply the ID on insert. If any insertion path forgets to generate the ID, the DB throws a confusing null constraint error.
+**Verification (2026-04-20):**  
+`Bundle.id` intentionally has no DB default. The app generates IDs in `shared/utils/helpers/calculations.ts` via `generateBundleId()` to match the Shopify product ID aesthetic (numeric-only, e.g. `7752960376937`):
 
-**Current:**
-```prisma
-id String @id
+```typescript
+const timestamp = Date.now().toString();           // 13 digits
+const random = customAlphabet("0123456789", 4)();  // 4 digits
+return `${timestamp}${random}`;
 ```
 
-**Fix:**
-```prisma
-id String @id @default(cuid())
-```
+Adding `@default(cuid())` would produce `clxxxxx…` — wrong format. **Do not change the schema.**
 
-**Pros:**
-- Consistent with all 20 other models
-- Eliminates caller responsibility for ID generation
-
-**Cons / Caveats:**
-- The app may intentionally use an external ID as the PK (e.g., a Shopify GID or metafield ID). Verify before changing.
-- If Shopify GIDs are the intended PK, add a comment documenting this — don't change the type.
-
-**Impact:** High — silent insert failures if any path omits the ID.  
-**Migration risk:** High — audit all Bundle insert paths before changing.
+**Residual risk:** Collision probability is 1-in-10,000 for two creates in the exact same millisecond. Negligible for merchant UI usage. If bulk import is ever added, add a guard there. Optional low-risk improvement: bump suffix from 4 → 6 digits (1-in-1,000,000).
 
 ---
 
 ### F-02 — `Bundle.priorityType` / `AppSettings.bundlePriorityType` — raw String
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
-**Problem:**  
-Both fields accept any string. The only known value is `"index_based"`. Invalid values write silently and affect bundle ordering logic.
-
-**Current:**
-```prisma
-priorityType String @default("index_based")
-```
-
-**Fix:**
-```prisma
-enum BundlePriorityType {
-  INDEX_BASED
-  MANUAL
-  PERFORMANCE
-}
-priorityType BundlePriorityType @default(INDEX_BASED)
-```
-
-**Pros:** DB-level type safety; prevents invalid priority modes.  
-**Cons / Caveats:** Enum values are speculative — confirm the full set before migrating. Existing rows containing `"index_based"` need a data migration to `INDEX_BASED`.  
-**Migration risk:** Medium — requires data migration + code changes.
+**Verification (2026-04-20):**  
+Both fields already use the `PriorityType` enum (`priorityType PriorityType @default(INDEX_BASED)`). Resolved in a recent schema update commit.
 
 ---
 
 ### F-03 — `Bundle.discountApplication` — raw String
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
-**Problem:**  
-Possible values (`"bundle"`, `"line_item"`, `"order"`) drive discount scoping logic in the Rust function. Any misspelling writes silently.
-
-**Fix:**
-```prisma
-enum DiscountApplication {
-  BUNDLE
-  LINE_ITEM
-  ORDER
-}
-discountApplication DiscountApplication? @default(BUNDLE)
-```
-
-**Pros:** Prevents invalid discount scope from reaching the Rust WASM function.  
-**Cons / Caveats:** Confirm full value set from Rust function before migrating. Lowercase → uppercase data migration required.  
-**Migration risk:** Medium.
+**Verification (2026-04-20):**  
+Already uses `DiscountApplication` enum (`discountApplication DiscountApplication @default(BUNDLE)`). Resolved in a recent schema update commit.
 
 ---
 
 ### F-04 — `BundleSettings.layout` — raw String
-**Severity: Medium**
+~~**Severity: Medium**~~ **→ RESOLVED** ✅
 
-**Problem:**  
-Layout values (`GRID`, `CLASSIC_CARD`, `COMPACT_GRID`, `LIST`, etc.) are constrained in TypeScript but not at DB level. A typo in any write path writes an unrenderable layout value permanently.
-
-**Fix:**
-```prisma
-enum BundleLayout {
-  GRID
-  CLASSIC_CARD
-  COMPACT_GRID
-  LIST
-  CAROUSEL
-  COMPACT
-}
-layout BundleLayout @default(GRID)
-```
-
-**Pros:** DB-enforced layout validity; easier to track layout additions via migrations.  
-**Cons / Caveats:** Every new layout requires a schema migration. Verify all existing string values match enum members exactly (case-sensitive).  
-**Migration risk:** Medium.
+**Verification (2026-04-20):**  
+Already uses `BundleLayout` enum (`layout BundleLayout @default(GRID)`). Resolved in a recent schema update commit.
 
 ---
 
