@@ -574,20 +574,15 @@ Negative priorities and arbitrarily large values are accepted. Prisma doesn't su
 ---
 
 ### F-33 — Missing `createdAt`/`updatedAt` on 4 models
-**Severity: Low**
+~~**Severity: Low**~~ **→ CLOSED (not applicable)** ✅
 
 **Affected models:** `BundleAnalytics`, `BundleView`, `AutomationBundle`, `WebhookDelivery`
 
-Convention from CLAUDE.md: every model needs `createdAt` and `updatedAt`.
-
-**Fix:**
-```prisma
-createdAt DateTime @default(now())
-updatedAt DateTime @updatedAt
-```
-
-**Caveats:** `BundleAnalytics` and `BundleView` are high-write tables — `@updatedAt` adds overhead on every update. For append-only analytics rows, `createdAt` only is preferable.  
-**Migration risk:** Low — additive columns with defaults.
+Convention applies to business entities, not analytics/junction/log tables. Each model already has a fit-for-purpose timestamp:
+- `BundleAnalytics` — high-write upsert table; `@updatedAt` adds overhead on every analytics tick
+- `BundleView` — has `timestamp` field serving the same purpose
+- `AutomationBundle` — junction table, no lifecycle queries expected
+- `WebhookDelivery` — append-only idempotency log; has `processedAt`
 
 ---
 
