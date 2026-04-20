@@ -304,7 +304,7 @@ export async function deleteShopData(shop: string): Promise<void> {
                 await tx.aIInsight.deleteMany({ where: { shopId } });
                 await tx.notification.deleteMany({ where: { shopId } });
                 await tx.alertRule.deleteMany({ where: { shopId } });
-                await tx.shopPlan.deleteMany({ where: { shop } });
+                await tx.shopPlan.deleteMany({ where: { shopId } });
                 await tx.shop.deleteMany({ where: { id: shopId } });
             }
         });

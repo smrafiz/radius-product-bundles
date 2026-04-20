@@ -484,9 +484,8 @@ model WebhookDelivery {
 
 model ShopPlan {
     id               String                     @id @default(cuid())
-    shop             String                     @unique
-    shopId           String?                    @unique
-    shopRef          Shop?                      @relation("ShopShopPlan", fields: [shopId], references: [id])
+    shopId           String                     @unique
+    shop             Shop                       @relation("ShopShopPlan", fields: [shopId], references: [id])
     plan             PlanName                   @default(FREE)
     status           ShopifySubscriptionStatus?
     billingId        String?                    @unique

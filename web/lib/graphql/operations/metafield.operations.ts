@@ -881,8 +881,8 @@ export async function syncAllSettingsToMetafields(
         // Resolve Pro status safely — don't let plan query crash the sync
         let isPro = false;
         try {
-            const shopPlan = await prisma.shopPlan.findUnique({
-                where: { shop },
+            const shopPlan = await prisma.shopPlan.findFirst({
+                where: { shop: { domain: shop } },
                 select: { plan: true, status: true },
             });
             isPro =
