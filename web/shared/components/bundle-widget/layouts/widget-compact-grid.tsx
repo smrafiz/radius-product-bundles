@@ -134,7 +134,6 @@ function ProductTile({
                     lineHeight: "1.3",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
                     maxWidth: "100%",
                 }}
             >
@@ -301,7 +300,6 @@ function TileSlider({
                                         : `repeat(${cols}, 1fr)`,
                                 gap: 8,
                                 minWidth: "100%",
-                                flexShrink: 0,
                             }}
                         >
                             {page.map((p) => (
@@ -429,19 +427,21 @@ export function WidgetCompactGrid({
                         flexDirection: "column",
                         gap: 2,
                         minWidth: 0,
+                        flex: 1,
                     }}
                 >
-                    <span
+                    <h3
                         style={{
                             color: "#fff",
                             fontSize: headingFontSize,
                             fontWeight: 600,
+                            margin: 0,
                         }}
                     >
                         {title || PREVIEW_LABELS.headingLabel}
-                    </span>
+                    </h3>
                     {subtitle && (
-                        <span
+                        <p
                             style={{
                                 color: "rgba(255,255,255,0.8)",
                                 fontSize: bodyFontSize,
@@ -449,7 +449,7 @@ export function WidgetCompactGrid({
                             }}
                         >
                             {subtitle}
-                        </span>
+                        </p>
                     )}
                 </div>
                 {badgeText &&

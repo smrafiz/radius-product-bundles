@@ -523,7 +523,13 @@ export function renderBogoSleekProducts(
         );
 
     let html = `<div class="rb-sleek__container">`;
+    html += `<div class="rb-sleek__title-wrap">`;
     html += `<h2 class="rb-sleek__header">${bundle.name}</h2>`;
+
+    if (structure.subtitle) {
+        html += `<p class="rb-sleek__subtitle">${structure.subtitle}</p>`;
+    }
+    html += `</div>`;
 
     triggers.forEach((p) => {
         html += renderCard(p, false);

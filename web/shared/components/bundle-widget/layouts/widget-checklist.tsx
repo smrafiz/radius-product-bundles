@@ -322,7 +322,7 @@ export function WidgetChecklist({
             {/* Progress Section */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {title && (
-                    <div
+                    <h3
                         style={{
                             fontSize: headingFontSize,
                             fontWeight: 600,
@@ -330,10 +330,10 @@ export function WidgetChecklist({
                         }}
                     >
                         {title || PREVIEW_LABELS.headingLabel}
-                    </div>
+                    </h3>
                 )}
                 {subtitle && (
-                    <div
+                    <p
                         style={{
                             fontSize: bodyFontSize,
                             color: styles.textColor,
@@ -343,7 +343,7 @@ export function WidgetChecklist({
                         }}
                     >
                         {subtitle}
-                    </div>
+                    </p>
                 )}
                 <div
                     style={{

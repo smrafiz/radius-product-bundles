@@ -13,11 +13,22 @@
         gap: var(--rb-gap-spacing, 12px);
     }
 
+    &__title-wrap {
+        display: flex;
+        flex-direction: column;
+    }
+
     &__header {
         font-size: var(--rb-heading-font-size, 18px);
         font-weight: 600;
         color: var(--rb-text-color, #111827);
         margin: 0 0 4px;
+        line-height: 1.3;
+    }
+    &__subtitle {
+        font-size: var(--rb-body-font-size);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 80%, transparent);
+        margin: 0 0 8px;
         line-height: 1.3;
     }
 

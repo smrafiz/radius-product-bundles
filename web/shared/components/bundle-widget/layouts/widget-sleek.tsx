@@ -208,12 +208,14 @@ export function WidgetSleek({
     pricing,
     cartButtonText,
     title,
+    subtitle,
     labels,
     bundleType,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
+    const bodyFontSize = getFontSize(styles.bodySize);
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
 
@@ -236,19 +238,35 @@ export function WidgetSleek({
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {title && (
-                <h3
-                    style={{
-                        fontSize: headingFontSize,
-                        fontWeight: 600,
-                        color: styles.textColor,
-                        margin: "0 0 4px",
-                        lineHeight: "1.3",
-                    }}
-                >
-                    {title || PREVIEW_LABELS.headingLabel}
-                </h3>
-            )}
+            <div style={{ display: "inline" }}>
+                {title && (
+                    <h3
+                        style={{
+                            fontSize: headingFontSize,
+                            fontWeight: 600,
+                            color: styles.textColor,
+                            margin: "0 0 4px",
+                            lineHeight: "1.3",
+                        }}
+                    >
+                        {title || PREVIEW_LABELS.headingLabel}
+                    </h3>
+                )}
+
+                {subtitle && (
+                    <p
+                        style={{
+                            fontSize: bodyFontSize,
+                            color: styles.textColor,
+                            margin: "0 0 8px",
+                            lineHeight: "1.3",
+                            opacity: 0.8,
+                        }}
+                    >
+                        {subtitle}
+                    </p>
+                )}
+            </div>
 
             {triggerProducts.map((p) => (
                 <SleekProductCard
