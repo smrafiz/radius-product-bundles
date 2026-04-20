@@ -54,6 +54,8 @@ try {
                     "products/update",
                     "products/delete",
                     "app_subscriptions/update",
+                    "locales/create",
+                    "locales/update",
                 ],
                 uri: "/api/webhooks",
             },
