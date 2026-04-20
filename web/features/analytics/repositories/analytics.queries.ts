@@ -372,6 +372,30 @@ export async function getAnalyticsTrend(
 }
 
 /**
+ * Prune bundle_analytics rows older than the given number of days.
+ * Returns the number of deleted rows.
+ */
+export async function pruneAnalytics(olderThanDays: number): Promise<number> {
+    const cutoff = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000);
+    const { count } = await prisma.bundleAnalytics.deleteMany({
+        where: { date: { lt: cutoff } },
+    });
+    return count;
+}
+
+/**
+ * Prune automation_logs rows older than the given number of days.
+ * Returns the number of deleted rows.
+ */
+export async function pruneAutomationLogs(olderThanDays: number): Promise<number> {
+    const cutoff = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000);
+    const { count } = await prisma.automationLog.deleteMany({
+        where: { createdAt: { lt: cutoff } },
+    });
+    return count;
+}
+
+/**
  * Get bundle performance stats with details
  */
 export async function getBundlePerformanceStats(

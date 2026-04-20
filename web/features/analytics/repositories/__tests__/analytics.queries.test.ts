@@ -2,11 +2,17 @@ import { startOfDay } from "date-fns";
 
 const mockBundleViewCreate = jest.fn();
 const mockBundleAnalyticsUpsert = jest.fn();
+const mockBundleAnalyticsDeleteMany = jest.fn();
+const mockAutomationLogDeleteMany = jest.fn();
 
 jest.mock("@/shared/repositories/prisma-connect", () => ({
     prisma: {
         bundleView: { create: mockBundleViewCreate },
-        bundleAnalytics: { upsert: mockBundleAnalyticsUpsert },
+        bundleAnalytics: {
+            upsert: mockBundleAnalyticsUpsert,
+            deleteMany: mockBundleAnalyticsDeleteMany,
+        },
+        automationLog: { deleteMany: mockAutomationLogDeleteMany },
     },
 }));
 
@@ -14,12 +20,14 @@ jest.mock("date-fns", () => ({
     ...jest.requireActual("date-fns"),
 }));
 
-import { trackBundleView } from "../analytics.queries";
+import { trackBundleView, pruneAnalytics, pruneAutomationLogs } from "../analytics.queries";
 
 beforeEach(() => {
     jest.clearAllMocks();
     mockBundleViewCreate.mockResolvedValue({});
     mockBundleAnalyticsUpsert.mockResolvedValue({});
+    mockBundleAnalyticsDeleteMany.mockResolvedValue({ count: 0 });
+    mockAutomationLogDeleteMany.mockResolvedValue({ count: 0 });
 });
 
 describe("trackBundleView", () => {
@@ -89,5 +97,67 @@ describe("trackBundleView", () => {
                 trackBundleView("bundle-1", timestamp, "customer-1"),
             ).rejects.toThrow("DB down");
         });
+    });
+});
+
+describe("pruneAnalytics", () => {
+    it("deletes bundle_analytics rows older than the given days", async () => {
+        mockBundleAnalyticsDeleteMany.mockResolvedValueOnce({ count: 42 });
+
+        const result = await pruneAnalytics(730);
+
+        expect(result).toBe(42);
+        expect(mockBundleAnalyticsDeleteMany).toHaveBeenCalledWith({
+            where: { date: { lt: expect.any(Date) } },
+        });
+    });
+
+    it("cutoff date is approximately N days ago", async () => {
+        const before = new Date();
+        await pruneAnalytics(730);
+        const after = new Date();
+
+        const call = mockBundleAnalyticsDeleteMany.mock.calls[0][0];
+        const cutoff: Date = call.where.date.lt;
+
+        const expectedMs = 730 * 24 * 60 * 60 * 1000;
+        expect(before.getTime() - cutoff.getTime()).toBeGreaterThanOrEqual(expectedMs - 1000);
+        expect(after.getTime() - cutoff.getTime()).toBeLessThanOrEqual(expectedMs + 1000);
+    });
+
+    it("returns 0 when nothing to prune", async () => {
+        mockBundleAnalyticsDeleteMany.mockResolvedValueOnce({ count: 0 });
+        expect(await pruneAnalytics(730)).toBe(0);
+    });
+});
+
+describe("pruneAutomationLogs", () => {
+    it("deletes automation_logs rows older than the given days", async () => {
+        mockAutomationLogDeleteMany.mockResolvedValueOnce({ count: 7 });
+
+        const result = await pruneAutomationLogs(90);
+
+        expect(result).toBe(7);
+        expect(mockAutomationLogDeleteMany).toHaveBeenCalledWith({
+            where: { createdAt: { lt: expect.any(Date) } },
+        });
+    });
+
+    it("cutoff date is approximately N days ago", async () => {
+        const before = new Date();
+        await pruneAutomationLogs(90);
+        const after = new Date();
+
+        const call = mockAutomationLogDeleteMany.mock.calls[0][0];
+        const cutoff: Date = call.where.createdAt.lt;
+
+        const expectedMs = 90 * 24 * 60 * 60 * 1000;
+        expect(before.getTime() - cutoff.getTime()).toBeGreaterThanOrEqual(expectedMs - 1000);
+        expect(after.getTime() - cutoff.getTime()).toBeLessThanOrEqual(expectedMs + 1000);
+    });
+
+    it("returns 0 when nothing to prune", async () => {
+        mockAutomationLogDeleteMany.mockResolvedValueOnce({ count: 0 });
+        expect(await pruneAutomationLogs(90)).toBe(0);
     });
 });
