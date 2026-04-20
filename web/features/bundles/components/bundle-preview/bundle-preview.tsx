@@ -437,6 +437,7 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
 
 function useWidgetDisplayOptions(): WidgetDisplayOptions {
     const displaySettings = useBundleStore((s) => s.displaySettings);
+    const freeShipping = useBundleStore((s) => s.bundleData.freeShipping);
     return {
         showImages: displaySettings.showImages,
         showPrices: displaySettings.showPrices,
@@ -444,7 +445,7 @@ function useWidgetDisplayOptions(): WidgetDisplayOptions {
         showQuantity: displaySettings.showQuantity,
         showSavingsBadge: displaySettings.showSavingsBadge,
         showSavings: displaySettings.showSavings,
-        showFreeShipping: displaySettings.showFreeShipping,
+        showFreeShipping: displaySettings.showFreeShipping && !!freeShipping,
         enableHyperLink: displaySettings.enableHyperLink,
     };
 }
