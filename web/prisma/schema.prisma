@@ -478,8 +478,7 @@ model WebhookDelivery {
     shop        String
     processedAt DateTime @default(now())
 
-    @@index([shop])
-    @@index([processedAt])
+    @@index([shop, processedAt])
     @@map("webhook_deliveries")
 }
 
