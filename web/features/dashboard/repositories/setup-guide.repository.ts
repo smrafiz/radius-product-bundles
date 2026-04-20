@@ -3,6 +3,7 @@
 import prisma from "@/shared/repositories/prisma-connect";
 import { SetupProgress } from "@/features/dashboard";
 import { DEFAULT_SETUP_PROGRESS } from "@/features/dashboard/constants/setup-guide.constants";
+import { SetupProgressSchema } from "@/features/dashboard/validation/setup-guide.validation";
 
 export async function getSetupProgress(domain: string) {
     const shop = await prisma.shop.findUnique({
@@ -52,10 +53,11 @@ export async function updateSetupProgress(
     progress: SetupProgress,
     allComplete: boolean,
 ) {
+    const validated = SetupProgressSchema.parse(progress);
     await prisma.shop.update({
         where: { domain },
         data: {
-            setupProgress: progress as any,
+            setupProgress: validated,
             setupGuideDismissed: allComplete,
         },
     });
