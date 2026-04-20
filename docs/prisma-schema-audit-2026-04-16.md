@@ -491,7 +491,7 @@ Requires all existing rows to have a valid `shopId`. Run data migration: match `
 ---
 
 ### F-29 — `ShopPlan` dual shop fields
-~~**Severity: Medium**~~ **→ DEFERRED** — billing hot path; requires auditing all callers before removing `shop` String field
+~~**Severity: Medium**~~ **→ RESOLVED** ✅ — backfilled `shopId`, made non-nullable, dropped `shop String`, updated 5 query sites
 
 Same pattern as F-28 but isolated to one model. `shopId` should be non-nullable since a plan always belongs to a shop.
 
