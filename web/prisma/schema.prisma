@@ -103,6 +103,7 @@ model Bundle {
     bundleProducts       BundleProduct[]
     settings             BundleSettings?
     bundleViews          BundleView[]
+    aiInsights           AIInsight[]
 
     @@unique([shop, name])
     @@index([shop, status, type])
@@ -205,6 +206,7 @@ model ABTest {
     controlBundle   Bundle       @relation(fields: [controlBundleId], references: [id])
     Shop            Shop?        @relation(fields: [shopId], references: [id])
     results         TestResult[]
+    aiInsights      AIInsight[]
 
     @@index([shopId, status])
     @@map("ab_tests")
@@ -338,8 +340,12 @@ model AIInsight {
     expiresAt   DateTime?
     shopId      String?
     Shop        Shop?         @relation(fields: [shopId], references: [id])
+    bundle      Bundle?       @relation(fields: [bundleId], references: [id], onDelete: SetNull)
+    abTest      ABTest?       @relation(fields: [testId], references: [id], onDelete: SetNull)
 
     @@index([shopId, type, confidence])
+    @@index([bundleId])
+    @@index([testId])
     @@map("ai_insights")
 }
 
