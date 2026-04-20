@@ -185,7 +185,6 @@ model BundleSettings {
 
 model ABTest {
     id              String       @id @default(cuid())
-    shop            String
     name            String
     hypothesis      String?
     type            TestType
@@ -207,8 +206,7 @@ model ABTest {
     Shop            Shop?        @relation(fields: [shopId], references: [id])
     results         TestResult[]
 
-    @@index([shop, status])
-    @@index([shopId])
+    @@index([shopId, status])
     @@map("ab_tests")
 }
 
@@ -230,7 +228,6 @@ model TestResult {
 
 model Automation {
     id            String             @id @default(cuid())
-    shop          String
     name          String
     description   String?
     status        AutomationStatus   @default(ACTIVE)
@@ -249,8 +246,7 @@ model Automation {
     logs          AutomationLog[]
     Shop          Shop?              @relation(fields: [shopId], references: [id])
 
-    @@index([shop, status])
-    @@index([shopId])
+    @@index([shopId, status])
     @@map("automations")
 }
 
@@ -322,7 +318,6 @@ model BundleView {
 
 model AIInsight {
     id          String        @id @default(cuid())
-    shop        String
     type        AIInsightType
     category    String
     title       String
@@ -344,14 +339,12 @@ model AIInsight {
     shopId      String?
     Shop        Shop?         @relation(fields: [shopId], references: [id])
 
-    @@index([shop, type, confidence])
-    @@index([shopId])
+    @@index([shopId, type, confidence])
     @@map("ai_insights")
 }
 
 model Notification {
     id          String               @id @default(cuid())
-    shop        String
     type        NotificationType
     title       String
     message     String
@@ -366,14 +359,12 @@ model Notification {
     shopId      String?
     Shop        Shop?                @relation(fields: [shopId], references: [id])
 
-    @@index([shop, read, createdAt])
-    @@index([shopId])
+    @@index([shopId, read, createdAt])
     @@map("notifications")
 }
 
 model AlertRule {
     id              String           @id @default(cuid())
-    shop            String
     name            String
     type            NotificationType
     status          AlertRuleStatus  @default(ACTIVE)
@@ -389,8 +380,7 @@ model AlertRule {
     shopId          String?
     Shop            Shop?            @relation(fields: [shopId], references: [id])
 
-    @@index([shop, status])
-    @@index([shopId])
+    @@index([shopId, status])
     @@map("alert_rules")
 }
 
