@@ -291,6 +291,7 @@ model BundleAnalytics {
     crossSellPurchases         Int      @default(0)
     newCustomerPurchases       Int      @default(0)
     returningCustomerPurchases Int      @default(0)
+    // Restrict: analytics data is preserved on soft-delete; hard deletes must clear analytics first
     bundle                     Bundle   @relation(fields: [bundleId], references: [id], onDelete: Restrict)
 
     @@unique([bundleId, date, hour])
@@ -307,6 +308,7 @@ model BundleView {
     date       DateTime  @db.Date
     timestamp  DateTime @default(now())
 
+    // Restrict: view history is preserved on soft-delete; hard deletes must clear views first
     bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Restrict)
 
     // One view per customer per bundle per day
