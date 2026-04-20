@@ -167,8 +167,9 @@ export function WidgetProductCard({
                         className="radius-bundle__product-image"
                         style={{
                             height: imageSizePx,
+                            width: styles.imagePosition === "top" ? "max-content" : undefined,
+                            margin: styles.imagePosition === "top" ? `0px auto ${gap}` : undefined,
                             borderRadius: cardRadius,
-                            marginBottom: gap,
                             backgroundColor: "#f3f4f6",
                             overflow: "hidden",
                             border: `1px solid ${styles.borderColor}`,
