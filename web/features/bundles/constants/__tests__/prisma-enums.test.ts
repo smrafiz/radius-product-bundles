@@ -7,11 +7,20 @@
 import fs from "node:fs";
 import path from "node:path";
 import {
+    AIInsightType,
+    AlertFrequency,
+    AlertRuleStatus,
+    AutomationStatus,
     BundleLayout,
     BundleProductRole,
     DiscountApplication,
+    NotificationPriority,
+    NotificationType,
     PriorityType,
     RedirectAfterCart,
+    TestStatus,
+    TestType,
+    TriggerType,
 } from "../prisma-enums";
 
 function extractSchemaEnum(schema: string, enumName: string): string[] {
@@ -56,6 +65,60 @@ describe("prisma-enums sync check", () => {
     it("BundleProductRole matches schema", () => {
         expect(Object.values(BundleProductRole).sort()).toEqual(
             extractSchemaEnum(schema, "BundleProductRole").sort(),
+        );
+    });
+
+    it("TestType matches schema", () => {
+        expect(Object.values(TestType).sort()).toEqual(
+            extractSchemaEnum(schema, "TestType").sort(),
+        );
+    });
+
+    it("TestStatus matches schema", () => {
+        expect(Object.values(TestStatus).sort()).toEqual(
+            extractSchemaEnum(schema, "TestStatus").sort(),
+        );
+    });
+
+    it("AutomationStatus matches schema", () => {
+        expect(Object.values(AutomationStatus).sort()).toEqual(
+            extractSchemaEnum(schema, "AutomationStatus").sort(),
+        );
+    });
+
+    it("TriggerType matches schema", () => {
+        expect(Object.values(TriggerType).sort()).toEqual(
+            extractSchemaEnum(schema, "TriggerType").sort(),
+        );
+    });
+
+    it("AIInsightType matches schema", () => {
+        expect(Object.values(AIInsightType).sort()).toEqual(
+            extractSchemaEnum(schema, "AIInsightType").sort(),
+        );
+    });
+
+    it("NotificationType matches schema", () => {
+        expect(Object.values(NotificationType).sort()).toEqual(
+            extractSchemaEnum(schema, "NotificationType").sort(),
+        );
+    });
+
+    it("NotificationPriority matches schema", () => {
+        expect(Object.values(NotificationPriority).sort()).toEqual(
+            extractSchemaEnum(schema, "NotificationPriority").sort(),
+        );
+    });
+
+    it("AlertRuleStatus matches schema", () => {
+        expect(Object.values(AlertRuleStatus).sort()).toEqual(
+            extractSchemaEnum(schema, "AlertRuleStatus").sort(),
+        );
+    });
+
+    it("AlertFrequency matches schema", () => {
+        expect(Object.values(AlertFrequency).sort()).toEqual(
+            extractSchemaEnum(schema, "AlertFrequency").sort(),
         );
     });
 });
