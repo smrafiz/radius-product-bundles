@@ -17,6 +17,11 @@
     }
 }
 
+/* Hide NavMenu anchor children before App Bridge initializes */
+[data-sprogress] {
+    display: none;
+}
+
 /* Radius Product Bundles - Minimal Styles */
 .radius-app-wrapper {
     word-break: break-word;
