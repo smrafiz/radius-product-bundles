@@ -14,8 +14,6 @@ import {
     getCardBgColor,
     getImageSize,
     getPadding,
-    getSpacing,
-    SPACING_VALUES,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -381,10 +379,7 @@ export function WidgetCompactGrid({
     const isOutline = styles.badgeStyle === "outline";
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const bodyFontSize = getFontSize(styles.bodySize);
-    const gap = getSpacing(styles.spacing);
     const padding = getPadding(styles.spacing);
-    const spacingValues =
-        SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
 
     if (!products.length) {
         return (
@@ -552,7 +547,7 @@ export function WidgetCompactGrid({
             <div
                 style={{
                     display: "flex",
-                    alignItems: "center",
+                    alignItems: activeDevice === "mobile" ? "normal" : "center",
                     justifyContent: "space-between",
                     padding: `10px ${parseInt(padding)}px ${parseInt(padding)}px`,
                     gap: 12,

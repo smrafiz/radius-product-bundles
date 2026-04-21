@@ -138,7 +138,6 @@ export function WidgetSplitDeal({
     subtitle,
     badgeText,
     labels,
-    activeDevice,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -146,7 +145,7 @@ export function WidgetSplitDeal({
     const spacingValues =
         SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
     const cardRadius = getCardRadius(styles.cornerStyle);
-    const showPricingBar = styles.pricingSummaryBox !== false;
+    const showPricingBar = styles.pricingSummaryBox;
     const pricingBarBg = styles.pricingSummaryBg || "#DDEDDF";
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
