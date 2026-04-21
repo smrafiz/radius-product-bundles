@@ -491,6 +491,7 @@ export const LABELS_TAB: SettingsTabConfig = {
             id: "volume-labels",
             title: "Volume Discount Labels",
             tooltip: "Labels specific to Volume Discount bundle layouts.",
+            proFeature: "bundle_behavior",
             columns: 2,
             fields: [
                 {
