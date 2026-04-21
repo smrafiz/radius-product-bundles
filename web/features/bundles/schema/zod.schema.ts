@@ -154,7 +154,7 @@ export function createBundleSchema(v: T) {
                 .string()
                 .min(1, v("REQUIRED_FIELD"))
                 .max(100, v("MAX_LENGTH"))
-                .transform(sanitizeText),
+                .transform((s) => sanitizeText(s.trim().replace(/\s+/g, " "))),
 
             description: z
                 .string()
