@@ -445,7 +445,8 @@
       "duplicateSuccess": "Bundle duplicated successfully",
       "duplicateFailed": "Failed to duplicate bundle",
       "checkStatus": "Health check",
-      "themeReady": "Theme is set up correctly"
+      "themeReady": "Theme is set up correctly",
+      "moreActions": "More actions"
     },
     "Selection": {
       "title": "Select bundle type",

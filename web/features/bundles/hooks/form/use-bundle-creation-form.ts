@@ -244,6 +244,10 @@ export function useBundleCreationForm({
         ? `bundle-view-popover-edit-${bundleId}`
         : undefined;
 
+    const overflowMenuId = bundleId
+        ? `bundle-overflow-menu-${bundleId}`
+        : undefined;
+
     const uniqueProducts = selectedItems.length
         ? [...new Map(selectedItems.map((p) => [p.productId, p])).values()]
         : [];
@@ -277,6 +281,7 @@ export function useBundleCreationForm({
 
         // View bundle
         viewPopoverId,
+        overflowMenuId,
         uniqueProducts,
         mainProductUrl,
         mainProductTitle,

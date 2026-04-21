@@ -37,6 +37,7 @@ export function BundleCreationForm({
         isDuplicating,
         isCheckingStatus,
         viewPopoverId,
+        overflowMenuId,
         uniqueProducts,
         mainProductUrl,
         mainProductTitle,
@@ -142,18 +143,6 @@ export function BundleCreationForm({
                                         {pageProps.badgeLabel}
                                     </s-badge>
                                 )}
-
-                                {isEditMode && (
-                                    <s-button
-                                        variant="secondary"
-                                        icon="plus"
-                                        onClick={navActions.createNew}
-                                        loading={isCreatingNew}
-                                        disabled={isCreatingNew}
-                                    >
-                                        {tc("createNew")}
-                                    </s-button>
-                                )}
                             </s-stack>
                             {isEditMode && updatedAt && (
                                 <s-text color="subdued">
@@ -165,7 +154,7 @@ export function BundleCreationForm({
                         </s-stack>
 
                         {isEditMode && bundleId && (
-                            <s-stack direction="inline" gap="small">
+                            <s-stack direction="inline" gap="small-300" alignItems="center">
                                 <s-button
                                     variant="secondary"
                                     icon="view"
@@ -185,14 +174,10 @@ export function BundleCreationForm({
                                 </s-button>
                                 <s-button
                                     variant="secondary"
-                                    tone="critical"
-                                    icon="delete"
-                                    onClick={handleDelete}
-                                    loading={isDeleting}
-                                    accessibilityLabel={tc("deleteBundle")}
-                                >
-                                    {tc("deleteBundle")}
-                                </s-button>
+                                    icon="menu-horizontal"
+                                    commandFor={overflowMenuId}
+                                    accessibilityLabel={tc("moreActions")}
+                                />
                             </s-stack>
                         )}
                     </div>
@@ -247,6 +232,35 @@ export function BundleCreationForm({
                                         </>
                                     )}
                                 </s-stack>
+                            </s-stack>
+                        </s-box>
+                    </s-popover>
+                )}
+
+                {/* Overflow menu popover */}
+                {overflowMenuId && (
+                    <s-popover id={overflowMenuId}>
+                        <s-box padding="small">
+                            <s-stack gap="small-200">
+                                <s-button
+                                    variant="tertiary"
+                                    icon="plus"
+                                    onClick={navActions.createNew}
+                                    loading={isCreatingNew}
+                                    disabled={isCreatingNew}
+                                >
+                                    {tc("createNew")}
+                                </s-button>
+                                <s-button
+                                    variant="tertiary"
+                                    tone="critical"
+                                    icon="delete"
+                                    onClick={handleDelete}
+                                    loading={isDeleting}
+                                    disabled={isDeleting}
+                                >
+                                    {tc("deleteBundle")}
+                                </s-button>
                             </s-stack>
                         </s-box>
                     </s-popover>
