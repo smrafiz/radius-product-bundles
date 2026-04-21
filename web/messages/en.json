@@ -170,49 +170,51 @@
     "setupGuide": "Setup guide",
     "SetupGuide": {
       "tasksComplete": "{completed} of {total} tasks complete",
-      "heading": "Get started with Product Bundles",
-      "subheading": "Use this personalized guide to get your app up and running.",
+      "heading": "Let's get you set up",
+      "subheading": "Complete these quick steps and you'll be selling bundles in no time.",
       "dismiss": "Dismiss",
       "collapse": "Collapse",
       "expand": "Expand",
       "upNext": "Up next:",
-      "resumeGuide": "Resume guide",
-      "allComplete": "All tasks complete",
+      "resumeGuide": "Pick up where you left off",
+      "allComplete": "All done!",
+      "allCompleteHeading": "You're all set!",
+      "allCompleteDesc": "Great work! Your Product Bundles app is fully configured and ready for customers.",
       "dismissGuide": "Dismiss guide",
       "toggleGuide": "Toggle setup guide",
-      "markComplete": "Mark as complete",
-      "markIncomplete": "Mark as incomplete",
+      "markComplete": "Mark as done",
+      "markIncomplete": "Mark as not done",
       "steps": {
         "enableAppEmbed": {
-          "title": "Enable the app embed",
-          "description": "Activate the Product Bundles app embed in your theme editor. This is required for bundle widgets, analytics tracking, and storefront functionality to work on your store.",
-          "primaryButton": "Open theme editor",
+          "title": "Turn on the app embed",
+          "description": "We'll open the theme editor with the app embed ready to go — just hit Save to turn it on.",
+          "primaryButton": "Go to theme editor",
           "secondaryButton": "Check status"
         },
         "createFirstBundle": {
-          "title": "Create your first product bundle",
-          "description": "Select a bundle type — Fixed Bundle, BOGO, Volume Discount, or Mix & Match — add products, configure pricing, and publish to start selling.",
+          "title": "Create your first bundle",
+          "description": "Pick a bundle type — Fixed Bundle, BOGO, or Volume Discount — add your products, set the pricing, and hit publish.",
           "primaryButton": "Create bundle"
         },
         "addWidgetToTheme": {
-          "title": "Add bundle widget to your theme",
-          "description": "Add the bundle widget block to your product pages in the theme editor. This displays your bundles on the storefront so customers can see and add them to their cart.",
-          "primaryButton": "Open theme editor",
+          "title": "Add the bundle widget",
+          "description": "We'll open the theme editor with the bundle widget already added to your product page — just hit Save to confirm.",
+          "primaryButton": "Go to theme editor",
           "secondaryButton": "Check status"
         },
         "customizeSettings": {
-          "title": "Customize your settings",
-          "description": "Configure your global display preferences and style the bundle widget to match your store's branding — adjust layout, colors, typography, and button styles.",
+          "title": "Make it yours",
+          "description": "Tweak the layout, colors, fonts, and buttons to match your store's look and feel.",
           "primaryButton": "Go to settings"
         },
         "previewStorefront": {
-          "title": "Preview your live storefront",
-          "description": "Visit your online store to verify how bundles appear to customers. Check the widget layout, discount display, and add-to-cart experience on a real product page.",
+          "title": "See it live",
+          "description": "Visit your store and see exactly what your customers will see on the product page.",
           "primaryButton": "View storefront"
         },
         "monitorAnalytics": {
-          "title": "Monitor bundle analytics",
-          "description": "Track key metrics like bundle views, add-to-cart rate, conversion rate, and revenue generated across all your bundles from the analytics dashboard.",
+          "title": "Keep an eye on performance",
+          "description": "Track views, add-to-carts, conversions, and revenue for all your bundles in one place.",
           "primaryButton": "Go to analytics"
         }
       }

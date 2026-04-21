@@ -73,6 +73,7 @@ export function DashboardSetupSteps({
 }: DashboardSetupGuideProps) {
     const t = useTranslations("Dashboard.SetupGuide");
     const nextIncompleteItem = items.find((item) => !item.complete);
+    const allComplete = !nextIncompleteItem;
 
     return (
         <s-section padding="none">
@@ -139,40 +140,60 @@ export function DashboardSetupSteps({
                     </s-grid>
                 </s-box>
 
-                {/* Expanded: Step list */}
+                {/* Expanded: Step list or celebration */}
                 <s-box
                     borderRadius="base"
                     display={isGuideOpen ? "auto" : "none"}
                     padding="small-200"
                 >
-                    <s-stack gap="small-500">
-                        {items.map((item) => (
-                            <Fragment key={item.id}>
-                                <DashboardSetupItem
-                                    expanded={expanded === item.id}
-                                    setExpanded={() => setExpanded(item.id)}
-                                    checkboxLoading={
-                                        checkboxLoadingId === item.id
-                                    }
-                                    buttonLoading={
-                                        buttonLoading?.itemId === item.id
-                                            ? buttonLoading.type
-                                            : null
-                                    }
-                                    onCheckboxChange={() =>
-                                        onItemComplete(item.id)
-                                    }
-                                    onPrimaryClick={() =>
-                                        onPrimaryClick(item.id)
-                                    }
-                                    onSecondaryClick={() =>
-                                        onSecondaryClick(item.id)
-                                    }
-                                    {...item}
-                                />
-                            </Fragment>
-                        ))}
-                    </s-stack>
+                    {allComplete ? (
+                        <s-banner
+                            tone="success"
+                            heading={t("allCompleteHeading")}
+                        >
+                            <s-paragraph>{t("allCompleteDesc")}</s-paragraph>
+                            <s-button
+                                slot="secondary-actions"
+                                variant="secondary"
+                                onClick={onDismiss}
+                                disabled={isDismissing}
+                                loading={isDismissing}
+                            >
+                                {t("dismissGuide")}
+                            </s-button>
+                        </s-banner>
+                    ) : (
+                        <s-stack gap="small-500">
+                            {items.map((item) => (
+                                <Fragment key={item.id}>
+                                    <DashboardSetupItem
+                                        expanded={expanded === item.id}
+                                        setExpanded={() =>
+                                            setExpanded(item.id)
+                                        }
+                                        checkboxLoading={
+                                            checkboxLoadingId === item.id
+                                        }
+                                        buttonLoading={
+                                            buttonLoading?.itemId === item.id
+                                                ? buttonLoading.type
+                                                : null
+                                        }
+                                        onCheckboxChange={() =>
+                                            onItemComplete(item.id)
+                                        }
+                                        onPrimaryClick={() =>
+                                            onPrimaryClick(item.id)
+                                        }
+                                        onSecondaryClick={() =>
+                                            onSecondaryClick(item.id)
+                                        }
+                                        {...item}
+                                    />
+                                </Fragment>
+                            ))}
+                        </s-stack>
+                    )}
                 </s-box>
 
                 {/* Collapsed: "Up next" bar */}

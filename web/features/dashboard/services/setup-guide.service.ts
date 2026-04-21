@@ -20,11 +20,7 @@ export async function getSetupGuideService({
 }): Promise<SetupGuideData> {
     const persisted = await getSetupProgress(shop);
 
-    // Skip auto-detection when guide is dismissed or all steps already complete
-    const allPersistedComplete = Object.values(persisted.progress).every(
-        Boolean,
-    );
-    if (persisted.dismissed || allPersistedComplete) {
+    if (persisted.dismissed) {
         return {
             dismissed: persisted.dismissed,
             progress: persisted.progress,
@@ -49,8 +45,7 @@ export async function getSetupGuideService({
     };
 
     if (JSON.stringify(merged) !== JSON.stringify(persisted.progress)) {
-        const allComplete = Object.values(merged).every(Boolean);
-        await updateSetupProgress(shop, merged, allComplete);
+        await updateSetupProgress(shop, merged);
     }
 
     return {
@@ -81,8 +76,7 @@ export async function updateSetupStepService({
 }) {
     const { progress } = await getSetupProgress(shop);
     const updated: SetupProgress = { ...progress, [stepKey]: value };
-    const allComplete = Object.values(updated).every(Boolean);
-    await updateSetupProgress(shop, updated, allComplete);
+    await updateSetupProgress(shop, updated);
     return updated;
 }
 

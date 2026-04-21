@@ -51,14 +51,12 @@ export async function getAutoDetectData(domain: string) {
 export async function updateSetupProgress(
     domain: string,
     progress: SetupProgress,
-    allComplete: boolean,
 ) {
     const validated = SetupProgressSchema.parse(progress);
     await prisma.shop.update({
         where: { domain },
         data: {
             setupProgress: validated,
-            setupGuideDismissed: allComplete,
         },
     });
 }

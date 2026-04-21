@@ -169,49 +169,51 @@
     "setupGuide": "Guide de configuration",
     "SetupGuide": {
       "tasksComplete": "{completed} sur {total} tâches terminées",
-      "heading": "Démarrer avec les packs de produits",
-      "subheading": "Utilisez ce guide personnalisé pour configurer votre application.",
+      "heading": "Commençons la configuration",
+      "subheading": "Suivez ces étapes rapides et vous vendrez des offres groupées en un rien de temps.",
       "dismiss": "Fermer",
       "collapse": "Réduire",
       "expand": "Développer",
       "upNext": "Prochaine étape :",
-      "resumeGuide": "Reprendre le guide",
-      "allComplete": "Toutes les tâches sont terminées",
+      "resumeGuide": "Reprendre là où vous en étiez",
+      "allComplete": "Tout est fait !",
+      "allCompleteHeading": "Vous êtes fin prêt !",
+      "allCompleteDesc": "Bravo ! Votre application Product Bundles est entièrement configurée et prête pour vos clients.",
       "dismissGuide": "Fermer le guide",
       "toggleGuide": "Activer/désactiver le guide de configuration",
-      "markComplete": "Marquer comme terminé",
+      "markComplete": "Marquer comme fait",
       "markIncomplete": "Marquer comme non terminé",
       "steps": {
         "enableAppEmbed": {
           "title": "Activer l'intégration de l'application",
-          "description": "Activez l'intégration de l'application Packs de produits dans l'éditeur de thème. Cela est nécessaire pour que les widgets, le suivi analytique et les fonctionnalités de la vitrine fonctionnent sur votre boutique.",
-          "primaryButton": "Ouvrir l'éditeur de thème",
+          "description": "Nous allons ouvrir l'éditeur de thème avec l'intégration de l'application prête à l'emploi. Il vous suffit d'appuyer sur Enregistrer pour l'activer.",
+          "primaryButton": "Accédez à l'éditeur de thème",
           "secondaryButton": "Vérifier le statut"
         },
         "createFirstBundle": {
-          "title": "Créer votre première offre groupée",
-          "description": "Sélectionnez un type d'offre — Forfait, un acheté = un offert, remise par quantité ou mix & match — ajoutez des produits, configurez les prix et publiez pour commencer à vendre.",
+          "title": "Créez votre première offre groupée",
+          "description": "Choisissez un type d'offre — Fixed Bundle, BOGO ou Volume Discount — ajoutez vos produits, définissez les tarifs et publiez.",
           "primaryButton": "Créer une offre groupée"
         },
         "addWidgetToTheme": {
-          "title": "Ajouter le widget de bundle à votre thème",
-          "description": "Ajoutez le bloc widget de bundle à vos pages produit dans l'éditeur de thème. Cela affiche vos offres groupées sur la vitrine pour que les clients puissent les voir et les ajouter à leur panier.",
-          "primaryButton": "Ouvrir l'éditeur de thème",
+          "title": "Ajoutez le widget d'offres groupées",
+          "description": "Nous allons ouvrir l'éditeur de thème avec le widget d'offres groupées déjà ajouté à votre page produit. Il vous suffit d'appuyer sur Enregistrer pour confirmer.",
+          "primaryButton": "Accédez à l'éditeur de thème",
           "secondaryButton": "Vérifier le statut"
         },
         "customizeSettings": {
-          "title": "Personnaliser vos paramètres",
-          "description": "Configurez vos préférences d'affichage globales et stylisez le widget de pack pour correspondre à l'identité visuelle de votre boutique — ajustez la mise en page, les couleurs, la typographie et les styles de boutons.",
+          "title": "Faites-en votre marque",
+          "description": "Ajustez la mise en page, les couleurs, les polices et les boutons pour qu'ils correspondent au style de votre boutique.",
           "primaryButton": "Aller aux paramètres"
         },
         "previewStorefront": {
-          "title": "Prévisualiser votre vitrine",
-          "description": "Visitez votre boutique en ligne pour vérifier comment les offres groupées apparaissent aux clients. Vérifiez la disposition du widget, l'affichage des remises et l'expérience d'ajout au panier sur une vraie page produit.",
+          "title": "Voir en conditions réelles",
+          "description": "Visitez votre boutique et voyez exactement ce que vos clients verront sur la page produit.",
           "primaryButton": "Voir la vitrine"
         },
         "monitorAnalytics": {
-          "title": "Suivre les analyses des offres groupées",
-          "description": "Suivez les métriques clés comme les vues, le taux d'ajout au panier, le taux de conversion et les revenus générés par toutes vos offres groupées depuis le tableau de bord analytique.",
+          "title": "Gardez un œil sur les performances",
+          "description": "Suivez les vues, les ajouts au panier, les conversions et les revenus de toutes vos offres groupées au même endroit.",
           "primaryButton": "Aller aux analyses"
         }
       }
