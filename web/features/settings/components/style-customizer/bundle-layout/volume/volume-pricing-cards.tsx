@@ -141,6 +141,13 @@ export function VolumePricingCards({
                                     selectTier(i);
                                 }
                             }}
+                            style={{
+                                border: styles.productCardBorder
+                                    ? isSelected
+                                        ? `1px solid ${styles.primaryColor}`
+                                        : `1px solid ${styles.borderColor}`
+                                    : "none",
+                            }}
                         >
                             {hasBadge && (
                                 <div

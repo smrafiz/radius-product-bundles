@@ -158,7 +158,13 @@ export function VolumeSlider({ tiers, product, styles, displayOptions, labels }:
             </div>
 
             {unitPrice > 0 && (
-                <div className="rb-vol-slider__price-box">
+                <div className="rb-vol-slider__price-box"
+                     style={{
+                         border: styles.productCardBorder
+                             ? `1px solid ${styles.borderColor}`
+                             : "none",
+                     }}
+                >
                     <div className="rb-vol-slider__price-left">
                         <span className="rb-vol-slider__price-total">
                             {formatPrice(currencyPrefix, total)}

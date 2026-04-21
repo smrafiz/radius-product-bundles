@@ -117,6 +117,13 @@ export function VolumeTierList({ tiers, product, styles, displayOptions, labels 
                                     selectTier(i);
                                 }
                             }}
+                            style={{
+                                border: styles.productCardBorder
+                                    ? isSelected
+                                        ? `1px solid ${styles.primaryColor}`
+                                        : `1px solid ${styles.borderColor}`
+                                    : "none",
+                            }}
                         >
                             <div
                                 className="rb-vol__tier-radio"
