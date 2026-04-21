@@ -29,7 +29,7 @@ export function bundleCurrencyFormatter(
             return "•";
         }
 
-        return `${currencySymbol}${value}`;
+        return `${currencySymbol}${value.toFixed(2)}`;
     };
 }
 

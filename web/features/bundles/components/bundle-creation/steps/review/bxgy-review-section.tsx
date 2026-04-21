@@ -142,10 +142,12 @@ export function BxgyReviewSection() {
         p: (typeof triggerProducts)[0],
         role: "TRIGGER" | "REWARD",
     ) => {
-        const originalPrice = parseFloat(p.price || "0");
+        const qty = p.quantity || 1;
+        const unitPrice = parseFloat(p.price || "0");
+        const originalPrice = round(unitPrice * qty);
         const isReward = role === "REWARD";
         const finalPrice = isReward
-            ? getRewardPrice(originalPrice)
+            ? round(getRewardPrice(unitPrice) * qty)
             : originalPrice;
         const hasDiscount =
             isReward &&

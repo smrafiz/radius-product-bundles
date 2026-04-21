@@ -20,7 +20,7 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
         bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 
     return useMemo(() => {
-        if (!selectedItems.length || !bundleData.discountType) {
+        if (!selectedItems.length) {
             return {
                 originalPrice: 0,
                 discountAmount: 0,
@@ -32,6 +32,16 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
 
         const round = (n: number) => Math.round(n * 100) / 100;
         const originalPrice = round(calculateBundlePrice(selectedItems));
+
+        if (!bundleData.discountType) {
+            return {
+                originalPrice,
+                discountAmount: 0,
+                finalPrice: originalPrice,
+                savingsPercentage: 0,
+                hasDiscount: false,
+            };
+        }
 
         // BOGO/BXGY: discount applies only to reward products
         if (isBxgy) {
