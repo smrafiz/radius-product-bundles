@@ -216,6 +216,7 @@ export async function getPaginatedBundlesWithAnalytics(
         sortBy,
         sortOrder,
         search,
+        includeDeleted: true,
         ...(useDbPagination ? { page, perPage } : {}),
     });
 
@@ -281,6 +282,7 @@ export async function fetchBundlesWithAnalyticsCore(
         search = "",
         page,
         perPage,
+        includeDeleted = false,
     } = params;
 
     const DB_SORTABLE_FIELDS = [
@@ -297,7 +299,7 @@ export async function fetchBundlesWithAnalyticsCore(
 
     const bundleWhereClause: any = {
         shop,
-        status: { not: "DELETED" as const },
+        ...(includeDeleted ? {} : { status: { not: "DELETED" as const } }),
     };
 
     if (search && search.trim() !== "") {

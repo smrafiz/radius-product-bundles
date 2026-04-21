@@ -142,6 +142,7 @@ export interface CoreBundleFetchParams {
     search?: string;
     page?: number;
     perPage?: number;
+    includeDeleted?: boolean;
 }
 
 /**
