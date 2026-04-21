@@ -50,8 +50,8 @@ export async function getRecentBundlesService({
         const mainProduct = b.mainProductId
             ? productMap.get(b.mainProductId)
             : null;
-        const mainProductImage = mainProduct?.featuredImage;
-        const displayImage = mainProductImage || b.images?.[0];
+        const mainProductImageUrl = mainProduct?.featuredImage?.url ?? null;
+        const displayImage = mainProductImageUrl || b.images?.[0] || null;
 
         return {
             bundleId: b.id,
@@ -61,7 +61,7 @@ export async function getRecentBundlesService({
             discountType: b.discountType,
             discountValue: b.discountValue ? Number(b.discountValue) : null,
             createdAt: b.createdAt,
-            images: displayImage ? [displayImage] : b.images,
+            images: displayImage ? [displayImage] : (b.images ?? []),
             revenue,
             purchases,
             views,

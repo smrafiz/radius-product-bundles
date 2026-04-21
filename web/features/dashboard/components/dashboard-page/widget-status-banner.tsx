@@ -66,7 +66,7 @@ export function WidgetStatusBanner({
                 <s-button
                     slot="secondary-actions"
                     variant="secondary"
-                    onClick={() => window.open(embedUrl, "_blank")}
+                    onClick={() => Object.assign(document.createElement("a"), { href: embedUrl, target: "_blank", rel: "noopener noreferrer" }).click()}
                 >
                     {bothMissing ? tBoth("enableEmbed") : tEmbed("enableButton")}
                 </s-button>

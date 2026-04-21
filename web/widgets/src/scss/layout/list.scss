@@ -117,11 +117,10 @@
         .divider-position {
             width: 24px;
             height: 24px;
+            line-height: 23px;
+            text-align: center;
             background: var(--rb-primary-color);
             color: var(--rb-button-text-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             border-radius: 50%;
             z-index: 1;
             position: absolute;

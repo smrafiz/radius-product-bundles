@@ -240,14 +240,14 @@ export function useSetupGuide() {
 
             if (item.stepKey === SETUP_STEP_KEYS.APP_EMBED) {
                 const url = `https://${shopDomain}/admin/themes/current/editor?context=apps&activateAppId=${apiKey}/app-embed`;
-                window.open(url, "_blank");
+                Object.assign(document.createElement("a"), { href: url, target: "_blank", rel: "noopener noreferrer" }).click();
                 setButtonLoading(null);
             } else if (item.stepKey === SETUP_STEP_KEYS.WIDGET_BLOCK_ADDED) {
                 const url = `https://${shopDomain}/admin/themes/current/editor?template=product&addAppBlockId=${apiKey}/app-block&target=newAppsSection`;
-                window.open(url, "_blank");
+                Object.assign(document.createElement("a"), { href: url, target: "_blank", rel: "noopener noreferrer" }).click();
                 setButtonLoading(null);
             } else if (item.stepKey === SETUP_STEP_KEYS.STOREFRONT_PREVIEW) {
-                window.open(`https://${shopDomain}`, "_blank");
+                Object.assign(document.createElement("a"), { href: `https://${shopDomain}`, target: "_blank", rel: "noopener noreferrer" }).click();
                 await completeStepMutation.mutateAsync({
                     key: item.stepKey as SetupStepKey,
                     value: true,
