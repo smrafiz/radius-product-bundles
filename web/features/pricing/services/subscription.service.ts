@@ -346,10 +346,15 @@ export async function handleSubscriptionWebhookService(
             existingPlan?.trialEndsAt != null && existingPlan.trialEndsAt > new Date();
 
         if (!trialStillActive) {
+            // CANCELLED = downgrade to free plan — shop remains active on free tier.
+            // EXPIRED = trial ended without subscribing — mark trial expired.
+            // Everything else (DECLINED, etc.) = suspended.
             const terminatedStatus =
                 normalizedStatus === ShopifySubscriptionStatus.EXPIRED
                     ? ShopStatus.TRIAL_EXPIRED
-                    : ShopStatus.SUSPENDED;
+                    : normalizedStatus === ShopifySubscriptionStatus.CANCELLED
+                      ? ShopStatus.ACTIVE
+                      : ShopStatus.SUSPENDED;
             await upsertShop(shop, { status: terminatedStatus });
             console.warn(
                 `[Subscription] Subscription ${normalizedStatus} for ${shop} — status set to ${terminatedStatus}`,
