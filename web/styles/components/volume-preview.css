@@ -498,7 +498,6 @@
     background: linear-gradient(
         to right,
         var(--rb-primary-color, #303030) 0%,
-        var(--rb-primary-color, #303030) var(--rb-slider-fill-pct, 0%),
         var(--rb-border-color, #e5e7eb) var(--rb-slider-fill-pct, 0%),
         var(--rb-border-color, #e5e7eb) 100%
     );
