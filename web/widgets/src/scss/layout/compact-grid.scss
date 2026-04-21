@@ -79,7 +79,7 @@
         display: flex;
         align-items: stretch;
         gap: 4px;
-        padding: var(--rb-gap-spacing, 12px);
+        padding: var(--rb-box-spacing, 12px) var(--rb-box-spacing, 12px) 10px;
         position: relative;
     }
 
@@ -93,7 +93,7 @@
         background: var(--rb-product-bg-color, #fff);
 
         &--trigger {
-            border: 1.5px solid
+            border: 1px solid
                 color-mix(
                     in srgb,
                     var(--rb-primary-color, #e0598b) 13%,
@@ -102,7 +102,7 @@
         }
 
         &--reward {
-            border: 1.5px solid
+            border: 1px solid
                 color-mix(
                     in srgb,
                     var(--rb-savings-color, #16a34a) 13%,
@@ -145,7 +145,7 @@
     }
 
     &__tile--trigger &__tile-image {
-        border: 2px solid
+        border: 1px solid
             color-mix(
                 in srgb,
                 var(--rb-primary-color, #e0598b) 20%,
@@ -154,7 +154,7 @@
     }
 
     &__tile--reward &__tile-image {
-        border: 2px solid
+        border: 1px solid
             color-mix(
                 in srgb,
                 var(--rb-savings-color, #16a34a) 20%,
@@ -319,8 +319,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 10px var(--rb-gap-spacing, 12px) var(--rb-gap-spacing, 12px)
-        var(--rb-gap-spacing, 12px);
+        padding: 10px var(--rb-box-spacing, 12px) var(--rb-box-spacing, 12px);
         gap: 12px;
     }
 

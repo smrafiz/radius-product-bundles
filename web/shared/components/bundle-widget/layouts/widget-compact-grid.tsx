@@ -15,6 +15,7 @@ import {
     getImageSize,
     getPadding,
     getSpacing,
+    SPACING_VALUES,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -81,7 +82,7 @@ function ProductTile({
                 padding: "16px 12px 12px",
                 borderRadius: cardRadius,
                 backgroundColor: cardBg,
-                border: `1.5px solid ${accentColor}22`,
+                border: `1px solid ${accentColor}22`,
             }}
         >
             {product.image && displayOptions.showImages && (
@@ -92,7 +93,7 @@ function ProductTile({
                         borderRadius: cardRadius,
                         overflow: "hidden",
                         background: styles.productCardBg || "#f9fafb",
-                        border: `2px solid ${accentColor}33`,
+                        border: `1px solid ${accentColor}33`,
                     }}
                 >
                     <img
@@ -381,6 +382,9 @@ export function WidgetCompactGrid({
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const bodyFontSize = getFontSize(styles.bodySize);
     const gap = getSpacing(styles.spacing);
+    const padding = getPadding(styles.spacing);
+    const spacingValues =
+        SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
 
     if (!products.length) {
         return (
@@ -484,7 +488,8 @@ export function WidgetCompactGrid({
                     alignItems: "stretch",
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                     gap: 4,
-                    padding: `${parseInt(gap)}px ${parseInt(gap)}px 10px`,
+                    padding: `${parseInt(padding)}px ${parseInt(padding)}px 10px`,
+
                 }}
             >
                 <TileSlider
@@ -549,7 +554,7 @@ export function WidgetCompactGrid({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: `10px ${parseInt(gap)}px ${parseInt(gap)}px`,
+                    padding: `10px ${parseInt(padding)}px ${parseInt(padding)}px`,
                     gap: 12,
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                 }}

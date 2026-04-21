@@ -58,7 +58,7 @@ function ChecklistTriggerItem({
                 alignItems: "center",
                 gap: 12,
                 padding: 12,
-                border: `2px solid ${styles.borderColor || "#d1d5db"}`,
+                border: `1px solid ${styles.borderColor || "#d1d5db"}`,
                 borderRadius: cardRadius,
                 background: cardBg,
             }}
@@ -69,7 +69,7 @@ function ChecklistTriggerItem({
                     height: 20,
                     minWidth: 20,
                     borderRadius: 4,
-                    border: `2px solid ${styles.borderColor || "#d1d5db"}`,
+                    border: `1px solid ${styles.borderColor || "#d1d5db"}`,
                     background: styles.backgroundColor || "#fff",
                 }}
             />
@@ -427,8 +427,8 @@ export function WidgetChecklist({
             <div
                 style={{
                     border: isUnlocked
-                        ? `2px dashed ${styles.savingsColor || "#16a34a"}`
-                        : `2px solid ${styles.borderColor || "#d1d5db"}`,
+                        ? `1px dashed ${styles.savingsColor || "#16a34a"}`
+                        : `1px solid ${styles.borderColor || "#d1d5db"}`,
                     borderRadius: cardRadius,
                     padding: 16,
                     background: cardBg,

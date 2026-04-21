@@ -94,7 +94,7 @@
         align-items: center;
         gap: 12px;
         padding: 12px;
-        border: 2px solid var(--rb-border-color, #e5e7eb);
+        border: 1px solid var(--rb-border-color, #e5e7eb);
         border-radius: var(--rb-border-radius, 8px);
         background: var(
             --rb-product-bg-color,
@@ -221,7 +221,7 @@
     // ── Reward Section ───────────────────────────────────────────────
     &__reward {
         position: relative;
-        border: 2px solid var(--rb-border-color, #e5e7eb);
+        border: 1px solid var(--rb-border-color, #e5e7eb);
         border-radius: var(--rb-border-radius, 12px);
         padding: var(--rb-box-spacing, 16px);
         background: var(
@@ -237,7 +237,7 @@
 
         &--unlocked {
             opacity: 1;
-            border: 2px dashed var(--rb-savings-color, #16a34a);
+            border: 1px dashed var(--rb-savings-color, #16a34a);
         }
     }
 
