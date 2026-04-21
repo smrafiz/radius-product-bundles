@@ -11,7 +11,7 @@ import {
 } from "@/features/settings";
 import { useFormContext } from "react-hook-form";
 import { useTranslations } from "@/lib/i18n/provider";
-import { RtpbRangeSlider, useCrossSellStore, usePlan } from "@/shared";
+import { ProBadge, RtpbRangeSlider, useCrossSellStore, usePlan } from "@/shared";
 import { STYLE_PRESETS } from "@/features/settings/constants/defaults.constants";
 
 /**
@@ -123,9 +123,7 @@ function DynamicFormFieldWrapper(props: DynamicCustomizerFieldProps) {
         >
             <div className="pointer-events-none opacity-40">{inner}</div>
             <div className="absolute inset-0 flex items-center justify-center z-10">
-                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-md">
-                    <s-icon type="lock" tone="neutral" />
-                </span>
+                <ProBadge label={lockLabel} />
             </div>
         </div>
     );
