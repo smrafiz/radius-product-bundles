@@ -521,7 +521,8 @@ function useBadgeText(labels: WidgetLabels): string {
                     vids.length === 1 &&
                     (firstTitle === "Default Title" ||
                         firstTitle === "Default");
-                return sum + (vids.length > 1 && !isDefault ? vids.length : 1);
+                const variantCount = vids.length > 1 && !isDefault ? vids.length : 1;
+                return sum + variantCount * (i.quantity ?? 1);
             }, 0);
     const triggerCount = countExpanded("TRIGGER");
     const rewardCount = countExpanded("REWARD");

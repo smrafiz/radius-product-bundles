@@ -5,6 +5,7 @@ import type {
     BundleStructure,
 } from "./types";
 import {
+    buildBxgyBadgeText,
     escapeHtml,
     formatLabel,
     formatMoney,
@@ -287,29 +288,7 @@ export function renderClassicCardProducts(
         `;
     };
 
-    let headerBadge = labels?.bogoBadgeText || "";
-    if (!headerBadge) {
-        const buyQty = structure.buyQuantity || triggers.length || 1;
-        const getQty = structure.getQuantity || rewards.length || 1;
-        const buyText = labels?.bogoBuyText || "Buy";
-        const getText = labels?.bogoGetText || "Get";
-        if (
-            structure.discountType === "PERCENTAGE" &&
-            structure.discountValue === 100
-        ) {
-            headerBadge = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
-        } else if (
-            structure.discountType === "PERCENTAGE" &&
-            structure.discountValue > 0
-        ) {
-            headerBadge = `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
-        } else if (
-            structure.discountType === "FIXED_AMOUNT" &&
-            structure.discountValue > 0
-        ) {
-            headerBadge = `${buyText} ${buyQty} ${getText} ${getQty} at ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
-        }
-    }
+    const headerBadge = buildBxgyBadgeText(structure, triggers, rewards);
 
     let html = `<div class="rb-classic__header">`;
     if (headerBadge && ctx.showSavingsBadge) {
@@ -583,34 +562,9 @@ export function renderBogoMinimalistProducts(
 
     const triggerProduct = triggers[0];
 
-    const minLabels = structure.labels;
     let badgeHtml = "";
-
     if (savings > 0 && ctx.showSavingsBadge) {
-        let badgeText = minLabels?.bogoBadgeText || "";
-        if (!badgeText) {
-            const buyQty = triggers.length || structure.buyQuantity || 1;
-            const getQty = rewards.length || structure.getQuantity || 1;
-            const freeText = minLabels?.bogoFreeText || "FREE";
-            const buyText = minLabels?.bogoBuyText || "Buy";
-            const getText = minLabels?.bogoGetText || "Get";
-            if (
-                structure.discountType === "PERCENTAGE" &&
-                structure.discountValue === 100
-            ) {
-                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
-            } else if (
-                structure.discountType === "PERCENTAGE" &&
-                structure.discountValue > 0
-            ) {
-                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
-            } else if (
-                structure.discountType === "FIXED_AMOUNT" &&
-                structure.discountValue > 0
-            ) {
-                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
-            }
-        }
+        const badgeText = buildBxgyBadgeText(structure, triggers, rewards);
         if (badgeText) {
             badgeHtml = `<span class="rb-minimalist__badge">${badgeText}</span>`;
         }
@@ -628,8 +582,8 @@ export function renderBogoMinimalistProducts(
         pricingHtml += `<span class="rb-minimalist__price-compare">${formatMoney(totalOriginal)}</span>`;
     }
 
-    const freeText = minLabels?.bogoFreeText || "FREE";
-    const triggerBadge = minLabels?.bogoTriggerBadgeText || "You Buy";
+    const freeText = structure.labels?.bogoFreeText || "FREE";
+    const triggerBadge = structure.labels?.bogoTriggerBadgeText || "You Buy";
     let rewardBadge: string;
     if (
         structure.discountType === "PERCENTAGE" &&
@@ -647,7 +601,7 @@ export function renderBogoMinimalistProducts(
     ) {
         rewardBadge = `${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
     } else {
-        rewardBadge = minLabels?.bogoRewardBadgeText || "You Get";
+        rewardBadge = structure.labels?.bogoRewardBadgeText || "You Get";
     }
 
     const renderMinItem = (p: BundleProduct, isReward: boolean): string => {
@@ -846,33 +800,10 @@ export function renderBogoCompactGridProducts(
         );
     const savings = totalOriginal - totalDiscounted;
 
-    let badgeText = "";
-    if (savings > 0 && ctx.showSavingsBadge) {
-        badgeText = labels?.bogoBadgeText || "";
-        if (!badgeText) {
-            const buyQty = triggers.length || structure.buyQuantity || 1;
-            const getQty = rewards.length || structure.getQuantity || 1;
-            const freeText = labels?.bogoFreeText || "FREE";
-            const buyText = labels?.bogoBuyText || "Buy";
-            const getText = labels?.bogoGetText || "Get";
-            if (
-                structure.discountType === "PERCENTAGE" &&
-                structure.discountValue === 100
-            ) {
-                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
-            } else if (
-                structure.discountType === "PERCENTAGE" &&
-                structure.discountValue > 0
-            ) {
-                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
-            } else if (
-                structure.discountType === "FIXED_AMOUNT" &&
-                structure.discountValue > 0
-            ) {
-                badgeText = `${buyText} ${buyQty} ${getText} ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
-            }
-        }
-    }
+    const badgeText =
+        savings > 0 && ctx.showSavingsBadge
+            ? buildBxgyBadgeText(structure, triggers, rewards)
+            : "";
 
     const renderTile = (product: BundleProduct, isReward: boolean): string => {
         const imageHtml =
@@ -1369,29 +1300,7 @@ export function renderSplitDealProducts(
         rewardLabel = labels?.bogoRewardBadgeText || "Get";
     }
 
-    let badgeText = labels?.bogoBadgeText || "";
-    if (!badgeText) {
-        const buyQty = structure.buyQuantity || triggers.length || 1;
-        const getQty = structure.getQuantity || rewards.length || 1;
-        const buyText = labels?.bogoBuyText || "Buy";
-        const getText = labels?.bogoGetText || "Get";
-        if (
-            structure.discountType === "PERCENTAGE" &&
-            structure.discountValue === 100
-        ) {
-            badgeText = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
-        } else if (
-            structure.discountType === "PERCENTAGE" &&
-            structure.discountValue > 0
-        ) {
-            badgeText = `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
-        } else if (
-            structure.discountType === "FIXED_AMOUNT" &&
-            structure.discountValue > 0
-        ) {
-            badgeText = `${buyText} ${buyQty} ${getText} ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
-        }
-    }
+    const badgeText = buildBxgyBadgeText(structure, triggers, rewards);
 
     const renderProduct = (
         product: BundleProduct,

@@ -9,6 +9,7 @@ import type {
     ProductDetailsResponse,
 } from "./lib/types";
 import {
+    buildBxgyBadgeText,
     countBundlesInCart,
     extractNumericId,
     formatLabel,
@@ -579,45 +580,27 @@ import type { VolumeContext } from "./lib/types";
             const isBxgy =
                 structure.bundleType === "BOGO" ||
                 structure.bundleType === "BUY_X_GET_Y";
-            const roles = Array.isArray(structure.productRoles)
-                ? structure.productRoles
-                : [];
-            const triggers = roles.filter((r) => r === "TRIGGER");
-            const rewards = roles.filter((r) => r === "REWARD");
-            const isSameProductBogo =
-                structure.bundleType === "BOGO" && rewards.length === 0;
-            const buyQty = isSameProductBogo
-                ? structure.buyQuantity || 1
-                : triggers.length || structure.buyQuantity || 1;
-            const getQty = isSameProductBogo
-                ? structure.getQuantity || 1
-                : rewards.length || structure.getQuantity || 1;
 
             if (isBxgy) {
-                const buyText = structure.labels?.bogoBuyText || "Buy";
-                const getText = structure.labels?.bogoGetText || "Get";
-                const freeText = structure.labels?.bogoFreeText || "FREE";
-                if (
-                    structure.discountType === "PERCENTAGE" &&
-                    structure.discountValue === 100
-                ) {
-                    badgeText = `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
-                } else if (
-                    structure.discountType === "PERCENTAGE" &&
-                    structure.discountValue > 0
-                ) {
-                    badgeText = `${buyText} ${buyQty} ${getText} ${getQty} at ${structure.discountValue}% off`;
-                } else if (
-                    structure.discountType === "FIXED_AMOUNT" &&
-                    structure.discountValue > 0
-                ) {
-                    badgeText = `${buyText} ${buyQty} ${getText} ${getQty} - Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
-                } else if (
-                    structure.discountType === "CUSTOM_PRICE" &&
-                    structure.discountValue > 0
-                ) {
-                    badgeText = `${buyText} ${buyQty} ${getText} ${getQty} for ${trimMoney(formatMoney(structure.discountValue * 100))}`;
-                }
+                const roles = Array.isArray(structure.productRoles)
+                    ? structure.productRoles
+                    : [];
+                const qtys = Array.isArray(structure.productQuantities)
+                    ? structure.productQuantities
+                    : [];
+                const toProducts = (role: string) =>
+                    roles.reduce<Array<{ quantity: number }>>(
+                        (arr, r, i) =>
+                            r === role
+                                ? [...arr, { quantity: qtys[i] ?? 1 }]
+                                : arr,
+                        [],
+                    );
+                badgeText = buildBxgyBadgeText(
+                    structure,
+                    toProducts("TRIGGER"),
+                    toProducts("REWARD"),
+                );
             } else if (structure.bundleType === "VOLUME_DISCOUNT") {
                 const volConfig = parseVolumeTiers(structure);
                 if (volConfig?.tiers?.length) {
