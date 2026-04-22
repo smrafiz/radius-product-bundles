@@ -861,12 +861,11 @@
         justify-content: space-between;
         gap: 12px;
         padding: 14px 16px;
-        border: 1px solid var(--rb-border-color, #e5e7eb);
+        border: var(--rb-card-border);
         border-radius: var(--rb-border-radius, 8px);
         background: var(--rb-product-bg-color, #fff);
 
         &--savings {
-            border: 1px solid var(--rb-savings-color, #16a34a);
             background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 6%, var(--rb-background-color, #fff));
         }
     }

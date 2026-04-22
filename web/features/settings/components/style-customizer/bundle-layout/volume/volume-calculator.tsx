@@ -170,7 +170,13 @@ export function VolumeCalculator({
             )}
 
             {unitPrice > 0 && (
-                <div className="rb-vol-calc__calc-row" data-calc-total="">
+                <div className="rb-vol-calc__calc-row" data-calc-total=""
+                     style={{
+                         border: styles.productCardBorder
+                             ? `1px solid ${styles.borderColor}`
+                             : "none",
+                     }}
+                >
                     <span className="rb-vol-calc__calc-label">{labels?.volumeTotalCostLabel || PREVIEW_LABELS.volumeTotalCostLabel}</span>
                     <div className="rb-vol-calc__calc-value-wrap">
                         <span
@@ -188,7 +194,12 @@ export function VolumeCalculator({
             {unitPrice > 0 && displayOptions?.showSavings && (
                 <div
                     className="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"
-                    style={{ display: hasSavings ? undefined : "none" }}
+                    style={{
+                        display: hasSavings ? undefined : "none",
+                        border: styles.productCardBorder
+                            ? `1px solid ${styles.borderColor}`
+                            : "none",
+                    }}
                 >
                     <span className="rb-vol-calc__calc-label">{labels?.volumeYouSaveLabel || PREVIEW_LABELS.volumeYouSaveLabel}</span>
                     <div className="rb-vol-calc__calc-value-wrap">
@@ -211,7 +222,12 @@ export function VolumeCalculator({
                 <div
                     className="rb-vol-calc__calc-row"
                     data-calc-cpu=""
-                    style={{ display: hasSavings ? undefined : "none" }}
+                    style={{
+                        display: hasSavings ? undefined : "none",
+                        border: styles.productCardBorder
+                            ? `1px solid ${styles.borderColor}`
+                            : "none",
+                    }}
                 >
                     <span className="rb-vol-calc__calc-label">
                         {labels?.volumeCostPerUnitLabel || PREVIEW_LABELS.volumeCostPerUnitLabel}
