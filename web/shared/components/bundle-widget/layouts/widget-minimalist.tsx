@@ -65,7 +65,6 @@ function MinimalistItem({
         <div
             style={{
                 display: "flex",
-                alignItems: "center",
                 gap: 10,
                 padding: "15px 10px",
                 background: `color-mix(in srgb, ${roleColor} 6%, ${styles.backgroundColor || "white"})`,
