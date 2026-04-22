@@ -300,14 +300,12 @@ export function WidgetSleek({
                     style={{
                         width: 28,
                         height: 28,
+                        textAlign: "center",
+                        lineHeight: "24px",
                         borderRadius: "50%",
                         background: styles.backgroundColor || "#fff",
-                        border: `1.5px solid ${styles.borderColor || "#e5e7eb"}`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
                         fontSize: 15,
-                        fontWeight: 700,
                         color: styles.textColor || "#9ca3af",
                         flexShrink: 0,
                     }}

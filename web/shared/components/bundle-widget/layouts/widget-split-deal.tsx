@@ -317,17 +317,14 @@ export function WidgetSplitDeal({
                 >
                     <span
                         style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
                             width: 28,
                             height: 28,
+                            textAlign: "center",
+                            lineHeight: "27px",
                             background: styles.primaryColor || "#303030",
                             color: "#fff",
                             borderRadius: "50%",
                             fontSize: 16,
-                            fontWeight: 700,
-                            lineHeight: 1,
                         }}
                     >
                         +

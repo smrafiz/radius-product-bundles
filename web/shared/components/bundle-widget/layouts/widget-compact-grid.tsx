@@ -515,12 +515,10 @@ export function WidgetCompactGrid({
                             height: 32,
                             borderRadius: "50%",
                             background: styles.backgroundColor || "#fff",
-                            border: `2px solid ${styles.borderColor || "#e5e7eb"}`,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
+                            textAlign: "center",
+                            lineHeight: "28px",
                             fontSize: 16,
-                            fontWeight: 600,
                             color: styles.textColor || "#9ca3af",
                         }}
                     >

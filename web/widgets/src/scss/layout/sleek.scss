@@ -197,14 +197,12 @@
     &__divider-icon {
         width: 28px;
         height: 28px;
+        text-align: center;
+        line-height: 24px;
         border-radius: 50%;
         background: var(--rb-background-color, #fff);
-        border: 1.5px solid var(--rb-border-color, #e5e7eb);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        border: 1px solid var(--rb-border-color, #e5e7eb);
         font-size: 15px;
-        font-weight: 700;
         color: var(--rb-text-color, #9ca3af);
         flex-shrink: 0;
     }

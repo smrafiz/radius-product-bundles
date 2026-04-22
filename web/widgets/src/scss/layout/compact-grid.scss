@@ -301,14 +301,12 @@
     &__connector {
         width: 32px;
         height: 32px;
+        text-align: center;
+        line-height: 28px;
         border-radius: 50%;
         background: var(--rb-background-color, #fff);
-        border: 2px solid var(--rb-border-color, #e5e7eb);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        border: 1px solid var(--rb-border-color, #e5e7eb);
         font-size: 16px;
-        font-weight: 700;
         color: var(--rb-text-color, #333);
         flex-shrink: 0;
         align-self: center;
