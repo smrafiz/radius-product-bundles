@@ -16,32 +16,30 @@
 // Base Bundle Container
 // ==========================================================================
 
-.radius-bundle-widget {
-    .radius-bundle {
-        max-width: var(--rb-bundle-max-width, #{$rb-max-width});
+.radius-bundle {
+    max-width: var(--rb-bundle-max-width, #{$rb-max-width});
 
-        // Widget alignment (data-box-align attribute)
-        &[data-box-align="left"] {
-            margin-inline-start: 0;
-            margin-inline-end: auto;
-            .radius-bundle__actions {
-                text-align: start;
-            }
+    // Widget alignment (data-box-align attribute)
+    &[data-box-align="left"] {
+        margin-inline-start: 0;
+        margin-inline-end: auto;
+        .radius-bundle__actions {
+            text-align: start;
         }
+    }
 
-        &[data-box-align="center"] {
-            margin-inline: auto;
-            .radius-bundle__actions {
-                text-align: center;
-            }
+    &[data-box-align="center"] {
+        margin-inline: auto;
+        .radius-bundle__actions {
+            text-align: center;
         }
+    }
 
-        &[data-box-align="right"] {
-            margin-inline-start: auto;
-            margin-inline-end: 0;
-            .radius-bundle__actions {
-                text-align: end;
-            }
+    &[data-box-align="right"] {
+        margin-inline-start: auto;
+        margin-inline-end: 0;
+        .radius-bundle__actions {
+            text-align: end;
         }
     }
 }
