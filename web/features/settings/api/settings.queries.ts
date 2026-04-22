@@ -49,5 +49,28 @@ export function settingsQueries(app: ReturnType<typeof useAppBridge>) {
                 refetchOnWindowFocus: false,
                 retry: 2,
             }),
+
+        /**
+         * Per-locale labels query. Each locale gets its own cache entry
+         * so switching between previously loaded locales is instant.
+         */
+        labels: (locale: string) =>
+            queryOptions({
+                queryKey: settingsQueryKeys.labels(locale),
+                queryFn: async () => {
+                    const token = await app.idToken();
+                    const result = await getSettingsAction(token, locale);
+
+                    if (result.status === "error") {
+                        throw new Error(result.message);
+                    }
+
+                    return result.data?.labels ?? null;
+                },
+                staleTime: 5 * 60 * 1000,
+                gcTime: 10 * 60 * 1000,
+                refetchOnWindowFocus: false,
+                retry: 1,
+            }),
     };
 }

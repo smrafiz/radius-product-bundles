@@ -309,12 +309,15 @@ function transformFormDataToSettings(
         // General - Performance
         lazyLoadImages: data.lazyLoadImages,
 
-        // Labels (JSON field) — if locale pre-merged, pass through; otherwise sanitize flat labels
-        labels: data.labels
-            ? localePreMerged
-                ? data.labels
-                : sanitizeLabels(data.labels as Record<string, string>)
-            : null,
+        // Labels (JSON field) — if locale pre-merged, pass through; otherwise sanitize flat labels.
+        // undefined → omit from write (preserve existing); explicit null → clear.
+        ...(data.labels !== undefined && {
+            labels: data.labels
+                ? localePreMerged
+                    ? data.labels
+                    : sanitizeLabels(data.labels as Record<string, string>)
+                : null,
+        }),
 
         // Style (JSON field)
         globalStyles: data.globalStyles ?? null,

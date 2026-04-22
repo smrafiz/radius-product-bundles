@@ -51,6 +51,13 @@ export function useSettingsSubmit(options: UseSettingsSubmitOptions = {}) {
                 // Update React Query cache
                 queryClient.setQueryData(settingsQueryKeys.detail(), savedData);
 
+                // Invalidate per-locale labels cache so next switch refetches
+                if (!isCustomizerMode(options)) {
+                    void queryClient.invalidateQueries({
+                        queryKey: settingsQueryKeys.allLabels(),
+                    });
+                }
+
                 // Mode-specific cleanup
                 if (isCustomizerMode(options)) {
                     markClean();
@@ -107,8 +114,12 @@ export function useSettingsSubmit(options: UseSettingsSubmitOptions = {}) {
                 options.currentSettings ??
                 (getDefaultValuesFromConfig() as AppSettingsFormData);
 
+            // Only send globalStyles — never include labels from the
+            // customizer path, as baseSettings may carry stale/partial
+            // label data that would overwrite the full locale-keyed blob.
+            const { labels: _labels, ...settingsWithoutLabels } = baseSettings;
             const updatedSettings: AppSettingsFormData = {
-                ...baseSettings,
+                ...settingsWithoutLabels,
                 globalStyles,
             };
 
