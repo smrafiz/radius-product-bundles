@@ -39,6 +39,11 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
         try {
             const navigate = bundleData.create(bundleType.slug);
             navigate();
+
+            setTimeout(() => {
+                const modal = document.getElementById(`modal-${bundleType.id}`);
+                if (modal) modal.remove();
+            }, 300);
         } catch (error) {
             console.error("Navigation error:", error);
             setSelectingBundleId(null);
@@ -145,14 +150,13 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                 <s-stack>
                                     <s-button
                                         variant="primary"
-                                        commandFor={`modal-${bundleType.id}`}
-                                        command="--hide"
                                         onClick={
                                             isProLocked
                                                 ? handleSelect
                                                 : withLoader(handleSelect)
                                         }
                                         loading={isThisCardSelecting}
+                                        disabled={isAnotherCardSelecting}
                                     >
                                         {bundleType.comingSoon
                                             ? t("comingSoon")
