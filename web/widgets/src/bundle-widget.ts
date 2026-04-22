@@ -212,6 +212,17 @@ import type { VolumeContext } from "./lib/types";
                     parsed.discountedProductIds = ensureArray(
                         parsed.discountedProductIds,
                     );
+                    // Liquid auto-escapes {{ var }} and | escape on the full JSON
+                    // double-encodes user content (e.g. "Bundle & Save" → "&amp;").
+                    // The browser decodes one level via dataset, but JSON.parse does
+                    // not decode HTML entities — so decode them here.
+                    const decodeHtml = (s: string) => {
+                        const d = document.createElement("div");
+                        d.innerHTML = s;
+                        return d.textContent ?? s;
+                    };
+                    if (parsed.name) parsed.name = decodeHtml(parsed.name);
+                    if (parsed.subtitle) parsed.subtitle = decodeHtml(parsed.subtitle);
                     this.bundleStructure = parsed;
                 } catch (e) {
                     console.warn(

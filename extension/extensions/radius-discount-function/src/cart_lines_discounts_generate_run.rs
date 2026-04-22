@@ -745,21 +745,47 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    let cart_attr = match input.cart().attribute() {
-        Some(attr) => attr,
-        None => return Ok(no_discount),
-    };
+    // Primary: read bundle list from cart-level _radiusDiscounts attribute.
+    // Fallback: if cart attribute is missing (e.g. timing race between widget write
+    // and checkout function invocation), reconstruct from line-level _bundle_id
+    // properties. The metafield is the authoritative source of truth for bundle
+    // config and product membership, so this fallback is safe.
+    let cart_configs: Vec<CartBundleConfig> = {
+        let from_attr = input
+            .cart()
+            .attribute()
+            .and_then(|a| a.value())
+            .and_then(|v| {
+                serde_json::from_str::<Vec<CartBundleConfig>>(v)
+                    .map_err(|e| {
+                        log!("[RadiusDiscount] Failed to parse cart attribute: {}", e);
+                        e
+                    })
+                    .ok()
+            });
 
-    let cart_attr_value = match cart_attr.value() {
-        Some(v) => v,
-        None => return Ok(no_discount),
-    };
-
-    let cart_configs: Vec<CartBundleConfig> = match serde_json::from_str(cart_attr_value) {
-        Ok(c) => c,
-        Err(e) => {
-            log!("[RadiusDiscount] Failed to parse cart attribute: {}", e);
-            return Ok(no_discount);
+        match from_attr {
+            Some(configs) if !configs.is_empty() => configs,
+            _ => {
+                // Fallback: collect unique bundle IDs from line _bundle_id properties.
+                let mut seen = std::collections::HashSet::new();
+                let mut fallback: Vec<CartBundleConfig> = Vec::new();
+                for line in input.cart().lines().iter() {
+                    if let Some(bid) = line.attribute().and_then(|a| a.value()) {
+                        let bid = bid.to_string();
+                        if !bid.is_empty() && bid.len() <= 100 && seen.insert(bid.clone()) {
+                            fallback.push(CartBundleConfig {
+                                bundle_id: bid,
+                                bundle_name: None,
+                            });
+                        }
+                    }
+                }
+                if !fallback.is_empty() {
+                    log!("[RadiusDiscount] cart attribute missing; fell back to {} bundle(s) from line properties", fallback.len());
+                }
+                fallback
+            }
         }
     };
 
@@ -767,10 +793,10 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    // Limit cart configs to prevent DoS via crafted cart attributes
+    // Limit cart configs to prevent DoS via crafted line properties
     if cart_configs.len() > 50 {
         log!(
-            "[RadiusDiscount] Too many bundle configs in cart attribute: {}",
+            "[RadiusDiscount] Too many bundle configs: {}",
             cart_configs.len()
         );
         return Ok(no_discount);
