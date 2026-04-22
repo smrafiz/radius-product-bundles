@@ -48,8 +48,6 @@ export function WidgetProductCard({
         product.variantTitle && !isDefaultVariant
             ? `${product.title} / ${product.variantTitle}`
             : product.title;
-    const truncatedTitle =
-        fullTitle.length > 40 ? `${fullTitle.slice(0, 40)}...` : fullTitle;
 
     const cardStyle: React.CSSProperties = showCardStyle
         ? {
@@ -104,10 +102,10 @@ export function WidgetProductCard({
     const titleEl =
         displayOptions.enableHyperLink && product.url ? (
             <a href={product.url} className="hover:underline">
-                {truncatedTitle}
+                {fullTitle}
             </a>
         ) : (
-            <span>{truncatedTitle}</span>
+            <span>{fullTitle}</span>
         );
 
     const priceEl = displayOptions.showPrices && (
@@ -183,11 +181,11 @@ export function WidgetProductCard({
                     style={{
                         fontWeight: 500,
                         marginBottom: "8px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        whiteSpace: "normal",
                         textAlign:
                             styles.imagePosition === "top"
                                 ? "center"
@@ -241,11 +239,11 @@ export function WidgetProductCard({
                     style={{
                         fontWeight: 500,
                         marginBottom: "4px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
                         display: "-webkit-box",
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        whiteSpace: "normal",
                     }}
                 >
                     {titleEl}

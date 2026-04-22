@@ -289,8 +289,8 @@ export function renderClassicCardProducts(
 
     let headerBadge = labels?.bogoBadgeText || "";
     if (!headerBadge) {
-        const buyQty = triggers.length || structure.buyQuantity || 1;
-        const getQty = rewards.length || structure.getQuantity || 1;
+        const buyQty = structure.buyQuantity || triggers.length || 1;
+        const getQty = structure.getQuantity || rewards.length || 1;
         const buyText = labels?.bogoBuyText || "Buy";
         const getText = labels?.bogoGetText || "Get";
         if (
@@ -1371,8 +1371,8 @@ export function renderSplitDealProducts(
 
     let badgeText = labels?.bogoBadgeText || "";
     if (!badgeText) {
-        const buyQty = triggers.length || structure.buyQuantity || 1;
-        const getQty = rewards.length || structure.getQuantity || 1;
+        const buyQty = structure.buyQuantity || triggers.length || 1;
+        const getQty = structure.getQuantity || rewards.length || 1;
         const buyText = labels?.bogoBuyText || "Buy";
         const getText = labels?.bogoGetText || "Get";
         if (

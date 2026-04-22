@@ -496,6 +496,7 @@
         "sameProductLabel": "Same product for both",
         "sameProductBogoDetails": "Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)",
         "sameProductBxgyDetails": "Use the same products for both Buy and Get groups",
+        "sameProductHint": "Select your Buy product(s) first, then enable this toggle to automatically use them as the Get product(s) too.",
         "roleBuy": "Buy",
         "roleGet": "Get",
         "role": "Role",

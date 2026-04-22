@@ -28,6 +28,7 @@ function ProductTile({
 }: {
     product: {
         title: string;
+        variantTitle?: string;
         image?: string;
         price: string;
         compareAtPrice?: string;
@@ -53,6 +54,10 @@ function ProductTile({
     const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
     const rewardBadgeText =
         labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
     const rewardBadge = isFreePrice
@@ -131,14 +136,17 @@ function ProductTile({
                     color: styles.textColor,
                     textAlign: "center",
                     lineHeight: "1.3",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
                     overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    whiteSpace: "normal",
                     maxWidth: "100%",
                 }}
             >
-                {product.title}
+                {displayTitle}
             </div>
-            
+
             {quantityEl}
 
             <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>

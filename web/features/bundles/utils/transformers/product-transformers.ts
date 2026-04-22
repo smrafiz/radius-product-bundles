@@ -49,6 +49,20 @@ export function createSelectedItem(
     const variants = product.variants || [];
     const variantIds = variants.map((v: any) => v.id);
     const defaultVariant = variants[0];
+    const selectedVariantObjs: SelectedItem["variants"] = variants.map((v: any) => ({
+        id: v.id,
+        title: v.title || "",
+        price: v.price || "0.00",
+        compareAtPrice: v.compareAtPrice || null,
+        image: v.image?.originalSrc || v.image?.url || undefined,
+        availableForSale: v.availableForSale !== false,
+        inventoryQuantity: v.inventoryQuantity || 0,
+    }));
+
+    const isDefaultVariant =
+        defaultVariant?.title === "Default Title" ||
+        defaultVariant?.title === "Default";
+    const isSingleVariantSelected = variantIds.length === 1 && !isDefaultVariant;
 
     return {
         id: `product-${product.id}`,
@@ -74,5 +88,17 @@ export function createSelectedItem(
         isRequired: options?.isRequired ?? true,
         inventoryQuantity: defaultVariant?.inventoryQuantity || 0,
         availableForSale: defaultVariant?.availableForSale !== false,
+        selectedVariant: isSingleVariantSelected && defaultVariant
+            ? {
+                  id: defaultVariant.id,
+                  title: defaultVariant.title,
+                  price: defaultVariant.price || "0.00",
+                  compareAtPrice: defaultVariant.compareAtPrice || null,
+                  availableForSale: defaultVariant.availableForSale !== false,
+                  inventoryQuantity: defaultVariant.inventoryQuantity || 0,
+                  productId: product.id,
+              }
+            : undefined,
+        variants: (selectedVariantObjs ?? []).length > 0 ? selectedVariantObjs : undefined,
     };
 }

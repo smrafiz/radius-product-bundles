@@ -44,13 +44,14 @@ export function ProductList({
     isVolume?: boolean;
 }) {
     const t = useTranslations("Bundles.Creation.Products");
-    const { getGroupedItems, selectedItems, setItemRole, removeItemById } =
+    const { getGroupedItems, selectedItems, setItemRole, removeItemById, setSameProductMode } =
         useBundleStore(
             useShallow((s) => ({
                 getGroupedItems: s.getGroupedItems,
                 selectedItems: s.selectedItems,
                 setItemRole: s.setItemRole,
                 removeItemById: s.removeItemById,
+                setSameProductMode: s.setSameProductMode,
             })),
         );
     const sameProductMode = useBundleStore((s) => s.bundleData.sameProductMode);
@@ -115,6 +116,11 @@ export function ProductList({
             );
             toRemove.forEach((i) => removeItemById(i.id));
         } else {
+            // BXGY same-product mode: removing a mirrored reward exits same-product
+            // mode so the next product pick is treated as a normal reward, not re-mirrored.
+            if (sameProductMode && itemId.startsWith("reward-")) {
+                setSameProductMode(false);
+            }
             removeItemById(itemId);
         }
     };

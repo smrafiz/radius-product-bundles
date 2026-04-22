@@ -103,7 +103,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                 const mirrored = triggers.map((t) => ({
                     ...t,
                     role: "REWARD" as const,
-                    id: `reward-${t.productId}`,
+                    id: `reward-${t.id}`,
                 }));
                 const combined = [...withRoles, ...mirrored];
                 prevLengthRef.current = combined.length;
@@ -182,7 +182,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                 .map((item) => ({
                     ...item,
                     role: "REWARD" as const,
-                    id: `reward-${item.productId}`,
+                    id: `reward-${item.id}`,
                 }));
 
             const combined = [...currentNonReward, ...mirroredRewards];
@@ -289,24 +289,31 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                     )}
                     <ProductList isBxgy={isBxgy} isBogo={isBogo} isVolume={isVolume} />
                     {isBxgy && (
-                        <s-switch
-                            label={t("sameProductLabel")}
-                            details={
-                                isBogo
-                                    ? t("sameProductBogoDetails")
-                                    : t("sameProductBxgyDetails")
-                            }
-                            checked={bundleData.sameProductMode || false}
-                            onInput={(event: Event) => {
-                                const target = event.target as HTMLInputElement;
-                                if (
-                                    target.checked !==
-                                    bundleData.sameProductMode
-                                ) {
-                                    handleSameProductToggle();
+                        <s-stack gap="small-200">
+                            <s-switch
+                                label={t("sameProductLabel")}
+                                details={
+                                    isBogo
+                                        ? t("sameProductBogoDetails")
+                                        : t("sameProductBxgyDetails")
                                 }
-                            }}
-                        />
+                                checked={bundleData.sameProductMode || false}
+                                onInput={(event: Event) => {
+                                    const target = event.target as HTMLInputElement;
+                                    if (
+                                        target.checked !==
+                                        bundleData.sameProductMode
+                                    ) {
+                                        handleSameProductToggle();
+                                    }
+                                }}
+                            />
+                            {!bundleData.sameProductMode && selectedItems.length > 0 && (
+                                <s-banner tone="info">
+                                    {t("sameProductHint")}
+                                </s-banner>
+                            )}
+                        </s-stack>
                     )}
                 </s-stack>
             </s-section>

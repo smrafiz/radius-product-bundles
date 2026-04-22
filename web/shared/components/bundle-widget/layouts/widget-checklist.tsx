@@ -43,6 +43,10 @@ function ChecklistTriggerItem({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const imageSizePx = getImageSize(styles.imageSize);
     const cardBg = getCardBgColor(styles);
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
 
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
@@ -100,12 +104,14 @@ function ChecklistTriggerItem({
                         fontSize: bodyFontSize,
                         fontWeight: 500,
                         color: styles.textColor,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "normal",
                     }}
                 >
-                    {product.title}
+                    {displayTitle}
                 </div>
                 {quantityEl}
             </div>
@@ -163,6 +169,10 @@ function ChecklistRewardItem({
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
     const cardBg = getCardBgColor(styles);
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
             {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
@@ -199,12 +209,14 @@ function ChecklistRewardItem({
                         fontSize: bodyFontSize,
                         fontWeight: 500,
                         color: styles.textColor,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "normal",
                     }}
                 >
-                    {product.title}
+                    {displayTitle}
                 </div>
                 {quantityEl}
                 <div

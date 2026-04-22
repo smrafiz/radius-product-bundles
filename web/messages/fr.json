@@ -487,6 +487,7 @@
         "sameProductLabel": "Même produit pour les deux",
         "sameProductBogoDetails": "Le client achète et reçoit le même produit (p. ex. : BOGO)",
         "sameProductBxgyDetails": "Utiliser les mêmes produits pour les groupes « Acheter » et « Obtenir »",
+        "sameProductHint": "Veuillez d'abord sélectionner le(s) produit(s) Buy, puis activer ce bouton pour les utiliser automatiquement en tant que produit(s) Get également.",
         "roleBuy": "Acheter",
         "roleGet": "Obtenir",
         "role": "Rôle",

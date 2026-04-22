@@ -33,6 +33,10 @@ function SplitProductCard({
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
     const cardBg = getCardBgColor(styles);
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
@@ -85,7 +89,7 @@ function SplitProductCard({
                         WebkitBoxOrient: "vertical",
                     }}
                 >
-                    {product.title}
+                    {displayTitle}
                 </div>
                 {quantityEl}
                 <div

@@ -39,6 +39,10 @@ function SleekProductCard({
     const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
     const rewardBadgeText = isFreePrice
         ? freeText
         : pricing?.hasDiscount && pricing.savingsAmount
@@ -117,12 +121,14 @@ function SleekProductCard({
                         fontWeight: 500,
                         color: styles.textColor,
                         lineHeight: "1.3",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "normal",
                     }}
                 >
-                    {product.title}
+                    {displayTitle}
                 </div>
                 {quantityEl}
                 {isTrigger && displayOptions.showSavingsBadge ? (

@@ -128,6 +128,15 @@ export interface SelectedItem {
         inventoryQuantity: number;
         productId: string;
     };
+    variants?: Array<{
+        id: string;
+        title: string;
+        price: string;
+        compareAtPrice?: string | null;
+        image?: string;
+        availableForSale: boolean;
+        inventoryQuantity: number;
+    }>;
 }
 
 /**

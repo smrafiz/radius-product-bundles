@@ -41,6 +41,10 @@ function ClassicProductItem({
     const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
 
     const imageBlock = product.image && displayOptions.showImages && (
         <div
@@ -82,7 +86,7 @@ function ClassicProductItem({
                     WebkitBoxOrient: "vertical",
                 }}
             >
-                {product.title}
+                {displayTitle}
             </div>
             <div
                 style={{

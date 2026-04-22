@@ -148,6 +148,9 @@ export interface BundleState {
         value: ExtendedBundleFormData[K],
     ) => void;
 
+    // Variant data map — stable lookup immune to item recreation
+    variantDataMap: Record<string, { title: string; price: string; image?: string }>;
+
     // Selected items actions
     setSelectedItems: (items: SelectedItem[]) => void;
     addSelectedItems: (items: SelectedItem[]) => void;

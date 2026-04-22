@@ -170,6 +170,7 @@ export function ProductItem({
                                 direction="inline"
                                 alignItems="center"
                                 gap="small"
+                                rowGap="none"
                             >
                                 <s-text tone="caution">
                                     {t("variantsSelected", {

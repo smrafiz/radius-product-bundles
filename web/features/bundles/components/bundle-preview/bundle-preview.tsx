@@ -305,10 +305,11 @@ function useWidgetStyles(
 }
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
-    const { selectedItems, bundleData } = useBundleStore(
+    const { selectedItems, bundleData, variantDataMap } = useBundleStore(
         useShallow((s) => ({
             selectedItems: s.selectedItems,
             bundleData: s.bundleData,
+            variantDataMap: s.variantDataMap,
         })),
     );
     const isBxgy =
@@ -319,47 +320,63 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
         const discountValue = bundleData.discountValue ?? 0;
 
         if (isBxgy) {
-            return selectedItems.map((item) => {
-                const unitPrice = parseFloat(item.price) || 0;
+            const rows: PreviewProduct[] = [];
+            for (const item of selectedItems) {
                 const isReward = item.role === "REWARD";
-                let discountedUnitPrice = unitPrice;
+                const vids = item.variantIds ?? [];
+                // Check if this should expand into per-variant rows
+                const firstVarData = variantDataMap[vids[0]];
+                const isDefault =
+                    vids.length === 1 &&
+                    (firstVarData?.title === "Default Title" ||
+                        firstVarData?.title === "Default");
+                const shouldExpand = vids.length > 1 && !isDefault;
 
-                if (isReward && discountType && discountValue > 0) {
-                    switch (discountType) {
-                        case "PERCENTAGE":
-                            discountedUnitPrice =
-                                unitPrice * (1 - discountValue / 100);
-                            break;
-                        case "FIXED_AMOUNT":
-                            discountedUnitPrice = Math.max(
-                                0,
-                                unitPrice - discountValue,
-                            );
-                            break;
-                        case "CUSTOM_PRICE":
-                            discountedUnitPrice = discountValue;
-                            break;
+                const idsToRender = shouldExpand ? vids : [item.variantId || item.id];
+
+                idsToRender.forEach((vid, vi) => {
+                    const vData = variantDataMap[vid];
+                    const unitPrice = parseFloat(
+                        (shouldExpand && vData?.price) || item.price || "0",
+                    ) || 0;
+                    let dp = unitPrice;
+
+                    if (isReward && discountType && discountValue > 0) {
+                        switch (discountType) {
+                            case "PERCENTAGE":
+                                dp = unitPrice * (1 - discountValue / 100);
+                                break;
+                            case "FIXED_AMOUNT":
+                                dp = Math.max(0, unitPrice - discountValue);
+                                break;
+                            case "CUSTOM_PRICE":
+                                dp = discountValue;
+                                break;
+                        }
                     }
-                }
 
-                discountedUnitPrice =
-                    Math.round(discountedUnitPrice * 100) / 100;
-                const hasDiscount = discountedUnitPrice < unitPrice;
-                return {
-                    id: item.id,
-                    title: item.title,
-                    variantId: item.variantId,
-                    variantTitle: item.selectedVariant?.title,
-                    image: item.image,
-                    price: formatPrice(discountedUnitPrice, currencyCode),
-                    compareAtPrice: hasDiscount
-                        ? formatPrice(unitPrice, currencyCode)
-                        : undefined,
-                    quantity: item.quantity,
-                    url: item.url,
-                    role: item.role,
-                };
-            });
+                    dp = Math.round(dp * 100) / 100;
+                    const hasDiscount = dp < unitPrice;
+                    const vTitle = vData?.title;
+                    const isDef =
+                        vTitle === "Default Title" || vTitle === "Default";
+                    rows.push({
+                        id: shouldExpand ? `${item.id}-v${vi}` : item.id,
+                        title: item.title,
+                        variantId: vid,
+                        variantTitle: vTitle && !isDef ? vTitle : undefined,
+                        image: (shouldExpand && vData?.image) || item.image,
+                        price: formatPrice(dp, currencyCode),
+                        compareAtPrice: hasDiscount
+                            ? formatPrice(unitPrice, currencyCode)
+                            : undefined,
+                        quantity: item.quantity,
+                        url: item.url,
+                        role: item.role,
+                    });
+                });
+            }
+            return rows;
         }
 
         const applyToSpecific = bundleData.discountApplication === DiscountApplication.PRODUCTS;
@@ -431,6 +448,7 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
         bundleData.discountApplication,
         bundleData.discountedProductIds,
         bundleData.maxDiscountAmount,
+        variantDataMap,
         currencyCode,
     ]);
 }
@@ -481,10 +499,11 @@ function useWidgetLabels(): WidgetLabels {
 
 function useBadgeText(labels: WidgetLabels): string {
     const t = useTranslations("Bundles.Creation.Preview");
-    const { bundleData, selectedItems } = useBundleStore(
+    const { bundleData, selectedItems, variantDataMap } = useBundleStore(
         useShallow((s) => ({
             bundleData: s.bundleData,
             selectedItems: s.selectedItems,
+            variantDataMap: s.variantDataMap,
         })),
     );
     const { currencyCode } = useShopSettings();
@@ -492,10 +511,20 @@ function useBadgeText(labels: WidgetLabels): string {
 
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
 
-    const triggerCount = selectedItems.filter(
-        (i) => i.role === "TRIGGER",
-    ).length;
-    const rewardCount = selectedItems.filter((i) => i.role === "REWARD").length;
+    const countExpanded = (role: string) =>
+        selectedItems
+            .filter((i) => i.role === role)
+            .reduce((sum, i) => {
+                const vids = i.variantIds ?? [];
+                const firstTitle = variantDataMap[vids[0]]?.title;
+                const isDefault =
+                    vids.length === 1 &&
+                    (firstTitle === "Default Title" ||
+                        firstTitle === "Default");
+                return sum + (vids.length > 1 && !isDefault ? vids.length : 1);
+            }, 0);
+    const triggerCount = countExpanded("TRIGGER");
+    const rewardCount = countExpanded("REWARD");
     const buy = triggerCount || (bundleData.buyQuantity ?? 1);
     const get = rewardCount || (bundleData.getQuantity ?? 1);
     const discountType = bundleData.discountType;

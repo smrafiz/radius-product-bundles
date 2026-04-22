@@ -219,9 +219,11 @@
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 500;
         color: var(--rb-text-color, #333);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
         margin: 0;
         a {
             color: var(--rb-text-color);
