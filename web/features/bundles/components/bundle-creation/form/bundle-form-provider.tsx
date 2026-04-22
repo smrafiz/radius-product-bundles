@@ -16,7 +16,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "@/lib/i18n/provider";
 import { useSettingsStore } from "@/features/settings";
-import { blockSaveBar, VALIDATION_ERROR } from "@/shared";
+import { blockSaveBar, usePlan, VALIDATION_ERROR } from "@/shared";
 import { BundleCreationSkeleton } from "@/features/bundles";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
@@ -55,6 +55,12 @@ export function BundleFormProvider({
     const serverData = useSettingsStore((s) => s.serverData);
     const isSettingsLoading = useSettingsStore((s) => s.isLoading);
     const settings = useSettingsStore.getState().getEffectiveData();
+    const { plan } = usePlan();
+
+    const safeDiscountType = (type: unknown): DiscountType =>
+        typeof type === "string" && plan.limits.allowedDiscountTypes.includes(type as DiscountType)
+            ? (type as DiscountType)
+            : "PERCENTAGE";
 
     const isNewBundle = !initialData;
     const isWaitingForSettings =
@@ -68,8 +74,9 @@ export function BundleFormProvider({
             type: bundleType,
             status: initialData?.status || "DRAFT",
             products: initialData?.products || [],
-            discountType: (initialData?.discountType ??
-                settings.defaultDiscountType) as DiscountType,
+            discountType: initialData?.discountType
+                ? (initialData.discountType as DiscountType)
+                : safeDiscountType(settings.defaultDiscountType),
             discountValue:
                 initialData?.discountValue ??
                 (settings.defaultDiscountValue as number) ??
@@ -125,9 +132,7 @@ export function BundleFormProvider({
                 resetBundle(bundleType);
                 setBundleData({
                     type: bundleType,
-                    discountType:
-                        (settings?.defaultDiscountType as DiscountType) ??
-                        "PERCENTAGE",
+                    discountType: safeDiscountType(settings?.defaultDiscountType),
                     discountValue:
                         (settings?.defaultDiscountValue as number) ?? 0,
                 });
@@ -214,8 +219,7 @@ export function BundleFormProvider({
         if (isEditMode || settingsApplied.current || !serverData) return;
 
         const saved = useSettingsStore.getState().getEffectiveData();
-        const discountType =
-            (saved.defaultDiscountType as DiscountType) ?? "PERCENTAGE";
+        const discountType = safeDiscountType(saved.defaultDiscountType);
         const discountValue = (saved.defaultDiscountValue as number) ?? 0;
 
         setValue("discountType", discountType, { shouldDirty: false });
