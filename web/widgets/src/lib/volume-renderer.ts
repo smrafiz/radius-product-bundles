@@ -532,8 +532,10 @@ export function initVolumeSlider(
 
         // Update ATC button text
         if (btnTextEl) {
-            const base = bundleStructure.labels?.addToCartText || "Add to Cart";
-            btnTextEl.textContent = `${base} (${qty})`;
+            const raw = bundleStructure.labels?.addToCartText || "Add to Cart";
+            const ta = document.createElement("textarea");
+            ta.innerHTML = raw;
+            btnTextEl.textContent = `${ta.value} (${qty})`;
         }
 
         if (unitPriceCents <= 0) return;
@@ -908,8 +910,10 @@ export function initVolumeCalculator(
 
         // Update ATC button text
         if (btnTextEl) {
-            const base = bundleStructure.labels?.addToCartText || "Add to Cart";
-            btnTextEl.textContent = `${base} (${clampedQty})`;
+            const raw = bundleStructure.labels?.addToCartText || "Add to Cart";
+            const ta = document.createElement("textarea");
+            ta.innerHTML = raw;
+            btnTextEl.textContent = `${ta.value} (${clampedQty})`;
         }
 
         if (unitPriceCents <= 0) return;
@@ -1132,8 +1136,9 @@ export function initVolumeTierSelection(
 
     function updateAtcText(qty: number): void {
         if (!btnTextEl) return;
-        const base = bundleStructure.labels?.addToCartText || "Add to Cart";
-        btnTextEl.textContent = `${base} (${qty})`;
+        const ta = document.createElement("textarea");
+        ta.innerHTML = bundleStructure.labels?.addToCartText || "Add to Cart";
+        btnTextEl.textContent = `${ta.value} (${qty})`;
     }
 
     // ── Tier selection ─────────────────────────────────────────────────
