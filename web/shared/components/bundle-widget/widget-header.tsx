@@ -14,6 +14,7 @@ export function WidgetHeader({
     pricing,
     title,
     subtitle,
+    badgeText,
 }: WidgetHeaderProps) {
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const badgeRadius = getBadgeRadius(styles.cornerStyle);
@@ -67,13 +68,13 @@ export function WidgetHeader({
                 )}
             </div>
 
-            {displayOptions.showSavingsBadge && pricing.hasDiscount && (
+            {displayOptions.showSavingsBadge && (badgeText || pricing.hasDiscount) && (
                 <div
                     style={{ alignSelf: isInline ? "center" : undefined }}
                 >
                     <span
                         className="radius-bundle__badge"
-                        aria-label={`Save ${pricing.savingsPercentage}%`}
+                        aria-label={badgeText ?? `Save ${pricing.savingsPercentage}%`}
                         style={{
                             display: "inline-block",
                             borderRadius: badgeRadius,
@@ -89,7 +90,7 @@ export function WidgetHeader({
                                 : "none",
                         }}
                     >
-                        Save {pricing.savingsPercentage}%
+                        {badgeText ?? `Save ${pricing.savingsPercentage}%`}
                     </span>
                 </div>
             )}

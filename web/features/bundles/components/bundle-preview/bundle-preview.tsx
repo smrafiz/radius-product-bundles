@@ -511,6 +511,24 @@ function useBadgeText(labels: WidgetLabels): string {
     const { currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
 
+    // VOLUME_DISCOUNT badge: "Up to X% off" / "Up to $X off" / "From $X"
+    if (bundleData.type === "VOLUME_DISCOUNT") {
+        const volConfig = bundleData.volumeTiers as VolumeDiscountConfig | undefined;
+        if (!volConfig?.tiers?.length) return "";
+        const maxTier = volConfig.tiers[volConfig.tiers.length - 1];
+        const firstTier = volConfig.tiers[0];
+        if (volConfig.discountType === "PERCENTAGE") {
+            return `Up to ${Math.round(maxTier.discount)}% off`;
+        }
+        if (volConfig.discountType === "FIXED_AMOUNT") {
+            return `Up to ${currencySymbol}${maxTier.discount} off`;
+        }
+        if (volConfig.discountType === "CUSTOM_PRICE") {
+            return `From ${currencySymbol}${firstTier.discount}`;
+        }
+        return "";
+    }
+
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
 
     const countExpanded = (role: string) =>
@@ -892,6 +910,7 @@ export function BundlePreview() {
                                             title={displaySettings.title}
                                             subtitle={displaySettings.subtitle}
                                             labels={labels}
+                                            badgeText={badgeText}
                                             hideFooter
                                             hidePricing
                                         >

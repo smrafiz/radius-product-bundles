@@ -103,6 +103,7 @@ export interface BundleWidgetProps {
     subtitle?: string;
     cartButtonText?: string;
     labels?: WidgetLabels;
+    badgeText?: string;
     hideFooter?: boolean;
     hideHeader?: boolean;
     hidePricing?: boolean;
@@ -138,6 +139,7 @@ export interface WidgetHeaderProps {
     pricing: WidgetPricing;
     title?: string;
     subtitle?: string;
+    badgeText?: string;
 }
 
 export interface WidgetPricingProps {
