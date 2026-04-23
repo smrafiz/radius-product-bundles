@@ -35,10 +35,7 @@ export async function getRegisteredWebhooks(
     return response.data.webhookSubscriptions.edges.map((edge) => ({
         id: edge.node.id,
         topic: edge.node.topic,
-        callbackUrl:
-            edge.node.endpoint?.__typename === "WebhookHttpEndpoint"
-                ? edge.node.endpoint.callbackUrl
-                : null,
+        callbackUrl: edge.node.uri ?? null,
         createdAt: edge.node.createdAt,
         updatedAt: edge.node.updatedAt,
     }));

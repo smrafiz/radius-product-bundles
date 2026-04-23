@@ -4,12 +4,7 @@ query GetWebhookSubscriptions($first: Int!) {
             node {
                 id
                 topic
-                endpoint {
-                    __typename
-                    ... on WebhookHttpEndpoint {
-                        callbackUrl
-                    }
-                }
+                uri
                 createdAt
                 updatedAt
             }
