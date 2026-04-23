@@ -12,7 +12,6 @@
         &--list {
             display: flex;
             flex-direction: column;
-            gap: var(--rb-gap-spacing);
         }
     }
 
@@ -109,6 +108,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 8px 0;
     }
     .radius-bundle__divider--plus {
         display: flex;
@@ -117,13 +117,13 @@
         .divider-position {
             width: 24px;
             height: 24px;
-            line-height: 23px;
+            line-height: 22px;
             text-align: center;
             background: var(--rb-primary-color);
             color: var(--rb-button-text-color);
             border-radius: 50%;
             z-index: 1;
-            position: absolute;
+            position: relative;
         }
     }
 

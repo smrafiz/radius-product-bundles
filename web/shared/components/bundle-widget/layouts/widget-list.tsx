@@ -42,7 +42,6 @@ export function WidgetList({
                 style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: gap,
                 }}
             >
                 {visibleItems.map((product, index) => (
@@ -66,7 +65,8 @@ export function WidgetList({
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    paddingTop: gap,
+                                    paddingTop: styles.dividerStyle === "plus" ? "8px" : gap,
+                                    paddingBottom: styles.dividerStyle === "plus" ? "8px" : undefined,
                                 }}
                             >
                                 {styles.dividerStyle === "plus" ? (
@@ -83,8 +83,7 @@ export function WidgetList({
                                                 backgroundColor:
                                                     styles.primaryColor,
                                                 color: "#fff",
-                                                bottom: `calc(-1 * ${gap} / 2 - 8px)`,
-                                                marginBottom: `calc(${gap} / 2 - 4px)`,
+                                                position: "relative",
                                             }}
                                         >
                                             +
