@@ -6,8 +6,10 @@ import {
     RevenueAOVChart,
 } from "@/features/analytics";
 import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function AnalyticsComparisonCharts() {
+    const t = useTranslations("Analytics.Charts");
     const { canUse } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
 
@@ -21,17 +23,17 @@ export function AnalyticsComparisonCharts() {
                     <s-grid gap="base" gridTemplateColumns="repeat(2, 1fr)">
                         <s-grid-item>
                             <s-section>
-                                <LockedChartPlaceholder title="Customer Journey Funnel" />
+                                <LockedChartPlaceholder title={t("funnelTitle")} />
                             </s-section>
                         </s-grid-item>
                         <s-grid-item>
                             <s-section>
-                                <LockedChartPlaceholder title="Conversion Performance" />
+                                <LockedChartPlaceholder title={t("conversionTitle")} />
                             </s-section>
                         </s-grid-item>
                     </s-grid>
                     <s-section>
-                        <LockedChartPlaceholder title="Revenue Analysis" />
+                        <LockedChartPlaceholder title={t("revenueTitle")} />
                     </s-section>
                 </s-stack>
             </div>
