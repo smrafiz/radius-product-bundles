@@ -601,7 +601,9 @@
         "productTitlePlaceholder": "Bundle Product #5",
         "uploadInvalidSingle": "File too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC",
         "uploadInvalidMultiple": "{count} files too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC",
-        "uploadDuplicate": "Duplicate image(s) already added"
+        "uploadDuplicate": "Duplicate image(s) already added",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Describe this bundle product..."
       },
       "Appearance": {
         "displayHeading": "Display Settings",
