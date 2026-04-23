@@ -32,6 +32,7 @@ type TabKey = (typeof TAB_KEYS)[number];
 
 export function AnalyticsTabs() {
     const t = useTranslations("Analytics.Tabs");
+    const tAllBundles = useTranslations("Analytics.AllBundles");
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabParam = searchParams.get("tab") as TabKey | null;
@@ -127,7 +128,7 @@ export function AnalyticsTabs() {
                                     className="cursor-pointer"
                                     onClick={() =>
                                         openCrossSell(
-                                            "All Bundles Performance",
+                                            tAllBundles("heading"),
                                         )
                                     }
                                 >
@@ -138,11 +139,11 @@ export function AnalyticsTabs() {
                                             alignItems="center"
                                         >
                                             <s-heading>
-                                                All Bundles Performance
+                                                {tAllBundles("heading")}
                                             </s-heading>
                                         </s-stack>
                                         <div className="h-48 rounded-lg bg-gray-50 flex items-center justify-center">
-                                            <ProBadge label="All Bundles Performance" />
+                                            <ProBadge label={tAllBundles("heading")} />
                                         </div>
                                     </s-stack>
                                 </div>
