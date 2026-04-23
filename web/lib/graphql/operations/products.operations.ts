@@ -72,7 +72,9 @@ async function fetchProductsFromShopifyUncached(
                     tracked: var_.inventoryItem?.tracked ?? false,
                 },
                 ...(var_.sku && { sku: var_.sku }),
-                ...(var_.image && { image: var_.image }),
+                ...((var_ as any).media?.nodes?.[0]?.image && {
+                    image: (var_ as any).media.nodes[0].image,
+                }),
             } as ProductVariant);
         });
     });
