@@ -1,34 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="168" height="136" viewBox="0 0 168 136" fill="none">
-  <rect width="168" height="136" rx="8" fill="#F9FAFB"/>
-  <!-- Qty input -->
-  <text x="8" y="14" font-size="6" fill="#374151" font-family="system-ui" font-weight="500">Enter Quantity</text>
-  <rect x="8" y="18" width="152" height="20" rx="6" fill="#fff" stroke="#6366F1" stroke-width="1.5"/>
-  <text x="78" y="32" font-size="10" fill="#6366F1" font-family="system-ui" font-weight="700">5</text>
-  <text x="144" y="28" font-size="6" fill="#9CA3AF" font-family="system-ui">▲</text>
-  <text x="144" y="35" font-size="6" fill="#9CA3AF" font-family="system-ui">▼</text>
-  <!-- Total Cost -->
-  <rect x="8" y="44" width="152" height="16" rx="5" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
-  <text x="14" y="55" font-size="6" fill="#374151" font-family="system-ui">Total Cost</text>
-  <rect x="110" y="49" width="42" height="6" rx="2" fill="#6366F1" opacity="0.6"/>
-  <!-- You Save -->
-  <rect x="8" y="64" width="152" height="20" rx="5" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="1"/>
-  <text x="14" y="75" font-size="6" fill="#374151" font-family="system-ui">You Save</text>
-  <rect x="116" y="69" width="36" height="7" rx="2" fill="#16A34A" opacity="0.6"/>
-  <rect x="118" y="78" width="32" height="4" rx="2" fill="#9CA3AF" opacity="0.4"/>
-  <!-- Cost Per Unit -->
-  <rect x="8" y="88" width="152" height="16" rx="5" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
-  <text x="14" y="99" font-size="6" fill="#374151" font-family="system-ui">Cost Per Unit</text>
-  <rect x="118" y="93" width="34" height="6" rx="2" fill="#374151" opacity="0.5"/>
-  <!-- Tier pills -->
-  <rect x="8" y="108" width="22" height="10" rx="5" fill="#E5E7EB"/>
-  <text x="14" y="115" font-size="5" fill="#6B7280" font-family="system-ui">1+</text>
-  <rect x="34" y="108" width="34" height="10" rx="5" fill="#E5E7EB"/>
-  <text x="38" y="115" font-size="5" fill="#6B7280" font-family="system-ui">3+ (-8%)</text>
-  <rect x="72" y="108" width="38" height="10" rx="5" fill="#6366F1"/>
-  <text x="76" y="115" font-size="5" fill="#fff" font-family="system-ui" font-weight="600">5+ (-20%)</text>
-  <rect x="114" y="108" width="42" height="10" rx="5" fill="#E5E7EB"/>
-  <text x="118" y="115" font-size="5" fill="#6B7280" font-family="system-ui">10+ (-28%)</text>
-  <!-- ATC -->
-  <rect x="8" y="122" width="152" height="10" rx="4" fill="#6366F1"/>
-  <text x="56" y="130" font-size="6" fill="#fff" font-family="system-ui" font-weight="500">Add to Cart</text>
+<svg width="96" height="76" viewBox="0 0 96 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="96" height="76" rx="3" fill="white"/>
+<rect x="8" y="64.6235" width="79.959" height="5.12646" rx="1" fill="#004BFF"/>
+<rect x="37.9795" y="66.1865" width="20" height="2" rx="0.6" fill="white"/>
+<rect x="8" y="58.5" width="10" height="3" rx="0.6" fill="#D2D8E2"/>
+<rect x="20" y="58.5" width="10" height="3" rx="0.6" fill="#D2D8E2"/>
+<rect x="32" y="58.5" width="10" height="3" rx="0.6" fill="#D2D8E2"/>
+<rect x="44" y="58.5" width="10" height="3" rx="0.6" fill="#D2D8E2"/>
+<g clip-path="url(#clip0_357_7619)">
+<rect x="8" y="7.5" width="80" height="27" rx="1.5" fill="#ECEEF2"/>
+</g>
+<rect x="8.25" y="48.75" width="79.5" height="5.5" rx="0.95" fill="white"/>
+<rect x="8.25" y="48.75" width="79.5" height="5.5" rx="0.95" stroke="#DCDCDC" stroke-width="0.5"/>
+<rect x="75.5" y="50.5" width="10" height="2" rx="0.5" fill="#004BFF"/>
+<rect x="10" y="50.5" width="14" height="2" rx="0.5" fill="#BDC5D7"/>
+<rect x="8.25" y="37.75" width="79.5" height="7.5" rx="1.25" fill="#F4F6F8"/>
+<rect x="8.25" y="37.75" width="79.5" height="7.5" rx="1.25" stroke="#DCDCDC" stroke-width="0.5"/>
+<rect x="43" y="40.5" width="10" height="2" rx="0.5" fill="#004BFF"/>
+<rect x="11" y="40.3271" width="5" height="2" rx="0.5" fill="#BDC5D7"/>
+<line x1="18.4863" y1="37.5" x2="18.4863" y2="45.3271" stroke="#DCDCDC" stroke-width="0.5"/>
+<rect width="5" height="2" rx="0.5" transform="matrix(-1 0 0 1 85.2363 40.3271)" fill="#BDC5D7"/>
+<line y1="-0.25" x2="7.82715" y2="-0.25" transform="matrix(4.37117e-08 1 1 -4.37117e-08 78 37.5)" stroke="#DCDCDC" stroke-width="0.5"/>
+<defs>
+<clipPath id="clip0_357_7619">
+<rect x="8" y="7.5" width="80" height="27" rx="1.5" fill="white"/>
+</clipPath>
+</defs>
 </svg>

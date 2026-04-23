@@ -421,25 +421,81 @@ function buildShopBundlesMetafieldValue(
               }, 0) || 0
             : 0;
 
-        const effectiveSavings = priceMap
-            ? calculateDiscountAmount(
-                  bundlePrice,
-                  bundle.discountType || "PERCENTAGE",
-                  bundle.discountValue || 0,
-                  bundle.maxDiscountAmount || 0,
-              )
-            : 0;
-
         const isBxgy = bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
+        const isVolume = bundle.type === "VOLUME_DISCOUNT";
+
+        let effectiveSavings = 0;
+        if (priceMap) {
+            if (isBxgy) {
+                // Savings on reward products only
+                const rewardTotal =
+                    bundleProducts
+                        .filter((bp) => bp.role === "REWARD")
+                        .reduce((sum, bp) => {
+                            const price =
+                                (bp.variantId && priceMap.get(bp.variantId)) ||
+                                priceMap.get(bp.productId) ||
+                                0;
+                            return sum + price * bp.quantity;
+                        }, 0) || 0;
+                effectiveSavings = calculateDiscountAmount(
+                    rewardTotal,
+                    bundle.discountType || "PERCENTAGE",
+                    bundle.discountValue || 0,
+                    bundle.maxDiscountAmount || 0,
+                );
+            } else if (isVolume && bundle.volumeTiers) {
+                // Highest tier for max savings estimate
+                const config =
+                    typeof bundle.volumeTiers === "string"
+                        ? JSON.parse(bundle.volumeTiers as string)
+                        : bundle.volumeTiers;
+                const tiers = (config?.tiers || []) as Array<{
+                    minQuantity?: number;
+                    discount?: number;
+                }>;
+                if (tiers.length) {
+                    const bestTier = tiers.reduce(
+                        (best, tier) =>
+                            (tier.discount || 0) > (best.discount || 0)
+                                ? tier
+                                : best,
+                        tiers[0],
+                    );
+                    const firstBp = bundleProducts[0];
+                    const unitPrice = firstBp
+                        ? (firstBp.variantId &&
+                              priceMap.get(firstBp.variantId)) ||
+                          priceMap.get(firstBp.productId) ||
+                          0
+                        : 0;
+                    const totalAtTier = unitPrice * (bestTier.minQuantity || 1);
+                    effectiveSavings = calculateDiscountAmount(
+                        totalAtTier,
+                        config?.discountType || "PERCENTAGE",
+                        bestTier.discount || 0,
+                        bundle.maxDiscountAmount || 0,
+                    );
+                }
+            } else {
+                // FIXED_BUNDLE and fallback
+                effectiveSavings = calculateDiscountAmount(
+                    bundlePrice,
+                    bundle.discountType || "PERCENTAGE",
+                    bundle.discountValue || 0,
+                    bundle.maxDiscountAmount || 0,
+                );
+            }
+        }
 
         const productRoles = isBxgy
             ? bundleProducts.map((bp) => bp.role || "INCLUDED")
             : undefined;
 
-        const productVariantIdsList = bundleProducts.map((bp) => bp.variantId || null);
+        const productVariantIdsList = bundleProducts.map(
+            (bp) => bp.variantId || null,
+        );
         const hasVariants = productVariantIdsList.some((v) => v !== null);
-
-        const isVolume = bundle.type === "VOLUME_DISCOUNT";
 
         bundleMap[bundle.id] = {
             status: bundle.status,
@@ -482,9 +538,10 @@ function buildShopBundlesMetafieldValue(
                 usesPerOrderLimit: bundle.usesPerOrderLimit || null,
                 productRoles: productRoles,
             }),
-            ...(isVolume && bundle.volumeTiers != null && {
-                volumeTiers: bundle.volumeTiers,
-            }),
+            ...(isVolume &&
+                bundle.volumeTiers != null && {
+                    volumeTiers: bundle.volumeTiers,
+                }),
         };
     }
 
@@ -505,7 +562,8 @@ function buildDiscountBundlesMetafieldValue(
         const bundleProducts = bundle.bundleProducts || [];
         const productQuantityMap: Record<string, number> = {};
         for (const bp of bundleProducts) {
-            productQuantityMap[bp.productId] = (productQuantityMap[bp.productId] || 0) + bp.quantity;
+            productQuantityMap[bp.productId] =
+                (productQuantityMap[bp.productId] || 0) + bp.quantity;
         }
 
         const isBxgy = bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y";
@@ -544,7 +602,8 @@ function buildDiscountBundlesMetafieldValue(
 
         const discountProductIdCounts: Record<string, number> = {};
         for (const bp of bundleProducts) {
-            discountProductIdCounts[bp.productId] = (discountProductIdCounts[bp.productId] || 0) + 1;
+            discountProductIdCounts[bp.productId] =
+                (discountProductIdCounts[bp.productId] || 0) + 1;
         }
         const productVariantIdsMap: Record<string, string> = {};
         for (const bp of bundleProducts) {
@@ -597,10 +656,11 @@ function buildDiscountBundlesMetafieldValue(
                 productRoles: productRoleMap,
                 variantRoles: hasVariantRoles ? variantRolesMap : null,
             }),
-            ...(isVolume && bundle.volumeTiers != null && {
-                bundleType: bundle.type,
-                volumeTiers: bundle.volumeTiers,
-            }),
+            ...(isVolume &&
+                bundle.volumeTiers != null && {
+                    bundleType: bundle.type,
+                    volumeTiers: bundle.volumeTiers,
+                }),
         };
     }
 
@@ -706,7 +766,9 @@ export async function syncActiveBundlesToMetafield(
                 value: discountValue,
             });
         } else {
-            console.warn("[Metafield] Bundle discount not found — shop metafield will still be written");
+            console.warn(
+                "[Metafield] Bundle discount not found — shop metafield will still be written",
+            );
         }
 
         const result = await executeGraphQLMutation<MetafieldsSetMutation>({
@@ -816,6 +878,20 @@ export async function syncAllSettingsToMetafields(
 
         const primaryLocale = shopRecord?.primaryLocale ?? "en";
 
+        // Resolve Pro status safely — don't let plan query crash the sync
+        let isPro = false;
+        try {
+            const shopPlan = await prisma.shopPlan.findFirst({
+                where: { shop: { domain: shop } },
+                select: { plan: true, status: true },
+            });
+            isPro =
+                (shopPlan?.status === "ACTIVE" && shopPlan?.plan === "PRO") ||
+                process.env.NEXT_PUBLIC_UNLOCK_ALL_FEATURES === "true";
+        } catch {
+            // No plan record = free plan
+        }
+
         // Fetch product prices for effective savings calculation
         const priceMap = await buildPriceMapForBundles(auth, activeBundles);
 
@@ -834,6 +910,7 @@ export async function syncAllSettingsToMetafields(
         const globalSettingsValue = buildGlobalSettingsMetafieldValue(
             globalSettings,
             primaryLocale,
+            isPro,
         );
         const shopBundlesValue = buildShopBundlesMetafieldValue(
             activeBundles,

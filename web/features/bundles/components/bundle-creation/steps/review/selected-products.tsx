@@ -6,7 +6,7 @@ import { useTranslations } from "@/lib/i18n/provider";
 
 export function SelectedProducts() {
     const t = useTranslations("Bundles.Creation.Review");
-    const { getGroupedItems } = useBundleStore();
+    const getGroupedItems = useBundleStore((s) => s.getGroupedItems);
     const [open, setOpen] = useState(true);
 
     const groupedItems = getGroupedItems();
@@ -85,9 +85,10 @@ export function SelectedProducts() {
 
                                     <s-stack
                                         direction="inline"
-                                        gap="small"
+                                        gap="small-400"
                                         alignItems="center"
                                     >
+                                        <s-text color="subdued">{group.quantity || 1} x</s-text>
                                         <s-heading>
                                             {group.product.title}
                                         </s-heading>

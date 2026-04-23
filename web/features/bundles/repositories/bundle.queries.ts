@@ -33,6 +33,20 @@ export async function findBundleStatusById(id: string, shop: string) {
 }
 
 /**
+ * Find only mainProductId and bundleProduct IDs for a bundle.
+ * Use instead of findBundleByIdWithAllRelations when only product IDs are needed.
+ */
+export async function findBundleProductIds(id: string, shop: string) {
+    return prisma.bundle.findFirst({
+        where: { id, shop },
+        select: {
+            mainProductId: true,
+            bundleProducts: { select: { productId: true } },
+        },
+    });
+}
+
+/**
  * Find bundle by ID
  */
 export async function findBundleById(
@@ -369,21 +383,22 @@ export async function getBundleActivity(
 ) {
     const since = new Date(Date.now() - hoursToCheck * 60 * 60 * 1000);
 
-    const createdCount = await prisma.bundle.count({
-        where: {
-            shop,
-            status: { not: "DELETED" as const },
-            createdAt: { gte: since },
-        },
-    });
-
-    const deletedCount = await prisma.bundle.count({
-        where: {
-            shop,
-            status: "DELETED",
-            deletedAt: { gte: since },
-        },
-    });
+    const [createdCount, deletedCount] = await Promise.all([
+        prisma.bundle.count({
+            where: {
+                shop,
+                status: { not: "DELETED" as const },
+                createdAt: { gte: since },
+            },
+        }),
+        prisma.bundle.count({
+            where: {
+                shop,
+                status: "DELETED",
+                deletedAt: { gte: since },
+            },
+        }),
+    ]);
 
     return {
         created: createdCount,

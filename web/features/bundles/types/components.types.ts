@@ -68,6 +68,7 @@ export interface BundleCreationFormProps {
     bundleType: BundleType;
     bundleName?: string;
     bundleId?: string;
+    updatedAt?: string;
 }
 
 /*
@@ -79,10 +80,6 @@ export interface BundleFormProviderProps {
     initialData?: Partial<BundleFormData>;
 }
 
-/*
- * Discount application types
- */
-export type DiscountApplication = "bundle" | "products";
 
 /*
  * Bundle bulk actions bar components

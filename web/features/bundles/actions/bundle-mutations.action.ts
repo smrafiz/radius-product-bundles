@@ -35,8 +35,8 @@ import { ApiResponse } from "@/shared";
 import {
     ProductDeleteDocument,
     ProductDeleteMutation,
-    ProductUpdateDocument,
-    ProductUpdateMutation,
+    ProductStatusUpdateDocument,
+    ProductStatusUpdateMutation,
 } from "@/lib/graphql/generated/graphql";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/shared/repositories";
@@ -54,6 +54,7 @@ import {
 import {
     clearMainProductByGid,
     findBundleByIdWithAllRelations,
+    findBundleProductIds,
     findBundlesByIdsWithAllRelations,
 } from "@/features/bundles/repositories";
 import { createBundleProductAction } from "@/features/bundles/actions/product-mutations.action";
@@ -86,9 +87,7 @@ export async function updateBundleStatusAction(
     endDate?: string,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         const result = await updateBundleStatusService({
             bundleId,
@@ -98,16 +97,16 @@ export async function updateBundleStatusAction(
             endDate: endDate ? new Date(endDate) : undefined,
         });
 
-        // Sync Shopify product status
         if (result.bundle?.mainProductId) {
             const updateResult =
-                await executeGraphQLMutation<ProductUpdateMutation>({
-                    query: ProductUpdateDocument,
+                await executeGraphQLMutation<ProductStatusUpdateMutation>({
+                    query: ProductStatusUpdateDocument,
                     variables: {
                         id: result.bundle.mainProductId,
                         status: getShopifyProductStatus(status),
                     },
-                    sessionToken,
+                    shop,
+                    accessToken: session.accessToken,
                 });
             if (isProductNotFoundError(updateResult)) {
                 console.warn(
@@ -117,8 +116,7 @@ export async function updateBundleStatusAction(
             }
         }
 
-        // Sync metafields so storefront reflects the status change
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        await syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop);
 
         revalidatePath("/bundles");
         revalidatePath(`/bundles/${bundleId}`);
@@ -133,7 +131,6 @@ export async function updateBundleStatusAction(
         console.error("[updateBundleStatus] Error:", error);
         const errorMessage =
             error instanceof Error ? error.message : String(error);
-
         return {
             status: "error" as const,
             message: errorMessage || "Failed to update bundle status",
@@ -152,9 +149,7 @@ export async function bulkToggleBundleStatusAction(
     currentStatus: "ACTIVE" | "DRAFT",
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         const result =
             currentStatus === "ACTIVE"
@@ -169,13 +164,11 @@ export async function bulkToggleBundleStatusAction(
             await Promise.all(
                 batch.map(async (productId) => {
                     const updateResult =
-                        await executeGraphQLMutation<ProductUpdateMutation>({
-                            query: ProductUpdateDocument,
-                            variables: {
-                                id: productId,
-                                status: productStatus,
-                            },
-                            sessionToken,
+                        await executeGraphQLMutation<ProductStatusUpdateMutation>({
+                            query: ProductStatusUpdateDocument,
+                            variables: { id: productId, status: productStatus },
+                            shop,
+                            accessToken: session.accessToken,
                         });
                     if (isProductNotFoundError(updateResult)) {
                         console.warn(
@@ -187,7 +180,7 @@ export async function bulkToggleBundleStatusAction(
             );
         }
 
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        await syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop);
 
         revalidatePath("/bundles");
         invalidateDashboardCache(shop);
@@ -201,10 +194,8 @@ export async function bulkToggleBundleStatusAction(
         };
     } catch (error) {
         console.error("[bulkUpdateBundleStatus] Error:", error);
-
         const errorMessage =
             error instanceof Error ? error.message : String(error);
-
         return {
             status: "error",
             message: errorMessage || "Failed to update bundle statuses",
@@ -222,29 +213,22 @@ export async function deleteBundleAction(
     bundleId: string,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
-        // Get bundle products before deletion for metafield cleanup
-        const bundle = await findBundleByIdWithAllRelations(bundleId, shop);
+        const bundle = await findBundleProductIds(bundleId, shop);
         const productIds =
             bundle?.bundleProducts?.map((bp) => bp.productId) || [];
 
-        const result = await deleteSingleBundleService({
-            bundleId,
-            shop,
-        });
-        await syncActiveBundlesToMetafield(sessionToken, shop);
+        const result = await deleteSingleBundleService({ bundleId, shop });
 
-        // Remove bundle ID from product metafields
+        await syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop);
+
         if (productIds.length > 0) {
             const metafieldResult = await removeBundleIdFromProducts(
                 sessionToken,
                 bundleId,
                 productIds,
             );
-
             if (!metafieldResult.success) {
                 console.warn(
                     "[deleteBundle] Metafield cleanup warning:",
@@ -253,13 +237,13 @@ export async function deleteBundleAction(
             }
         }
 
-        // Delete Shopify standalone product if one was created
         if (bundle?.mainProductId) {
             const deleteResult =
                 await executeGraphQLMutation<ProductDeleteMutation>({
                     query: ProductDeleteDocument,
                     variables: { productId: bundle.mainProductId },
-                    sessionToken,
+                    shop,
+                    accessToken: session.accessToken,
                 });
             if (deleteResult.errors?.length) {
                 console.warn(
@@ -282,7 +266,6 @@ export async function deleteBundleAction(
         console.error("[deleteBundle] Error:", error);
         const errorMessage =
             error instanceof Error ? error.message : String(error);
-
         return {
             status: "error" as const,
             message: errorMessage || "Failed to delete bundle",
@@ -300,9 +283,7 @@ export async function deleteBundlesAction(
     bundleIds: string[],
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         if (!bundleIds || bundleIds.length === 0) {
             return {
@@ -331,7 +312,7 @@ export async function deleteBundlesAction(
         const result = await deleteMultipleBundles({ bundleIds, shop });
 
         const deleteMetafieldResults = await Promise.allSettled([
-            syncActiveBundlesToMetafield(sessionToken, shop),
+            syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop),
             ...[...bundleProductMap.entries()].map(([bundleId, productIds]) =>
                 removeBundleIdFromProducts(sessionToken, bundleId, productIds),
             ),
@@ -350,7 +331,8 @@ export async function deleteBundlesAction(
                     executeGraphQLMutation<ProductDeleteMutation>({
                         query: ProductDeleteDocument,
                         variables: { productId },
-                        sessionToken,
+                        shop,
+                        accessToken: session.accessToken,
                     }),
                 ),
             );
@@ -358,11 +340,8 @@ export async function deleteBundlesAction(
         }
 
         revalidatePath("/bundles");
-
         if (bundleIds.length <= 10) {
-            bundleIds.forEach((bundleId) => {
-                revalidatePath(`/bundles/${bundleId}`);
-            });
+            bundleIds.forEach((id) => revalidatePath(`/bundles/${id}`));
         }
 
         return {
@@ -376,7 +355,6 @@ export async function deleteBundlesAction(
         console.error("[deleteMultipleBundles] Error:", error);
         const errorMessage =
             error instanceof Error ? error.message : String(error);
-
         return {
             status: "error",
             message: errorMessage || "Failed to delete bundles",
@@ -398,10 +376,7 @@ export async function duplicateBundleAction(
             session: { shop },
         } = await handleSessionToken(sessionToken);
 
-        const result = await duplicateBundleService({
-            bundleId,
-            shop,
-        });
+        const result = await duplicateBundleService({ bundleId, shop });
 
         if (!result.success) {
             return {
@@ -411,7 +386,6 @@ export async function duplicateBundleAction(
             };
         }
 
-        // Add metafields for duplicated bundle's products
         if (result.data?.bundle?.id) {
             const newBundleId = result.data.bundle.id;
             const productIds =
@@ -423,7 +397,6 @@ export async function duplicateBundleAction(
                     newBundleId,
                     productIds,
                 );
-
                 if (!metafieldResult.success) {
                     console.warn(
                         "[duplicateBundle] Metafield warning:",
@@ -432,7 +405,6 @@ export async function duplicateBundleAction(
                 }
             }
 
-            // Create a new standalone Shopify product if the original had one
             if (result.data.hadStandaloneProduct) {
                 const newBundle = result.data.bundle;
                 const productResult = await createBundleProductAction(
@@ -453,8 +425,6 @@ export async function duplicateBundleAction(
                             mainVariantId: productResult.data.mainVariantId,
                         },
                     });
-
-                    // Attach bundle ID metafield to the new standalone product
                     await addBundleIdToProducts(sessionToken, newBundleId, [
                         productResult.data.mainProductId,
                     ]);
@@ -470,13 +440,9 @@ export async function duplicateBundleAction(
         revalidatePath("/bundles");
         invalidateDashboardCache(shop);
 
-        return {
-            status: "success" as const,
-            ...result,
-        };
+        return { status: "success" as const, ...result };
     } catch (error) {
         console.error("[duplicateBundle] Error:", error);
-
         return {
             status: "error",
             message:
@@ -496,13 +462,9 @@ export async function createBundleAction(
     bundleData: CreateBundleActionInput,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
-        // Schema Validation (Fail Fast)
         const schemaValidation = bundleSchema.safeParse(bundleData);
-
         if (!schemaValidation.success) {
             return handleZodValidationError(schemaValidation.error);
         }
@@ -519,7 +481,6 @@ export async function createBundleAction(
                 errors: [metafieldSetupResult.error || "Unknown error"],
             };
         }
-
         if (!discountSetupResult.success) {
             return {
                 status: "error",
@@ -528,7 +489,6 @@ export async function createBundleAction(
             };
         }
 
-        // Call Service with Clean Data
         const result = await createBundleService({
             shop,
             data: schemaValidation.data,
@@ -552,7 +512,7 @@ export async function createBundleAction(
         }
 
         const createMetafieldResults = await Promise.allSettled([
-            syncActiveBundlesToMetafield(sessionToken, shop),
+            syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop),
             allProductIds.length > 0 && result.bundle?.id
                 ? addBundleIdToProducts(
                       sessionToken,
@@ -584,10 +544,8 @@ export async function createBundleAction(
         };
     } catch (error) {
         console.error("[createBundleAction] Error:", error);
-
         const errorMessage =
             error instanceof Error ? error.message : "Failed to create bundle";
-
         return {
             status: "error",
             message: errorMessage,
@@ -605,9 +563,7 @@ export async function updateBundleAction(
     bundleData: BundleFormData,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         if (!bundleId) {
             return {
@@ -623,12 +579,10 @@ export async function updateBundleAction(
         };
 
         const schemaValidation = bundleSchema.safeParse(sanitizedData);
-
         if (!schemaValidation.success) {
             return handleZodValidationError(schemaValidation.error);
         }
 
-        // Get old product IDs before update for metafield sync
         const existingBundle = await findBundleByIdWithAllRelations(
             bundleId,
             shop,
@@ -648,7 +602,6 @@ export async function updateBundleAction(
                 errors: [metafieldSetupResult.error || "Unknown error"],
             };
         }
-
         if (!discountSetupResult.success) {
             return {
                 status: "error",
@@ -682,7 +635,7 @@ export async function updateBundleAction(
             : newProductIds;
 
         const updateMetafieldResults = await Promise.allSettled([
-            syncActiveBundlesToMetafield(sessionToken, shop),
+            syncActiveBundlesToMetafield({ shop, accessToken: session.accessToken! }, shop),
             syncBundleProductMetafields(
                 sessionToken,
                 bundleId,
@@ -718,10 +671,8 @@ export async function updateBundleAction(
         };
     } catch (error) {
         console.error("[updateBundleAction] Unexpected error:", error);
-
         const errorMessage =
             error instanceof Error ? error.message : "Failed to update bundle";
-
         return {
             status: "error",
             message: errorMessage,
@@ -730,16 +681,7 @@ export async function updateBundleAction(
     }
 }
 
-/**
- * Sanitizes settings by converting null values to undefined.
- *
- * @param settings - Raw settings object from form
- * @returns Sanitized settings object
- */
 function sanitizeSettings(settings: any) {
-    if (!settings) {
-        return undefined;
-    }
-
+    if (!settings) return undefined;
     return { ...settings };
 }

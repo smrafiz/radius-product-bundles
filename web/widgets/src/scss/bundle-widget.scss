@@ -16,32 +16,30 @@
 // Base Bundle Container
 // ==========================================================================
 
-.radius-bundle-widget {
-    .radius-bundle {
-        max-width: var(--rb-bundle-max-width, #{$rb-max-width});
+.radius-bundle {
+    max-width: var(--rb-bundle-max-width, #{$rb-max-width});
 
-        // Widget alignment (data-box-align attribute)
-        &[data-box-align="left"] {
-            margin-inline-start: 0;
-            margin-inline-end: auto;
-            .radius-bundle__actions {
-                text-align: start;
-            }
+    // Widget alignment (data-box-align attribute)
+    &[data-box-align="left"] {
+        margin-inline-start: 0;
+        margin-inline-end: auto;
+        .radius-bundle__actions {
+            text-align: start;
         }
+    }
 
-        &[data-box-align="center"] {
-            margin-inline: auto;
-            .radius-bundle__actions {
-                text-align: center;
-            }
+    &[data-box-align="center"] {
+        margin-inline: auto;
+        .radius-bundle__actions {
+            text-align: center;
         }
+    }
 
-        &[data-box-align="right"] {
-            margin-inline-start: auto;
-            margin-inline-end: 0;
-            .radius-bundle__actions {
-                text-align: end;
-            }
+    &[data-box-align="right"] {
+        margin-inline-start: auto;
+        margin-inline-end: 0;
+        .radius-bundle__actions {
+            text-align: end;
         }
     }
 }
@@ -128,14 +126,16 @@
 
     &__add-to-cart {
         width: var(--rb-button-width, auto);
-        padding: var(--rb-button-padding);
+        height: var(--rb-button-height, 44px);
         background: var(--rb-button-bg);
         color: var(--rb-button-text);
         border: var(--rb-button-border);
         border-radius: var(--rb-border-radius);
         font-size: var(--rb-button-font-size);
+        padding: var(--rb-button-padding);
         font-weight: 600;
         cursor: pointer;
+        touch-action: manipulation;
         transition: all var(--rb-transition);
 
         &:hover:not(:disabled) {
@@ -275,10 +275,6 @@
 
 .radius-bundle.rb--tablet,
 .radius-bundle.rb--mobile {
-    .radius-bundle__inner {
-        padding: var(--rb-spacing);
-    }
-
     .radius-bundle__header {
         flex-direction: column;
         align-items: flex-start;
@@ -288,18 +284,9 @@
     .radius-bundle__title-wrapper {
         width: 100%;
     }
-
-    .radius-bundle__product--list .radius-bundle__product-image {
-        width: 60px;
-        height: 60px;
-    }
 }
 
 .radius-bundle.rb--mobile {
-    .radius-bundle__product--grid .radius-bundle__product-image {
-        height: 160px;
-    }
-
     .radius-bundle__product--list {
         flex-wrap: wrap;
 

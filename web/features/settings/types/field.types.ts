@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { BundleLayout } from "@/features/bundles/constants/prisma-enums";
 import { BundleType } from "@/features/bundles";
 import { appSettingsSchema, PreviewTemplateId } from "@/features/settings";
 
-export type WidgetLayout = string;
+export type WidgetLayout = BundleLayout;
 
 /**
  * Validation configuration
@@ -308,18 +309,8 @@ export interface CustomizerStyles {
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BUY X GET Y SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
-    /** Tier display style */
-    buyGetTierStyle: "cards" | "list" | "tabs";
     /** Split deal layout direction (SPLIT_DEAL layout only) */
     splitDealStyle: "column" | "row";
-
-    // ═══════════════════════════════════════════════════════════════════
-    // ADVANCED - VOLUME DISCOUNT SPECIFIC
-    // ═══════════════════════════════════════════════════════════════════
-    /** Active tier highlight color */
-    volumeTierHighlightColor: string;
-    /** Tier display style */
-    volumeTierStyle: "table" | "cards";
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - MIX & MATCH SPECIFIC

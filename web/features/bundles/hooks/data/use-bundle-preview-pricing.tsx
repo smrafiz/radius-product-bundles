@@ -3,20 +3,24 @@ import {
     calculateBundlePrice,
     calculateDiscountAmount,
     calculateSavingsPercentage,
+    DiscountApplication,
     useBundlePreviewPricingProps,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 
 /**
  * Hook for calculating bundle preview pricing
  */
 export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
-    const { bundleData, selectedItems } = useBundleStore();
+    const { bundleData, selectedItems } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, selectedItems: s.selectedItems })),
+    );
     const isBxgy =
         bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 
     return useMemo(() => {
-        if (!selectedItems.length || !bundleData.discountType) {
+        if (!selectedItems.length) {
             return {
                 originalPrice: 0,
                 discountAmount: 0,
@@ -28,6 +32,16 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
 
         const round = (n: number) => Math.round(n * 100) / 100;
         const originalPrice = round(calculateBundlePrice(selectedItems));
+
+        if (!bundleData.discountType) {
+            return {
+                originalPrice,
+                discountAmount: 0,
+                finalPrice: originalPrice,
+                savingsPercentage: 0,
+                hasDiscount: false,
+            };
+        }
 
         // BOGO/BXGY: discount applies only to reward products
         if (isBxgy) {
@@ -76,7 +90,7 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
         }
 
         // FIXED_BUNDLE: existing logic
-        const applyToSpecific = bundleData.discountApplication === "products";
+        const applyToSpecific = bundleData.discountApplication === DiscountApplication.PRODUCTS;
         const discountedIds = new Set(bundleData.discountedProductIds ?? []);
 
         const discountableItems = applyToSpecific

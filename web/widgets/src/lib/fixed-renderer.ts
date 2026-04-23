@@ -248,11 +248,8 @@ export function renderFixedProducts(
                 ? " radius-bundle__divider--hidden"
                 : "";
 
-            if (ctx.dividerStyle === "plus") {
-                html += `<div class="radius-bundle__divider radius-bundle__divider--plus${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}><div class="divider-position">+</div></div>`;
-            } else if (ctx.dividerStyle === "line") {
-                html += `<div class="radius-bundle__divider radius-bundle__divider--line${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}></div>`;
-            }
+            html += `<div class="radius-bundle__divider radius-bundle__divider--plus${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}><div class="divider-position">+</div></div>`;
+            html += `<div class="radius-bundle__divider radius-bundle__divider--line${dividerHiddenClass}" data-divider-index="${index}"${dividerHiddenAttr}></div>`;
         }
     });
 
@@ -331,7 +328,9 @@ export function updatePricing(bundle: Bundle, ctx: FixedContext): void {
                 Math.max(0, discountableTotal - structure.discountValue * 100);
             break;
         case "CUSTOM_PRICE":
-            bundleTotal = nonDiscountableTotal + structure.discountValue * 100;
+            bundleTotal = applyToSpecific
+                ? structure.discountValue * 100 + nonDiscountableTotal
+                : structure.discountValue * 100;
             break;
         default:
             bundleTotal = sellingTotal;

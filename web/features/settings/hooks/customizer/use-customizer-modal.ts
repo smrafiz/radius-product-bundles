@@ -1,23 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
-import { useRefetchSettings } from "@/features/settings";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAppBridge } from "@shopify/app-bridge-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { settingsQueries, useSettingsStore } from "@/features/settings";
 
-/**
- * Hook for managing the customizer modal behavior.
- */
 export function useCustomizerModal() {
-    const { refetch } = useRefetchSettings();
+    const app = useAppBridge();
+    const queryClient = useQueryClient();
+    const queries = settingsQueries(app);
     const appWindowRef = useRef<HTMLElement>(null);
+    const [isSyncing, setIsSyncing] = useState(false);
 
-    /**
-     * Handles the app window close event.
-     */
     const handleClose = useCallback(() => {
-        void refetch();
-    }, [refetch]);
+        setIsSyncing(true);
+        queryClient
+            .fetchQuery({ ...queries.detail(), staleTime: 0 })
+            .then((freshData) => {
+                if (freshData) {
+                    useSettingsStore.getState().setServerData(freshData);
+                }
+            })
+            .finally(() => setIsSyncing(false));
+    }, [queryClient, queries]);
 
-    // Attach close event listener
+    const handleCloseRef = useRef(handleClose);
+    handleCloseRef.current = handleClose;
+
     useEffect(() => {
         const appWindow = appWindowRef.current;
 
@@ -25,14 +34,19 @@ export function useCustomizerModal() {
             return;
         }
 
-        appWindow.addEventListener("hide", handleClose);
+        const handler = () => {
+            handleCloseRef.current();
+        };
+
+        appWindow.addEventListener("hide", handler);
 
         return () => {
-            appWindow.removeEventListener("hide", handleClose);
+            appWindow.removeEventListener("hide", handler);
         };
-    }, [handleClose]);
+    }, []);
 
     return {
         appWindowRef,
+        isSyncing,
     };
 }

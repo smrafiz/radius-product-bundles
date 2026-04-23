@@ -11,6 +11,7 @@ export const BundleTableHeader = memo(function BundleTableHeader({
     toggleAllSelection,
 }: BundleTableHeaderProps) {
     const t = useTranslations("Bundles.Listing.Table");
+    const tl = useTranslations("Bundles.Listing");
     const isIndeterminate =
         selectedResources.length > 0 && !allResourcesSelected;
 
@@ -19,6 +20,7 @@ export const BundleTableHeader = memo(function BundleTableHeader({
             <s-table-header listSlot="primary">
                 <s-stack direction="inline" gap="small" alignItems="center">
                     <s-checkbox
+                        aria-label={tl("selectAll")}
                         indeterminate={isIndeterminate}
                         checked={allResourcesSelected}
                         onChange={(e: Event) => {

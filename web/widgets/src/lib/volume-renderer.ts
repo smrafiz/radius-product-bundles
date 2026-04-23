@@ -45,15 +45,24 @@ function calcSavingsDisplay(
     unitPriceCents: number,
     tier: VolumeTier,
     discountType: VolumeTiersConfig["discountType"],
+    savePercentLabel?: string,
+    saveAmountLabel?: string,
+    saveCustomLabel?: string,
 ): string {
     switch (discountType) {
-        case "PERCENTAGE":
-            return `${Math.round(tier.discount)}% off`;
-        case "FIXED_AMOUNT":
-            return `${trimMoney(formatMoney(tier.discount * 100))} off`;
+        case "PERCENTAGE": {
+            const tmpl = savePercentLabel ?? "Save {discount}%";
+            return tmpl.replace("{discount}", String(Math.round(tier.discount)));
+        }
+        case "FIXED_AMOUNT": {
+            const tmpl = saveAmountLabel ?? "Save {discount} off";
+            return tmpl.replace("{discount}", trimMoney(formatMoney(tier.discount * 100)));
+        }
         case "CUSTOM_PRICE": {
             const saving = unitPriceCents - tier.discount * 100;
-            return saving > 0 ? `Save ${trimMoney(formatMoney(saving))}` : "";
+            if (saving <= 0) return "";
+            const tmpl = saveCustomLabel ?? "Save {discount}";
+            return tmpl.replace("{discount}", trimMoney(formatMoney(saving)));
         }
         default:
             return "";
@@ -101,39 +110,50 @@ function renderTierRow(
     config: VolumeTiersConfig,
     unitPriceCents: number,
     showPrices: boolean,
+    showComparePrices: boolean,
     showSavings: boolean,
+    savePercentLabel?: string,
+    saveAmountLabel?: string,
+    saveCustomLabel?: string,
+    buyUnitsLabel?: string,
+    buyUnitsMoreLabel?: string,
 ): string {
     const isDefault = !!tier.isDefault;
     const isLast = index === config.tiers.length - 1;
-    const qtyLabel = config.openEnded || !isLast
-        ? `${tier.minQuantity}+`
-        : `${tier.minQuantity}`;
+    const isOpenEnded = config.openEnded || !isLast;
+    const qtyStr = String(tier.minQuantity);
 
     const discountedCents = calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType);
     const hasDiscount = config.discountType !== "NO_DISCOUNT" && tier.discount > 0;
     const savingsText = showSavings && hasDiscount
-        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType)
+        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType, savePercentLabel, saveAmountLabel, saveCustomLabel)
         : "";
 
     const badgeHtml = tier.badge?.text
         ? `<span class="rb-vol__tier-badge ${badgeClass(tier.badge.style)}">${escapeHtml(tier.badge.text)}</span>`
         : "";
 
-    // Title: fall back to "Buy X Units"
-    const resolvedTitle = tier.title
-        ? escapeHtml(resolvePlaceholders(tier.title, tier, config.discountType))
-        : `Buy ${escapeHtml(qtyLabel)} Units`;
+    // Title: fall back to translated "Buy X Units" / "Buy X+ Units"
+    let resolvedTitle: string;
+    if (tier.title) {
+        resolvedTitle = escapeHtml(resolvePlaceholders(tier.title, tier, config.discountType));
+    } else {
+        const tmpl = isOpenEnded
+            ? (buyUnitsMoreLabel ?? "Buy {qty}+ Units")
+            : (buyUnitsLabel ?? "Buy {qty} Units");
+        resolvedTitle = escapeHtml(tmpl.replace("{qty}", qtyStr));
+    }
 
     // Savings line below title (green)
     const savingsLineHtml = savingsText
-        ? `<span class="rb-vol__tier-savings-line">Save ${escapeHtml(savingsText)}</span>`
+        ? `<span class="rb-vol__tier-savings-line">${escapeHtml(savingsText)}</span>`
         : "";
 
     // Right-side pricing
     const priceColHtml = showPrices && unitPriceCents > 0
         ? `<div class="rb-vol__tier-pricing">
                 <span class="rb-vol__tier-price">${trimMoney(formatMoney(discountedCents))}</span>
-                ${hasDiscount ? `<span class="rb-vol__tier-original">${trimMoney(formatMoney(unitPriceCents))}</span>` : ""}
+                ${hasDiscount && showComparePrices ? `<span class="rb-vol__tier-original">${trimMoney(formatMoney(unitPriceCents))}</span>` : ""}
             </div>`
         : "";
 
@@ -171,9 +191,11 @@ export function renderVolumeTable(
     unitPriceCents: number,
     showImages: boolean,
     showPrices: boolean,
+    showComparePrices: boolean,
     showSavings: boolean,
     lazyLoadImages: boolean,
 ): void {
+    const labels = bundleStructure.labels;
     const imageHtml =
         showImages && productImageSrc
             ? `<div class="rb-vol__product-image">${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "thumb" })}</div>`
@@ -181,7 +203,14 @@ export function renderVolumeTable(
 
     const tiersHtml = config.tiers
         .map((tier, i) =>
-            renderTierRow(tier, i, config, unitPriceCents, showPrices, showSavings),
+            renderTierRow(
+                tier, i, config, unitPriceCents, showPrices, showComparePrices, showSavings,
+                labels?.volumeSavePercentLabel,
+                labels?.volumeSaveAmountLabel,
+                labels?.volumeSaveCustomLabel,
+                labels?.volumeBuyUnitsLabel,
+                labels?.volumeBuyUnitsMoreLabel,
+            ),
         )
         .join("");
 
@@ -189,8 +218,8 @@ export function renderVolumeTable(
         <div class="rb-vol__product-header">
             ${imageHtml}
             <div class="rb-vol__product-meta">
-                <span class="rb-vol__product-title">${escapeHtml(productTitle)}</span>
-                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / unit</span>` : ""}
+                <h3 class="rb-vol__product-title">${escapeHtml(productTitle)}</h3>
+                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / ${escapeHtml(bundleStructure.labels?.volumeUnitLabel || "unit")}</span>` : ""}
             </div>
         </div>
     `;
@@ -212,17 +241,22 @@ function renderPricingCard(
     unitPriceCents: number,
     showPrices: boolean,
     showSavings: boolean,
+    savePercentLabel?: string,
+    saveAmountLabel?: string,
+    saveCustomLabel?: string,
+    buyUnitsLabel?: string,
+    buyUnitsMoreLabel?: string,
+    selectLabel?: string,
 ): string {
     const isDefault = !!tier.isDefault;
     const isLast = index === config.tiers.length - 1;
-    const qtyLabel = config.openEnded || !isLast
-        ? `${tier.minQuantity}+`
-        : `${tier.minQuantity}`;
+    const isOpenEnded = config.openEnded || !isLast;
+    const qtyStr = String(tier.minQuantity);
 
     const discountedCents = calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType);
     const hasDiscount = config.discountType !== "NO_DISCOUNT" && tier.discount > 0;
     const savingsText = showSavings && hasDiscount
-        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType)
+        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType, savePercentLabel, saveAmountLabel, saveCustomLabel)
         : "";
 
     const resolvedTitle = tier.title
@@ -234,9 +268,12 @@ function renderPricingCard(
         ? `<div class="rb-vol__card-popular-badge ${badgeClass(tier.badge?.style)}" aria-hidden="true">${escapeHtml(badgeText).toUpperCase()}</div>`
         : "";
 
+    const buyTmpl = isOpenEnded
+        ? (buyUnitsMoreLabel ?? "Buy {qty}+ Units")
+        : (buyUnitsLabel ?? "Buy {qty} Units");
     const subtitleText = tier.subtitle
         ? escapeHtml(resolvePlaceholders(tier.subtitle, tier, config.discountType))
-        : `Buy ${escapeHtml(qtyLabel)} Units`;
+        : escapeHtml(buyTmpl.replace("{qty}", qtyStr));
     const subtitleHtml = `<div class="rb-vol__card-subtitle">${subtitleText}</div>`;
 
     const priceHtml = showPrices && unitPriceCents > 0
@@ -244,10 +281,12 @@ function renderPricingCard(
         : "";
 
     const savingsPillHtml = savingsText
-        ? `<div class="rb-vol__card-savings">SAVE ${escapeHtml(savingsText.toUpperCase())}</div>`
+        ? `<div class="rb-vol__card-savings">${escapeHtml(savingsText).toUpperCase()}</div>`
         : "";
 
-    const btnLabel = "Select";
+    const btnLabel = selectLabel ?? "Select";
+    const savingsPart = savingsText ? `, ${savingsText}` : "";
+    const badgePart = badgeText ? `, ${badgeText}` : "";
 
     return `
         <li class="rb-vol__tier rb-vol__card${isDefault ? " rb-vol__tier--default" : ""}${badgeText ? " rb-vol__card--popular" : ""}"
@@ -256,7 +295,7 @@ function renderPricingCard(
             role="button"
             tabindex="0"
             aria-pressed="${isDefault ? "true" : "false"}"
-            aria-label="${resolvedTitle}, Buy ${escapeHtml(qtyLabel)} units">
+            aria-label="${resolvedTitle}, ${qtyStr} units${escapeHtml(savingsPart)}${escapeHtml(badgePart)}">
             ${badgeHtml}
             <div class="rb-vol__card-title">${resolvedTitle}</div>
             ${subtitleHtml}
@@ -280,6 +319,7 @@ export function renderVolumePricingCards(
     showSavings: boolean,
     lazyLoadImages: boolean,
 ): void {
+    const labels = bundleStructure.labels;
     const imageHtml =
         showImages && productImageSrc
             ? `<div class="rb-vol__product-image">${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "thumb" })}</div>`
@@ -287,7 +327,15 @@ export function renderVolumePricingCards(
 
     const cardsHtml = config.tiers
         .map((tier, i) =>
-            renderPricingCard(tier, i, config, unitPriceCents, showPrices, showSavings),
+            renderPricingCard(
+                tier, i, config, unitPriceCents, showPrices, showSavings,
+                labels?.volumeSavePercentLabel,
+                labels?.volumeSaveAmountLabel,
+                labels?.volumeSaveCustomLabel,
+                labels?.volumeBuyUnitsLabel,
+                labels?.volumeBuyUnitsMoreLabel,
+                labels?.volumeSelectLabel,
+            ),
         )
         .join("");
 
@@ -295,8 +343,8 @@ export function renderVolumePricingCards(
         <div class="rb-vol__product-header">
             ${imageHtml}
             <div class="rb-vol__product-meta">
-                <span class="rb-vol__product-title">${escapeHtml(productTitle)}</span>
-                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / unit</span>` : ""}
+                <h3 class="rb-vol__product-title">${escapeHtml(productTitle)}</h3>
+                ${showPrices && unitPriceCents > 0 ? `<span class="rb-vol__product-base-price">${trimMoney(formatMoney(unitPriceCents))} / ${escapeHtml(bundleStructure.labels?.volumeUnitLabel || "unit")}</span>` : ""}
             </div>
         </div>
     `;
@@ -373,12 +421,22 @@ function nudgeText(qty: number, next: VolumeTier, config: VolumeTiersConfig): st
 export function renderVolumeSlider(
     container: Element,
     config: VolumeTiersConfig,
+    showImages: boolean,
     productImageSrc: string | null,
     productTitle: string,
     unitPriceCents: number,
     showPrices: boolean,
+    showSavings: boolean,
+    showComparePrices: boolean,
+    showQuantity: boolean,
     lazyLoadImages: boolean,
+    selectQuantityLabel?: string,
+    youSaveLabel?: string,
+    unitLabel?: string,
+    unitsLabel?: string,
 ): void {
+    const u = unitLabel || "unit";
+    const us = unitsLabel || "units";
     const max = sliderMax(config);
     const firstTier = config.tiers[0];
     const initQty = firstTier.minQuantity;
@@ -401,26 +459,26 @@ export function renderVolumeSlider(
         })
         .join("");
 
-    const imageHtml = productImageSrc
+    const imageHtml = showImages && productImageSrc
         ? `<div class="rb-vol-slider__hero-image">
             ${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "hero" })}
-            <div class="rb-vol-slider__savings-badge" aria-live="polite"${hasSavings ? "" : ' style="display:none"'}>${hasSavings && initTier ? escapeHtml(tierSavingsBadgeText(initTier, config)) : ""}</div>
+            <div class="rb-vol-slider__savings-badge"${hasSavings ? "" : ' style="display:none"'}>${hasSavings && initTier ? escapeHtml(tierSavingsBadgeText(initTier, config)) : ""}</div>
         </div>`
         : "";
 
-    const priceSavingsHtml = showPrices
+    const priceSavingsHtml = showSavings
         ? `<div class="rb-vol-slider__price-savings"${hasSavings ? "" : ' style="display:none"'}>
             <span class="rb-vol-slider__price-savings-amount" style="color:var(--rb-savings-color,#16a34a)">-${escapeHtml(trimMoney(formatMoney(initSavingsAmt)))}</span>
-            <span class="rb-vol-slider__price-savings-label">You save</span>
+            <span class="rb-vol-slider__price-savings-label">${escapeHtml(youSaveLabel || "You save")}</span>
         </div>`
         : "";
 
-    const priceBoxHtml = showPrices && unitPriceCents > 0
+    const priceBoxHtml = unitPriceCents > 0
         ? `<div class="rb-vol-slider__price-box">
             <div class="rb-vol-slider__price-left">
-                <span class="rb-vol-slider__price-total">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
-                <span class="rb-vol-slider__price-unit">${escapeHtml(trimMoney(formatMoney(initDiscounted)))} / unit</span>
-                ${hasSavings ? `<span class="rb-vol-slider__price-original">${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</span>` : `<span class="rb-vol-slider__price-original" style="display:none"></span>`}
+                ${showPrices ? `<span class="rb-vol-slider__price-total">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
+                <span class="rb-vol-slider__price-unit">${escapeHtml(trimMoney(formatMoney(initDiscounted)))} / ${escapeHtml(u)}</span>` : ""}
+                ${hasSavings && showComparePrices ? `<span class="rb-vol-slider__price-original">${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</span>` : ""}
             </div>
             ${priceSavingsHtml}
         </div>`
@@ -435,7 +493,7 @@ export function renderVolumeSlider(
             (nextTier.minQuantity - (config.tiers[config.tiers.indexOf(nextTier) - 1]?.minQuantity ?? 1))) * 100)
         : 0;
 
-    const nudgeHtml = `<div class="rb-vol-slider__nudge"${nudgeVisible ? "" : ' style="display:none"'} aria-live="polite">
+    const nudgeHtml = `<div class="rb-vol-slider__nudge"${nudgeVisible ? "" : ' style="display:none"'}>
         <div class="rb-vol-slider__nudge-header">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
             <span class="rb-vol-slider__nudge-text">${nudgeMsg}</span>
@@ -445,32 +503,34 @@ export function renderVolumeSlider(
         </div>
     </div>`;
 
+    const sliderQuantityHtml = showQuantity ? `<div class="rb-vol-slider__slider-section">
+        <div class="rb-vol-slider__slider-header">
+            <span class="rb-vol-slider__qty-label">${escapeHtml(selectQuantityLabel || "Select Quantity")}</span>
+            <span class="rb-vol-slider__qty-counter" style="color:var(--rb-primary-color,#303030)">${initQty} ${escapeHtml(us)}</span>
+        </div>
+        <input
+            class="rb-vol-slider__slider-track"
+            type="range"
+            min="1"
+            max="${max}"
+            value="${initQty}"
+            step="1"
+            aria-label="Select quantity"
+            aria-valuemin="1"
+            aria-valuemax="${max}"
+            aria-valuenow="${initQty}"
+        />
+        <div class="rb-vol-slider__slider-markers" aria-hidden="true">
+            ${markerHtml}
+        </div>
+    </div>`: "";
+
     container.innerHTML = `
         <div class="rb-vol-slider__wrap">
             ${imageHtml}
-            <div class="rb-vol-slider__product-title">${escapeHtml(productTitle)}</div>
+            <h3 class="rb-vol-slider__product-title">${escapeHtml(productTitle)}</h3>
             ${priceBoxHtml}
-            <div class="rb-vol-slider__slider-section">
-                <div class="rb-vol-slider__slider-header">
-                    <span class="rb-vol-slider__qty-label">Select Quantity</span>
-                    <span class="rb-vol-slider__qty-counter" style="color:var(--rb-primary-color,#303030)">${initQty} units</span>
-                </div>
-                <input
-                    class="rb-vol-slider__slider-track"
-                    type="range"
-                    min="1"
-                    max="${max}"
-                    value="${initQty}"
-                    step="1"
-                    aria-label="Select quantity"
-                    aria-valuemin="1"
-                    aria-valuemax="${max}"
-                    aria-valuenow="${initQty}"
-                />
-                <div class="rb-vol-slider__slider-markers" aria-hidden="true">
-                    ${markerHtml}
-                </div>
-            </div>
+            ${sliderQuantityHtml}
             ${nudgeHtml}
         </div>
     `;
@@ -499,6 +559,8 @@ export function initVolumeSlider(
     const sliderEl = maybeSlider;
 
     const btnTextEl = atcBtn.querySelector<HTMLElement>("[data-button-text]");
+    const liveRegion = widgetContainer.querySelector<HTMLElement>("[data-vol-slider-live]");
+    let previousTierIndex = -1;
 
     // DOM element refs (queried fresh each update)
     function el<T extends HTMLElement>(sel: string): T | null {
@@ -510,17 +572,29 @@ export function initVolumeSlider(
 
         // Update counter
         const counter = el(".rb-vol-slider__qty-counter");
-        if (counter) counter.textContent = `${qty} units`;
+        if (counter) counter.textContent = `${qty} ${bundleStructure.labels?.volumeUnitsLabel || "units"}`;
 
         // Update ATC button text
         if (btnTextEl) {
-            const base = bundleStructure.labels?.buttonText || "Add to Cart";
-            btnTextEl.textContent = `${base} (${qty})`;
+            const raw = bundleStructure.labels?.addToCartText || "Add to Cart";
+            const ta = document.createElement("textarea");
+            ta.innerHTML = raw;
+            btnTextEl.textContent = `${ta.value} (${qty})`;
         }
 
         if (unitPriceCents <= 0) return;
 
         const tier = activeTierForQty(qty, config);
+        const currentTierIndex = tier ? config.tiers.indexOf(tier) : -1;
+        if (liveRegion && currentTierIndex !== previousTierIndex) {
+            previousTierIndex = currentTierIndex;
+            if (tier) {
+                liveRegion.textContent = tierSavingsBadgeText(tier, config);
+            } else {
+                liveRegion.textContent = "";
+            }
+        }
+
         const discounted = tier
             ? calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType)
             : unitPriceCents;
@@ -535,7 +609,7 @@ export function initVolumeSlider(
 
         // Per unit
         const priceUnit = el(".rb-vol-slider__price-unit");
-        if (priceUnit) priceUnit.textContent = `${trimMoney(formatMoney(discounted))} / unit`;
+        if (priceUnit) priceUnit.textContent = `${trimMoney(formatMoney(discounted))} / ${bundleStructure.labels?.volumeUnitLabel || "unit"}`;
 
         // Original total (strikethrough)
         const priceOrig = el<HTMLElement>(".rb-vol-slider__price-original");
@@ -665,7 +739,6 @@ export function initVolumeSlider(
                 bundleName: bundleStructure.name,
                 discountType: tier ? config.discountType : "NO_DISCOUNT",
                 discountValue: tier ? tier.discount : 0,
-                requiredLineCount: 1,
                 minOrderValue: bundleStructure.minOrderValue || 0,
                 maxDiscountAmount: bundleStructure.maxDiscountAmount || 0,
                 discountApplication: bundleStructure.discountApplication || "bundle",
@@ -723,10 +796,19 @@ export function renderVolumeCalculator(
     productImageSrc: string | null,
     productTitle: string,
     unitPriceCents: number,
+    showImages: boolean,
     showPrices: boolean,
+    showSavings: boolean,
+    showComparePrices: boolean,
+    showQuantity: boolean,
     lazyLoadImages: boolean,
+    selectQuantityLabel?: string,
+    youSaveLabel?: string,
+    totalCostLabel?: string,
+    costPerUnitLabel?: string,
+    regularPriceLabel?: string,
 ): void {
-    const imageHtml = productImageSrc
+    const imageHtml = showImages && productImageSrc
         ? `<div class="rb-vol-calc__hero-image">
             ${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "hero" })}
           </div>`
@@ -768,49 +850,50 @@ export function renderVolumeCalculator(
     const initSavings = initOrigTotal - initTotal;
     const initHasSavings = initTier !== null && initSavings > 0;
 
-    const calcRows = showPrices && unitPriceCents > 0
-        ? `<div class="rb-vol-calc__calc-row" data-calc-total>
-                <span class="rb-vol-calc__calc-label">Total Cost</span>
+    const calcQuantityHtml = showQuantity ? `<div class="rb-vol-calc__qty-section">
+        <label class="rb-vol-calc__qty-label" for="rb-calc-qty-input">${escapeHtml(selectQuantityLabel || "Select Quantity")}</label>
+        <div class="rb-vol-calc__qty-wrap">
+            <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-dec aria-label="Decrease quantity">−</button>
+            <input
+                class="rb-vol-calc__qty-input"
+                id="rb-calc-qty-input"
+                type="number"
+                min="1"
+                value="${initQty}"
+                step="1"
+            />
+            <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-inc aria-label="Increase quantity">+</button>
+        </div>
+    </div>` : "";
+
+    const calcRows = unitPriceCents > 0
+        ? `${showPrices ? `<div class="rb-vol-calc__calc-row" data-calc-total>
+                <span class="rb-vol-calc__calc-label">${escapeHtml(totalCostLabel || "Total Cost")}</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value" style="color:var(--rb-primary-color,#303030)">${escapeHtml(trimMoney(formatMoney(initTotal)))}</span>
                 </div>
-            </div>
-            <div class="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"${initHasSavings ? "" : ' style="display:none"'}>
-                <span class="rb-vol-calc__calc-label">You Save</span>
+            </div>` : ""}
+            ${showSavings ? `<div class="rb-vol-calc__calc-row rb-vol-calc__calc-row--savings"${initHasSavings ? "" : ' style="display:none"'}>
+                <span class="rb-vol-calc__calc-label">${escapeHtml(youSaveLabel || "You Save")}</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value" style="color:var(--rb-savings-color,#16a34a)">${escapeHtml(trimMoney(formatMoney(initSavings)))}</span>
                     <span class="rb-vol-calc__calc-sub"><s>${escapeHtml(trimMoney(formatMoney(initOrigTotal)))}</s></span>
                 </div>
-            </div>
-            <div class="rb-vol-calc__calc-row" data-calc-cpu${initHasSavings ? "" : ' style="display:none"'}>
-                <span class="rb-vol-calc__calc-label">Cost Per Unit</span>
+            </div>` : ""}
+            ${showComparePrices ? `<div class="rb-vol-calc__calc-row" data-calc-cpu${initHasSavings ? "" : ' style="display:none"'}>
+                <span class="rb-vol-calc__calc-label">${escapeHtml(costPerUnitLabel || "Cost Per Unit")}</span>
                 <div class="rb-vol-calc__calc-value-wrap">
                     <span class="rb-vol-calc__calc-value">${escapeHtml(trimMoney(formatMoney(initDiscounted)))}</span>
-                    <span class="rb-vol-calc__calc-sub">Regular price <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s></span>
+                    <span class="rb-vol-calc__calc-sub">${escapeHtml(regularPriceLabel || "Regular price")} <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s></span>
                 </div>
-            </div>`
+            </div>` : ""}`
         : "";
 
     container.innerHTML = `
         <div class="rb-vol-calc__wrap">
             ${imageHtml}
-            <div class="rb-vol-calc__product-title">${escapeHtml(productTitle)}</div>
-            <div class="rb-vol-calc__qty-section">
-                <label class="rb-vol-calc__qty-label" for="rb-calc-qty-input">Enter Quantity</label>
-                <div class="rb-vol-calc__qty-wrap">
-                    <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-dec aria-label="Decrease quantity">−</button>
-                    <input
-                        class="rb-vol-calc__qty-input"
-                        id="rb-calc-qty-input"
-                        type="number"
-                        min="1"
-                        value="${initQty}"
-                        step="1"
-                        aria-label="Quantity"
-                    />
-                    <button class="rb-vol-calc__qty-btn" type="button" data-calc-qty-inc aria-label="Increase quantity">+</button>
-                </div>
-            </div>
+            <h3 class="rb-vol-calc__product-title">${escapeHtml(productTitle)}</h3>
+            ${calcQuantityHtml}
             ${calcRows}
             <div class="rb-vol-calc__pills" role="group" aria-label="Quantity discount tiers">
                 ${pillsHtml}
@@ -871,8 +954,10 @@ export function initVolumeCalculator(
 
         // Update ATC button text
         if (btnTextEl) {
-            const base = bundleStructure.labels?.buttonText || "Add to Cart";
-            btnTextEl.textContent = `${base} (${clampedQty})`;
+            const raw = bundleStructure.labels?.addToCartText || "Add to Cart";
+            const ta = document.createElement("textarea");
+            ta.innerHTML = raw;
+            btnTextEl.textContent = `${ta.value} (${clampedQty})`;
         }
 
         if (unitPriceCents <= 0) return;
@@ -908,7 +993,7 @@ export function initVolumeCalculator(
                 const cpuVal = cpuRow.querySelector(".rb-vol-calc__calc-value");
                 if (cpuVal) cpuVal.textContent = trimMoney(formatMoney(discounted));
                 const cpuSub = cpuRow.querySelector(".rb-vol-calc__calc-sub");
-                if (cpuSub) cpuSub.innerHTML = `Regular price <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s>`;
+                if (cpuSub) cpuSub.innerHTML = `${escapeHtml(bundleStructure.labels?.volumeRegularPriceLabel || "Regular price")} <s>${escapeHtml(trimMoney(formatMoney(unitPriceCents)))}</s>`;
             }
         }
 
@@ -1005,7 +1090,6 @@ export function initVolumeCalculator(
                 bundleName: bundleStructure.name,
                 discountType: tier ? config.discountType : "NO_DISCOUNT",
                 discountValue: tier ? tier.discount : 0,
-                requiredLineCount: 1,
                 minOrderValue: bundleStructure.minOrderValue || 0,
                 maxDiscountAmount: bundleStructure.maxDiscountAmount || 0,
                 discountApplication: bundleStructure.discountApplication || "bundle",
@@ -1096,8 +1180,9 @@ export function initVolumeTierSelection(
 
     function updateAtcText(qty: number): void {
         if (!btnTextEl) return;
-        const base = bundleStructure.labels?.buttonText || "Add to Cart";
-        btnTextEl.textContent = `${base} (${qty})`;
+        const ta = document.createElement("textarea");
+        ta.innerHTML = bundleStructure.labels?.addToCartText || "Add to Cart";
+        btnTextEl.textContent = `${ta.value} (${qty})`;
     }
 
     // ── Tier selection ─────────────────────────────────────────────────
@@ -1254,7 +1339,6 @@ export function initVolumeTierSelection(
                 bundleName: bundleStructure.name,
                 discountType: tier ? config.discountType : "NO_DISCOUNT",
                 discountValue: tier ? tier.discount : 0,
-                requiredLineCount: 1,
                 minOrderValue: bundleStructure.minOrderValue || 0,
                 maxDiscountAmount: bundleStructure.maxDiscountAmount || 0,
                 discountApplication: bundleStructure.discountApplication || "bundle",

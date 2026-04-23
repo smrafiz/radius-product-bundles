@@ -2,6 +2,7 @@
  * AppSettings Types
  */
 
+import { RedirectAfterCart } from "@/features/bundles/constants/prisma-enums";
 import { DiscountType } from "@/features/bundles";
 
 /**
@@ -50,6 +51,22 @@ export interface AppSettingsLabels {
     checklistLockedLabel: string;
     checklistUnlockedLabel: string;
     checklistPricingLockedText: string;
+
+    // Volume Discount Labels
+    volumeSelectQuantityLabel: string;
+    volumeYouSaveLabel: string;
+    volumeUnitLabel: string;
+    volumeUnitsLabel: string;
+    volumeTotalCostLabel: string;
+    volumeCostPerUnitLabel: string;
+    volumeRegularPriceLabel: string;
+    volumeSavePercentLabel: string;
+    volumeSaveAmountLabel: string;
+    volumeSaveCustomLabel: string;
+    volumeBuyUnitsLabel: string;
+    volumeBuyUnitsMoreLabel: string;
+    volumeSelectLabel: string;
+    volumeAppliedLabel: string;
 
     // Cart Banner
     bannerSavingText: string;
@@ -155,7 +172,7 @@ export interface AppSettingsGlobalStyles {
 /**
  * Redirect after cart options
  */
-export type RedirectAfterCart = "default" | "cart" | "checkout" | "none";
+export type { RedirectAfterCart };
 
 /**
  * Complete AppSettings type (matches Prisma model)

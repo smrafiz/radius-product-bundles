@@ -7,6 +7,7 @@ import {
     PreviewProduct,
     ROUTES,
     useShopSettings,
+    WidgetAddToCart,
     WidgetCarousel,
     WidgetChecklist,
     WidgetClassicCard,
@@ -23,6 +24,7 @@ import {
 import {
     BundlePreviewStatus,
     BundlePriority,
+    DiscountApplication,
     DisplaySettings,
     formatPrice,
     useBundlePreviewPricing,
@@ -37,84 +39,298 @@ import {
     useCustomizerModal,
     useCustomizerStore,
     useSettingsStore,
+    VolumeCalculator,
+    type VolumeLayoutTier,
+    VolumePricingCards,
+    VolumeSlider,
+    VolumeTierList,
 } from "@/features/settings";
 import { useCallback, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { useTranslations } from "@/lib/i18n/provider";
+import { usePreviewLabels } from "@/shared/hooks/use-preview-labels";
+import { RESPONSIVE_FIELDS } from "@/features/settings/configs/customizer.config";
 import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
-import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
 
-import { useTranslations } from "@/lib/i18n/provider";
 import "@/styles/components/bundle.css";
 
-function VolumePreviewWidget({ config }: { config: VolumeDiscountConfig }) {
-    const { currencyCode } = useShopSettings();
-    const currencySymbol = getCurrencySymbol(currencyCode);
-    const suffix = config.discountType === "PERCENTAGE" ? "%" : currencySymbol;
-    const position = config.discountType === "PERCENTAGE" ? "suffix" : "prefix";
+function buildVolumeLayoutTiers(
+    config: VolumeDiscountConfig,
+    currencyCode: string | undefined,
+    basePrice?: number,
+    labels?: WidgetLabels,
+): ReadonlyArray<VolumeLayoutTier> {
+    return config.tiers.map((tier, index) => {
+        const isLast = index === config.tiers.length - 1;
+
+        let price = "";
+        let comparePrice: string | undefined;
+        let savings: string | undefined;
+
+        if (config.discountType === "PERCENTAGE") {
+            const discountStr = `${Math.round(tier.discount)}%`;
+            const tmpl = labels?.volumeSavePercentLabel ?? "Save {discount}%";
+            savings = tmpl.replace("{discount}", String(Math.round(tier.discount)));
+            if (basePrice && basePrice > 0) {
+                const discountedPrice = basePrice * (1 - tier.discount / 100);
+                price = formatPrice(Math.round(discountedPrice * 100) / 100, currencyCode);
+                comparePrice = formatPrice(basePrice, currencyCode);
+            } else {
+                price = `${discountStr} off`;
+            }
+        } else if (config.discountType === "FIXED_AMOUNT") {
+            const discountStr = formatPrice(tier.discount, currencyCode);
+            const tmpl = labels?.volumeSaveAmountLabel ?? "Save {discount} off";
+            savings = tmpl.replace("{discount}", discountStr);
+            if (basePrice && basePrice > 0) {
+                const discountedPrice = Math.max(0, basePrice - tier.discount);
+                price = formatPrice(Math.round(discountedPrice * 100) / 100, currencyCode);
+                comparePrice = formatPrice(basePrice, currencyCode);
+            } else {
+                price = `-${discountStr}`;
+            }
+        } else if (config.discountType === "CUSTOM_PRICE") {
+            if (basePrice && basePrice > 0 && tier.discount < basePrice) {
+                const discountStr = formatPrice(basePrice - tier.discount, currencyCode);
+                const tmpl = labels?.volumeSaveCustomLabel ?? "Save {discount}";
+                savings = tmpl.replace("{discount}", discountStr);
+                price = formatPrice(tier.discount, currencyCode);
+                comparePrice = formatPrice(basePrice, currencyCode);
+            } else {
+                price = formatPrice(tier.discount, currencyCode);
+            }
+        } else {
+            if (basePrice && basePrice > 0) {
+                price = formatPrice(basePrice, currencyCode);
+            }
+        }
+
+        const badge = tier.badge?.text
+            ? { text: tier.badge.text, style: tier.badge.style }
+            : undefined;
+
+        const discountLabel = config.discountType === "PERCENTAGE"
+            ? `${Math.round(tier.discount)}%`
+            : formatPrice(tier.discount, currencyCode);
+
+        const resolvedTitle = (tier.title || "")
+            .replace("{quantity}", String(tier.minQuantity))
+            .replace("{discount}", discountLabel);
+
+        const resolvedSubtitle = (tier.subtitle || "")
+            .replace("{quantity}", String(tier.minQuantity))
+            .replace("{discount}", discountLabel);
+
+        return {
+            qty: tier.minQuantity,
+            discount: tier.discount,
+            price,
+            comparePrice,
+            savings,
+            title: resolvedTitle || undefined,
+            subtitle: resolvedSubtitle || undefined,
+            badge,
+            isDefault: !!tier.isDefault,
+        };
+    });
+}
+
+function VolumeAddToCart({
+    styles,
+    cartButtonText,
+    displayOptions,
+}: {
+    styles: CustomizerStyles;
+    cartButtonText?: string;
+    displayOptions: WidgetDisplayOptions;
+}) {
+    const t = useTranslations("Bundles.Creation.Preview");
+    const bgColor = styles.buttonBgColor || styles.primaryColor;
+    const isOutline = styles.buttonStyle === "outline";
+    const isFullWidth = styles.buttonWidth === "full";
+    const borderRadius = styles.cornerStyle === "modern" ? "8px" : "4px";
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {config.tiers.map((tier, index) => {
-                const isLast = index === config.tiers.length - 1;
-                const nextMin = config.tiers[index + 1]?.minQuantity;
-                const rangeLabel = isLast
-                    ? config.openEnded
-                        ? `${tier.minQuantity}+ units`
-                        : `${tier.minQuantity} units`
-                    : `${tier.minQuantity}–${(nextMin ?? 0) - 1} units`;
-                const discountLabel = position === "suffix"
-                    ? `${tier.discount}${suffix} off`
-                    : `${suffix}${tier.discount} off`;
-
-                return (
-                    <div
-                        key={index}
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            padding: "10px 14px",
-                            borderRadius: 6,
-                            border: "1px solid #e1e3e5",
-                            background: tier.isDefault ? "#f0f7ff" : "#fff",
-                        }}
-                    >
-                        <div>
-                            <div style={{ fontWeight: 600, fontSize: 14 }}>
-                                {tier.title || rangeLabel}
-                            </div>
-                            <div style={{ fontSize: 12, color: "#6d7175" }}>
-                                {rangeLabel}
-                            </div>
-                        </div>
-                        <div style={{ fontWeight: 700, color: "#008060" }}>
-                            {discountLabel}
-                        </div>
-                    </div>
-                );
-            })}
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginTop: "16px",
+                justifyContent: isFullWidth ? "stretch" : "flex-start",
+            }}
+        >
+            {displayOptions?.showQuantity && (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    border: `1px solid ${styles.borderColor || "#d1d5db"}`,
+                    borderRadius,
+                    overflow: "hidden",
+                    flexShrink: 0,
+                }}
+            >
+                <button
+                    style={{
+                        width: 36,
+                        height: 42,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 16,
+                        color: styles.textColor,
+                    }}
+                    aria-label={t("decreaseQuantity")}
+                >
+                    −
+                </button>
+                <span
+                    style={{
+                        width: 36,
+                        height: 42,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: styles.textColor,
+                        borderLeft: `1px solid ${styles.borderColor || "#d1d5db"}`,
+                        borderRight: `1px solid ${styles.borderColor || "#d1d5db"}`,
+                    }}
+                >
+                    1
+                </span>
+                <button
+                    style={{
+                        width: 36,
+                        height: 42,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 16,
+                        color: styles.textColor,
+                    }}
+                    aria-label={t("increaseQuantity")}
+                >
+                    +
+                </button>
+            </div>
+                )}
+            <button
+                style={{
+                    flex: isFullWidth ? 1 : undefined,
+                    padding: "10px 24px",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    borderRadius,
+                    cursor: "pointer",
+                    transition: "opacity 0.2s ease",
+                    backgroundColor: isOutline ? "transparent" : bgColor,
+                    color: isOutline ? bgColor : "#ffffff",
+                    border: isOutline ? `2px solid ${bgColor}` : "none",
+                }}
+            >
+                {cartButtonText || t("defaultAddToCart")}
+            </button>
         </div>
     );
 }
 
-function useWidgetStyles(): CustomizerStyles {
+function RenderVolumeLayout({
+    layout,
+    config,
+    styles,
+    currencyCode,
+    firstProduct,
+    displayOptions,
+    labels,
+}: {
+    layout: DisplaySettings["layout"];
+    config: VolumeDiscountConfig;
+    styles: CustomizerStyles;
+    currencyCode?: string;
+    firstProduct?: PreviewProduct;
+    displayOptions: WidgetDisplayOptions;
+    labels?: WidgetLabels;
+}) {
+    const rawBasePrice = firstProduct?.compareAtPrice || firstProduct?.price;
+    const numericBasePrice = rawBasePrice
+        ? parseFloat(rawBasePrice.replace(/[^0-9.]/g, "")) || undefined
+        : undefined;
+    const tiers = buildVolumeLayoutTiers(config, currencyCode, numericBasePrice, labels);
+    const highlightColor = styles.primaryColor;
+    const product = firstProduct
+        ? {
+              title: firstProduct.title,
+              image: firstProduct.image,
+              basePrice: rawBasePrice || firstProduct.price,
+          }
+        : undefined;
+
+    const layoutProps = { tiers, product, highlightColor, styles, displayOptions, labels };
+
+    switch (layout) {
+        case "VOLUME_PRICING_CARDS":
+            return <VolumePricingCards {...layoutProps} />;
+        case "VOLUME_SLIDER":
+            return <VolumeSlider {...layoutProps} />;
+        case "VOLUME_CALCULATOR":
+            return <VolumeCalculator {...layoutProps} />;
+        case "VOLUME_TIER_LIST":
+        default:
+            return <VolumeTierList {...layoutProps} />;
+    }
+}
+
+function useWidgetStyles(
+    device: "desktop" | "tablet" | "mobile" = "mobile",
+): CustomizerStyles {
     const serverData = useSettingsStore((s) => s.serverData);
     const bundleType = useBundleStore((s) => s.bundleData.type);
 
     return useMemo(() => {
+        const globalStyles = serverData?.globalStyles as
+            | Partial<CustomizerStyles>
+            | undefined;
         const base = {
             ...DEFAULT_CUSTOMIZER_STYLES,
-            ...(serverData?.globalStyles as Partial<CustomizerStyles>),
+            ...globalStyles,
         };
         const typeOverride = bundleType
             ? base.bundleTypeOverrides?.[bundleType]
             : null;
-        return typeOverride ? { ...base, ...typeOverride } : base;
-    }, [serverData, bundleType]);
+        const withType = typeOverride ? { ...base, ...typeOverride } : base;
+        if (device !== "desktop") {
+            const deviceMap = globalStyles?.[device];
+            if (deviceMap) {
+                const filtered = Object.fromEntries(
+                    Object.entries(deviceMap).filter(([k]) =>
+                        RESPONSIVE_FIELDS.has(k),
+                    ),
+                );
+                return { ...withType, ...filtered };
+            }
+        }
+        return withType;
+    }, [serverData, bundleType, device]);
 }
 
 function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
-    const { selectedItems, bundleData } = useBundleStore();
+    const { selectedItems, bundleData, variantDataMap } = useBundleStore(
+        useShallow((s) => ({
+            selectedItems: s.selectedItems,
+            bundleData: s.bundleData,
+            variantDataMap: s.variantDataMap,
+        })),
+    );
     const isBxgy =
         bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
 
@@ -123,50 +339,66 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
         const discountValue = bundleData.discountValue ?? 0;
 
         if (isBxgy) {
-            return selectedItems.map((item) => {
-                const unitPrice = parseFloat(item.price) || 0;
+            const rows: PreviewProduct[] = [];
+            for (const item of selectedItems) {
                 const isReward = item.role === "REWARD";
-                let discountedUnitPrice = unitPrice;
+                const vids = item.variantIds ?? [];
+                // Check if this should expand into per-variant rows
+                const firstVarData = variantDataMap[vids[0]];
+                const isDefault =
+                    vids.length === 1 &&
+                    (firstVarData?.title === "Default Title" ||
+                        firstVarData?.title === "Default");
+                const shouldExpand = vids.length > 1 && !isDefault;
 
-                if (isReward && discountType && discountValue > 0) {
-                    switch (discountType) {
-                        case "PERCENTAGE":
-                            discountedUnitPrice =
-                                unitPrice * (1 - discountValue / 100);
-                            break;
-                        case "FIXED_AMOUNT":
-                            discountedUnitPrice = Math.max(
-                                0,
-                                unitPrice - discountValue,
-                            );
-                            break;
-                        case "CUSTOM_PRICE":
-                            discountedUnitPrice = discountValue;
-                            break;
+                const idsToRender = shouldExpand ? vids : [item.variantId || item.id];
+
+                idsToRender.forEach((vid, vi) => {
+                    const vData = variantDataMap[vid];
+                    const unitPrice = parseFloat(
+                        (shouldExpand && vData?.price) || item.price || "0",
+                    ) || 0;
+                    let dp = unitPrice;
+
+                    if (isReward && discountType && discountValue > 0) {
+                        switch (discountType) {
+                            case "PERCENTAGE":
+                                dp = unitPrice * (1 - discountValue / 100);
+                                break;
+                            case "FIXED_AMOUNT":
+                                dp = Math.max(0, unitPrice - discountValue);
+                                break;
+                            case "CUSTOM_PRICE":
+                                dp = discountValue;
+                                break;
+                        }
                     }
-                }
 
-                discountedUnitPrice =
-                    Math.round(discountedUnitPrice * 100) / 100;
-                const hasDiscount = discountedUnitPrice < unitPrice;
-                return {
-                    id: item.id,
-                    title: item.title,
-                    variantId: item.variantId,
-                    variantTitle: item.selectedVariant?.title,
-                    image: item.image,
-                    price: formatPrice(discountedUnitPrice, currencyCode),
-                    compareAtPrice: hasDiscount
-                        ? formatPrice(unitPrice, currencyCode)
-                        : undefined,
-                    quantity: item.quantity,
-                    url: item.url,
-                    role: item.role,
-                };
-            });
+                    dp = Math.round(dp * 100) / 100;
+                    const hasDiscount = dp < unitPrice;
+                    const vTitle = vData?.title;
+                    const isDef =
+                        vTitle === "Default Title" || vTitle === "Default";
+                    rows.push({
+                        id: shouldExpand ? `${item.id}-v${vi}` : item.id,
+                        title: item.title,
+                        variantId: vid,
+                        variantTitle: vTitle && !isDef ? vTitle : undefined,
+                        image: (shouldExpand && vData?.image) || item.image,
+                        price: formatPrice(dp, currencyCode),
+                        compareAtPrice: hasDiscount
+                            ? formatPrice(unitPrice, currencyCode)
+                            : undefined,
+                        quantity: item.quantity,
+                        url: item.url,
+                        role: item.role,
+                    });
+                });
+            }
+            return rows;
         }
 
-        const applyToSpecific = bundleData.discountApplication === "products";
+        const applyToSpecific = bundleData.discountApplication === DiscountApplication.PRODUCTS;
         const discountedIds = new Set(bundleData.discountedProductIds ?? []);
 
         const totalBundlePrice = selectedItems.reduce(
@@ -235,12 +467,14 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
         bundleData.discountApplication,
         bundleData.discountedProductIds,
         bundleData.maxDiscountAmount,
+        variantDataMap,
         currencyCode,
     ]);
 }
 
 function useWidgetDisplayOptions(): WidgetDisplayOptions {
-    const { displaySettings } = useBundleStore();
+    const displaySettings = useBundleStore((s) => s.displaySettings);
+    const freeShipping = useBundleStore((s) => s.bundleData.freeShipping);
     return {
         showImages: displaySettings.showImages,
         showPrices: displaySettings.showPrices,
@@ -248,7 +482,7 @@ function useWidgetDisplayOptions(): WidgetDisplayOptions {
         showQuantity: displaySettings.showQuantity,
         showSavingsBadge: displaySettings.showSavingsBadge,
         showSavings: displaySettings.showSavings,
-        showFreeShipping: displaySettings.showFreeShipping,
+        showFreeShipping: displaySettings.showFreeShipping && !!freeShipping,
         enableHyperLink: displaySettings.enableHyperLink,
     };
 }
@@ -269,45 +503,85 @@ function useWidgetLabels(): WidgetLabels {
     const savedLabels = serverData?.labels as
         | Record<string, string>
         | undefined;
+    const i18nLabels = usePreviewLabels();
     return useMemo(
         () => ({
-            ...PREVIEW_LABELS,
+            ...i18nLabels,
             ...Object.fromEntries(
                 Object.entries(savedLabels ?? {}).filter(
                     ([, val]) => val !== "",
                 ),
             ),
         }),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [savedLabels],
     );
 }
 
 function useBadgeText(labels: WidgetLabels): string {
-    const { bundleData, selectedItems } = useBundleStore();
+    const t = useTranslations("Bundles.Creation.Preview");
+    const { bundleData, selectedItems, variantDataMap } = useBundleStore(
+        useShallow((s) => ({
+            bundleData: s.bundleData,
+            selectedItems: s.selectedItems,
+            variantDataMap: s.variantDataMap,
+        })),
+    );
+    const { currencyCode } = useShopSettings();
+    const currencySymbol = getCurrencySymbol(currencyCode);
+
+    // VOLUME_DISCOUNT badge: "Up to X% off" / "Up to $X off" / "From $X"
+    if (bundleData.type === "VOLUME_DISCOUNT") {
+        const volConfig = bundleData.volumeTiers as VolumeDiscountConfig | undefined;
+        if (!volConfig?.tiers?.length) return "";
+        const maxTier = volConfig.tiers[volConfig.tiers.length - 1];
+        const firstTier = volConfig.tiers[0];
+        if (volConfig.discountType === "PERCENTAGE") {
+            return t("volumeBadgePercent", { discount: String(Math.round(maxTier.discount)) });
+        }
+        if (volConfig.discountType === "FIXED_AMOUNT") {
+            return t("volumeBadgeFixed", { amount: `${currencySymbol}${maxTier.discount}` });
+        }
+        if (volConfig.discountType === "CUSTOM_PRICE") {
+            return t("volumeBadgeCustom", { price: `${currencySymbol}${firstTier.discount}` });
+        }
+        return "";
+    }
 
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
 
-    const triggerCount = selectedItems.filter(
-        (i) => i.role === "TRIGGER",
-    ).length;
-    const rewardCount = selectedItems.filter((i) => i.role === "REWARD").length;
+    const countExpanded = (role: string) =>
+        selectedItems
+            .filter((i) => i.role === role)
+            .reduce((sum, i) => {
+                const vids = i.variantIds ?? [];
+                const firstTitle = variantDataMap[vids[0]]?.title;
+                const isDefault =
+                    vids.length === 1 &&
+                    (firstTitle === "Default Title" ||
+                        firstTitle === "Default");
+                const variantCount = vids.length > 1 && !isDefault ? vids.length : 1;
+                return sum + variantCount * (i.quantity ?? 1);
+            }, 0);
+    const triggerCount = countExpanded("TRIGGER");
+    const rewardCount = countExpanded("REWARD");
     const buy = triggerCount || (bundleData.buyQuantity ?? 1);
     const get = rewardCount || (bundleData.getQuantity ?? 1);
     const discountType = bundleData.discountType;
     const discountValue = bundleData.discountValue ?? 0;
 
-    const buyWord = labels.bogoBuyText || "Buy";
-    const getWord = labels.bogoGetText || "Get";
-    const freeWord = labels.bogoFreeText || "Free";
+    const buyWord = labels.bogoBuyText || t("bogoBuyFallback");
+    const getWord = labels.bogoGetText || t("bogoGetFallback");
+    const freeWord = labels.bogoFreeText || t("bogoFreeFallback");
 
     if (discountType === "PERCENTAGE" && discountValue === 100) {
         return `${buyWord} ${buy} ${getWord} ${get} ${freeWord}`;
     }
     if (discountType === "PERCENTAGE" && discountValue > 0) {
-        return `${buyWord} ${buy} ${getWord} ${get} at ${discountValue}% Off`;
+        return `${buyWord} ${buy} ${getWord} ${get} ${t("bogoAtPercentOff", { percent: String(discountValue) })}`;
     }
     if (discountType === "FIXED_AMOUNT" && discountValue > 0) {
-        return `${buyWord} ${buy} ${getWord} ${get} - $${discountValue} Off`;
+        return `${buyWord} ${buy} ${getWord} ${get} - ${t("bogoAtAmountOff", { amount: `${currencySymbol}${discountValue}` })}`;
     }
     return `${buyWord} ${buy} ${getWord} ${get}`;
 }
@@ -339,13 +613,20 @@ function RenderLayout({
     activeDevice?: "desktop" | "tablet" | "mobile";
     bundleType?: string;
 }) {
-    const layoutProps = { products, styles, displayOptions, bundleType, labels };
+    const t = useTranslations("Bundles.Creation.Preview");
+    const layoutProps = {
+        products,
+        styles,
+        displayOptions,
+        bundleType,
+        labels,
+    };
 
     // Default values if empty or undefined
-    const safeTitle = title?.trim() ? title : "Bundle & Save";
+    const safeTitle = title?.trim() ? title : t("defaultTitle");
     const safeButtonText = cartButtonText?.trim()
         ? cartButtonText
-        : "Add Bundle to Cart";
+        : t("defaultAddToCart");
 
     switch (layout) {
         case "GRID":
@@ -447,11 +728,18 @@ function RenderLayout({
 export function BundlePreview() {
     const t = useTranslations("Bundles.Creation.Preview");
     const ta = useTranslations("Bundles.Creation.Appearance");
-    const { appWindowRef } = useCustomizerModal();
-    const { displaySettings, bundleData } = useBundleStore();
+    const { appWindowRef, isSyncing } = useCustomizerModal();
+    const { displaySettings, bundleData } = useBundleStore(
+        useShallow((s) => ({
+            displaySettings: s.displaySettings,
+            bundleData: s.bundleData,
+        })),
+    );
     const { currencyCode } = useShopSettings();
     const isVolume = bundleData.type === "VOLUME_DISCOUNT";
-    const volumeConfig = bundleData.volumeTiers as VolumeDiscountConfig | undefined;
+    const volumeConfig = bundleData.volumeTiers as
+        | VolumeDiscountConfig
+        | undefined;
 
     const { setCustomizerSource } = useCustomizerStore();
     const styles = useWidgetStyles();
@@ -538,7 +826,7 @@ export function BundlePreview() {
                             <s-button-group gap="none">
                                 <s-button
                                     interestFor="tooltip-desktop"
-                                    accessibility-label="Open desktop customizer"
+                                    accessibility-label={t("customizerDesktopLabel")}
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("desktop")}
                                 >
@@ -546,7 +834,7 @@ export function BundlePreview() {
                                 </s-button>
                                 <s-button
                                     interestFor="tooltip-tablet"
-                                    accessibility-label="Open tablet customizer"
+                                    accessibility-label={t("customizerTabletLabel")}
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("tablet")}
                                 >
@@ -554,7 +842,7 @@ export function BundlePreview() {
                                 </s-button>
                                 <s-button
                                     interestFor="tooltip-mobile"
-                                    accessibility-label="Open mobile customizer"
+                                    accessibility-label={t("customizerMobileLabel")}
                                     slot="secondary-actions"
                                     onClick={() => openCustomizer("mobile")}
                                 >
@@ -572,24 +860,25 @@ export function BundlePreview() {
                             />
                         </s-stack>
                     </s-stack>
-                    {isVolume ? (
-                        volumeConfig && volumeConfig.tiers.length > 0 ? (
-                            <VolumePreviewWidget config={volumeConfig} />
-                        ) : (
-                            <div
-                                style={{
-                                    minHeight: 120,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    color: styles.textColor,
-                                    fontSize: 14,
-                                }}
-                            >
-                                Configure discount tiers to see a preview.
-                            </div>
-                        )
-                    ) : products.length === 0 ? (
+                    <div style={{ position: "relative" }}>
+                    {isSyncing ? (
+                        <div
+                            style={{
+                                position: "absolute",
+                                inset: -16,
+                                zIndex: 20,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                borderRadius: 8,
+                                transition: "opacity 0.2s",
+                            }}
+                        >
+                            <s-spinner size="large" />
+                        </div>
+                    ) : null}
+                    {products.length === 0 ? (
                         <div
                             style={{
                                 minHeight: 200,
@@ -602,6 +891,93 @@ export function BundlePreview() {
                         >
                             {t("emptyState")}
                         </div>
+                    ) : isVolume ? (
+                        volumeConfig && volumeConfig.tiers.length > 0 ? (
+                            <div className="radius-bundle-widget">
+                                <div className="radius-bundle">
+                                    <div
+                                        className="radius-bundle__inner"
+                                        style={{
+                                            position: "relative",
+                                            backgroundColor:
+                                                styles.backgroundColor,
+                                            borderRadius,
+                                            borderStyle: styles.showBorder
+                                                ? "solid"
+                                                : "none",
+                                            borderWidth: styles.showBorder
+                                                ? "1px"
+                                                : 0,
+                                            borderColor: styles.borderColor,
+                                            boxShadow: shadow,
+                                            padding,
+                                            marginInlineStart: styles.showBorder
+                                                ? "-17px"
+                                                : "-16px",
+                                            marginInlineEnd: styles.showBorder
+                                                ? "-17px"
+                                                : "-16px",
+                                            marginBlockEnd: styles.showBorder
+                                                ? "-17px"
+                                                : "-16px",
+                                        }}
+                                    >
+                                        <BundleWidget
+                                            styles={styles}
+                                            displayOptions={displayOptions}
+                                            pricing={pricing}
+                                            title={displaySettings.title}
+                                            subtitle={displaySettings.subtitle}
+                                            labels={labels}
+                                            badgeText={badgeText}
+                                            hideFooter
+                                            hidePricing
+                                        >
+                                            <RenderVolumeLayout
+                                                layout={displaySettings.layout}
+                                                config={volumeConfig}
+                                                styles={styles}
+                                                currencyCode={currencyCode}
+                                                firstProduct={products[0]}
+                                                displayOptions={displayOptions}
+                                                labels={labels}
+                                            />
+                                        </BundleWidget>
+                                        {displaySettings.layout === "VOLUME_SLIDER" ||
+                                        displaySettings.layout === "VOLUME_CALCULATOR" ? (
+                                            <WidgetAddToCart
+                                                styles={styles}
+                                                cartButtonText={
+                                                    displaySettings.cartButtonText ||
+                                                    labels.addToCartText
+                                                }
+                                            />
+                                        ) : (
+                                            <VolumeAddToCart
+                                                styles={styles}
+                                                displayOptions={displayOptions}
+                                                cartButtonText={
+                                                    displaySettings.cartButtonText
+                                                }
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div
+                                style={{
+                                    minHeight: 120,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: styles.textColor,
+                                    fontSize: 14,
+                                }}
+                            >
+                                {t("configureDiscountTiers")}
+                            </div>
+                        )
                     ) : (
                         <div className="radius-bundle-widget">
                             <div className="radius-bundle">
@@ -661,11 +1037,11 @@ export function BundlePreview() {
                                             pricing={pricing}
                                             cartButtonText={
                                                 displaySettings.cartButtonText ||
-                                                ta("cartButtonTextPlaceholder")
+                                                labels.addToCartText
                                             }
                                             title={
                                                 displaySettings.title ||
-                                                ta("titlePlaceholder")
+                                                labels.headingLabel
                                             }
                                             subtitle={displaySettings.subtitle}
                                             badgeText={badgeText}
@@ -678,6 +1054,7 @@ export function BundlePreview() {
                             </div>
                         </div>
                     )}
+                    </div>
                 </s-stack>
             </s-section>
         </div>

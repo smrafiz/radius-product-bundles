@@ -13,8 +13,12 @@ import {
 } from "../services/setup-guide.service";
 import { handleSessionToken } from "@/lib/shopify";
 import { processScheduledBundlesForShop } from "@/features/bundles/services/bundle-scheduler.service";
-import { getSetupGuideService } from "@/features/dashboard/services/setup-guide.service";
+import { getCachedSetupGuide } from "@/features/dashboard/services/setup-guide.cached";
 import { invalidateSetupGuideCache } from "@/lib/cache";
+import {
+    findBundlesReadyToActivate,
+    findBundlesReadyToDeactivate,
+} from "@/features/bundles/repositories";
 
 export async function getSetupGuideAction(
     sessionToken: string,
@@ -23,24 +27,38 @@ export async function getSetupGuideAction(
         const { session } = await handleSessionToken(sessionToken);
         const { shop } = session;
 
-        // Scheduler is a side-effect — never cache it
-        const schedulerPromise = session.accessToken
-            ? processScheduledBundlesForShop(shop, session.accessToken).catch(
-                  (err) => {
-                      console.error("[Dashboard] Scheduler check failed:", err);
-                      return { activated: 0, deactivated: 0 };
-                  },
-              )
-            : Promise.resolve({ activated: 0, deactivated: 0 });
+        // Scheduler: only run if there are actually scheduled bundles pending.
+        // Checking counts first is cheap (indexed queries) — only pay the full
+        // scheduler cost when there is real work to do.
+        let bundlesTransitioned = false;
+        if (session.accessToken) {
+            const [toActivate, toDeactivate] = await Promise.all([
+                findBundlesReadyToActivate(shop),
+                findBundlesReadyToDeactivate(shop),
+            ]);
 
-        // Setup guide data cached via `use cache` (10 min)
-        const [schedulerResult, data] = await Promise.all([
-            schedulerPromise,
-            getSetupGuideService({ shop }),
-        ]);
+            if (toActivate.length > 0 || toDeactivate.length > 0) {
+                const schedulerResult = await processScheduledBundlesForShop(
+                    shop,
+                    session.accessToken,
+                ).catch((err) => {
+                    console.error("[Dashboard] Scheduler check failed:", err);
+                    return { activated: 0, deactivated: 0 };
+                });
+                bundlesTransitioned =
+                    schedulerResult.activated > 0 ||
+                    schedulerResult.deactivated > 0;
 
-        const bundlesTransitioned =
-            schedulerResult.activated > 0 || schedulerResult.deactivated > 0;
+                // Bust setup guide cache if bundles transitioned — their
+                // auto-detected step statuses may have changed.
+                if (bundlesTransitioned) {
+                    invalidateSetupGuideCache(shop);
+                }
+            }
+        }
+
+        // Use the cached version — 10 min TTL, busted on step updates/dismiss
+        const data = await getCachedSetupGuide(shop);
 
         return {
             status: "success",

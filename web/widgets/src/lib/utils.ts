@@ -97,6 +97,8 @@ export function showToast(message: string, type: "success" | "error"): void {
 
     const toast = document.createElement("div");
     toast.className = `radius-bundle-toast radius-bundle-toast--${type}`;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.setAttribute('aria-atomic', 'true');
 
     const icon =
         type === "success"
@@ -166,6 +168,68 @@ export function getLayout(container: HTMLElement): string {
     if (container.classList.contains("radius-bundle--volume_slider"))
         return "volume_slider";
     return "list";
+}
+
+/**
+ * Compute BXGY badge text from products + structure.
+ * Works with BundleProduct[] (renderer) or parallel arrays (structure-only).
+ */
+export function buildBxgyBadgeText(
+    structure: {
+        discountType: string;
+        discountValue: number;
+        buyQuantity?: number;
+        getQuantity?: number;
+        labels?: {
+            bogoBuyText?: string;
+            bogoGetText?: string;
+            bogoFreeText?: string;
+            bogoBadgeText?: string;
+        };
+    },
+    triggers: Array<{ quantity?: number }>,
+    rewards: Array<{ quantity?: number }>,
+): string {
+    const override = structure.labels?.bogoBadgeText || "";
+    if (override) return override;
+
+    const buyQty =
+        triggers.reduce((s, p) => s + (p.quantity || 1), 0) ||
+        structure.buyQuantity ||
+        1;
+    const getQty =
+        rewards.reduce((s, p) => s + (p.quantity || 1), 0) ||
+        structure.getQuantity ||
+        1;
+    const buyText = structure.labels?.bogoBuyText || "Buy";
+    const getText = structure.labels?.bogoGetText || "Get";
+
+    if (
+        structure.discountType === "PERCENTAGE" &&
+        structure.discountValue === 100
+    ) {
+        const freeText = structure.labels?.bogoFreeText || "FREE";
+        return `${buyText} ${buyQty} ${getText} ${getQty} ${freeText}`;
+    }
+    if (
+        structure.discountType === "PERCENTAGE" &&
+        structure.discountValue > 0
+    ) {
+        return `${buyText} ${buyQty} ${getText} ${getQty} at ${Math.round(structure.discountValue)}% Off`;
+    }
+    if (
+        structure.discountType === "FIXED_AMOUNT" &&
+        structure.discountValue > 0
+    ) {
+        return `${buyText} ${buyQty} ${getText} ${getQty} — ${trimMoney(formatMoney(structure.discountValue * 100))} Off`;
+    }
+    if (
+        structure.discountType === "CUSTOM_PRICE" &&
+        structure.discountValue > 0
+    ) {
+        return `${buyText} ${buyQty} ${getText} ${getQty} for ${trimMoney(formatMoney(structure.discountValue * 100))}`;
+    }
+    return "";
 }
 
 export function countBundlesInCart(

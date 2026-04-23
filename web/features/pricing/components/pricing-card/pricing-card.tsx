@@ -74,7 +74,9 @@ export const PricingCard = () => {
                             price={getPrice(item.id)}
                             frequency={getFrequency(item.id)}
                             annualEquivalent={getAnnualEquivalent(item.id)}
-                            features={item.features}
+                            features={item.features.map((_, i) =>
+                                t(`plans.${item.id}.features.${i}`)
+                            )}
                             isPlanLoading={isPlanLoading}
                             primaryButton={{
                                 ...item.primaryButton,

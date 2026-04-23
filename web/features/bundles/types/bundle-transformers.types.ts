@@ -2,7 +2,7 @@
  * Bundle transformers types
  */
 
-import { BundleStatus, BundleType, DiscountType } from "@/features/bundles";
+import { BundleStatus, BundleType, DiscountType, VolumeDiscountConfig } from "@/features/bundles";
 
 /*
  * Bundle transformers
@@ -46,6 +46,9 @@ export interface TransformedBundleBase {
     updatedAt?: string;
     discountType: DiscountType;
     discountValue: number;
+    volumeTiers?: VolumeDiscountConfig;
+    buyQuantity?: number;
+    getQuantity?: number;
     products: TransformedProduct[];
     mainProduct?: { id: string; title: string; handle: string } | null;
 }
@@ -69,9 +72,6 @@ export interface TransformedBundle extends TransformedBundleBase {
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
-    volumeTiers?: unknown;
-    buyQuantity?: number;
-    getQuantity?: number;
     usesPerOrderLimit?: number;
     settings?: string;
 }

@@ -6,12 +6,8 @@ import {
     GetShopLocalesQuery,
 } from "@/lib/graphql/generated/graphql";
 import prisma from "@/shared/repositories/prisma-connect";
-
-export interface CachedLocale {
-    locale: string;
-    name: string;
-    primary: boolean;
-}
+import { CachedLocalesArraySchema } from "./locale.validation";
+import type { CachedLocale } from "./locale.validation";
 
 export async function fetchAndCacheShopLocales(
     sessionToken: string,
@@ -27,10 +23,11 @@ export async function fetchAndCacheShopLocales(
         return [];
     }
 
-    const published = response.data.shopLocales
+    const raw = response.data.shopLocales
         .filter((l) => l.published)
         .map(({ locale, name, primary }) => ({ locale, name, primary }));
 
+    const published = CachedLocalesArraySchema.parse(raw);
     const primaryLocale = published.find((l) => l.primary)?.locale ?? "en";
 
     await prisma.shop.update({
@@ -66,10 +63,17 @@ export async function getShopLocales(
         shop.locales.length > 0 &&
         isFresh
     ) {
-        return shop.locales as unknown as CachedLocale[];
+        return CachedLocalesArraySchema.parse(shop.locales);
     }
 
     return fetchAndCacheShopLocales(sessionToken, domain);
+}
+
+export async function clearLocaleCache(domain: string): Promise<void> {
+    await prisma.shop.update({
+        where: { domain },
+        data: { locales: [], localesUpdatedAt: null },
+    });
 }
 
 export async function getShopPrimaryLocale(domain: string): Promise<string> {

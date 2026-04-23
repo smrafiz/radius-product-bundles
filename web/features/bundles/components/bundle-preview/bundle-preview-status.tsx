@@ -14,12 +14,15 @@ import {
     getAvailableStatuses,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function BundlePreviewStatus() {
     const t = useTranslations("Bundles.Schedule");
     const ts = useTranslations("Bundles.Statuses");
-    const { bundleData, updateBundleField } = useBundleStore();
+    const { bundleData, updateBundleField } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, updateBundleField: s.updateBundleField })),
+    );
     const { plan } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
     const mode = bundleData.id ? "edit" : "create";
@@ -57,28 +60,18 @@ export function BundlePreviewStatus() {
         return new Date(value);
     };
 
-    const handleDateChange = (value: string) => {
-        if (!value || !value.includes("--")) {
-            updateBundleField("startDate", undefined);
-            updateBundleField("endDate", undefined);
-            return;
-        }
-
-        const [start, end] = value.split("--");
-        updateBundleField("startDate", start ? new Date(start) : undefined);
-        updateBundleField("endDate", end ? new Date(end) : undefined);
+    const handleStartDateChange = (value: string) => {
+        updateBundleField("startDate", value ? new Date(value) : undefined);
     };
 
-    const getDatePickerValue = (): string => {
-        const start = toDate(bundleData.startDate);
-        const end = toDate(bundleData.endDate);
+    const handleEndDateChange = (value: string) => {
+        updateBundleField("endDate", value ? new Date(value) : undefined);
+    };
 
-        if (!start || !end) return "";
-
-        const startStr = start.toISOString().split("T")[0];
-        const endStr = end.toISOString().split("T")[0];
-
-        return `${startStr}--${endStr}`;
+    const getDateValue = (date: Date | string | undefined): string => {
+        const dateObj = toDate(date);
+        if (!dateObj) return "";
+        return dateObj.toISOString().split("T")[0];
     };
 
     const formatDisplayDate = (date: Date | string | undefined): string => {
@@ -103,7 +96,7 @@ export function BundlePreviewStatus() {
     };
 
     const disallowPast = getDisallowPastDates();
-    const hasDates = bundleData.startDate && bundleData.endDate;
+    const hasDates = Boolean(bundleData.startDate);
 
     return (
         <s-section>
@@ -212,9 +205,7 @@ export function BundlePreviewStatus() {
                                                     </s-paragraph>
                                                 </s-stack>
                                                 {isLocked && (
-                                                    <ProBadge
-                                                        label={ts(key)}
-                                                    />
+                                                    <ProBadge label={ts(key)} />
                                                 )}
                                             </s-stack>
                                         </div>
@@ -224,6 +215,43 @@ export function BundlePreviewStatus() {
                         </s-stack>
                     </div>
                 </s-popover>
+
+                {mode === "edit" &&
+                    bundleData.status &&
+                    bundleData.status !== "ACTIVE" && (
+                        <s-banner
+                            tone={
+                                bundleData.status === "SCHEDULED"
+                                    ? "info"
+                                    : "warning"
+                            }
+                        >
+                            {bundleData.status === "SCHEDULED"
+                                ? bundleData.startDate
+                                    ? t("notLiveScheduledOn", {
+                                          date: formatDisplayDate(
+                                              bundleData.startDate,
+                                          ),
+                                      })
+                                    : t("notLiveScheduled")
+                                : t(
+                                      bundleData.status === "DRAFT"
+                                          ? "notLiveDraft"
+                                          : bundleData.status === "PAUSED"
+                                            ? "notLivePaused"
+                                            : "notLiveArchived",
+                                  )}
+                            {(bundleData.status === "DRAFT" ||
+                                bundleData.status === "PAUSED") && (
+                                <s-button
+                                    slot="secondary-actions"
+                                    onClick={() => handleStatusChange("ACTIVE")}
+                                >
+                                    {t("setToActive")}
+                                </s-button>
+                            )}
+                        </s-banner>
+                    )}
 
                 {bundleData.status === "SCHEDULED" && (
                     <s-stack gap="small">
@@ -238,7 +266,7 @@ export function BundlePreviewStatus() {
                                 commandFor="date-popover"
                                 variant="secondary"
                             >
-                                {bundleData.startDate && bundleData.endDate ? (
+                                {bundleData.startDate ? (
                                     <s-stack
                                         direction="inline"
                                         alignItems="center"
@@ -248,9 +276,15 @@ export function BundlePreviewStatus() {
                                         {formatDisplayDate(
                                             bundleData.startDate,
                                         )}
-                                        <s-icon type="arrow-right" />
-                                        <s-icon type="calendar" />
-                                        {formatDisplayDate(bundleData.endDate)}
+                                        {bundleData.endDate && (
+                                            <>
+                                                <s-icon type="arrow-right" />
+                                                <s-icon type="calendar" />
+                                                {formatDisplayDate(
+                                                    bundleData.endDate,
+                                                )}
+                                            </>
+                                        )}
                                     </s-stack>
                                 ) : (
                                     <s-stack
@@ -283,23 +317,57 @@ export function BundlePreviewStatus() {
                             <s-box padding="base">
                                 <s-stack gap="base">
                                     <s-heading>{t("scheduleBundle")}</s-heading>
-                                    <s-date-picker
-                                        type="range"
-                                        disallow={disallowPast}
-                                        value={getDatePickerValue()}
-                                        onChange={(e: any) =>
-                                            handleDateChange(
-                                                e.value ??
-                                                    e.currentTarget?.value ??
-                                                    "",
-                                            )
-                                        }
-                                    />
+                                    <s-stack direction="inline" gap="base">
+                                        <s-stack gap="small-300" alignItems="center">
+                                            <s-heading>
+                                                {t("startDate")}{" "}
+                                                <span style={{ color: "var(--p-color-text-critical)" }}>*</span>
+                                            </s-heading>
+                                            <s-date-picker
+                                                type="single"
+                                                disallow={disallowPast}
+                                                value={getDateValue(
+                                                    bundleData.startDate,
+                                                )}
+                                                onChange={(e: any) =>
+                                                    handleStartDateChange(
+                                                        e.value ??
+                                                            e.currentTarget
+                                                                ?.value ??
+                                                            "",
+                                                    )
+                                                }
+                                            />
+                                        </s-stack>
+                                        <s-stack gap="small-300" alignItems="center">
+                                            <s-heading>
+                                                {t("endDate")}{" "}
+                                                <s-text color="subdued">
+                                                    ({t("optional")})
+                                                </s-text>
+                                            </s-heading>
+                                            <s-date-picker
+                                                type="single"
+                                                disallow={disallowPast}
+                                                value={getDateValue(
+                                                    bundleData.endDate,
+                                                )}
+                                                onChange={(e: any) =>
+                                                    handleEndDateChange(
+                                                        e.value ??
+                                                            e.currentTarget
+                                                                ?.value ??
+                                                            "",
+                                                    )
+                                                }
+                                            />
+                                        </s-stack>
+                                    </s-stack>
                                 </s-stack>
                             </s-box>
                         </s-popover>
 
-                        {!bundleData.startDate || !bundleData.endDate ? (
+                        {!bundleData.startDate ? (
                             <s-banner tone="info">{t("dateRequired")}</s-banner>
                         ) : null}
                     </s-stack>

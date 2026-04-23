@@ -49,10 +49,9 @@
 
     &__header-subtitle {
         font-size: var(--rb-body-font-size);
-        color: var(--rb-text-color);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 80%, transparent);
         text-align: center;
         line-height: 1.3;
-        opacity: 0.8;
     }
 
     &__grid {
@@ -131,22 +130,21 @@
 
     // ── Individual product (inside a group card) ────────────────────
     &__product {
-        &--horizontal {
-            display: flex;
-            gap: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
 
-            .rb-classic__image {
-                width: calc(var(--rb-image-size) - 10px);
-                height: calc(var(--rb-image-size) - 10px);
-                flex-shrink: 0;
-                margin-top: 0;
-                margin-bottom: 0;
-            }
+        .rb-classic__image {
+            width: calc(var(--rb-image-size) - 10px);
+            height: calc(var(--rb-image-size) - 10px);
+            flex-shrink: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
 
-            .rb-classic__text {
-                flex: 1;
-                min-width: 0;
-            }
+        .rb-classic__text {
+            flex: 1;
+            min-width: 0;
         }
     }
 
@@ -187,18 +185,6 @@
         margin-bottom: 10px;
         margin-top: 8px;
         background: var(--rb-product-bg-color, #f9fafb);
-
-        &--small {
-            aspect-ratio: 4 / 3;
-        }
-
-        &--medium {
-            aspect-ratio: 1 / 1;
-        }
-
-        &--large {
-            aspect-ratio: 3 / 4;
-        }
 
         img {
             width: 100%;
@@ -254,9 +240,8 @@
 
     &__price-compare {
         font-size: calc(var(--rb-body-font-size) - 2px);
-        color: var(--rb-text-color);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
-        opacity: 0.5;
         font-weight: 500;
     }
 
@@ -306,7 +291,7 @@
         display: block;
         font-size: calc(var(--rb-body-font-size) + 4px);
         font-weight: 600;
-        color: var(--rb-text-color);
+        color: var(--rb-text-color, #333);
 
         &--savings {
             color: var(--rb-savings-color, #16a34a);
@@ -314,3 +299,29 @@
     }
 }
 
+.radius-bundle[data-image-position="top"] {
+    .rb-classic__product {
+        flex-direction: column;
+        align-items: stretch;
+        .rb-classic__image {
+            width: 100%;
+            height: auto;
+        }
+    }
+}
+
+.radius-bundle[data-image-size="large"] {
+    .rb-classic__image {
+        aspect-ratio: 3 / 4;
+    }
+}
+.radius-bundle[data-image-size="medium"] {
+    .rb-classic__image {
+        aspect-ratio: 1 / 1;
+    }
+}
+.radius-bundle[data-image-size="small"] {
+    .rb-classic__image {
+        aspect-ratio: 4 / 3;
+    }
+}

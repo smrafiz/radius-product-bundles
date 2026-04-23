@@ -20,6 +20,7 @@ import {
     SelectedItem,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 
 function buildBxgyGroups(items: SelectedItem[]): ProductGroup[] {
@@ -36,13 +37,23 @@ function buildBxgyGroups(items: SelectedItem[]): ProductGroup[] {
 export function ProductList({
     isBxgy,
     isBogo,
+    isVolume,
 }: {
     isBxgy?: boolean;
     isBogo?: boolean;
+    isVolume?: boolean;
 }) {
     const t = useTranslations("Bundles.Creation.Products");
-    const { getGroupedItems, selectedItems, setItemRole, removeItemById } =
-        useBundleStore();
+    const { getGroupedItems, selectedItems, setItemRole, removeItemById, setSameProductMode } =
+        useBundleStore(
+            useShallow((s) => ({
+                getGroupedItems: s.getGroupedItems,
+                selectedItems: s.selectedItems,
+                setItemRole: s.setItemRole,
+                removeItemById: s.removeItemById,
+                setSameProductMode: s.setSameProductMode,
+            })),
+        );
     const sameProductMode = useBundleStore((s) => s.bundleData.sameProductMode);
     const { sensors, handleDragEnd } = useDragAndDrop();
     const { openProductPicker, isLoading } = useProductPicker();
@@ -105,29 +116,36 @@ export function ProductList({
             );
             toRemove.forEach((i) => removeItemById(i.id));
         } else {
+            // BXGY same-product mode: removing a mirrored reward exits same-product
+            // mode so the next product pick is treated as a normal reward, not re-mirrored.
+            if (sameProductMode && itemId.startsWith("reward-")) {
+                setSameProductMode(false);
+            }
             removeItemById(itemId);
         }
     };
 
     if (items.length === 0) {
         return (
-            <s-box
-                padding="base"
-                background="subdued"
-                border="base"
-                borderRadius="base"
-            >
-                <s-stack gap="large" alignItems="center">
-                    <s-button
-                        variant="tertiary"
-                        icon="plus"
-                        onClick={openProductPicker}
-                        loading={isLoading}
-                    >
-                        {t("addProducts")}
-                    </s-button>
-                </s-stack>
-            </s-box>
+            <section aria-label={t("noProductsSelected")}>
+                <s-box
+                    padding="base"
+                    background="subdued"
+                    border="base"
+                    borderRadius="base"
+                >
+                    <s-stack gap="large" alignItems="center">
+                        <s-button
+                            variant="tertiary"
+                            icon="plus"
+                            onClick={openProductPicker}
+                            loading={isLoading}
+                        >
+                            {t("addProducts")}
+                        </s-button>
+                    </s-stack>
+                </s-box>
+            </section>
         );
     }
 
@@ -207,6 +225,7 @@ export function ProductList({
                         <ProductItem
                             key={group.product.productId}
                             group={group}
+                            quantityLocked={isVolume}
                         />
                     ))}
                 </s-stack>

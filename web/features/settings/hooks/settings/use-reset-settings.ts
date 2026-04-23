@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { resetSettingsAction } from "@/features/settings/actions/settings.action";
 import { settingsQueryKeys, useSettingsStore } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Hook to reset settings to defaults
@@ -12,6 +13,7 @@ export function useResetSettingsMutation() {
     const app = useAppBridge();
     const queryClient = useQueryClient();
     const { resetToDefaults } = useSettingsStore();
+    const t = useTranslations("Settings.Toast");
 
     return useMutation({
         mutationFn: async () => {
@@ -35,7 +37,7 @@ export function useResetSettingsMutation() {
 
             // Show success notification
             if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                shopify.toast.show("Settings reset to defaults", {
+                shopify.toast.show(t("resetSuccess"), {
                     duration: 3000,
                 });
             }
@@ -44,7 +46,7 @@ export function useResetSettingsMutation() {
             // Show error notification
             if (typeof shopify !== "undefined" && shopify.toast?.show) {
                 shopify.toast.show(
-                    error.message || "Failed to reset settings",
+                    error.message || t("resetError"),
                     {
                         duration: 5000,
                         isError: true,

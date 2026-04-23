@@ -3,12 +3,19 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useCallback } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function useStepIndicator() {
     const v = useTranslations("Validation");
-    const { currentStep, setStep, setValidationAttempted } = useBundleStore();
+    const { currentStep, setStep, setValidationAttempted } = useBundleStore(
+        useShallow((s) => ({
+            currentStep: s.currentStep,
+            setStep: s.setStep,
+            setValidationAttempted: s.setValidationAttempted,
+        })),
+    );
     const { validateCurrentStep } = useBundleValidation();
 
     const getStepStatus = (stepNumber: number) => {

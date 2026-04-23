@@ -20,11 +20,7 @@ export async function getSetupGuideService({
 }): Promise<SetupGuideData> {
     const persisted = await getSetupProgress(shop);
 
-    // Skip auto-detection when guide is dismissed or all steps already complete
-    const allPersistedComplete = Object.values(persisted.progress).every(
-        Boolean,
-    );
-    if (persisted.dismissed || allPersistedComplete) {
+    if (persisted.dismissed) {
         return {
             dismissed: persisted.dismissed,
             progress: persisted.progress,
@@ -44,15 +40,12 @@ export async function getSetupGuideService({
         widgetCustomized:
             persisted.progress.widgetCustomized ||
             autoDetected.widgetCustomized,
-        storefrontPreviewed:
-            persisted.progress.storefrontPreviewed ||
-            autoDetected.storefrontPreviewed,
+        storefrontPreviewed: persisted.progress.storefrontPreviewed,
         analyticsViewed: persisted.progress.analyticsViewed,
     };
 
     if (JSON.stringify(merged) !== JSON.stringify(persisted.progress)) {
-        const allComplete = Object.values(merged).every(Boolean);
-        await updateSetupProgress(shop, merged, allComplete);
+        await updateSetupProgress(shop, merged);
     }
 
     return {
@@ -64,14 +57,12 @@ export async function getSetupGuideService({
 }
 
 async function autoDetectProgress(shop: string) {
-    const { bundleCount, settingsExist, viewCount } =
-        await getAutoDetectData(shop);
+    const { bundleCount, settingsExist } = await getAutoDetectData(shop);
 
     const firstBundleCreated = bundleCount > 0;
     const widgetCustomized = settingsExist;
-    const storefrontPreviewed = viewCount > 0;
 
-    return { firstBundleCreated, widgetCustomized, storefrontPreviewed };
+    return { firstBundleCreated, widgetCustomized };
 }
 
 export async function updateSetupStepService({
@@ -85,8 +76,7 @@ export async function updateSetupStepService({
 }) {
     const { progress } = await getSetupProgress(shop);
     const updated: SetupProgress = { ...progress, [stepKey]: value };
-    const allComplete = Object.values(updated).every(Boolean);
-    await updateSetupProgress(shop, updated, allComplete);
+    await updateSetupProgress(shop, updated);
     return updated;
 }
 

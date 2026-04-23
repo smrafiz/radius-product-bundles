@@ -35,7 +35,7 @@ export function CrossSellModal() {
     return (
         <s-modal
             id="radius-cross-sell-modal"
-            accessibilityLabel="upgrade to pro"
+            accessibilityLabel={t("upgradeAriaLabel")}
             heading={t("heading", undefined, "Unlock Pro Features")}
             size="base"
         >

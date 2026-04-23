@@ -39,6 +39,18 @@ function SleekProductCard({
     const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
     const rewardBadgeText = isFreePrice
         ? freeText
         : pricing?.hasDiscount && pricing.savingsAmount
@@ -117,12 +129,14 @@ function SleekProductCard({
                         fontWeight: 500,
                         color: styles.textColor,
                         lineHeight: "1.3",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "normal",
                     }}
                 >
-                    {product.title}
+                    {titleEl}
                 </div>
                 {quantityEl}
                 {isTrigger && displayOptions.showSavingsBadge ? (
@@ -208,12 +222,14 @@ export function WidgetSleek({
     pricing,
     cartButtonText,
     title,
+    subtitle,
     labels,
     bundleType,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
+    const bodyFontSize = getFontSize(styles.bodySize);
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
 
@@ -236,19 +252,35 @@ export function WidgetSleek({
 
     return (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {title && (
-                <h3
-                    style={{
-                        fontSize: headingFontSize,
-                        fontWeight: 600,
-                        color: styles.textColor,
-                        margin: "0 0 4px",
-                        lineHeight: "1.3",
-                    }}
-                >
-                    {title || PREVIEW_LABELS.headingLabel}
-                </h3>
-            )}
+            <div style={{ display: "inline" }}>
+                {title && (
+                    <h3
+                        style={{
+                            fontSize: headingFontSize,
+                            fontWeight: 600,
+                            color: styles.textColor,
+                            margin: "0 0 4px",
+                            lineHeight: "1.3",
+                        }}
+                    >
+                        {title || PREVIEW_LABELS.headingLabel}
+                    </h3>
+                )}
+
+                {subtitle && (
+                    <p
+                        style={{
+                            fontSize: bodyFontSize,
+                            color: styles.textColor,
+                            margin: "0 0 8px",
+                            lineHeight: "1.3",
+                            opacity: 0.8,
+                        }}
+                    >
+                        {subtitle}
+                    </p>
+                )}
+            </div>
 
             {triggerProducts.map((p) => (
                 <SleekProductCard
@@ -282,14 +314,12 @@ export function WidgetSleek({
                     style={{
                         width: 28,
                         height: 28,
+                        textAlign: "center",
+                        lineHeight: "24px",
                         borderRadius: "50%",
                         background: styles.backgroundColor || "#fff",
-                        border: `1.5px solid ${styles.borderColor || "#e5e7eb"}`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
                         fontSize: 15,
-                        fontWeight: 700,
                         color: styles.textColor || "#9ca3af",
                         flexShrink: 0,
                     }}

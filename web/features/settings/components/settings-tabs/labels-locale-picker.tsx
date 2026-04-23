@@ -6,17 +6,21 @@ import {
     useSettingsStore,
     useSettingsForm,
     settingsQueryKeys,
+    settingsQueries,
 } from "@/features/settings";
 import { useAppBridge } from "@shopify/app-bridge-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-    getSettingsAction,
     refreshLocalesAction,
     autoTranslateLabelsAction,
 } from "@/features/settings/actions/settings.action";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 import { useTranslations } from "@/lib/i18n/provider";
 import { triggerSaveBar, useCrossSellStore, usePlan } from "@/shared";
+
+const emptyLabels = Object.fromEntries(
+    Object.keys(DEFAULT_LABELS).map((k) => [k, ""]),
+);
 
 export function LabelsLocalePicker() {
     const { data: locales, isLoading } = useLocales();
@@ -40,51 +44,52 @@ export function LabelsLocalePicker() {
 
     const primaryLocale = locales?.find((l) => l.primary)?.locale ?? "en";
 
-    const fetchLocaleLabels = useCallback(
-        async (locale: string) => {
-            const emptyLabels = Object.fromEntries(
-                Object.keys(DEFAULT_LABELS).map((k) => [k, ""]),
-            );
-            try {
-                setLocaleLoading(true);
-                // Clear inputs immediately so old locale data doesn't linger during fetch
-                reset({ ...getValues(), labels: emptyLabels });
-                const token = await app.idToken();
-                const result = await getSettingsAction(token, locale);
+    // Per-locale labels query — cached per locale key
+    const queries = settingsQueries(app);
+    const labelsQuery = useQuery({
+        ...queries.labels(labelsLocale ?? primaryLocale),
+        enabled: !!labelsLocale,
+    });
 
-                if (result.status === "success" && result.data) {
-                    reset({
-                        ...getValues(),
-                        labels: {
-                            ...emptyLabels,
-                            ...(result.data.labels ?? {}),
-                        },
-                    });
-                }
-            } catch (err) {
-                console.warn(
-                    "[LabelsLocalePicker] Failed to fetch locale labels:",
-                    err,
-                );
-            } finally {
-                setLocaleLoading(false);
-            }
-        },
-        [app, getValues, reset, setLocaleLoading],
-    );
+    // Sync fetched labels into the form when query data arrives
+    useEffect(() => {
+        if (!labelsLocale || labelsQuery.isFetching) return;
 
+        if (labelsQuery.data !== undefined) {
+            reset({
+                ...getValues(),
+                labels: {
+                    ...emptyLabels,
+                    ...(labelsQuery.data ?? {}),
+                },
+            });
+            setLocaleLoading(false);
+        }
+    }, [labelsQuery.data, labelsQuery.isFetching, labelsLocale]);
+
+    // Mirror React Query's fetching state to the store
+    useEffect(() => {
+        if (labelsQuery.isFetching) {
+            setLocaleLoading(true);
+        }
+    }, [labelsQuery.isFetching]);
+
+    // Initialize locale on first mount (multi-language stores only)
     useEffect(() => {
         if (!labelsLocale && locales && locales.length > 1) {
             setLabelsLocale(primaryLocale);
-            void fetchLocaleLabels(primaryLocale);
         }
-    }, [
-        locales,
-        labelsLocale,
-        primaryLocale,
-        setLabelsLocale,
-        fetchLocaleLabels,
-    ]);
+    }, [locales, labelsLocale, primaryLocale, setLabelsLocale]);
+
+    const handleLocaleChange = useCallback(
+        (locale: string) => {
+            if (isLocaleLoading || labelsLocale === locale) return;
+            setLabelsLocale(locale);
+            // Clear form immediately so stale data doesn't flash
+            reset({ ...getValues(), labels: emptyLabels });
+        },
+        [setLabelsLocale, isLocaleLoading, labelsLocale, reset, getValues],
+    );
 
     const handleAutoTranslate = useCallback(async () => {
         if (!labelsLocale || labelsLocale === primaryLocale || isTranslating)
@@ -157,17 +162,6 @@ export function LabelsLocalePicker() {
             setIsRefreshing(false);
         }
     }, [app, isRefreshing, queryClient]);
-
-    const handleLocaleChange = useCallback(
-        (locale: string) => {
-            if (isLocaleLoading || labelsLocale === locale) {
-                return;
-            }
-            setLabelsLocale(locale);
-            void fetchLocaleLabels(locale);
-        },
-        [setLabelsLocale, fetchLocaleLabels, isLocaleLoading, labelsLocale],
-    );
 
     if (isLoading || !locales || locales.length <= 1) {
         return null; // Don't show tabs for single-language stores

@@ -1,7 +1,7 @@
 "use client";
 
 import { ProBadge, triggerSaveBar, useCrossSellStore, usePlan } from "@/shared";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { AppSettingsFormData, FieldConfig } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -66,12 +66,13 @@ function DynamicFieldInner({
 }) {
     const {
         setValue,
-        watch,
+        control,
         formState: { errors },
     } = useFormContext<AppSettingsFormData>();
+    const { plan } = usePlan();
 
     const fieldPath = parentPath ? `${parentPath}.${config.name}` : config.name;
-    const value = watch(fieldPath as any);
+    const value = useWatch({ control, name: fieldPath as any });
     const error = getNestedError(errors, fieldPath);
     const defaultValue = (config as any).defaultValue;
     const t = useTranslations("Settings.Tabs");
@@ -118,7 +119,7 @@ function DynamicFieldInner({
                     name={fieldPath}
                     label={label}
                     value={String(value ?? defaultValue ?? "")}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     placeholder={placeholder}
                     details={details}
                     error={error}
@@ -132,7 +133,7 @@ function DynamicFieldInner({
                     name={fieldPath}
                     label={label}
                     value={String(value ?? defaultValue ?? "")}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     placeholder={placeholder}
                     details={details}
                     rows={config.rows ?? 4}
@@ -146,16 +147,19 @@ function DynamicFieldInner({
                     name={fieldPath}
                     label={label}
                     value={String(value ?? defaultValue ?? 0)}
-                    onChange={handleChange}
+                    onInput={handleChange}
                     min={config.min}
                     max={config.max}
+                    step={config.step}
                     details={details}
                     readOnly={config.readOnly}
                     error={error}
                 />
             );
 
-        case "select":
+        case "select": {
+            const allowedDiscountTypes = plan.limits.allowedDiscountTypes as string[];
+            const isDiscountTypeField = config.name === "defaultDiscountType";
             return (
                 <s-select
                     name={fieldPath}
@@ -165,17 +169,28 @@ function DynamicFieldInner({
                     details={details}
                     error={error}
                 >
-                    {config.options.map((option) => (
-                        <s-option key={option.value} value={option.value}>
-                            {t(
-                                `${fieldI18nKey}.options.${option.value}`,
-                                undefined,
-                                option.label,
-                            )}
-                        </s-option>
-                    ))}
+                    {config.options.map((option) => {
+                        const planLocked =
+                            isDiscountTypeField &&
+                            !allowedDiscountTypes.includes(option.value);
+                        return (
+                            <s-option
+                                key={option.value}
+                                value={option.value}
+                                disabled={planLocked || undefined}
+                            >
+                                {t(
+                                    `${fieldI18nKey}.options.${option.value}`,
+                                    undefined,
+                                    option.label,
+                                )}
+                                {planLocked ? " (Pro)" : ""}
+                            </s-option>
+                        );
+                    })}
                 </s-select>
             );
+        }
 
         case "switch":
             return (

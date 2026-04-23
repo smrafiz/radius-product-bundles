@@ -1,5 +1,6 @@
 "use client";
 
+import { DiscountApplication } from "@/features/bundles/constants/prisma-enums";
 import { useBundleBehavior } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
@@ -66,19 +67,19 @@ export function BundleBehavior() {
                         >
                             <s-choice
                                 value="bundle"
-                                selected={discountApplication === "bundle"}
+                                selected={discountApplication === DiscountApplication.BUNDLE}
                             >
                                 {t("applyEntire")}
                             </s-choice>
                             <s-choice
                                 value="products"
-                                selected={discountApplication === "products"}
+                                selected={discountApplication === DiscountApplication.PRODUCTS}
                             >
                                 {t("applySpecific")}
                             </s-choice>
                         </s-choice-list>
 
-                        {discountApplication === "products" &&
+                        {discountApplication === DiscountApplication.PRODUCTS &&
                             !isDiscountDisabled && (
                                 <s-stack
                                     direction="inline"

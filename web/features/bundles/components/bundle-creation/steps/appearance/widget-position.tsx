@@ -3,12 +3,19 @@
 import React, { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import { useBundleStore, useBundleValidation } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetPosition() {
     const t = useTranslations("Bundles.Creation.Appearance");
     const { displaySettings, updateDisplaySettings, markFieldTouched } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                displaySettings: s.displaySettings,
+                updateDisplaySettings: s.updateDisplaySettings,
+                markFieldTouched: s.markFieldTouched,
+            })),
+        );
     const { getFieldError } = useBundleValidation();
     const { setValue, trigger } = useFormContext();
 
@@ -82,7 +89,7 @@ export function WidgetPosition() {
                 <s-text-field
                     label={t("offerTitle")}
                     value={displaySettings.title || ""}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
                         handleTitleChange(target.value);
                     }}
@@ -95,7 +102,7 @@ export function WidgetPosition() {
                 <s-text-area
                     label={t("offerSubtitle")}
                     value={displaySettings.subtitle || ""}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
                         handleSubtitleChange(target.value);
                     }}
@@ -109,7 +116,7 @@ export function WidgetPosition() {
                 <s-text-field
                     label={t("addToCartText")}
                     value={displaySettings.cartButtonText || ""}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.currentTarget as HTMLInputElement;
                         handleCartButtonTextChange(target.value);
                     }}

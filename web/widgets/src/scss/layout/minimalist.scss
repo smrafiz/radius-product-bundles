@@ -90,10 +90,9 @@
 
     &__subtitle {
         font-size: var(--rb-body-font-size);
-        color: var(--rb-text-color, #6b7280);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 80%, transparent);
         margin-bottom: 8px;
         line-height: 1.3;
-        opacity: 0.8;
     }
 
     // ── Pricing ──────────────────────────────────────────────────────
@@ -111,9 +110,8 @@
 
     &__price-compare {
         font-size: calc(var(--rb-body-font-size) - 2px);
-        color: var(--rb-text-color);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
-        opacity: 0.5;
         font-weight: 500;
     }
 
@@ -128,7 +126,6 @@
     &__item {
         min-width: 0;
         display: flex;
-        align-items: center;
         gap: 10px;
         padding: 25px 10px 10px;
         border-radius: var(--rb-border-radius, 8px);
@@ -220,10 +217,12 @@
     &__item-title {
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 500;
-        color: var(--rb-text-color, #1a1a2e);
+        color: var(--rb-text-color, #333);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
         margin: 0;
         a {
             color: var(--rb-text-color);
@@ -247,7 +246,7 @@
     &__item-price-current {
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 600;
-        color: var(--rb-text-color, #1a1a2e);
+        color: var(--rb-text-color, #333);
 
         &--reward {
             color: var(--rb-savings-color, var(--rb-savings-color, #16a34a));
@@ -256,8 +255,7 @@
 
     &__item-price-compare {
         font-size: calc(var(--rb-body-font-size) - 3px);
-        color: var(--rb-text-color, #9ca3af);
-        opacity: 0.5;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
     }
 }

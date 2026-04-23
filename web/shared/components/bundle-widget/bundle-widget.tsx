@@ -15,8 +15,10 @@ export function BundleWidget({
     subtitle,
     cartButtonText,
     labels,
+    badgeText,
     hideFooter,
     hideHeader,
+    hidePricing,
     hideOriginalPrice,
     children,
 }: BundleWidgetProps) {
@@ -29,18 +31,22 @@ export function BundleWidget({
                     pricing={pricing}
                     title={title || labels?.headingLabel}
                     subtitle={subtitle}
+                    labels={labels}
+                    badgeText={badgeText}
                 />
             )}
             {children}
             {!hideFooter && (
                 <>
-                    <WidgetPricingDisplay
-                        styles={styles}
-                        displayOptions={displayOptions}
-                        pricing={pricing}
-                        hideOriginalPrice={hideOriginalPrice}
-                        labels={labels}
-                    />
+                    {!hidePricing && (
+                        <WidgetPricingDisplay
+                            styles={styles}
+                            displayOptions={displayOptions}
+                            pricing={pricing}
+                            hideOriginalPrice={hideOriginalPrice}
+                            labels={labels}
+                        />
+                    )}
                     <WidgetAddToCart
                         styles={styles}
                         cartButtonText={cartButtonText || labels?.addToCartText}

@@ -7,25 +7,34 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useSettingsStore } from "@/features/settings";
 import { useTranslations } from "@/lib/i18n/provider";
+import { PriorityType } from "@/features/bundles/constants/prisma-enums";
 
 export function BundlePriority() {
     const t = useTranslations("Bundles.Creation.Preview");
     const { bundleData, updateBundleField, markDirty, markFieldTouched } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                bundleData: s.bundleData,
+                updateBundleField: s.updateBundleField,
+                markDirty: s.markDirty,
+                markFieldTouched: s.markFieldTouched,
+            })),
+        );
     const { setValue, trigger } = useBundleFormMethods();
     const { getFieldError } = useBundleValidation();
     const { settings } = useAppNavigation();
 
     const globalPriorityType =
         useSettingsStore.getState().getEffectiveData()?.bundlePriorityType ??
-        "index_based";
+        PriorityType.INDEX_BASED;
 
     const strategyLabel =
-        globalPriorityType === "discount_based"
-            ? "Discount based"
-            : "Index based";
+        globalPriorityType === PriorityType.DISCOUNT_BASED
+            ? t("strategyDiscountBased")
+            : t("strategyIndexBased");
 
     return (
         <s-section>
@@ -38,7 +47,7 @@ export function BundlePriority() {
                     <s-heading>{t("priorityHeading")}</s-heading>
                     <s-tooltip id="bundle-priority-tooltip">
                         <s-text>
-                            {globalPriorityType === "index_based"
+                            {globalPriorityType === PriorityType.INDEX_BASED
                                 ? t("priorityTooltipIndex")
                                 : t("priorityTooltipDiscount")}
                         </s-text>
@@ -58,7 +67,7 @@ export function BundlePriority() {
                         justifyContent="space-between"
                     >
                         <s-text color="subdued">
-                            Strategy: {strategyLabel}
+                            {t("strategyLabel", { label: strategyLabel })}
                         </s-text>
                         <s-link onClick={settings}>
                             <span className="underline text-[#303030]">
@@ -67,7 +76,7 @@ export function BundlePriority() {
                         </s-link>
                     </s-stack>
 
-                    {globalPriorityType === "index_based" && (
+                    {globalPriorityType === PriorityType.INDEX_BASED && (
                         <s-number-field
                             label={t("priority")}
                             details={t("priorityDetails")}

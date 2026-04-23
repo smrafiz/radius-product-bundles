@@ -77,11 +77,11 @@ model Bundle {
     volumeTiers          Json?
     allowMixAndMatch     Boolean              @default(false)
     mixAndMatchPrice     Float?
-    discountApplication  String?              @default("bundle")
+    discountApplication  DiscountApplication  @default(BUNDLE)
     discountedProductIds String[]             @default([])
     freeShipping         Boolean              @default(false)
     priority             Int                  @default(0)
-    priorityType         String               @default("index_based")
+    priorityType         PriorityType         @default(INDEX_BASED)
     images               String[]
     marketingCopy        String?
     seoTitle             String?
@@ -103,9 +103,12 @@ model Bundle {
     bundleProducts       BundleProduct[]
     settings             BundleSettings?
     bundleViews          BundleView[]
+    aiInsights           AIInsight[]
 
     @@unique([shop, name])
     @@index([shop, status, type])
+    @@index([shop, status, deletedAt])
+    @@index([deletedAt])
     @@index([shop, createdAt])
     @@index([mainProductId])
     @@index([status, startDate])
@@ -129,7 +132,7 @@ model BundleProduct {
     createdAt    DateTime            @default(now())
     updatedAt    DateTime            @updatedAt
     bundle       Bundle              @relation(fields: [bundleId], references: [id], onDelete: Cascade)
-    group        BundleProductGroup? @relation(fields: [groupId], references: [id])
+    group        BundleProductGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
 
     @@unique([bundleId, productId, variantId, role])
     @@index([bundleId, role])
@@ -158,7 +161,7 @@ model BundleProductGroup {
 model BundleSettings {
     id             String  @id @default(cuid())
     bundleId       String  @unique
-    layout         String  @default("GRID")
+    layout         BundleLayout  @default(GRID)
     title          String?
     subtitle       String?
     cartButtonText String?
@@ -183,12 +186,11 @@ model BundleSettings {
 
 model ABTest {
     id              String       @id @default(cuid())
-    shop            String
     name            String
     hypothesis      String?
     type            TestType
     status          TestStatus   @default(DRAFT)
-    trafficSplit    Int          @default(50)
+    trafficSplit    Float        @default(50)
     duration        Int          @default(14)
     minSampleSize   Int          @default(100)
     controlBundleId String
@@ -200,13 +202,13 @@ model ABTest {
     completedAt     DateTime?
     createdAt       DateTime     @default(now())
     updatedAt       DateTime     @updatedAt
-    shopId          String?
-    controlBundle   Bundle       @relation(fields: [controlBundleId], references: [id])
-    Shop            Shop?        @relation(fields: [shopId], references: [id])
+    shopId          String
+    controlBundle   Bundle       @relation(fields: [controlBundleId], references: [id], onDelete: Cascade)
+    shop            Shop         @relation(fields: [shopId], references: [id])
     results         TestResult[]
+    aiInsights      AIInsight[]
 
-    @@index([shop, status])
-    @@index([shopId])
+    @@index([shopId, status])
     @@map("ab_tests")
 }
 
@@ -223,12 +225,12 @@ model TestResult {
     test        ABTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
 
     @@unique([testId, variant, date])
+    @@index([testId, date])
     @@map("test_results")
 }
 
 model Automation {
     id            String             @id @default(cuid())
-    shop          String
     name          String
     description   String?
     status        AutomationStatus   @default(ACTIVE)
@@ -242,13 +244,12 @@ model Automation {
     lastTriggered DateTime?
     createdAt     DateTime           @default(now())
     updatedAt     DateTime           @updatedAt
-    shopId        String?
+    shopId        String
     bundles       AutomationBundle[]
     logs          AutomationLog[]
-    Shop          Shop?              @relation(fields: [shopId], references: [id])
+    shop          Shop               @relation(fields: [shopId], references: [id])
 
-    @@index([shop, status])
-    @@index([shopId])
+    @@index([shopId, status])
     @@map("automations")
 }
 
@@ -266,7 +267,7 @@ model AutomationBundle {
 model AutomationLog {
     id           String     @id @default(cuid())
     automationId String
-    event        String
+    event        AutomationEvent
     success      Boolean
     data         Json?
     error        String?
@@ -290,6 +291,7 @@ model BundleAnalytics {
     crossSellPurchases         Int      @default(0)
     newCustomerPurchases       Int      @default(0)
     returningCustomerPurchases Int      @default(0)
+    // Restrict: analytics data is preserved on soft-delete; hard deletes must clear analytics first
     bundle                     Bundle   @relation(fields: [bundleId], references: [id], onDelete: Restrict)
 
     @@unique([bundleId, date, hour])
@@ -303,9 +305,10 @@ model BundleView {
     bundleId   String
     customerId String?
     sessionId  String?
-    date       String
+    date       DateTime  @db.Date
     timestamp  DateTime @default(now())
 
+    // Restrict: view history is preserved on soft-delete; hard deletes must clear views first
     bundle Bundle @relation(fields: [bundleId], references: [id], onDelete: Restrict)
 
     // One view per customer per bundle per day
@@ -314,21 +317,19 @@ model BundleView {
     @@unique([bundleId, sessionId, date], name: "unique_session_view")
     @@index([bundleId])
     @@index([customerId])
-    @@index([date])
     @@map("bundle_views")
 }
 
 model AIInsight {
     id          String        @id @default(cuid())
-    shop        String
     type        AIInsightType
-    category    String
+    category    AIInsightCategory
     title       String
     description String
     confidence  Float
-    impact      String
+    impact      ImpactLevel
     actionable  Boolean       @default(true)
-    actionType  String?
+    actionType  AIActionType?
     actionData  Json?
     implemented Boolean       @default(false)
     views       Int           @default(0)
@@ -339,17 +340,19 @@ model AIInsight {
     createdAt   DateTime      @default(now())
     updatedAt   DateTime      @updatedAt
     expiresAt   DateTime?
-    shopId      String?
-    Shop        Shop?         @relation(fields: [shopId], references: [id])
+    shopId      String
+    shop        Shop          @relation(fields: [shopId], references: [id])
+    bundle      Bundle?       @relation(fields: [bundleId], references: [id], onDelete: SetNull)
+    abTest      ABTest?       @relation(fields: [testId], references: [id], onDelete: SetNull)
 
-    @@index([shop, type, confidence])
-    @@index([shopId])
+    @@index([shopId, type, confidence])
+    @@index([bundleId])
+    @@index([testId])
     @@map("ai_insights")
 }
 
 model Notification {
     id          String               @id @default(cuid())
-    shop        String
     type        NotificationType
     title       String
     message     String
@@ -361,34 +364,31 @@ model Notification {
     createdAt   DateTime             @default(now())
     updatedAt   DateTime             @updatedAt
     expiresAt   DateTime?
-    shopId      String?
-    Shop        Shop?                @relation(fields: [shopId], references: [id])
+    shopId      String
+    shop        Shop                 @relation(fields: [shopId], references: [id])
 
-    @@index([shop, read, createdAt])
-    @@index([shopId])
+    @@index([shopId, read, createdAt])
     @@map("notifications")
 }
 
 model AlertRule {
     id              String           @id @default(cuid())
-    shop            String
     name            String
     type            NotificationType
     status          AlertRuleStatus  @default(ACTIVE)
     conditions      Json
     threshold       Float?
-    comparison      String?
+    comparison      ComparisonOperator?
     deliveryMethods Json
     frequency       AlertFrequency   @default(IMMEDIATE)
     triggerCount    Int              @default(0)
     lastTriggered   DateTime?
     createdAt       DateTime         @default(now())
     updatedAt       DateTime         @updatedAt
-    shopId          String?
-    Shop            Shop?            @relation(fields: [shopId], references: [id])
+    shopId          String
+    shop            Shop             @relation(fields: [shopId], references: [id])
 
-    @@index([shop, status])
-    @@index([shopId])
+    @@index([shopId, status])
     @@map("alert_rules")
 }
 
@@ -436,10 +436,10 @@ model AppSettings {
     defaultDiscountValue Float        @default(10)
     maxBundleProducts    Int          @default(10)
     maxBundlesPerShop    Int          @default(5)
-    bundlePriorityType   String       @default("index_based")
+    bundlePriorityType   PriorityType @default(INDEX_BASED)
 
     // Cart Behavior Section
-    redirectAfterCart     String  @default("cart")
+    redirectAfterCart     RedirectAfterCart  @default(DEFAULT)
     hidePaymentButtons    Boolean @default(false)
     enableStockValidation Boolean @default(true)
     maxBundlesPerOrder    Int     @default(0)
@@ -478,20 +478,18 @@ model WebhookDelivery {
     shop        String
     processedAt DateTime @default(now())
 
-    @@index([shop])
-    @@index([processedAt])
+    @@index([shop, processedAt])
     @@map("webhook_deliveries")
 }
 
 model ShopPlan {
     id               String                     @id @default(cuid())
-    shop             String                     @unique
-    shopId           String?                    @unique
-    shopRef          Shop?                      @relation("ShopShopPlan", fields: [shopId], references: [id])
+    shopId           String                     @unique
+    shop             Shop                       @relation("ShopShopPlan", fields: [shopId], references: [id])
     plan             PlanName                   @default(FREE)
     status           ShopifySubscriptionStatus?
     billingId        String?                    @unique
-    billingInterval  String?
+    billingInterval  BillingInterval?
     trialUsed        Boolean                    @default(false)
     trialEndsAt      DateTime?
     currentPeriodEnd DateTime?
@@ -574,6 +572,18 @@ enum AutomationStatus {
     ARCHIVED
 }
 
+enum BillingInterval {
+    EVERY_30_DAYS
+    ANNUAL
+}
+
+enum AutomationEvent {
+    TRIGGERED
+    SKIPPED
+    COMPLETED
+    FAILED
+}
+
 enum TriggerType {
     SCHEDULE
     PERFORMANCE
@@ -586,6 +596,41 @@ enum AIInsightType {
     OPTIMIZATION
     PREDICTION
     WARNING
+}
+
+enum AIInsightCategory {
+    PRICING
+    CONVERSION
+    PRODUCT_MIX
+    COPY
+    LAYOUT
+    INVENTORY
+    OTHER
+}
+
+enum ImpactLevel {
+    LOW
+    MEDIUM
+    HIGH
+    CRITICAL
+}
+
+enum AIActionType {
+    ADJUST_PRICE
+    CHANGE_PRODUCTS
+    UPDATE_COPY
+    RUN_AB_TEST
+    PAUSE_BUNDLE
+    ACTIVATE_BUNDLE
+    OTHER
+}
+
+enum ComparisonOperator {
+    GT
+    LT
+    GTE
+    LTE
+    EQ
 }
 
 enum NotificationType {
@@ -619,4 +664,41 @@ enum ShopStatus {
     SUSPENDED
     TRIAL_EXPIRED
     NOT_CONFIGURED
+}
+
+enum DiscountApplication {
+    BUNDLE
+    PRODUCTS
+}
+
+enum PriorityType {
+    INDEX_BASED
+    DISCOUNT_BASED
+}
+
+enum RedirectAfterCart {
+    DEFAULT
+    CART
+    CHECKOUT
+    NONE
+}
+
+enum BundleLayout {
+    // Fixed Bundle / Mix & Match / FBT
+    GRID
+    CAROUSEL
+    LIST
+    COMPACT
+    // BOGO / BXGY
+    CLASSIC_CARD
+    COMPACT_GRID
+    MINIMALIST
+    SLEEK
+    CHECKLIST
+    SPLIT_DEAL
+    // Volume Discount
+    VOLUME_TIER_LIST
+    VOLUME_PRICING_CARDS
+    VOLUME_SLIDER
+    VOLUME_CALCULATOR
 }

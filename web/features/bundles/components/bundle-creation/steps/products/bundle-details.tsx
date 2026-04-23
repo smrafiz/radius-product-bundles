@@ -43,7 +43,7 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
                 <s-text-field
                     label={t("name")}
                     value={nameField.value || ""}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.target as HTMLInputElement;
                         nameField.handleChange(target.value);
                     }}
@@ -64,7 +64,7 @@ export function BundleDetails({ bundleType }: { bundleType: BundleType }) {
             <s-text-area
                 label={t("description")}
                 value={descriptionField.value || ""}
-                onChange={(event: Event) => {
+                onInput={(event: Event) => {
                     const target = event.target as HTMLTextAreaElement;
                     descriptionField.handleChange(target.value);
                 }}

@@ -8,6 +8,7 @@ import {
     volumeDiscountConfigSchema,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { getCurrencySymbol, TRIGGER_SAVE_BAR, useShopSettings } from "@/shared";
@@ -23,7 +24,13 @@ const DEFAULT_CONFIG: VolumeDiscountConfig = {
 };
 
 export function useVolumeDiscount() {
-    const { bundleData, setBundleData, markDirty } = useBundleStore();
+    const { bundleData, setBundleData, markDirty } = useBundleStore(
+        useShallow((s) => ({
+            bundleData: s.bundleData,
+            setBundleData: s.setBundleData,
+            markDirty: s.markDirty,
+        })),
+    );
     const { currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
     const [lastAddedIndex, setLastAddedIndex] = useState<number | null>(null);

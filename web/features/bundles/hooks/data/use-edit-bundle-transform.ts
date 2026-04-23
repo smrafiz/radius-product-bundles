@@ -17,10 +17,10 @@ export function useEditBundleTransform(bundleData?: BundleDetail) {
     }
 
     const discountApplication: DiscountApplication =
-        bundleData.discountApplication === "bundle" ||
-        bundleData.discountApplication === "products"
+        bundleData.discountApplication === DiscountApplication.BUNDLE ||
+        bundleData.discountApplication === DiscountApplication.PRODUCTS
             ? bundleData.discountApplication
-            : "bundle";
+            : DiscountApplication.BUNDLE;
 
     return {
         name: bundleData.name,

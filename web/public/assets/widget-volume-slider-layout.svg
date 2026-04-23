@@ -1,35 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="168" height="136" viewBox="0 0 168 136" fill="none">
-  <rect width="168" height="136" rx="8" fill="#F9FAFB"/>
-  <!-- Product image placeholder -->
-  <rect x="8" y="8" width="152" height="30" rx="6" fill="#E5E7EB" opacity="0.5"/>
-  <rect x="50" y="18" width="68" height="5" rx="2" fill="#9CA3AF" opacity="0.6"/>
-  <!-- Save badge -->
-  <rect x="120" y="10" width="36" height="14" rx="7" fill="#16A34A"/>
-  <text x="125" y="20" font-size="6" fill="#fff" font-family="system-ui" font-weight="600">Save 8%</text>
-  <!-- Price box -->
-  <rect x="8" y="44" width="152" height="22" rx="6" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
-  <rect x="14" y="50" width="40" height="7" rx="2" fill="#6366F1" opacity="0.7"/>
-  <rect x="14" y="59" width="30" height="4" rx="2" fill="#9CA3AF" opacity="0.4"/>
-  <rect x="120" y="50" width="32" height="7" rx="2" fill="#16A34A" opacity="0.6"/>
-  <text x="124" y="63" font-size="5" fill="#9CA3AF" font-family="system-ui">You save</text>
-  <!-- Slider label -->
-  <text x="8" y="78" font-size="6" fill="#374151" font-family="system-ui" font-weight="500">Select Quantity</text>
-  <text x="136" y="78" font-size="7" fill="#6366F1" font-family="system-ui" font-weight="700">5 units</text>
-  <!-- Slider track -->
-  <rect x="8" y="84" width="152" height="4" rx="2" fill="#E5E7EB"/>
-  <rect x="8" y="84" width="76" height="4" rx="2" fill="#6366F1"/>
-  <circle cx="84" cy="86" r="6" fill="#6366F1" stroke="#fff" stroke-width="2"/>
-  <!-- Tick marks -->
-  <text x="8" y="98" font-size="5" fill="#9CA3AF" font-family="system-ui">1</text>
-  <text x="50" y="98" font-size="5" fill="#9CA3AF" font-family="system-ui">3</text>
-  <text x="92" y="98" font-size="5" fill="#9CA3AF" font-family="system-ui">5</text>
-  <text x="150" y="98" font-size="5" fill="#9CA3AF" font-family="system-ui">10</text>
-  <!-- Progress nudge -->
-  <rect x="8" y="104" width="152" height="16" rx="6" fill="#FFF9E6" stroke="#F5DEB3" stroke-width="0.5"/>
-  <text x="20" y="115" font-size="5.5" fill="#92400E" font-family="system-ui">Add 2 more to save 20%!</text>
-  <rect x="14" y="117" width="100" height="2" rx="1" fill="#F59E0B" opacity="0.4"/>
-  <rect x="14" y="117" width="60" height="2" rx="1" fill="#F59E0B"/>
-  <!-- ATC -->
-  <rect x="8" y="124" width="152" height="10" rx="4" fill="#6366F1"/>
-  <text x="56" y="132" font-size="6" fill="#fff" font-family="system-ui" font-weight="500">Add 5 to Cart</text>
+<svg width="96" height="76" viewBox="0 0 96 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="96" height="76" rx="3" fill="white"/>
+<rect x="8" y="64.6235" width="79.959" height="5.12646" rx="1" fill="#004BFF"/>
+<rect x="37.9795" y="66.1865" width="20" height="2" rx="0.6" fill="white"/>
+<rect x="8" y="57.5" width="80" height="2" rx="1" fill="#ECEEF2"/>
+<rect x="8" y="57.5" width="26.2109" height="2" rx="1" fill="#BDC5D7"/>
+<rect x="8.22949" y="53.3999" width="14" height="1.2" rx="0.5" fill="#BDC5D7"/>
+<rect x="31" y="56.5" width="4" height="4" rx="2" fill="#004BFF"/>
+<g clip-path="url(#clip0_355_7562)">
+<rect x="8" y="7.5" width="80" height="25" rx="1.5" fill="#ECEEF2"/>
+</g>
+<rect x="8.25" y="36.75" width="79.5" height="13.5" rx="1.25" fill="white"/>
+<rect x="8.25" y="36.75" width="79.5" height="13.5" rx="1.25" stroke="#DCDCDC" stroke-width="0.5"/>
+<rect x="72.5" y="42.5" width="10" height="2" rx="0.5" fill="#004BFF"/>
+<rect x="17" y="39.5" width="8" height="8" rx="1" fill="#7BA2FE"/>
+<rect x="27.2295" y="41.3999" width="26" height="1.4" rx="0.5" fill="#BDC5D7"/>
+<rect x="27.2295" y="44.3999" width="14" height="1.2" rx="0.5" fill="#BDC5D7"/>
+<rect x="11" y="42" width="3" height="3" rx="0.5" fill="#BDC5D7"/>
+<defs>
+<clipPath id="clip0_355_7562">
+<rect x="8" y="7.5" width="80" height="25" rx="1.5" fill="white"/>
+</clipPath>
+</defs>
 </svg>

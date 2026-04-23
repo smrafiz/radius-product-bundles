@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DiscountApplication } from "@/features/bundles/constants/prisma-enums";
 import { sanitizeText } from "@/shared";
 import { VALIDATION_MESSAGES } from "@/shared/constants";
 
@@ -15,83 +16,97 @@ const volumeTierBadgeSchema = z.object({
     text: z.string().max(30).optional(),
 });
 
-const volumeTierSchema = z.object({
-    id: z.string().optional(),
-    minQuantity: z.preprocess(
-        (v) => (typeof v === "number" && isNaN(v) ? undefined : v),
-        z.number({ error: "Quantity is required" })
-            .int("Must be a whole number")
-            .min(1, "Minimum quantity must be at least 1"),
-    ),
-    discount: z.preprocess(
-        (v) => (typeof v === "number" && isNaN(v) ? undefined : v),
-        z.number({ error: "Discount is required" })
-            .min(0, "Discount cannot be negative")
-            .max(999999.99, "Discount exceeds maximum"),
-    ),
-    title: z
-        .string()
-        .min(1, "Title is required")
-        .max(50, "Title must be 50 characters or less"),
-    subtitle: z
-        .string()
-        .max(80, "Subtitle must be 80 characters or less")
-        .optional(),
-    badge: volumeTierBadgeSchema.optional(),
-    isDefault: z.boolean().optional(),
-});
+const createVolumeTierSchema = (v: T) =>
+    z.object({
+        id: z.string().optional(),
+        minQuantity: z.preprocess(
+            (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
+            z.number({ error: v("QTY_REQUIRED") })
+                .int(v("WHOLE_NUMBER"))
+                .min(1, v("MIN_QUANTITY")),
+        ),
+        discount: z.preprocess(
+            (val) => (typeof val === "number" && isNaN(val) ? undefined : val),
+            z.number({ error: v("DISCOUNT_REQUIRED") })
+                .min(0, v("DISCOUNT_NEGATIVE"))
+                .max(999999.99, v("DISCOUNT_MAX"))
+                .refine(
+                    (val) => /^\d+(\.\d{1,2})?$/.test(String(val)),
+                    v("MAX_DECIMAL_PLACES"),
+                ),
+        ),
+        title: z
+            .string()
+            .min(1, v("TIER_TITLE_REQUIRED"))
+            .max(50, v("TIER_TITLE_MAX")),
+        subtitle: z
+            .string()
+            .max(80, v("TIER_SUBTITLE_MAX"))
+            .optional(),
+        badge: volumeTierBadgeSchema.optional(),
+        isDefault: z.boolean().optional(),
+    });
 
-export const volumeDiscountConfigSchema = z
-    .object({
-        discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"]),
-        openEnded: z.boolean().default(true),
-        tiers: z
-            .array(volumeTierSchema)
-            .min(1, "At least one tier is required")
-            .max(10, "Maximum of 10 tiers allowed"),
-    })
-    .superRefine((config, ctx) => {
-        config.tiers.forEach((tier, idx) => {
-            if (idx > 0) {
-                const prev = config.tiers[idx - 1];
-                if (tier.minQuantity <= prev.minQuantity) {
-                    ctx.addIssue({
-                        code: "custom",
-                        message: `Must be greater than tier ${idx} (${prev.minQuantity})`,
-                        path: ["tiers", idx, "minQuantity"],
-                    });
+const createVolumeDiscountConfigSchema = (v: T) =>
+    z
+        .object({
+            discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"]),
+            openEnded: z.boolean().default(true),
+            tiers: z
+                .array(createVolumeTierSchema(v))
+                .min(1, v("MIN_TIERS"))
+                .max(10, v("MAX_TIERS")),
+        })
+        .superRefine((config, ctx) => {
+            config.tiers.forEach((tier, idx) => {
+                if (idx > 0) {
+                    const prev = config.tiers[idx - 1];
+                    if (tier.minQuantity <= prev.minQuantity) {
+                        ctx.addIssue({
+                            code: "custom",
+                            message: v("TIER_ORDER")
+                                .replace("{index}", String(idx))
+                                .replace("{value}", String(prev.minQuantity)),
+                            path: ["tiers", idx, "minQuantity"],
+                        });
+                    }
+                    if (tier.discount <= prev.discount) {
+                        ctx.addIssue({
+                            code: "custom",
+                            message: v("TIER_ORDER")
+                                .replace("{index}", String(idx))
+                                .replace("{value}", String(prev.discount)),
+                            path: ["tiers", idx, "discount"],
+                        });
+                    }
                 }
-                if (tier.discount <= prev.discount) {
-                    ctx.addIssue({
-                        code: "custom",
-                        message: `Must be greater than tier ${idx} (${prev.discount})`,
-                        path: ["tiers", idx, "discount"],
-                    });
-                }
+            });
+
+            if (config.discountType === "PERCENTAGE") {
+                config.tiers.forEach((tier, idx) => {
+                    if (tier.discount > 99.99) {
+                        ctx.addIssue({
+                            code: "custom",
+                            message: v("TIER_PERCENTAGE_MAX"),
+                            path: ["tiers", idx, "discount"],
+                        });
+                    }
+                });
+            }
+
+            const defaultTiers = config.tiers.filter((t) => t.isDefault === true);
+            if (defaultTiers.length > 1) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("TIER_ONE_DEFAULT"),
+                    path: ["tiers"],
+                });
             }
         });
 
-        if (config.discountType === "PERCENTAGE") {
-            config.tiers.forEach((tier, idx) => {
-                if (tier.discount > 99.99) {
-                    ctx.addIssue({
-                        code: "custom",
-                        message: "Percentage discount cannot exceed 99.99%",
-                        path: ["tiers", idx, "discount"],
-                    });
-                }
-            });
-        }
-
-        const defaultTiers = config.tiers.filter((t) => t.isDefault === true);
-        if (defaultTiers.length > 1) {
-            ctx.addIssue({
-                code: "custom",
-                message: "Only one tier can be pre-selected",
-                path: ["tiers"],
-            });
-        }
-    });
+export const volumeDiscountConfigSchema = createVolumeDiscountConfigSchema(
+    (key) => (VALIDATION_MESSAGES as Record<string, string>)[key] ?? key,
+);
 
 const productGroupSchema = (v: T) =>
     z.object({
@@ -139,7 +154,7 @@ export function createBundleSchema(v: T) {
                 .string()
                 .min(1, v("REQUIRED_FIELD"))
                 .max(100, v("MAX_LENGTH"))
-                .transform(sanitizeText),
+                .transform((s) => sanitizeText(s.trim().replace(/\s+/g, " "))),
 
             description: z
                 .string()
@@ -227,7 +242,7 @@ export function createBundleSchema(v: T) {
             minOrderValue: z.number().min(0).max(999999.99).optional(),
             maxDiscountAmount: z.number().min(0).max(999999.99).optional(),
 
-            volumeTiers: volumeDiscountConfigSchema.optional(),
+            volumeTiers: createVolumeDiscountConfigSchema(v).optional(),
             openEnded: z.boolean().default(true).optional(),
 
             allowMixAndMatch: z.boolean().default(false),
@@ -235,8 +250,8 @@ export function createBundleSchema(v: T) {
             productGroups: z.array(productGroupSchema(v)).optional(),
 
             discountApplication: z
-                .enum(["bundle", "products"])
-                .default("bundle")
+                .nativeEnum(DiscountApplication)
+                .default(DiscountApplication.BUNDLE)
                 .optional(),
             discountedProductIds: z.array(z.string()).optional(),
             freeShipping: z.boolean().default(false).optional(),
@@ -255,8 +270,8 @@ export function createBundleSchema(v: T) {
                 .transform(sanitizeText)
                 .optional(),
 
-            startDate: z.date().optional(),
-            endDate: z.date().optional(),
+            startDate: z.coerce.date().optional(),
+            endDate: z.coerce.date().optional(),
 
             settings: bundleSettingsSchema(v),
         })
@@ -303,6 +318,30 @@ export function createBundleSchema(v: T) {
                         path: ["discountValue"],
                     });
                 }
+            }
+
+            if (!/^\d+(\.\d{1,2})?$/.test(String(discountValue))) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("MAX_DECIMAL_PLACES"),
+                    path: ["discountValue"],
+                });
+            }
+
+            if (data.minOrderValue != null && !/^\d+(\.\d{1,2})?$/.test(String(data.minOrderValue))) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("MAX_DECIMAL_PLACES"),
+                    path: ["minOrderValue"],
+                });
+            }
+
+            if (data.maxDiscountAmount != null && !/^\d+(\.\d{1,2})?$/.test(String(data.maxDiscountAmount))) {
+                ctx.addIssue({
+                    code: "custom",
+                    message: v("MAX_DECIMAL_PLACES"),
+                    path: ["maxDiscountAmount"],
+                });
             }
         })
         .superRefine((data, ctx) => {
@@ -417,12 +456,12 @@ export function createBundleSchema(v: T) {
         .refine(
             (data) => {
                 if (data.status === "SCHEDULED") {
-                    return data.startDate != null && data.endDate != null;
+                    return data.startDate != null;
                 }
                 return true;
             },
             {
-                message: v("SCHEDULED_DATES_REQUIRED"),
+                message: v("SCHEDULED_START_DATE_REQUIRED"),
                 path: ["startDate"],
             },
         );

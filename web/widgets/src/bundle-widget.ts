@@ -9,6 +9,7 @@ import type {
     ProductDetailsResponse,
 } from "./lib/types";
 import {
+    buildBxgyBadgeText,
     countBundlesInCart,
     extractNumericId,
     formatLabel,
@@ -52,6 +53,10 @@ import type { VolumeContext } from "./lib/types";
 
 (function () {
     "use strict";
+
+    /** Global lock — prevents concurrent add-to-cart across widget instances (window-level for multi-script) */
+    const W = window as any;
+    if (W.__radiusAtcLock === undefined) W.__radiusAtcLock = false;
 
     /**
      * Radius Bundle Widget Class
@@ -208,6 +213,17 @@ import type { VolumeContext } from "./lib/types";
                     parsed.discountedProductIds = ensureArray(
                         parsed.discountedProductIds,
                     );
+                    // Liquid auto-escapes {{ var }} and | escape on the full JSON
+                    // double-encodes user content (e.g. "Bundle & Save" → "&amp;").
+                    // The browser decodes one level via dataset, but JSON.parse does
+                    // not decode HTML entities — so decode them here.
+                    const decodeHtml = (s: string) => {
+                        const d = document.createElement("div");
+                        d.innerHTML = s;
+                        return d.textContent ?? s;
+                    };
+                    if (parsed.name) parsed.name = decodeHtml(parsed.name);
+                    if (parsed.subtitle) parsed.subtitle = decodeHtml(parsed.subtitle);
                     this.bundleStructure = parsed;
                 } catch (e) {
                     console.warn(
@@ -234,6 +250,7 @@ import type { VolumeContext } from "./lib/types";
             this.desktopDataAttrs = {
                 boxAlignment: container.dataset.boxAlign || "center",
                 imagePosition: container.dataset.imagePosition || "left",
+                imageSize: container.dataset.imageSize || "medium",
                 dividerStyle: container.dataset.dividerStyle || "plus",
                 carouselNavigation:
                     container.dataset.carouselNavigation || "both",
@@ -279,6 +296,7 @@ import type { VolumeContext } from "./lib/types";
             const attrMap: Record<string, string> = {
                 boxAlignment: "boxAlign",
                 imagePosition: "imagePosition",
+                imageSize: "imageSize",
                 dividerStyle: "dividerStyle",
                 carouselNavigation: "carouselNavigation",
             };
@@ -529,13 +547,12 @@ import type { VolumeContext } from "./lib/types";
             await enqueueCartAttributeWrite(this.bundleId, {
                 bundleId: this.bundleId,
                 bundleName: structure?.name || "Bundle",
-                discountType: "NO_DISCOUNT",
-                discountValue: 0,
-                requiredLineCount: 1,
+                discountType: structure?.discountType || "NO_DISCOUNT",
+                discountValue: structure?.discountValue || 0,
                 minOrderValue: structure?.minOrderValue || 0,
-                maxDiscountAmount: 0,
-                discountApplication: "bundle",
-                discountedProductIds: [],
+                maxDiscountAmount: structure?.maxDiscountAmount || 0,
+                discountApplication: structure?.discountApplication || "bundle",
+                discountedProductIds: structure?.discountedProductIds || [],
                 freeShipping: structure?.freeShipping || false,
             });
         }
@@ -563,48 +580,38 @@ import type { VolumeContext } from "./lib/types";
             const isBxgy =
                 structure.bundleType === "BOGO" ||
                 structure.bundleType === "BUY_X_GET_Y";
-            const roles = Array.isArray(structure.productRoles)
-                ? structure.productRoles
-                : [];
-            const buyQty =
-                roles.filter((r) => r === "TRIGGER").length ||
-                structure.buyQuantity ||
-                1;
-            const getQty =
-                roles.filter((r) => r === "REWARD").length ||
-                structure.getQuantity ||
-                1;
 
             if (isBxgy) {
-                if (
-                    structure.discountType === "PERCENTAGE" &&
-                    structure.discountValue === 100
-                ) {
-                    badgeText = `Buy ${buyQty} Get ${getQty} FREE`;
-                } else if (
-                    structure.discountType === "PERCENTAGE" &&
-                    structure.discountValue > 0
-                ) {
-                    badgeText = `Buy ${buyQty} Get ${getQty} at ${structure.discountValue}% off`;
-                } else if (
-                    structure.discountType === "FIXED_AMOUNT" &&
-                    structure.discountValue > 0
-                ) {
-                    badgeText = `Buy ${buyQty} Get ${getQty} - Save ${trimMoney(formatMoney(structure.discountValue * 100))}`;
-                } else if (
-                    structure.discountType === "CUSTOM_PRICE" &&
-                    structure.discountValue > 0
-                ) {
-                    badgeText = `Buy ${buyQty} Get ${getQty} for ${trimMoney(formatMoney(structure.discountValue * 100))}`;
-                }
+                const roles = Array.isArray(structure.productRoles)
+                    ? structure.productRoles
+                    : [];
+                const qtys = Array.isArray(structure.productQuantities)
+                    ? structure.productQuantities
+                    : [];
+                const toProducts = (role: string) =>
+                    roles.reduce<Array<{ quantity: number }>>(
+                        (arr, r, i) =>
+                            r === role
+                                ? [...arr, { quantity: qtys[i] ?? 1 }]
+                                : arr,
+                        [],
+                    );
+                badgeText = buildBxgyBadgeText(
+                    structure,
+                    toProducts("TRIGGER"),
+                    toProducts("REWARD"),
+                );
             } else if (structure.bundleType === "VOLUME_DISCOUNT") {
                 const volConfig = parseVolumeTiers(structure);
                 if (volConfig?.tiers?.length) {
+                    const firstTier = volConfig.tiers[0];
                     const maxTier = volConfig.tiers[volConfig.tiers.length - 1];
                     if (volConfig.discountType === "PERCENTAGE") {
                         badgeText = `Up to ${Math.round(maxTier.discount)}% off`;
                     } else if (volConfig.discountType === "FIXED_AMOUNT") {
                         badgeText = `Up to ${trimMoney(formatMoney(maxTier.discount * 100))} off`;
+                    } else if (volConfig.discountType === "CUSTOM_PRICE") {
+                        badgeText = `From ${trimMoney(formatMoney(firstTier.discount * 100))}`;
                     }
                 }
             } else if (structure.discountValue && structure.discountValue > 0) {
@@ -622,21 +629,27 @@ import type { VolumeContext } from "./lib/types";
                         break;
                     }
 
-                    case "FIXED_AMOUNT":
-                        badgeText = formatLabel("Save {amount}", {
-                            amount: trimMoney(
-                                formatMoney(structure.discountValue * 100),
-                            ),
-                        });
+                    case "FIXED_AMOUNT": {
+                        const formattedAmount = trimMoney(
+                            formatMoney(structure.discountValue * 100),
+                        );
+                        badgeText = formatLabel(
+                            structure.labels?.savingsBadgeText ?? "Save {amount}",
+                            { percent: "", amount: formattedAmount },
+                        );
                         break;
+                    }
 
-                    case "CUSTOM_PRICE":
-                        badgeText = formatLabel("Only {amount}", {
-                            amount: trimMoney(
-                                formatMoney(structure.discountValue * 100),
-                            ),
-                        });
+                    case "CUSTOM_PRICE": {
+                        const formattedAmount = trimMoney(
+                            formatMoney(structure.discountValue * 100),
+                        );
+                        badgeText = formatLabel(
+                            structure.labels?.savingsBadgeText || "Only {amount}",
+                            { percent: "", amount: formattedAmount },
+                        );
                         break;
+                    }
                 }
             }
 
@@ -742,7 +755,7 @@ import type { VolumeContext } from "./lib/types";
                 } as Bundle;
 
                 if (!this.bundle) {
-                    showError(this.container, "Bundle not available");
+                    showError(this.container, this.bundleStructure?.labels?.bundleNotAvailableText || "Bundle not available");
                     return;
                 }
 
@@ -760,7 +773,7 @@ import type { VolumeContext } from "./lib/types";
                     validateStock(this.getFixedContext());
             } catch (error) {
                 console.error("[RadiusBundle] Load error:", error);
-                showError(this.container, "Failed to load bundle");
+                showError(this.container, this.bundleStructure?.labels?.failedToLoadText || "Failed to load bundle");
             }
         }
 
@@ -888,7 +901,7 @@ import type { VolumeContext } from "./lib/types";
                     data.bundles[0];
 
                 if (!this.bundle) {
-                    showError(this.container, "Bundle not available");
+                    showError(this.container, this.bundleStructure?.labels?.bundleNotAvailableText || "Bundle not available");
                     return;
                 }
 
@@ -905,7 +918,7 @@ import type { VolumeContext } from "./lib/types";
                     validateStock(this.getFixedContext());
             } catch (error) {
                 console.error("[RadiusBundle] Legacy fetch error:", error);
-                showError(this.container, "Failed to load bundle");
+                showError(this.container, this.bundleStructure?.labels?.failedToLoadText || "Failed to load bundle");
             }
         }
 
@@ -928,7 +941,9 @@ import type { VolumeContext } from "./lib/types";
                 bundleStructure: this.bundleStructure,
                 showImages: this.showImages,
                 showPrices: this.showPrices,
+                showComparePrices: this.showComparePrices,
                 showSavings: this.showSavings,
+                showQuantity: this.showQuantity,
                 lazyLoadImages: this.lazyLoadImages,
                 redirectAfterCart: this.redirectAfterCart,
                 enableAnalytics: this.enableAnalytics,
@@ -1013,8 +1028,17 @@ import type { VolumeContext } from "./lib/types";
                     productImageSrc,
                     productTitle,
                     unitPriceCents,
+                    ctx.showImages,
                     ctx.showPrices,
+                    ctx.showSavings,
+                    ctx.showComparePrices,
+                    ctx.showQuantity,
                     ctx.lazyLoadImages,
+                    this.bundleStructure.labels?.volumeSelectQuantityLabel,
+                    this.bundleStructure.labels?.volumeYouSaveLabel,
+                    this.bundleStructure.labels?.volumeTotalCostLabel,
+                    this.bundleStructure.labels?.volumeCostPerUnitLabel,
+                    this.bundleStructure.labels?.volumeRegularPriceLabel,
                 );
                 initVolumeCalculator(
                     this.container,
@@ -1053,11 +1077,19 @@ import type { VolumeContext } from "./lib/types";
                 renderVolumeSlider(
                     productsContainer,
                     config,
+                    ctx.showImages,
                     productImageSrc,
                     productTitle,
                     unitPriceCents,
                     ctx.showPrices,
+                    ctx.showSavings,
+                    ctx.showComparePrices,
+                    ctx.showQuantity,
                     ctx.lazyLoadImages,
+                    this.bundleStructure.labels?.volumeSelectQuantityLabel,
+                    this.bundleStructure.labels?.volumeYouSaveLabel,
+                    this.bundleStructure.labels?.volumeUnitLabel,
+                    this.bundleStructure.labels?.volumeUnitsLabel,
                 );
                 initVolumeSlider(
                     this.container,
@@ -1079,6 +1111,7 @@ import type { VolumeContext } from "./lib/types";
                     unitPriceCents,
                     ctx.showImages,
                     ctx.showPrices,
+                    ctx.showComparePrices,
                     ctx.showSavings,
                     ctx.lazyLoadImages,
                 );
@@ -1157,7 +1190,7 @@ import type { VolumeContext } from "./lib/types";
                     setTimeout(() => this.initSliderInstance(), 0);
                 }
             } catch {
-                showError(this.container, "Failed to display bundle products");
+                showError(this.container, this.bundleStructure?.labels?.failedToDisplayText || "Failed to display bundle products");
             }
         }
 
@@ -1216,7 +1249,7 @@ import type { VolumeContext } from "./lib/types";
          * Handles add to cart.
          */
         private async handleAddToCart(): Promise<void> {
-            if (!this.bundle) {
+            if (!this.bundle || W.__radiusAtcLock) {
                 return;
             }
 
@@ -1228,6 +1261,7 @@ import type { VolumeContext } from "./lib/types";
                 return;
             }
 
+            W.__radiusAtcLock = true;
             button.classList.add("is-loading");
             button.disabled = true;
             button.setAttribute("aria-busy", "true");
@@ -1265,6 +1299,7 @@ import type { VolumeContext } from "./lib/types";
                         button.classList.remove("is-loading");
                         button.disabled = false;
                         button.setAttribute("aria-busy", "false");
+                        W.__radiusAtcLock = false;
                         return;
                     }
                 }
@@ -1286,6 +1321,7 @@ import type { VolumeContext } from "./lib/types";
 
                 if (cartItems.length === 0) {
                     showToast("No valid products to add to cart", "error");
+                    W.__radiusAtcLock = false;
                     return;
                 }
 
@@ -1314,9 +1350,6 @@ import type { VolumeContext } from "./lib/types";
                     bundleName: this.bundle.name,
                     discountType: structure.discountType || "PERCENTAGE",
                     discountValue: structure.discountValue || 0,
-                    requiredLineCount: this.bundle.products.filter((p) =>
-                        validRoles.includes(p.role),
-                    ).length,
                     minOrderValue: structure.minOrderValue || 0,
                     maxDiscountAmount: structure.maxDiscountAmount || 0,
                     discountApplication:
@@ -1394,6 +1427,7 @@ import type { VolumeContext } from "./lib/types";
                     }
                     button.classList.remove("is-added");
                     button.disabled = false;
+                    W.__radiusAtcLock = false;
                 }, 1500);
             }
         }
@@ -1418,7 +1452,11 @@ import type { VolumeContext } from "./lib/types";
         );
 
         placeholders.forEach((el) => {
-            if (el.childElementCount > 0) return;
+            if (el.childElementCount > 0) {
+                return;
+            }
+
+            const filterType = el.dataset.filterType ?? "";
 
             const title = document.createElement("div");
             title.className = "radius-bundle-placeholder__title";
@@ -1426,8 +1464,20 @@ import type { VolumeContext } from "./lib/types";
 
             const desc = document.createElement("div");
             desc.className = "radius-bundle-placeholder__desc";
-            desc.textContent =
-                "This widget displays only on products that are part of a bundle. Preview a bundled product to see the widget in action.";
+
+            if (filterType) {
+                const typeLabel: Record<string, string> = {
+                    FIXED_BUNDLE: "Fixed Bundle",
+                    BUY_X_GET_Y: "Buy X Get Y",
+                    BOGO: "BOGO",
+                    VOLUME_DISCOUNT: "Volume Discount",
+                };
+                const label = typeLabel[filterType] ?? filterType;
+                desc.textContent = `No active ${label} bundle found for this product. Create one in the Radius app or change the type filter to "Default".`;
+            } else {
+                desc.textContent =
+                    "This widget displays only on products that are part of a bundle. Preview a bundled product to see the widget in action.";
+            }
 
             el.append(title, desc);
         });

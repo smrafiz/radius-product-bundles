@@ -85,6 +85,7 @@ export function DashboardVideoModal({
                 className="rounded-lg overflow-hidden"
                 style={{ aspectRatio: "16/9", width: "100%" }}
             >
+                {/* WCAG 1.2.2: TODO: Add .vtt caption track to ReactPlayer when video content is finalized */}
                 {video && (
                     <ReactPlayer
                         ref={playerRef as any}

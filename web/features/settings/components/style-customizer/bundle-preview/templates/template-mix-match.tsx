@@ -9,14 +9,16 @@ import {
 import { GroupHeader } from "../../bundle-layout/elements/group-header";
 import { SectionDivider } from "../../bundle-layout/elements/section-divider";
 import { SelectableProductCard } from "../../bundle-layout/cards/selectable-product-card";
-
-const GROUPS: ReadonlyArray<MixMatchGroup> = [
-    { name: "Choose a Top", min: 1, max: 2, count: 3 },
-    { name: "Choose a Bottom", min: 1, max: 1, count: 2 },
-];
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function TemplateMixMatch({ activeLayout }: BundleTemplateProps) {
     const { styles } = useCustomizerStore();
+    const tm = useTranslations("Settings.MixMatch");
+
+    const GROUPS: ReadonlyArray<MixMatchGroup> = [
+        { name: tm("groupTop"), min: 1, max: 2, count: 3 },
+        { name: tm("groupBottom"), min: 1, max: 1, count: 2 },
+    ];
     const gap = getSpacing(styles.spacing);
     const groupHeaderColor =
         styles.mixMatchGroupHeaderColor || styles.primaryColor;

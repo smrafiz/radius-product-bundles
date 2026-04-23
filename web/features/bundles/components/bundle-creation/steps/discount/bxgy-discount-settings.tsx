@@ -1,12 +1,14 @@
 "use client";
 
 import { useDiscountSettings, useBundleStore } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 import { ProBadge, useCrossSellStore, usePlan, triggerSaveBar } from "@/shared";
 import { useState } from "react";
 
 export function BxgyDiscountSettings() {
     const t = useTranslations("Bundles.Creation.Discount");
+    const tdt = useTranslations("Bundles.DiscountTypes");
     const {
         discountType,
         discountValue,
@@ -23,19 +25,23 @@ export function BxgyDiscountSettings() {
     } = useDiscountSettings();
     const { open: openCrossSell } = useCrossSellStore();
     const { canUse } = usePlan();
-    const { bundleData, setBundleData, markDirty } = useBundleStore();
+    const { bundleData, setBundleData, markDirty } = useBundleStore(
+        useShallow((s) => ({
+            bundleData: s.bundleData,
+            setBundleData: s.setBundleData,
+            markDirty: s.markDirty,
+        })),
+    );
     const canFreeShipping = canUse("bundle_behavior");
     const [isOpen, setIsOpen] = useState(false);
     const popoverId = "bxgy-discount-type-popover";
 
-    const getLabel = (config: { id: string; label: string }) =>
-        config.id === "CUSTOM_PRICE" ? t("rewardPrice") : config.label;
+    const getLabel = (config: { id: string }) =>
+        config.id === "CUSTOM_PRICE" ? t("rewardPrice") : tdt(config.id + ".label");
 
     const selectedLabel =
         availableDiscountTypes.find((c) => c.id === discountType)
-            ? getLabel(
-                  availableDiscountTypes.find((c) => c.id === discountType)!,
-              )
+            ? getLabel(availableDiscountTypes.find((c) => c.id === discountType)!)
             : t("selectType");
 
     return (
@@ -147,7 +153,7 @@ export function BxgyDiscountSettings() {
                                                         {label}
                                                     </s-heading>
                                                     <s-paragraph color="subdued">
-                                                        {config.description}
+                                                        {tdt(config.id + ".description")}
                                                     </s-paragraph>
                                                 </s-stack>
                                                 {isLocked && (
@@ -172,37 +178,20 @@ export function BxgyDiscountSettings() {
                     label={
                         discountType === "CUSTOM_PRICE"
                             ? t("rewardProductPrice")
-                            : getDiscountValueLabel()
+                            : discountType
+                              ? tdt(discountType + ".label")
+                              : getDiscountValueLabel()
                     }
                     value={discountValue?.toString() || ""}
-                    step={discountType === "PERCENTAGE" ? 0.01 : 1}
+                    step={0.01}
                     min={0}
                     placeholder="0"
                     prefix={getPrefix()}
                     suffix={getSuffix()}
                     max={discountType === "PERCENTAGE" ? 99.99 : undefined}
-                    onChange={(event: Event) => {
+                    onInput={(event: Event) => {
                         const target = event.target as HTMLInputElement;
-                        const raw = target.value;
-                        const value =
-                            discountType === "PERCENTAGE" && raw !== ""
-                                ? String(
-                                      Math.trunc(parseFloat(raw) * 100) / 100,
-                                  )
-                                : raw;
-                        handleDiscountValueChange(value);
-                    }}
-                    onBlur={(event: Event) => {
-                        if (discountType === "PERCENTAGE") {
-                            const target = event.target as HTMLInputElement;
-                            const raw = target.value;
-                            if (raw !== "") {
-                                const truncated = String(
-                                    Math.trunc(parseFloat(raw) * 100) / 100,
-                                );
-                                handleDiscountValueChange(truncated);
-                            }
-                        }
+                        handleDiscountValueChange(target.value);
                         createBlurHandler("discountValue")();
                     }}
                     error={getFieldError("discountValue")}

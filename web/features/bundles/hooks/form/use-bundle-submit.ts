@@ -5,6 +5,7 @@ import {
     BundleStatus,
     calculateBundlePrice,
     calculateDiscountAmount,
+    DiscountApplication,
     ExtendedBundleFormData,
     invalidateBundleCache,
     PendingMediaItem,
@@ -12,6 +13,7 @@ import {
     useCreateBundleProduct,
     useMediaUpload,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useState } from "react";
 import {
     attachMediaToProductAction,
@@ -29,6 +31,7 @@ import {
     usePlan,
     withAsyncLoader,
 } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Hook for bundle form submission.
@@ -46,7 +49,17 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
         setStep,
         setPendingProductDeletion,
         setBundleData,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            setSaving: s.setSaving,
+            resetDirty: s.resetDirty,
+            setStep: s.setStep,
+            setPendingProductDeletion: s.setPendingProductDeletion,
+            setBundleData: s.setBundleData,
+        })),
+    );
+    const v = useTranslations("Validation");
+    const bs = useTranslations("Bundles.Submit");
     const { showSuccess, showError } = useGlobalBanner();
     const { bundleData } = useAppNavigation();
     const { refreshPlan } = usePlan();
@@ -101,7 +114,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
         const { discountApplication, discountedProductIds } =
             storeState.bundleData;
-        const applyToSpecific = discountApplication === "products";
+        const applyToSpecific = discountApplication === DiscountApplication.PRODUCTS;
         const discountedIds = new Set(discountedProductIds ?? []);
 
         const discountableItems = applyToSpecific
@@ -241,7 +254,7 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
      */
     const mergeBundleBehavior = (data: ExtendedBundleFormData) => {
         const storeData = useBundleStore.getState().bundleData;
-        data.discountApplication = storeData.discountApplication ?? "bundle";
+        data.discountApplication = storeData.discountApplication ?? DiscountApplication.BUNDLE;
         data.discountedProductIds = storeData.discountedProductIds ?? [];
         data.freeShipping = storeData.freeShipping ?? false;
         data.priority = storeData.priority ?? 0;
@@ -292,9 +305,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         );
 
                         if (!productData) {
-                            showError("Failed to create product", {
-                                content:
-                                    "Could not create Shopify product. Please try again.",
+                            showError(v("ERROR_CREATE_PRODUCT"), {
+                                content: bs("createProductFailed"),
                             });
                             return;
                         }
@@ -341,10 +353,10 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                 "Failed to delete product:",
                                 deleteResult.message,
                             );
-                            showError("Failed to delete product", {
+                            showError(v("ERROR_DELETE_PRODUCT"), {
                                 content:
                                     deleteResult.message ||
-                                    "Could not delete the Shopify product.",
+                                    bs("deleteProductFailed"),
                             });
                             return;
                         }
@@ -385,9 +397,8 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                         });
 
                         if (!productData) {
-                            showError("Failed to create product", {
-                                content:
-                                    "Could not create Shopify product. Please try again.",
+                            showError(v("ERROR_CREATE_PRODUCT"), {
+                                content: bs("createProductFailed"),
                             });
                             return;
                         }
@@ -425,7 +436,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                     "Failed to update price:",
                                     priceResult.message,
                                 );
-                            } else {
                             }
                         }
                     }
@@ -569,7 +579,6 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                     productResult.message,
                                 );
                             } else {
-                                // Update snapshot after successful sync
                                 useBundleStore
                                     .getState()
                                     .setSavedProductSnapshot({
@@ -584,12 +593,11 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
                                         productIds: currentProductIds,
                                     });
                             }
-                        } else {
                         }
                     }
                 } else {
-                    showError("Unexpected error", {
-                        content: "Invalid mode or missing bundleId for edit.",
+                    showError(v("ERROR_UNEXPECTED"), {
+                        content: bs("invalidMode"),
                     });
                     return;
                 }
@@ -614,28 +622,26 @@ export function useBundleSubmit(mode: "create" | "edit", bundleId?: string) {
 
                     if (mode === "create") {
                         void refreshPlan();
-                        showSuccess("Bundle created successfully!", {
-                            content: "Your bundle has been created.",
+                        showSuccess(v("SUCCESS_BUNDLE_CREATED"), {
+                            content: bs("bundleCreated"),
                             autoHide: true,
                         });
                         bundleData.edit(result.data.id);
                     } else {
-                        showSuccess("Bundle updated successfully!", {
-                            content: "Your changes have been saved.",
+                        showSuccess(v("SUCCESS_BUNDLE_UPDATED"), {
+                            content: bs("bundleSaved"),
                             autoHide: true,
                         });
                     }
                 } else {
-                    showError("Failed to save bundle", {
-                        content:
-                            result.message ||
-                            "Please check your inputs and try again.",
+                    showError(v("ERROR_SAVE_BUNDLE"), {
+                        content: result.message || bs("checkInputs"),
                     });
                 }
             } catch (error) {
                 console.error(error);
-                showError("Unexpected error", {
-                    content: "Please try again later.",
+                showError(v("ERROR_UNEXPECTED"), {
+                    content: bs("tryAgainLater"),
                 });
             } finally {
                 setIsSubmitting(false);

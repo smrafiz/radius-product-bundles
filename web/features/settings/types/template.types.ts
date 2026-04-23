@@ -1,6 +1,7 @@
 import type { BundleType } from "@/features/bundles";
 import type { ComponentType, ReactNode } from "react";
 import { CustomizerStyles, type WidgetLayout } from "@/features/settings";
+import { WidgetDisplayOptions, WidgetLabels } from "@/shared";
 
 /**
  * Extended template identifier — BundleType + UI-only templates.
@@ -33,6 +34,7 @@ export interface PreviewContainerProps {
     activeDevice: "desktop" | "tablet" | "mobile";
     activeLayout?: string;
     styles: CustomizerStyles;
+    displayOptions?: WidgetDisplayOptions;
     isCartBanner?: boolean;
     children: ReactNode;
 }
@@ -153,6 +155,37 @@ export interface VolumeTier {
 export interface VolumeTiersProps {
     tiers: ReadonlyArray<VolumeTier>;
     highlightColor: string;
+}
+
+/**
+ * Tier entry for the 4 volume layout components.
+ */
+export interface VolumeLayoutTier {
+    qty: number;
+    discount: number;
+    price: string;
+    comparePrice?: string;
+    savings?: string;
+    title?: string;
+    subtitle?: string;
+    badge?: { text: string; style?: string };
+    isDefault?: boolean;
+}
+
+/**
+ * Props shared across all 4 volume layout preview components.
+ */
+export interface VolumeLayoutProps {
+    tiers: ReadonlyArray<VolumeLayoutTier>;
+    product?: {
+        title: string;
+        image?: string;
+        basePrice: string;
+    };
+    highlightColor: string;
+    styles: CustomizerStyles;
+    displayOptions: WidgetDisplayOptions;
+    labels?: WidgetLabels;
 }
 
 // ═══════════════════════════════════════════════════════════════════

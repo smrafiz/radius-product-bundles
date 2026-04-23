@@ -45,24 +45,29 @@ export async function checkBundleExists(bundleId: string, shop: string) {
 export async function getBundlesListService(
     input: GetBundlesInput,
 ): Promise<BundlesListResult> {
-    const { shop, sessionToken, pagination, filters } = input;
+    const { shop, sessionToken, accessToken, pagination, filters } = input;
     const { page, itemsPerPage } = pagination;
 
-    const bundles = await findBundlesByShop(shop, {
-        limit: itemsPerPage,
-        offset: (page - 1) * itemsPerPage,
+    const filtersInput = {
         search: filters?.search,
         status: filters?.status,
         type: filters?.type,
         orderBy: filters?.sortBy || "createdAt",
         orderDirection: filters?.sortDirection || "desc",
-    });
+    };
 
-    const totalCount = await countBundlesByShop(shop, {
-        search: filters?.search,
-        status: filters?.status,
-        type: filters?.type,
-    });
+    const [bundles, totalCount] = await Promise.all([
+        findBundlesByShop(shop, {
+            limit: itemsPerPage,
+            offset: (page - 1) * itemsPerPage,
+            ...filtersInput,
+        }),
+        countBundlesByShop(shop, {
+            search: filters?.search,
+            status: filters?.status,
+            type: filters?.type,
+        }),
+    ]);
 
     const paginationResult: PaginationResult = {
         page,
@@ -81,8 +86,13 @@ export async function getBundlesListService(
 
     const allProductIds = extractProductIds(bundles);
 
+    // Use pre-resolved { shop, accessToken } when available to avoid a second
+    // handleSessionToken round-trip inside executeGraphQLQuery.
+    const shopifyAuth =
+        accessToken ? { shop, accessToken } : sessionToken;
+
     const { productMap, variantMap } = await fetchProductsFromShopify(
-        sessionToken,
+        shopifyAuth,
         allProductIds,
     );
 
@@ -105,8 +115,9 @@ export async function getBundleDetails(input: {
     bundleId: string;
     shop: string;
     sessionToken: string;
+    accessToken?: string;
 }): Promise<any> {
-    const { bundleId, shop, sessionToken } = input;
+    const { bundleId, shop, sessionToken, accessToken } = input;
 
     // Fetch bundle with relations
     const bundle = await findBundleByIdWithAllRelations(bundleId, shop);
@@ -118,9 +129,13 @@ export async function getBundleDetails(input: {
     // Extract product IDs
     const productIds = extractProductIds([bundle]);
 
-    // Fetch product data from Shopify
+    // Use pre-resolved { shop, accessToken } when available to avoid a second
+    // handleSessionToken round-trip inside executeGraphQLQuery.
+    const shopifyAuth =
+        accessToken ? { shop, accessToken } : sessionToken;
+
     const { productMap, variantMap } = await fetchProductsFromShopify(
-        sessionToken,
+        shopifyAuth,
         productIds,
     );
 

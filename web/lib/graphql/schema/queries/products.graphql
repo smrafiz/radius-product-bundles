@@ -1,38 +1,3 @@
-query GetProducts(
-    $first: Int!
-    $after: String
-    $query: String
-    $sortKey: ProductSortKeys
-    $reverse: Boolean
-) {
-    products(
-        first: $first
-        after: $after
-        query: $query
-        sortKey: $sortKey
-        reverse: $reverse
-    ) {
-        edges {
-            node {
-                ...ProductFields
-                allCollections: collections(first: 100) {
-                    edges {
-                        node {
-                            id
-                            title
-                            handle
-                        }
-                    }
-                }
-            }
-            cursor
-        }
-        pageInfo {
-            ...PageInfoFields
-        }
-    }
-}
-
 query GetProductById($id: ID!) {
     product(id: $id) {
         id
@@ -62,7 +27,33 @@ query GetProductById($id: ID!) {
 query GetProductsByIds($ids: [ID!]!) {
     nodes(ids: $ids) {
         ... on Product {
-            ...ProductFields
+            id
+            title
+            handle
+            vendor
+            productType
+            featuredMedia {
+                ... on MediaImage {
+                    id
+                    image {
+                        ...ImageFields
+                    }
+                }
+            }
+            variants(first: 100) {
+                nodes {
+                    id
+                    title
+                    price
+                    compareAtPrice
+                    sku
+                    inventoryQuantity
+                    availableForSale
+                    image {
+                        ...ImageFields
+                    }
+                }
+            }
         }
     }
 }

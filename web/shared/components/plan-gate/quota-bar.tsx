@@ -46,6 +46,11 @@ export function QuotaBar({ resource, label }: QuotaBarProps) {
                 </s-text>
             </div>
             <div
+                role="progressbar"
+                aria-valuenow={percentage}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={displayLabel}
                 style={{
                     height: "6px",
                     background: "#E5E7EB",

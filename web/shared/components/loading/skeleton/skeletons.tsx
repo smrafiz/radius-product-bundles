@@ -11,6 +11,7 @@ import {
     SkeletonSectionProps,
     useAppNavigation,
 } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Default fallback configs (used when not in random mode)
@@ -159,6 +160,7 @@ export function PageHeaderSkeleton({
     subtext,
     skeletonText = false,
 }: PageHeaderSkeletonProps) {
+    const t = useTranslations("Common");
     const { goBack } = useAppNavigation();
 
     return (
@@ -168,7 +170,7 @@ export function PageHeaderSkeleton({
                     <s-button
                         onClick={() => goBack("/dashboard")}
                         icon="arrow-left"
-                        accessibilityLabel="Back"
+                        accessibilityLabel={t("back")}
                     ></s-button>
                 </s-stack>
             )}
@@ -247,6 +249,7 @@ export function PageSkeleton({
  * Skeleton for metric/stats card
  */
 export function MetricCardSkeleton({ title, icon }: MetricCardSkeletonProps) {
+    const t = useTranslations("Common");
     return (
         <s-section>
             <s-stack>
@@ -255,7 +258,7 @@ export function MetricCardSkeleton({ title, icon }: MetricCardSkeletonProps) {
                         <div className="w-10">
                             <s-image
                                 src={`/assets/${icon}.svg`}
-                                alt={title || "Loading"}
+                                alt={title || t("loading")}
                                 aspectRatio="1/1"
                                 inlineSize="auto"
                             />

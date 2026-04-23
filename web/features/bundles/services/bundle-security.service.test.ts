@@ -26,6 +26,23 @@ jest.mock("@/shared/services/plan.service", () => ({
     checkBundleStatusAllowed: jest.fn(),
 }));
 
+jest.mock("@/lib/i18n/server", () => ({
+    getStaticTranslations: jest.fn().mockResolvedValue(
+        (key: string, params?: Record<string, string>) => {
+            const msgs: Record<string, string> = {
+                rateLimitExceeded: `Rate limit exceeded (max: ${params?.max})`,
+                shopSuspended: "Shop is suspended",
+                trialExpired: "Trial has expired",
+                shopNotConfigured: "Shop not configured",
+                excessiveCreation: `Excessive creation: ${params?.count} in ${params?.hours}h`,
+                suspiciousActivity: "Suspicious activity detected",
+                quotaExceeded: `Bundle quota exceeded (limit: ${params?.limit})`,
+            };
+            return msgs[key] ?? key;
+        },
+    ),
+}));
+
 import {
     countRecentBundles,
     getBundleActivity,

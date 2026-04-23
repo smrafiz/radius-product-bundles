@@ -18,7 +18,7 @@ export function DashboardFeatures() {
                 <s-grid-item gridColumn="auto">
                     <s-image
                         alt="Radius Bundles features"
-                        src="/assets/shopbuilder.jpg"
+                        src="/assets/dashboard-feature.svg"
                         aspectRatio="16/9"
                         inlineSize="fill"
                         objectFit="cover"

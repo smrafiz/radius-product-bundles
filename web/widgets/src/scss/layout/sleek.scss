@@ -13,11 +13,22 @@
         gap: var(--rb-gap-spacing, 12px);
     }
 
+    &__title-wrap {
+        display: flex;
+        flex-direction: column;
+    }
+
     &__header {
         font-size: var(--rb-heading-font-size, 18px);
         font-weight: 600;
         color: var(--rb-text-color, #111827);
         margin: 0 0 4px;
+        line-height: 1.3;
+    }
+    &__subtitle {
+        font-size: var(--rb-body-font-size);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 80%, transparent);
+        margin: 0 0 8px;
         line-height: 1.3;
     }
 
@@ -95,9 +106,11 @@
         color: var(--rb-text-color, #111827);
         margin: 0;
         line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
         a {
             color: var(--rb-text-color);
             text-decoration: none;
@@ -186,14 +199,12 @@
     &__divider-icon {
         width: 28px;
         height: 28px;
+        text-align: center;
+        line-height: 24px;
         border-radius: 50%;
         background: var(--rb-background-color, #fff);
-        border: 1.5px solid var(--rb-border-color, #e5e7eb);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        border: 1px solid var(--rb-border-color, #e5e7eb);
         font-size: 15px;
-        font-weight: 700;
         color: var(--rb-text-color, #9ca3af);
         flex-shrink: 0;
     }

@@ -21,7 +21,8 @@ export type FeatureId =
     | "advanced_discount_controls"
     | "advanced_cart_controls"
     | "auto_translate"
-    | "volume_discount";
+    | "volume_discount"
+    | "multi_bundle_display";
 
 export interface PlanFeatureConfig {
     feature: FeatureId;

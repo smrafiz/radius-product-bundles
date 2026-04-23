@@ -158,10 +158,11 @@ export async function createMetafieldDefinitions(
 export async function createBundleAutomaticDiscount(
     accessToken: string,
     shop: string,
+    skipExistenceCheck = false,
 ): Promise<SetupResult> {
     try {
-        // Check if discount already exists
-        const checkResult =
+        // Check if discount already exists (skip after cleanup to avoid stale reads)
+        const checkResult = skipExistenceCheck ? null :
             await executeGraphQLWithToken<CheckBundleDiscountExistsQuery>(
                 CheckBundleDiscountExistsDocument,
                 {
@@ -172,7 +173,7 @@ export async function createBundleAutomaticDiscount(
             );
 
         const existingDiscount =
-            checkResult.data?.discountNodes?.edges?.[0]?.node;
+            checkResult?.data?.discountNodes?.edges?.[0]?.node;
 
         if (existingDiscount) {
             return {
@@ -202,8 +203,33 @@ export async function createBundleAutomaticDiscount(
                 shop,
             );
 
+        // Check for top-level GraphQL errors (auth, schema, function not found)
+        if (result.errors?.length) {
+            console.error(
+                "[Setup] ✗ GraphQL errors creating bundle discount:",
+                result.errors.map((e) => e.message).join(", "),
+            );
+            return {
+                success: false,
+                message: "GraphQL error creating bundle discount",
+                error: result.errors[0].message,
+            };
+        }
+
+        // Check for missing response data
+        if (!result.data?.discountAutomaticAppCreate) {
+            console.error(
+                "[Setup] ✗ No response data from discountAutomaticAppCreate",
+            );
+            return {
+                success: false,
+                message: "No response from discount creation",
+                error: "Empty response from Shopify API",
+            };
+        }
+
         const userErrors =
-            result.data?.discountAutomaticAppCreate?.userErrors || [];
+            result.data.discountAutomaticAppCreate.userErrors || [];
 
         // Filter out "already exists" errors (race condition handling)
         const realErrors = userErrors.filter(
@@ -226,8 +252,19 @@ export async function createBundleAutomaticDiscount(
         }
 
         const discountId =
-            result.data?.discountAutomaticAppCreate?.automaticAppDiscount
+            result.data.discountAutomaticAppCreate.automaticAppDiscount
                 ?.discountId;
+
+        if (!discountId) {
+            console.error(
+                "[Setup] ✗ Discount created but no discountId returned",
+            );
+            return {
+                success: false,
+                message: "Discount created but no ID returned",
+                error: "Missing discountId in response",
+            };
+        }
 
         return {
             success: true,
@@ -257,10 +294,12 @@ export async function runAppSetup(
 ): Promise<SetupResult> {
     // Task 0: Clean up stale Shopify resources from previous install
     // Safe: claimSetupLock only succeeds on fresh install or reinstall
+    let cleanedUpDiscount = false;
     try {
         const { cleanupShopifyResources } =
             await import("@/features/webhooks/services/shopify-cleanup.service");
         await cleanupShopifyResources(accessToken, shop);
+        cleanedUpDiscount = true;
     } catch (error) {
         console.warn(
             "[Setup] Stale data cleanup failed (non-blocking):",
@@ -280,9 +319,12 @@ export async function runAppSetup(
     }
 
     // Task 2: Create bundle automatic discount (handles both product and shipping)
+    // Skip existence check after cleanup — Shopify's eventual consistency
+    // can return stale deleted discount, causing false "already exists" skip
     const discountResult = await createBundleAutomaticDiscount(
         accessToken,
         shop,
+        cleanedUpDiscount,
     );
 
     if (discountResult.success) {

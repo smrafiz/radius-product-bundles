@@ -10,7 +10,8 @@ import {
     StyleOverrides,
     WidgetBehavior,
 } from "@/features/settings";
-import { AppSettings } from "@/prisma/generated/client";
+import type { AppSettings } from "@/prisma/generated/client";
+import { PriorityType } from "@/features/bundles/constants/prisma-enums";
 
 interface MetafieldGlobalSettings {
     // Required for Liquid rendering
@@ -20,7 +21,7 @@ interface MetafieldGlobalSettings {
 
     // Required for JS cart behavior
     cart: {
-        redirectAfterCart: string;
+        redirectAfterCart: string; // lowercase for widget switch-case compatibility
         hidePaymentButtons: boolean;
         enableStockValidation: boolean;
         maxBundlesPerOrder: number;
@@ -40,6 +41,9 @@ interface MetafieldGlobalSettings {
         cssClass: string;
         css: string;
     };
+
+    // Plan gate — read by Liquid to enable Pro features
+    isPro: boolean;
 }
 
 interface MetafieldBundleConfig {
@@ -203,6 +207,7 @@ function getValidGlobalStyles(styles: any): GlobalStyleSettings {
 export function buildGlobalSettingsMetafieldValue(
     appSettings: AppSettings | null,
     primaryLocale = "en",
+    isPro = false,
 ): string {
     const mergedStyles: CustomizerStyles = {
         ...DEFAULT_CUSTOMIZER_STYLES,
@@ -225,7 +230,7 @@ export function buildGlobalSettingsMetafieldValue(
 
         // Cart behavior for JS
         cart: {
-            redirectAfterCart: appSettings?.redirectAfterCart || "default",
+            redirectAfterCart: (appSettings?.redirectAfterCart ?? "DEFAULT").toLowerCase(),
             hidePaymentButtons: appSettings?.hidePaymentButtons ?? false,
             enableStockValidation: appSettings?.enableStockValidation ?? true,
             maxBundlesPerOrder: appSettings?.maxBundlesPerOrder ?? 0,
@@ -233,7 +238,7 @@ export function buildGlobalSettingsMetafieldValue(
             allowDiscountStacking: appSettings?.allowDiscountStacking ?? false,
             lazyLoadImages: appSettings?.lazyLoadImages ?? true,
             bundlePriorityType:
-                appSettings?.bundlePriorityType ?? "index_based",
+                appSettings?.bundlePriorityType ?? PriorityType.INDEX_BASED,
         },
 
         // Privacy settings
@@ -246,6 +251,7 @@ export function buildGlobalSettingsMetafieldValue(
             cssClass: appSettings?.customCssClass || "",
             css: appSettings?.customCss || "",
         },
+        isPro,
     };
 
     return JSON.stringify(settings);
@@ -347,10 +353,7 @@ function getValidCustomizerStyles(styles: unknown): Partial<CustomizerStyles> {
             // Bundle-type specific
             "bogoFreeTagColor",
             "bogoCardBorderStyle",
-            "buyGetTierStyle",
             "splitDealStyle",
-            "volumeTierHighlightColor",
-            "volumeTierStyle",
             "mixMatchGroupHeaderColor",
             "mixMatchSelectionStyle",
             "fbtSeparatorStyle",

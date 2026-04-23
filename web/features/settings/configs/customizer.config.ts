@@ -202,7 +202,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         operator: "equals",
                         value: true,
                     },
-                    bundleTypes: ["FIXED_BUNDLE"],
+                    bundleTypes: ["FIXED_BUNDLE", "VOLUME_DISCOUNT"],
                 },
                 {
                     type: "switch",
@@ -252,6 +252,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     type: "buttonGroup",
                     name: "buttonSize",
                     label: "Button size",
+                    responsive: true,
                     options: [
                         { value: "small", label: "Small" },
                         { value: "medium", label: "Medium" },
@@ -685,44 +686,6 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     bundleTypes: ["BUY_X_GET_Y", "BOGO"],
                 },
 
-                // Volume Discount Specific
-                {
-                    type: "heading",
-                    label: "Volume Discount Settings",
-                    bundleTypes: ["VOLUME_DISCOUNT"],
-                },
-                {
-                    type: "buttonGroup",
-                    name: "buyGetTierStyle",
-                    label: "Tier display",
-                    options: [
-                        { value: "cards", label: "Cards" },
-                        { value: "list", label: "List" },
-                        { value: "tabs", label: "Tabs" },
-                    ],
-                    defaultValue: "cards",
-                    bundleTypes: ["VOLUME_DISCOUNT"],
-                },
-                {
-                    type: "color",
-                    name: "volumeTierHighlightColor",
-                    label: "Tier highlight color",
-                    details: "Color for the active/popular tier",
-                    defaultValue: "#303030",
-                    bundleTypes: ["VOLUME_DISCOUNT"],
-                },
-                {
-                    type: "buttonGroup",
-                    name: "volumeTierStyle",
-                    label: "Tier display",
-                    options: [
-                        { value: "table", label: "Table" },
-                        { value: "cards", label: "Cards" },
-                    ],
-                    defaultValue: "table",
-                    bundleTypes: ["VOLUME_DISCOUNT"],
-                },
-
                 // Mix & Match Specific
                 {
                     type: "heading",
@@ -926,3 +889,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
         },
     ],
 };
+
+export const RESPONSIVE_FIELDS: ReadonlySet<string> = new Set(
+    CUSTOMIZER_CONFIG.sections.flatMap((s) =>
+        s.fields
+            .filter((f) => "responsive" in f && f.responsive === true)
+            .map((f) => (f as any).name as string),
+    ),
+);

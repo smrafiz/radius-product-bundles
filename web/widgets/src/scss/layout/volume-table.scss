@@ -20,14 +20,14 @@
         display: flex;
         align-items: center;
         gap: var(--rb-gap-spacing, 12px);
-        margin-bottom: var(--rb-gap-spacing, 12px);
-        padding-bottom: var(--rb-gap-spacing, 12px);
+        margin-bottom: calc(var(--rb-gap-spacing, 12px) + 6px);
+        padding-bottom: calc(var(--rb-gap-spacing, 12px) + 6px);
         border-bottom: 1px solid var(--rb-border-color, #e5e7eb);
     }
 
     &__product-image {
-        width: var(--rb-image-size, 70px);
-        height: var(--rb-image-size, 70px);
+        width: var(--rb-image-size, 80px);
+        height: var(--rb-image-size, 80px);
         flex-shrink: 0;
         border-radius: var(--rb-border-radius, 8px);
         overflow: hidden;
@@ -51,6 +51,7 @@
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 600;
         color: var(--rb-text-color, #333);
+        margin: 0;
         line-height: 1.3;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -61,8 +62,7 @@
 
     &__product-base-price {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
-        color: var(--rb-text-color, #333);
-        opacity: 0.6;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 75%, transparent);
     }
 
     // ── Tier list ─────────────────────────────────────────────────────
@@ -72,7 +72,7 @@
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: var(--rb-gap-spacing, 12px);
     }
 
     &__tier {
@@ -81,7 +81,7 @@
         align-items: center;
         gap: var(--rb-gap-spacing, 12px);
         padding: 14px 16px;
-        border: 2px solid var(--rb-border-color, #e5e7eb);
+        border: var(--rb-card-border);
         border-radius: var(--rb-border-radius, 8px);
         background: var(--rb-product-bg-color, #fff);
         cursor: pointer;
@@ -95,7 +95,7 @@
         }
 
         &:focus-visible {
-            outline: 2px solid var(--rb-primary-color, #303030);
+            outline: 1px solid var(--rb-primary-color, #303030);
             outline-offset: 2px;
         }
 
@@ -170,8 +170,7 @@
 
     &__tier-subtitle {
         font-size: calc(var(--rb-body-font-size, 14px) - 2px);
-        color: var(--rb-text-color, #333);
-        opacity: 0.55;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 75%, transparent);
         line-height: 1.3;
     }
 
@@ -239,8 +238,7 @@
 
     &__tier-original {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
-        color: var(--rb-text-color, #333);
-        opacity: 0.4;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
     }
 
@@ -256,6 +254,9 @@
         align-items: center;
         gap: var(--rb-gap-spacing, 12px);
         margin-top: var(--rb-gap-spacing, 12px);
+        .radius-bundle__actions {
+            margin-top: 0;
+        }
     }
 
     &__qty-selector {
@@ -265,7 +266,12 @@
         border-radius: var(--rb-border-radius, 8px);
         overflow: hidden;
         flex-shrink: 0;
-        height: 44px;
+        height: var(--rb-button-height, 44px);
+    }
+
+    &__qty-selector:focus-within {
+        border-color: var(--rb-primary-color, #303030);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--rb-primary-color, #303030) 15%, transparent);
     }
 
     &__qty-btn {
@@ -305,7 +311,6 @@
         background: transparent;
         height: 100%;
         outline: none;
-        -moz-appearance: textfield;
 
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
@@ -338,7 +343,7 @@
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--rb-gap-spacing, 12px);
+    gap: calc(var(--rb-gap-spacing, 12px) + 6px);
     align-items: stretch;
 }
 
@@ -349,9 +354,9 @@
     align-items: center;
     gap: 8px;
     flex: 1 1 120px;
-    min-width: 110px;
+    min-width: 180px;
     padding: 20px 14px 16px;
-    border: 2px solid var(--rb-border-color, #e5e7eb);
+    border: var(--rb-card-border);
     border-radius: var(--rb-border-radius, 8px);
     background: var(--rb-product-bg-color, #fff);
     cursor: pointer;
@@ -365,7 +370,7 @@
     }
 
     &:focus-visible {
-        outline: 2px solid var(--rb-primary-color, #303030);
+        outline: 1px solid var(--rb-primary-color, #303030);
         outline-offset: 2px;
     }
 
@@ -419,8 +424,7 @@
 
 .rb-vol__card-subtitle {
     font-size: calc(var(--rb-body-font-size, 14px) - 2px);
-    color: var(--rb-text-color, #333);
-    opacity: 0.55;
+    color: color-mix(in srgb, var(--rb-text-color, #333) 75%, transparent);
     line-height: 1.3;
 }
 
@@ -457,7 +461,7 @@
     padding: 8px 12px;
     background: transparent;
     color: var(--rb-primary-color, #303030);
-    border: 2px solid var(--rb-primary-color, #303030);
+    border: 1px solid var(--rb-primary-color, #303030);
     border-radius: calc(var(--rb-border-radius, 8px) - 2px);
     font-size: calc(var(--rb-body-font-size, 14px) - 1px);
     font-weight: 600;
@@ -483,7 +487,7 @@
     &__wrap {
         display: flex;
         flex-direction: column;
-        gap: var(--rb-gap-spacing, 12px);
+        gap: calc(var(--rb-gap-spacing, 12px) + 6px);
     }
 
     // ── Hero image ─────────────────────────────────────────────────────
@@ -494,12 +498,12 @@
         overflow: hidden;
         background: var(--rb-product-bg-color, #f9fafb);
         aspect-ratio: 1 / 1;
-        max-height: 300px;
+        max-height: calc(var(--rb-image-size, 80px) + 220px);
 
         img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: var(--rb-image-fit, cover);
             display: block;
         }
     }
@@ -524,17 +528,18 @@
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 600;
         color: var(--rb-text-color, #333);
+        margin: 0;
         line-height: 1.3;
     }
 
     // ── Price box ──────────────────────────────────────────────────────
     &__price-box {
         display: flex;
-        align-items: flex-start;
         justify-content: space-between;
+        align-items: center;
         gap: 12px;
         padding: 14px 16px;
-        border: 2px solid var(--rb-border-color, #e5e7eb);
+        border: var(--rb-card-border);
         border-radius: var(--rb-border-radius, 8px);
         background: var(--rb-product-bg-color, #fff);
     }
@@ -546,7 +551,7 @@
     }
 
     &__price-total {
-        font-size: calc(var(--rb-body-font-size, 14px) + 6px);
+        font-size: calc(var(--rb-body-font-size, 14px) + 8px);
         font-weight: 700;
         color: var(--rb-primary-color, #303030);
         line-height: 1.1;
@@ -555,13 +560,11 @@
     &__price-unit {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
         color: var(--rb-text-color, #333);
-        opacity: 0.65;
     }
 
     &__price-original {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
-        color: var(--rb-text-color, #333);
-        opacity: 0.45;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
     }
 
@@ -574,7 +577,7 @@
     }
 
     &__price-savings-amount {
-        font-size: calc(var(--rb-body-font-size, 14px) + 2px);
+        font-size: calc(var(--rb-body-font-size, 14px) + 8px);
         font-weight: 700;
         color: var(--rb-savings-color, #16a34a);
         line-height: 1.1;
@@ -582,8 +585,7 @@
 
     &__price-savings-label {
         font-size: calc(var(--rb-body-font-size, 14px) - 2px);
-        color: var(--rb-savings-color, #16a34a);
-        opacity: 0.8;
+        color: color-mix(in srgb, var(--rb-savings-color, #16a34a) 80%, transparent);
         white-space: nowrap;
     }
 
@@ -624,7 +626,6 @@
         background: linear-gradient(
             to right,
             var(--rb-primary-color, #303030) 0%,
-            var(--rb-primary-color, #303030) var(--rb-slider-fill-pct, 0%),
             var(--rb-border-color, #e5e7eb) var(--rb-slider-fill-pct, 0%),
             var(--rb-border-color, #e5e7eb) 100%
         );
@@ -670,16 +671,15 @@
         }
 
         &:focus-visible {
-            &::-webkit-slider-thumb {
-                box-shadow: 0 0 0 3px var(--rb-primary-color, #303030), 0 2px 6px rgba(0,0,0,0.15);
-            }
+            outline: 2px solid var(--rb-primary-color, #303030);
+            outline-offset: 4px;
         }
     }
 
     &__slider-markers {
         position: relative;
         height: 8px;
-        margin: 0 11px; // half thumb width to align with thumb center
+        margin: 0 11px;
     }
 
     &__marker {
@@ -694,8 +694,8 @@
 
     // ── Nudge banner ───────────────────────────────────────────────────
     &__nudge {
-        background: #fffbeb;
-        border: 1px solid #fbbf24;
+        background: color-mix(in srgb, var(--rb-savings-color,#16a34a) 6%, var(--rb-background-color,#fff));
+        border: 1px solid var(--rb-savings-color,#16a34a);
         border-radius: var(--rb-border-radius, 8px);
         padding: 12px 14px;
         display: flex;
@@ -707,7 +707,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #92400e;
+        color: var(--rb-text-color);
 
         svg {
             flex-shrink: 0;
@@ -717,21 +717,21 @@
     &__nudge-text {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
         font-weight: 600;
-        color: #92400e;
+        color: var(--rb-text-color);
         line-height: 1.3;
     }
 
     &__nudge-bar {
         width: 100%;
         height: 6px;
-        background: #fde68a;
+        background: color-mix(in srgb, var(--rb-savings-color,#16a34a) 50%, var(--rb-background-color,#fff));
         border-radius: 3px;
         overflow: hidden;
     }
 
     &__nudge-fill {
         height: 100%;
-        background: #f59e0b;
+        background: var(--rb-savings-color,#16a34a);
         border-radius: 3px;
         transition: width 0.2s ease;
     }
@@ -765,12 +765,12 @@
         overflow: hidden;
         background: var(--rb-product-bg-color, #f9fafb);
         aspect-ratio: 1 / 1;
-        max-height: 300px;
+        max-height: calc(var(--rb-image-size, 80px) + 220px);
 
         img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: var(--rb-image-fit, cover);
             display: block;
         }
     }
@@ -780,6 +780,7 @@
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 600;
         color: var(--rb-text-color, #333);
+        margin: 0;
         line-height: 1.3;
     }
 
@@ -788,13 +789,15 @@
         display: flex;
         flex-direction: column;
         gap: 6px;
+        padding: 16px;
+        border-radius: var(--rb-border-radius, 8px);
+        background: color-mix(in srgb, var(--rb-primary-color, #16a34a) 6%, var(--rb-background-color, #fff));
     }
 
     &__qty-label {
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
         font-weight: 500;
-        color: var(--rb-text-color, #333);
-        opacity: 0.7;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 90%, transparent);
     }
 
     &__qty-wrap {
@@ -807,7 +810,6 @@
 
         &:focus-within {
             border-color: var(--rb-primary-color, #303030);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--rb-primary-color, #303030) 15%, transparent);
         }
     }
 
@@ -816,7 +818,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: transparent;
+        background: var(--rb-background-color,#fff);
         border: none;
         cursor: pointer;
         font-size: 20px;
@@ -831,18 +833,19 @@
     }
 
     &__qty-input {
-        flex: 1;
+        flex: 1 1 0;
+        min-width: 0;
         text-align: center;
         font-size: calc(var(--rb-body-font-size, 14px) + 8px);
         font-weight: 700;
         color: var(--rb-text-color, #333);
         background: var(--rb-background-color, #fff);
         border: none;
-        border-left: 1px solid var(--rb-border-color, #e5e7eb);
-        border-right: 1px solid var(--rb-border-color, #e5e7eb);
+        box-shadow: none;
+        border-left: 2px solid var(--rb-border-color, #e5e7eb);
+        border-right: 2px solid var(--rb-border-color, #e5e7eb);
         padding: 14px 16px;
         outline: none;
-        -moz-appearance: textfield;
 
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
@@ -858,13 +861,11 @@
         justify-content: space-between;
         gap: 12px;
         padding: 14px 16px;
-        border: 1px solid var(--rb-border-color, #e5e7eb);
-        border-left: 4px solid var(--rb-primary-color, #303030);
+        border: var(--rb-card-border);
         border-radius: var(--rb-border-radius, 8px);
         background: var(--rb-product-bg-color, #fff);
 
         &--savings {
-            border-left-color: var(--rb-savings-color, #16a34a);
             background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 6%, var(--rb-background-color, #fff));
         }
     }
@@ -893,8 +894,7 @@
 
     &__calc-sub {
         font-size: calc(var(--rb-body-font-size, 14px) - 2px);
-        color: var(--rb-text-color, #333);
-        opacity: 0.5;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         line-height: 1.3;
 
         s {
@@ -915,31 +915,37 @@
         justify-content: center;
         padding: 6px 14px;
         border-radius: 20px;
-        border: 2px solid var(--rb-border-color, #e5e7eb);
-        background: var(--rb-background-color, #fff);
+        background: color-mix(in srgb, var(--rb-primary-color,#303030) 6%, var(--rb-background-color,#fff));
         color: var(--rb-text-color, #333);
         font-size: calc(var(--rb-body-font-size, 14px) - 1px);
         font-weight: 500;
         cursor: pointer;
-        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        transition: background 0.15s ease, color 0.15s ease;
         white-space: nowrap;
         user-select: none;
+        border: none;
+        box-shadow: none;
+        outline: none;
 
         &:hover:not(.rb-vol-calc__pill--active) {
-            border-color: var(--rb-primary-color, #303030);
-            background: color-mix(in srgb, var(--rb-primary-color, #303030) 6%, var(--rb-background-color, #fff));
-        }
-
-        &:focus-visible {
-            outline: 2px solid var(--rb-primary-color, #303030);
-            outline-offset: 2px;
+            background: color-mix(in srgb, var(--rb-primary-color, #303030) 10%, var(--rb-background-color, #fff));
         }
 
         &--active {
             background: var(--rb-primary-color, #303030);
-            border-color: var(--rb-primary-color, #303030);
             color: #fff;
         }
+    }
+}
+
+// ── Reduced motion ────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+    .rb-vol__tier,
+    .rb-vol__card,
+    .rb-vol-slider__nudge-fill,
+    .rb-vol-slider__slider-track,
+    .rb-vol-calc__pill {
+        transition: none !important;
     }
 }
 

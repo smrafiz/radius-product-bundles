@@ -11,13 +11,15 @@ use crate::schema::Percentage;
 
 use super::schema;
 use schema::cart_delivery_options_discounts_generate_run::input::cart::lines::Merchandise;
-use serde::Deserialize;
 use shopify_function::prelude::*;
 use shopify_function::Result;
 use std::collections::HashMap;
 
+/// Typed alias for the active_bundles metafield JSON (used by custom_scalar_overrides).
+pub type ActiveBundles = HashMap<String, MetafieldBundleConfig>;
+
 /// Bundle config from cart attribute (untrusted - only for identification).
-#[derive(Deserialize)]
+#[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct CartBundleConfig {
     bundle_id: String,
@@ -26,14 +28,14 @@ struct CartBundleConfig {
 
 /// Bundle config from metafield (trusted - source of truth).
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct MetafieldBundleConfig {
-    status: Option<String>,
-    free_shipping: Option<bool>,
-    free_shipping_method_title: Option<String>,
-    product_quantities: Option<HashMap<String, i32>>,
-    product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
-    main_product_id: Option<String>,
+#[shopify_function(rename_all = "camelCase")]
+pub struct MetafieldBundleConfig {
+    pub status: Option<String>,
+    pub free_shipping: Option<bool>,
+    pub free_shipping_method_title: Option<String>,
+    pub product_quantities: Option<HashMap<String, i32>>,
+    pub product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
+    pub main_product_id: Option<String>,
 }
 
 /// Checks if a Shopify product GID belongs to this bundle.
@@ -115,7 +117,7 @@ fn extract_bundles_from_lines(
 
     for line in lines {
         let bundle_id = match line.attribute().and_then(|a| a.value()) {
-            Some(id) if !id.is_empty() => id.to_string(),
+            Some(id) if !id.is_empty() && id.len() <= 100 => id.to_string(),
             _ => continue,
         };
 
@@ -171,7 +173,16 @@ fn cart_delivery_options_discounts_generate_run(
     if let Some(attr) = input.cart().attribute() {
         if let Some(attr_value) = attr.value() {
             if let Ok(cart_configs) = serde_json::from_str::<Vec<CartBundleConfig>>(attr_value) {
+                // Limit cart configs to prevent DoS
+                if cart_configs.len() > 50 {
+                    log!("[RadiusDiscount] Too many delivery bundle configs: {}", cart_configs.len());
+                    return Ok(no_discount);
+                }
                 for config in cart_configs {
+                    // Validate bundle ID length
+                    if config.bundle_id.is_empty() || config.bundle_id.len() > 100 {
+                        continue;
+                    }
                     bundles_by_id
                         .entry(config.bundle_id)
                         .or_insert_with(|| (config.bundle_name, Vec::new(), Vec::new()));
@@ -203,22 +214,7 @@ fn cart_delivery_options_discounts_generate_run(
         None => return Ok(no_discount),
     };
 
-    // metafield.value() returns &String directly
-    let metafield_value = metafield.value();
-
-    // Check if metafield value is empty
-    if metafield_value.is_empty() {
-        return Ok(no_discount);
-    }
-
-    let active_bundles: HashMap<String, MetafieldBundleConfig> =
-        match serde_json::from_str(metafield_value) {
-            Ok(v) => v,
-            Err(e) => {
-                log!("[RadiusDiscount] Failed to parse delivery metafield: {}", e);
-                return Ok(no_discount);
-            }
-        };
+    let active_bundles = metafield.json_value();
 
     if active_bundles.is_empty() {
         return Ok(no_discount);
@@ -250,11 +246,11 @@ fn cart_delivery_options_discounts_generate_run(
         None => return Ok(no_discount),
     };
 
-    // Get first delivery group
-    let first_delivery_group = match input.cart().delivery_groups().first() {
-        Some(group) => group,
-        None => return Ok(no_discount),
-    };
+    // Target ALL delivery groups, not just the first
+    let delivery_groups = input.cart().delivery_groups();
+    if delivery_groups.is_empty() {
+        return Ok(no_discount);
+    }
 
     let bundle_name = matched_bundle_name
         .clone()
@@ -267,16 +263,21 @@ fn cart_delivery_options_discounts_generate_run(
 
     let message = message_template.replace("{name}", &bundle_name);
 
+    let targets: Vec<DeliveryDiscountCandidateTarget> = delivery_groups
+        .iter()
+        .map(|group| {
+            DeliveryDiscountCandidateTarget::DeliveryGroup(DeliveryGroupTarget {
+                id: group.id().clone(),
+            })
+        })
+        .collect();
+
     Ok(CartDeliveryOptionsDiscountsGenerateRunResult {
         operations: vec![DeliveryOperation::DeliveryDiscountsAdd(
             DeliveryDiscountsAddOperation {
                 selection_strategy: DeliveryDiscountSelectionStrategy::All,
                 candidates: vec![DeliveryDiscountCandidate {
-                    targets: vec![DeliveryDiscountCandidateTarget::DeliveryGroup(
-                        DeliveryGroupTarget {
-                            id: first_delivery_group.id().clone(),
-                        },
-                    )],
+                    targets,
                     value: DeliveryDiscountCandidateValue::Percentage(Percentage {
                         value: Decimal(100.0),
                     }),

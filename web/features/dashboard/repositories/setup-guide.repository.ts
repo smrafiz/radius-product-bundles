@@ -3,6 +3,7 @@
 import prisma from "@/shared/repositories/prisma-connect";
 import { SetupProgress } from "@/features/dashboard";
 import { DEFAULT_SETUP_PROGRESS } from "@/features/dashboard/constants/setup-guide.constants";
+import { SetupProgressSchema } from "@/features/dashboard/validation/setup-guide.validation";
 
 export async function getSetupProgress(domain: string) {
     const shop = await prisma.shop.findUnique({
@@ -31,7 +32,7 @@ export async function getSetupProgress(domain: string) {
 }
 
 export async function getAutoDetectData(domain: string) {
-    const [bundleCount, appSettings, viewCount] = await Promise.all([
+    const [bundleCount, appSettings] = await Promise.all([
         prisma.bundle.count({
             where: { shop: domain, status: { not: "DELETED" as const } },
         }),
@@ -39,28 +40,23 @@ export async function getAutoDetectData(domain: string) {
             where: { shop: { domain } },
             select: { id: true },
         }),
-        prisma.bundleView.count({
-            where: { bundle: { shop: domain } },
-        }),
     ]);
 
     return {
         bundleCount,
         settingsExist: appSettings !== null,
-        viewCount,
     };
 }
 
 export async function updateSetupProgress(
     domain: string,
     progress: SetupProgress,
-    allComplete: boolean,
 ) {
+    const validated = SetupProgressSchema.parse(progress);
     await prisma.shop.update({
         where: { domain },
         data: {
-            setupProgress: progress as any,
-            setupGuideDismissed: allComplete,
+            setupProgress: validated,
         },
     });
 }

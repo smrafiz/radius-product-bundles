@@ -56,7 +56,7 @@ export const formatCurrency = (
 };
 
 /*
- * Format amount as currency compact
+ * Format amount as currency compact (locale-aware sign + symbol placement)
  */
 export const formatCurrencyCompact = (
     amount?: number | string | null,
@@ -77,29 +77,43 @@ export const formatCurrencyCompact = (
         return "";
     }
 
-    // Small numbers → normal currency
+    const finalCurrencyCode = currencyCode || "USD";
+    const finalLocale = locale || convertShopifyLocale("en-US");
+
+    // Small numbers → normal currency (preserves 2-decimal precision)
     if (Math.abs(value) < 1000) {
-        return formatCurrency(value, currencyCode, locale);
+        return formatCurrency(value, finalCurrencyCode, finalLocale);
     }
 
-    const units = [
-        { limit: 1e9, suffix: "B" },
-        { limit: 1e6, suffix: "M" },
-        { limit: 1e3, suffix: "K" },
-    ];
+    try {
+        return new Intl.NumberFormat(finalLocale, {
+            style: "currency",
+            currency: finalCurrencyCode,
+            currencyDisplay: "symbol",
+            notation: "compact",
+            compactDisplay: "short",
+            maximumFractionDigits: decimals,
+        }).format(value);
+    } catch (error) {
+        console.warn("Compact currency formatting error:", error, {
+            finalCurrencyCode,
+            finalLocale,
+        });
 
-    const unit = units.find((u) => Math.abs(value) >= u.limit)!;
-    const compactValue = value / unit.limit;
-
-    const fixed = compactValue.toFixed(decimals);
-    const trimmed = fixed.endsWith(".0") ? fixed.slice(0, -2) : fixed;
-
-    // Get currency symbol safely (same logic as your formatter)
-    const symbol = currencyCode
-        ? getCurrencySymbol(currencyCode)
-        : getCurrencySymbol("USD");
-
-    return `${symbol}${trimmed}${unit.suffix}`;
+        // Fallback: manual format with sign before symbol
+        const units = [
+            { limit: 1e9, suffix: "B" },
+            { limit: 1e6, suffix: "M" },
+            { limit: 1e3, suffix: "K" },
+        ];
+        const unit = units.find((u) => Math.abs(value) >= u.limit)!;
+        const compactValue = Math.abs(value) / unit.limit;
+        const sign = value < 0 ? "-" : "";
+        const fixed = compactValue.toFixed(decimals);
+        const trimmed = fixed.endsWith(".0") ? fixed.slice(0, -2) : fixed;
+        const symbol = getCurrencySymbol(finalCurrencyCode);
+        return `${sign}${symbol}${trimmed}${unit.suffix}`;
+    }
 };
 
 /**

@@ -12,10 +12,12 @@ use crate::schema::ProductDiscountsAddOperation;
 
 use super::schema;
 use schema::cart_lines_discounts_generate_run::input::cart::lines::Merchandise;
-use serde::Deserialize;
 use shopify_function::prelude::*;
 use shopify_function::Result;
 use std::collections::HashMap;
+
+/// Typed alias for the active_bundles metafield JSON (used by custom_scalar_overrides).
+pub type ActiveBundles = HashMap<String, MetafieldBundleConfig>;
 
 const MAX_QUANTITY: i32 = 10_000;
 
@@ -24,39 +26,37 @@ fn safe_mul(a: i32, b: i32) -> Option<i32> {
 }
 
 /// Bundle config from cart attribute (untrusted - only for identification).
-#[derive(Deserialize)]
+#[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct CartBundleConfig {
     bundle_id: String,
     bundle_name: Option<String>,
-    required_line_count: Option<usize>,
 }
 
 /// Bundle config from metafield (trusted - source of truth).
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct MetafieldBundleConfig {
-    status: Option<String>,
-    discount_type: String,
-    discount_value: f64,
+#[shopify_function(rename_all = "camelCase")]
+pub struct MetafieldBundleConfig {
+    pub status: Option<String>,
+    pub discount_type: String,
+    pub discount_value: f64,
     #[allow(dead_code)]
-    free_shipping: Option<bool>,
-    min_order_value: Option<f64>,
-    max_discount_amount: Option<f64>,
-    discount_application: Option<String>,
-    discounted_product_ids: Option<Vec<String>>,
-    product_quantities: Option<HashMap<String, i32>>,
-    product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
-    main_product_id: Option<String>,
+    pub free_shipping: Option<bool>,
+    pub min_order_value: Option<f64>,
+    pub max_discount_amount: Option<f64>,
+    pub discount_application: Option<String>,
+    pub discounted_product_ids: Option<Vec<String>>,
+    pub product_quantities: Option<HashMap<String, i32>>,
+    pub product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
+    pub main_product_id: Option<String>,
     // BOGO/BXGY fields
-    bundle_type: Option<String>,
-    buy_quantity: Option<i32>,
-    get_quantity: Option<i32>,
-    product_roles: Option<HashMap<String, String>>,
-    variant_roles: Option<HashMap<String, String>>, // variantId -> role (for same-product different-variant BOGO)
+    pub bundle_type: Option<String>,
+    pub buy_quantity: Option<i32>,
+    pub get_quantity: Option<i32>,
+    pub product_roles: Option<HashMap<String, String>>,
+    pub variant_roles: Option<HashMap<String, String>>, // variantId -> role (for same-product different-variant BOGO)
     // Volume discount fields
-    #[allow(dead_code)]
-    volume_tiers: Option<serde_json::Value>,
+    pub volume_tiers: Option<VolumeTierConfig>,
 }
 
 /// Checks if a Shopify product GID belongs to this bundle.
@@ -126,27 +126,27 @@ struct BundleLineInfo<'a> {
 
 /// Volume discount tier configuration (from `volumeTiers` in the metafield).
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct VolumeTierConfig {
-    discount_type: String, // "PERCENTAGE" or "FIXED_AMOUNT"
-    open_ended: bool,
-    tiers: Vec<VolumeTier>,
+#[shopify_function(rename_all = "camelCase")]
+pub struct VolumeTierConfig {
+    pub discount_type: String, // "PERCENTAGE" or "FIXED_AMOUNT"
+    pub open_ended: bool,
+    pub tiers: Vec<VolumeTier>,
 }
 
 /// A single volume discount tier.
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct VolumeTier {
-    min_quantity: u64,
-    discount: f64,
+#[shopify_function(rename_all = "camelCase")]
+pub struct VolumeTier {
+    pub min_quantity: u64,
+    pub discount: f64,
 }
 
 /// Find the highest-matching tier for `cart_qty`.
 ///
 /// Tiers are treated as minimum thresholds: the highest tier whose `min_quantity`
-/// is <= `cart_qty` wins.  When `open_ended` is false, quantities above the last
-/// tier's `min_quantity` still qualify (tiers define floors, not ceilings).
-fn find_volume_tier<'a>(tiers: &'a [VolumeTier], cart_qty: u64, open_ended: bool) -> Option<&'a VolumeTier> {
+/// is <= `cart_qty` wins.  Returns `None` when `cart_qty` is below all tier
+/// minimums, regardless of `open_ended`.
+fn find_volume_tier<'a>(tiers: &'a [VolumeTier], cart_qty: u64, _open_ended: bool) -> Option<&'a VolumeTier> {
     if tiers.is_empty() {
         return None;
     }
@@ -159,12 +159,7 @@ fn find_volume_tier<'a>(tiers: &'a [VolumeTier], cart_qty: u64, open_ended: bool
         return best;
     }
 
-    // qty is below the lowest tier.  If open_ended, still apply the first tier.
-    if open_ended {
-        tiers.iter().min_by_key(|t| t.min_quantity)
-    } else {
-        None
-    }
+    None
 }
 
 /// Calculate VOLUME_DISCOUNT candidates for a bundle.
@@ -176,15 +171,7 @@ fn calculate_volume_discount(
     bundle_lines: &[BundleLineInfo],
     bundle_name: &str,
 ) -> Option<ProductDiscountCandidate> {
-    let raw_tiers = bundle_settings.volume_tiers.as_ref()?;
-
-    let tier_config: VolumeTierConfig = match serde_json::from_value(raw_tiers.clone()) {
-        Ok(c) => c,
-        Err(e) => {
-            log!("[RadiusDiscount] Failed to parse volume_tiers: {}", e);
-            return None;
-        }
-    };
+    let tier_config = bundle_settings.volume_tiers.as_ref()?;
 
     if tier_config.tiers.is_empty() {
         return None;
@@ -198,8 +185,11 @@ fn calculate_volume_discount(
     let mut product_qty: HashMap<String, u64> = HashMap::new();
     for bl in bundle_lines {
         if let Some(ref pid) = bl.product_id {
-            let qty = *bl.line.quantity() as u64;
-            *product_qty.entry(pid.clone()).or_insert(0) += qty;
+            let qty = *bl.line.quantity();
+            if qty <= 0 {
+                continue;
+            }
+            *product_qty.entry(pid.clone()).or_insert(0) += qty as u64;
         }
     }
 
@@ -226,7 +216,17 @@ fn calculate_volume_discount(
             continue;
         }
 
-        let line_qty = *bl.line.quantity() as u64;
+        // Cap percentage at 100% to prevent over-discount
+        if tier_config.discount_type == "PERCENTAGE" && tier.discount > 100.0 {
+            log!("[RadiusDiscount] Volume tier percentage exceeds 100%: {}", tier.discount);
+            continue;
+        }
+
+        let raw_qty = *bl.line.quantity();
+        if raw_qty <= 0 {
+            continue;
+        }
+        let line_qty = raw_qty as u64;
         let unit_price = bl.line.cost().amount_per_quantity().amount().0;
 
         let line_discount = match tier_config.discount_type.as_str() {
@@ -296,6 +296,12 @@ fn build_bxgy_candidate(
     }
 
     if bundle_settings.discount_value < 0.0 {
+        return None;
+    }
+
+    // Cap percentage at 100% to prevent over-discount
+    if bundle_settings.discount_type == "PERCENTAGE" && bundle_settings.discount_value > 100.0 {
+        log!("[RadiusDiscount] BXGY percentage exceeds 100%: {}", bundle_settings.discount_value);
         return None;
     }
 
@@ -378,11 +384,13 @@ fn calculate_bxgy_discount(
     // BOGO quantities
     let buy_qty = bundle_settings.buy_quantity.unwrap_or(1);
     let get_qty = bundle_settings.get_quantity.unwrap_or(1);
-    let items_per_deal = buy_qty + get_qty;
-
-    if items_per_deal <= 0 || buy_qty <= 0 || get_qty <= 0 {
+    if buy_qty <= 0 || get_qty <= 0 {
         return None;
     }
+    let items_per_deal = match buy_qty.checked_add(get_qty) {
+        Some(v) if v > 0 => v,
+        _ => return None,
+    };
 
     // When variant_roles is set, use variantId for TRIGGER/REWARD classification.
     // This handles same-product BOGO with different variants (e.g., Buy Blue / Get Black).
@@ -423,6 +431,7 @@ fn calculate_bxgy_discount(
 
         let mut targets: Vec<ProductDiscountCandidateTarget> = Vec::new();
         let mut reward_total: f64 = 0.0;
+        let mut total_reward_qty: i32 = 0;
 
         for bl in &reward_lines {
             let qty_to_discount = std::cmp::min(
@@ -431,6 +440,7 @@ fn calculate_bxgy_discount(
             );
             if qty_to_discount <= 0 { continue; }
             reward_total += bl.line.cost().amount_per_quantity().amount().0 * qty_to_discount as f64;
+            total_reward_qty += qty_to_discount;
             targets.push(ProductDiscountCandidateTarget::CartLine(CartLineTarget {
                 id: bl.line.id().clone(),
                 quantity: Some(qty_to_discount),
@@ -440,14 +450,6 @@ fn calculate_bxgy_discount(
         if targets.is_empty() {
             return None;
         }
-
-        let total_reward_qty: i32 = reward_lines
-            .iter()
-            .map(|bl| std::cmp::min(
-                safe_mul(deal_count, get_qty).unwrap_or(0),
-                *bl.line.quantity(),
-            ))
-            .sum();
 
         return build_bxgy_candidate(
             bundle_settings,
@@ -507,12 +509,9 @@ fn calculate_bxgy_discount(
 
     // Calculate deal count
     let deal_count: i32 = if is_same_product {
-        // Same product (BOGO): guard check — at least one product must have enough qty
-        reward_lines
-            .iter()
-            .map(|bl| *bl.line.quantity() / items_per_deal)
-            .max()
-            .unwrap_or(0)
+        // Same product: sum all quantities across lines, divide by items_per_deal
+        let total_qty: i32 = reward_lines.iter().map(|bl| *bl.line.quantity()).sum();
+        total_qty / items_per_deal
     } else {
         // Different products: use per-product expected quantities from product_quantities.
         // deal_count = min across all products of (cart_qty / expected_qty).
@@ -585,11 +584,9 @@ fn calculate_bxgy_discount(
 
     for bl in &reward_lines {
         let qty_to_discount = if is_same_product {
-            let per_product_deals = *bl.line.quantity() / items_per_deal;
-            match safe_mul(per_product_deals, get_qty) {
-                Some(v) => v,
-                None => continue,
-            }
+            // Each line independently: calculate deals from this line's own qty
+            let per_line_deals = *bl.line.quantity() / items_per_deal;
+            per_line_deals * get_qty
         } else {
             let expected = match bl
                 .product_id
@@ -646,6 +643,12 @@ fn calculate_bxgy_discount(
 
     // Reject negative discount values (prevents price increases via compromised data)
     if bundle_settings.discount_value < 0.0 {
+        return None;
+    }
+
+    // Cap percentage at 100% to prevent over-discount
+    if bundle_settings.discount_type == "PERCENTAGE" && bundle_settings.discount_value > 100.0 {
+        log!("[RadiusDiscount] BXGY percentage exceeds 100%: {}", bundle_settings.discount_value);
         return None;
     }
 
@@ -735,25 +738,60 @@ fn cart_lines_discounts_generate_run(
         return Ok(no_discount);
     }
 
-    let cart_attr = match input.cart().attribute() {
-        Some(attr) => attr,
-        None => return Ok(no_discount),
-    };
+    // Primary: read bundle list from cart-level _radiusDiscounts attribute.
+    // Fallback: if cart attribute is missing (e.g. timing race between widget write
+    // and checkout function invocation), reconstruct from line-level _bundle_id
+    // properties. The metafield is the authoritative source of truth for bundle
+    // config and product membership, so this fallback is safe.
+    let cart_configs: Vec<CartBundleConfig> = {
+        let from_attr = input
+            .cart()
+            .attribute()
+            .and_then(|a| a.value())
+            .and_then(|v| {
+                serde_json::from_str::<Vec<CartBundleConfig>>(v)
+                    .map_err(|e| {
+                        log!("[RadiusDiscount] Failed to parse cart attribute: {}", e);
+                        e
+                    })
+                    .ok()
+            });
 
-    let cart_attr_value = match cart_attr.value() {
-        Some(v) => v,
-        None => return Ok(no_discount),
-    };
-
-    let cart_configs: Vec<CartBundleConfig> = match serde_json::from_str(cart_attr_value) {
-        Ok(c) => c,
-        Err(e) => {
-            log!("[RadiusDiscount] Failed to parse cart attribute: {}", e);
-            return Ok(no_discount);
+        match from_attr {
+            Some(configs) if !configs.is_empty() => configs,
+            _ => {
+                // Fallback: collect unique bundle IDs from line _bundle_id properties.
+                let mut seen = std::collections::HashSet::new();
+                let mut fallback: Vec<CartBundleConfig> = Vec::new();
+                for line in input.cart().lines().iter() {
+                    if let Some(bid) = line.attribute().and_then(|a| a.value()) {
+                        let bid = bid.to_string();
+                        if !bid.is_empty() && bid.len() <= 100 && seen.insert(bid.clone()) {
+                            fallback.push(CartBundleConfig {
+                                bundle_id: bid,
+                                bundle_name: None,
+                            });
+                        }
+                    }
+                }
+                if !fallback.is_empty() {
+                    log!("[RadiusDiscount] cart attribute missing; fell back to {} bundle(s) from line properties", fallback.len());
+                }
+                fallback
+            }
         }
     };
 
     if cart_configs.is_empty() {
+        return Ok(no_discount);
+    }
+
+    // Limit cart configs to prevent DoS via crafted line properties
+    if cart_configs.len() > 50 {
+        log!(
+            "[RadiusDiscount] Too many bundle configs: {}",
+            cart_configs.len()
+        );
         return Ok(no_discount);
     }
 
@@ -762,20 +800,7 @@ fn cart_lines_discounts_generate_run(
         None => return Ok(no_discount),
     };
 
-    let metafield_value = metafield.value();
-
-    if metafield_value.is_empty() {
-        return Ok(no_discount);
-    }
-
-    let active_bundles: HashMap<String, MetafieldBundleConfig> =
-        match serde_json::from_str(metafield_value) {
-            Ok(v) => v,
-            Err(e) => {
-                log!("[RadiusDiscount] Failed to parse metafield: {}", e);
-                return Ok(no_discount);
-            }
-        };
+    let active_bundles = metafield.json_value();
 
     if active_bundles.is_empty() {
         return Ok(no_discount);
@@ -865,16 +890,8 @@ fn cart_lines_discounts_generate_run(
             continue;
         }
 
-        // For non-BXGY bundles, validate required line count.
-        // Skip for BXGY because same-product BOGO merges into one cart line;
-        // calculate_bxgy_discount validates quantities instead.
-        if !is_bxgy {
-            if let Some(required) = cart_config.required_line_count {
-                if bundle_lines.len() < required {
-                    continue;
-                }
-            }
-        }
+        // Removed required_line_count check — it came from untrusted cart attribute.
+        // Product presence is validated by complete_sets (from metafield product_quantities).
 
         if is_bxgy {
             let bxgy_bundle_name = cart_config.bundle_name.as_deref().unwrap_or("Bundle");
@@ -891,7 +908,7 @@ fn cart_lines_discounts_generate_run(
 
         let complete_sets: i32 = if let Some(qty_map) = product_quantities {
             if qty_map.is_empty() {
-                1
+                0 // No products defined → no complete sets
             } else {
                 let mut min_sets: Option<i32> = None;
 
@@ -1044,6 +1061,12 @@ fn cart_lines_discounts_generate_run(
             .sum();
 
         if bundle_settings.discount_value < 0.0 {
+            continue;
+        }
+
+        // Cap percentage at 100% to prevent over-discount
+        if bundle_settings.discount_type == "PERCENTAGE" && bundle_settings.discount_value > 100.0 {
+            log!("[RadiusDiscount] Percentage exceeds 100%: {}", bundle_settings.discount_value);
             continue;
         }
 
@@ -1332,10 +1355,9 @@ mod tests {
     #[test]
     fn volume_tier_below_first_tier_open_ended_returns_first() {
         let tiers = make_tiers();
-        // open_ended means the lowest tier applies even below its min_quantity
-        let tier = find_volume_tier(&tiers, 5, true).expect("should match via open_ended");
-        assert_eq!(tier.min_quantity, 10);
-        assert_eq!(tier.discount as u32, 10);
+        // qty below all tier minimums should return None even when open_ended
+        let tier = find_volume_tier(&tiers, 5, true);
+        assert!(tier.is_none());
     }
 
     #[test]

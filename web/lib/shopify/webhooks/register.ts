@@ -5,8 +5,11 @@ import {
     handleAppUninstalled,
     handleOrdersCreate,
     handleProductsDelete,
+    handleProductsUpdate,
+    handleProductsCreate,
     handleShopUpdate,
     handleAppSubscriptionUpdate,
+    handleLocalesUpdate,
 } from "@/features/webhooks/handlers";
 
 let webhooksInitialized = false;
@@ -47,11 +50,39 @@ export function addHandlers() {
                     await handleProductsDelete(shop, body);
                 },
             },
+            PRODUCTS_UPDATE: {
+                deliveryMethod: DeliveryMethod.Http,
+                callbackUrl: "/api/webhooks",
+                callback: async (_topic, shop, body) => {
+                    await handleProductsUpdate(shop, body);
+                },
+            },
+            PRODUCTS_CREATE: {
+                deliveryMethod: DeliveryMethod.Http,
+                callbackUrl: "/api/webhooks",
+                callback: async (_topic, shop, body) => {
+                    await handleProductsCreate(shop, body);
+                },
+            },
             APP_SUBSCRIPTIONS_UPDATE: {
                 deliveryMethod: DeliveryMethod.Http,
                 callbackUrl: "/api/webhooks",
                 callback: async (_topic, shop, body) => {
                     await handleAppSubscriptionUpdate(shop, body);
+                },
+            },
+            LOCALES_CREATE: {
+                deliveryMethod: DeliveryMethod.Http,
+                callbackUrl: "/api/webhooks",
+                callback: async (_topic, shop) => {
+                    await handleLocalesUpdate(shop);
+                },
+            },
+            LOCALES_UPDATE: {
+                deliveryMethod: DeliveryMethod.Http,
+                callbackUrl: "/api/webhooks",
+                callback: async (_topic, shop) => {
+                    await handleLocalesUpdate(shop);
                 },
             },
         });

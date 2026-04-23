@@ -11,6 +11,7 @@ import {
     useBundlePreviewPricing,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
 import { formatDateLong, useShopSettings } from "@/shared";
 
@@ -20,7 +21,9 @@ import { formatDateLong, useShopSettings } from "@/shared";
 export function BundleSummary() {
     const ts = useTranslations("Bundles.Statuses");
     const t = useTranslations("Bundles.Creation.Review");
-    const { bundleData, getGroupedItems } = useBundleStore();
+    const { bundleData, getGroupedItems } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, getGroupedItems: s.getGroupedItems })),
+    );
     const groupedItems = getGroupedItems();
     const nameField = useBundleField<string>("name");
     const descriptionField = useBundleField<string>("description");
@@ -124,17 +127,30 @@ export function BundleSummary() {
                                 : t("notSet")}
                         </s-text>
                     </s-stack>
-                    <s-stack
-                        alignItems="center"
-                        justifyContent="space-between"
-                        direction="inline"
-                        gap="small-300"
-                    >
-                        <s-heading>{t("discountValue")}</s-heading>
-                        <s-text color="subdued">
-                            {isLoading ? "•" : formatDiscount()}
-                        </s-text>
-                    </s-stack>
+                    {discountTypeField.value !== "NO_DISCOUNT" && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                            gap="small-300"
+                        >
+                            <s-heading>{t("discountValue")}</s-heading>
+                            <s-text color="subdued">
+                                {isLoading ? "•" : formatDiscount()}
+                            </s-text>
+                        </s-stack>
+                    )}
+                    {bundleData.freeShipping && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                            gap="small-300"
+                        >
+                            <s-heading>{t("freeShipping")}</s-heading>
+                            <s-text color="subdued">{t("yes")}</s-text>
+                        </s-stack>
+                    )}
                 </s-stack>
             </s-section>
 

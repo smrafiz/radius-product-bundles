@@ -29,10 +29,22 @@ function SplitProductCard({
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
-    const freeText = PREVIEW_LABELS.bogoFreeText;
+    const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
     const cardBg = getCardBgColor(styles);
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
@@ -85,7 +97,7 @@ function SplitProductCard({
                         WebkitBoxOrient: "vertical",
                     }}
                 >
-                    {product.title}
+                    {titleEl}
                 </div>
                 {quantityEl}
                 <div
@@ -138,7 +150,6 @@ export function WidgetSplitDeal({
     subtitle,
     badgeText,
     labels,
-    activeDevice,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -146,7 +157,7 @@ export function WidgetSplitDeal({
     const spacingValues =
         SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
     const cardRadius = getCardRadius(styles.cornerStyle);
-    const showPricingBar = styles.pricingSummaryBox !== false;
+    const showPricingBar = styles.pricingSummaryBox;
     const pricingBarBg = styles.pricingSummaryBg || "#DDEDDF";
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
@@ -252,7 +263,7 @@ export function WidgetSplitDeal({
                     display: "flex",
                     alignItems: "stretch",
                     gap: 4,
-                    flexDirection: activeDevice === "mobile" ? "column" : (styles.splitDealStyle ?? "row"),
+                    flexDirection: styles.splitDealStyle ?? "row",
                 }}
             >
                 {/* Trigger Column */}
@@ -318,17 +329,14 @@ export function WidgetSplitDeal({
                 >
                     <span
                         style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
                             width: 28,
                             height: 28,
+                            textAlign: "center",
+                            lineHeight: "27px",
                             background: styles.primaryColor || "#303030",
                             color: "#fff",
                             borderRadius: "50%",
                             fontSize: 16,
-                            fontWeight: 700,
-                            lineHeight: 1,
                         }}
                     >
                         +

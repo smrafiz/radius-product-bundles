@@ -4,6 +4,7 @@ import { getGridClass, SectionConfig } from "@/features/settings";
 import { DynamicField } from "./dynamic-field";
 import { useTranslations } from "@/lib/i18n/provider";
 import { PlanGate } from "@/shared";
+import { useFormContext, useWatch } from "react-hook-form";
 
 /**
  * Universal section renderer - renders ANY section from config.
@@ -114,11 +115,28 @@ function SectionFields({
     parentPath?: string;
     tabId: string;
 }) {
+    const { control } = useFormContext();
+    const defaultDiscountType = useWatch({ control, name: "defaultDiscountType" });
+    const isNoDiscount = defaultDiscountType === "NO_DISCOUNT";
+
+    const resolvedGridFields = isNoDiscount
+        ? gridFields.filter((f) => f.name !== "defaultDiscountValue")
+        : gridFields;
+    const resolvedFullWidthFields = isNoDiscount
+        ? [
+              ...gridFields.filter((f) => f.name === "defaultDiscountType"),
+              ...fullWidthFields,
+          ]
+        : fullWidthFields;
+    const resolvedGridFieldsFinal = isNoDiscount
+        ? resolvedGridFields.filter((f) => f.name !== "defaultDiscountType")
+        : resolvedGridFields;
+
     return (
         <s-stack gap="base">
-            {gridFields.length > 0 && (
+            {resolvedGridFieldsFinal.length > 0 && (
                 <div className={gridClass}>
-                    {gridFields.map((field: any) => (
+                    {resolvedGridFieldsFinal.map((field: any) => (
                         <DynamicField
                             key={String(field.name)}
                             config={field}
@@ -129,7 +147,7 @@ function SectionFields({
                 </div>
             )}
 
-            {fullWidthFields.map((field: any) => (
+            {resolvedFullWidthFields.map((field: any) => (
                 <DynamicField
                     key={String(field.name)}
                     config={field}

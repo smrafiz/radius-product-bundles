@@ -14,7 +14,6 @@ import {
     getCardBgColor,
     getImageSize,
     getPadding,
-    getSpacing,
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
@@ -29,10 +28,12 @@ function ProductTile({
 }: {
     product: {
         title: string;
+        variantTitle?: string;
         image?: string;
         price: string;
         compareAtPrice?: string;
         quantity?: number;
+        url?: string;
     };
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
@@ -54,6 +55,18 @@ function ProductTile({
     const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
     const rewardBadgeText =
         labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
     const rewardBadge = isFreePrice
@@ -81,7 +94,7 @@ function ProductTile({
                 padding: "16px 12px 12px",
                 borderRadius: cardRadius,
                 backgroundColor: cardBg,
-                border: `1.5px solid ${accentColor}22`,
+                border: `1px solid ${accentColor}22`,
             }}
         >
             {product.image && displayOptions.showImages && (
@@ -92,7 +105,7 @@ function ProductTile({
                         borderRadius: cardRadius,
                         overflow: "hidden",
                         background: styles.productCardBg || "#f9fafb",
-                        border: `2px solid ${accentColor}33`,
+                        border: `1px solid ${accentColor}33`,
                     }}
                 >
                     <img
@@ -132,15 +145,17 @@ function ProductTile({
                     color: styles.textColor,
                     textAlign: "center",
                     lineHeight: "1.3",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
                     overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    whiteSpace: "normal",
                     maxWidth: "100%",
                 }}
             >
-                {product.title}
+                {titleEl}
             </div>
-            
+
             {quantityEl}
 
             <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
@@ -301,7 +316,6 @@ function TileSlider({
                                         : `repeat(${cols}, 1fr)`,
                                 gap: 8,
                                 minWidth: "100%",
-                                flexShrink: 0,
                             }}
                         >
                             {page.map((p) => (
@@ -382,7 +396,7 @@ export function WidgetCompactGrid({
     const isOutline = styles.badgeStyle === "outline";
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const bodyFontSize = getFontSize(styles.bodySize);
-    const gap = getSpacing(styles.spacing);
+    const padding = getPadding(styles.spacing);
 
     if (!products.length) {
         return (
@@ -429,19 +443,21 @@ export function WidgetCompactGrid({
                         flexDirection: "column",
                         gap: 2,
                         minWidth: 0,
+                        flex: 1,
                     }}
                 >
-                    <span
+                    <h3
                         style={{
                             color: "#fff",
                             fontSize: headingFontSize,
                             fontWeight: 600,
+                            margin: 0,
                         }}
                     >
                         {title || PREVIEW_LABELS.headingLabel}
-                    </span>
+                    </h3>
                     {subtitle && (
-                        <span
+                        <p
                             style={{
                                 color: "rgba(255,255,255,0.8)",
                                 fontSize: bodyFontSize,
@@ -449,7 +465,7 @@ export function WidgetCompactGrid({
                             }}
                         >
                             {subtitle}
-                        </span>
+                        </p>
                     )}
                 </div>
                 {badgeText &&
@@ -484,7 +500,8 @@ export function WidgetCompactGrid({
                     alignItems: "stretch",
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                     gap: 4,
-                    padding: `${parseInt(gap)}px ${parseInt(gap)}px 10px`,
+                    padding: `${parseInt(padding)}px ${parseInt(padding)}px 10px`,
+
                 }}
             >
                 <TileSlider
@@ -515,12 +532,10 @@ export function WidgetCompactGrid({
                             height: 32,
                             borderRadius: "50%",
                             background: styles.backgroundColor || "#fff",
-                            border: `2px solid ${styles.borderColor || "#e5e7eb"}`,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
+                            border: `1px solid ${styles.borderColor || "#e5e7eb"}`,
+                            textAlign: "center",
+                            lineHeight: "28px",
                             fontSize: 16,
-                            fontWeight: 600,
                             color: styles.textColor || "#9ca3af",
                         }}
                     >
@@ -547,9 +562,9 @@ export function WidgetCompactGrid({
             <div
                 style={{
                     display: "flex",
-                    alignItems: "center",
+                    alignItems: activeDevice === "mobile" ? "normal" : "center",
                     justifyContent: "space-between",
-                    padding: `10px ${parseInt(gap)}px ${parseInt(gap)}px`,
+                    padding: `10px ${parseInt(padding)}px ${parseInt(padding)}px`,
                     gap: 12,
                     flexDirection: activeDevice === "mobile" ? "column" : "row",
                 }}

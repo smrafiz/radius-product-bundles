@@ -5,7 +5,7 @@ handle = "product-bundles-112"
 client_id = "669f6e833a3de3aa7a758c91373e5b85"
 application_url = "https://shopify.radiusdirectory.net"
 embedded = true
-extension_directories = [ "./extension/extensions/**" ]
+extension_directories = ["extension/extensions/*"]
 
 [app_proxy]
 url = "https://shopify.radiusdirectory.net/api/proxy"
@@ -24,7 +24,12 @@ api_version = "2026-01"
   "app/uninstalled",
   "shop/update",
   "orders/create",
-  "products/delete"
+  "products/create",
+  "products/update",
+  "products/delete",
+  "app_subscriptions/update",
+  "locales/create",
+  "locales/update"
 ]
   uri = "/api/webhooks"
 

@@ -6,9 +6,10 @@ import {
     bundleSchema,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { BundleProductRole } from "@/prisma/generated/client";
+import { BundleProductRole } from "@/features/bundles/constants/prisma-enums";
 
 export function useBundleValidation() {
     const form = useFormContext<BundleFormData>();
@@ -20,7 +21,17 @@ export function useBundleValidation() {
         displaySettings,
         isFieldTouched,
         bundleData,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            currentStep: s.currentStep,
+            validationAttempted: s.validationAttempted,
+            getGroupedItems: s.getGroupedItems,
+            selectedItems: s.selectedItems,
+            displaySettings: s.displaySettings,
+            isFieldTouched: s.isFieldTouched,
+            bundleData: s.bundleData,
+        })),
+    );
 
     if (!form) {
         throw new Error(

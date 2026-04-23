@@ -10,6 +10,7 @@ import { useState } from "react";
  */
 export function DiscountSettings() {
     const t = useTranslations("Bundles.Creation.Discount");
+    const tdt = useTranslations("Bundles.DiscountTypes");
     const {
         discountType,
         discountValue,
@@ -36,8 +37,9 @@ export function DiscountSettings() {
     const [isOpen, setIsOpen] = useState(false);
     const popoverId = "discount-type-popover";
     const selectedLabel =
-        availableDiscountTypes.find((c) => c.id === discountType)?.label ??
-        t("selectType");
+        availableDiscountTypes.find((c) => c.id === discountType) != null
+            ? tdt(discountType + ".label")
+            : t("selectType");
 
     return (
         <s-stack gap="base">
@@ -71,6 +73,8 @@ export function DiscountSettings() {
                         padding="small-300"
                         paddingInline="small"
                         type="submit"
+                        aria-haspopup="listbox"
+                        aria-expanded={isOpen}
                         onClick={() => setIsOpen((prev) => !prev)}
                     >
                         <div className="w-full flex justify-between items-center">
@@ -96,7 +100,7 @@ export function DiscountSettings() {
                 </div>
 
                 <s-popover id={popoverId}>
-                    <div className="p-2 w-100">
+                    <div className="p-2 w-100" role="listbox" aria-label={t("discountTypeLabel")}>
                         <s-stack gap="small-400">
                             {availableDiscountTypes.map((config) => {
                                 const isSelected = config.id === discountType;
@@ -116,7 +120,7 @@ export function DiscountSettings() {
                                         borderRadius="base"
                                         onClick={() => {
                                             if (isLocked) {
-                                                openCrossSell(config.label);
+                                                openCrossSell(tdt(config.id + ".label"));
                                             } else {
                                                 handleDiscountTypeChange(
                                                     config.id,
@@ -126,6 +130,8 @@ export function DiscountSettings() {
                                         }}
                                     >
                                         <div
+                                            role="option"
+                                            aria-selected={isSelected}
                                             className={`py-1 px-2 rounded-md transition-colors ${
                                                 isLocked
                                                     ? "rtpb-pro-locked"
@@ -142,15 +148,15 @@ export function DiscountSettings() {
                                             >
                                                 <s-stack gap="none">
                                                     <s-heading>
-                                                        {config.label}
+                                                        {tdt(config.id + ".label")}
                                                     </s-heading>
                                                     <s-paragraph color="subdued">
-                                                        {config.description}
+                                                        {tdt(config.id + ".description")}
                                                     </s-paragraph>
                                                 </s-stack>
                                                 {isLocked && (
                                                     <ProBadge
-                                                        label={config.label}
+                                                        label={tdt(config.id + ".label")}
                                                     />
                                                 )}
                                             </s-stack>
@@ -166,39 +172,17 @@ export function DiscountSettings() {
             {showDiscountValue && (
                 <s-stack gap="small-200">
                     <s-number-field
-                        label={getDiscountValueLabel()}
+                        label={discountType ? tdt(discountType + ".label") : getDiscountValueLabel()}
                         value={discountValue?.toString() || ""}
-                        step={discountType === "PERCENTAGE" ? 0.01 : 1}
+                        step={0.01}
                         min={0}
                         placeholder="0"
                         prefix={getPrefix()}
                         suffix={getSuffix()}
                         max={discountType === "PERCENTAGE" ? 99.99 : undefined}
-                        onChange={(event: Event) => {
+                        onInput={(event: Event) => {
                             const target = event.target as HTMLInputElement;
-                            const raw = target.value;
-                            const value =
-                                discountType === "PERCENTAGE" && raw !== ""
-                                    ? String(
-                                          Math.trunc(parseFloat(raw) * 100) /
-                                              100,
-                                      )
-                                    : raw;
-                            handleDiscountValueChange(value);
-                        }}
-                        onBlur={(event: Event) => {
-                            if (discountType === "PERCENTAGE") {
-                                const target =
-                                    event.target as HTMLInputElement;
-                                const raw = target.value;
-                                if (raw !== "") {
-                                    const truncated = String(
-                                        Math.trunc(parseFloat(raw) * 100) /
-                                            100,
-                                    );
-                                    handleDiscountValueChange(truncated);
-                                }
-                            }
+                            handleDiscountValueChange(target.value);
                             createBlurHandler("discountValue")();
                         }}
                         error={getFieldError("discountValue")}
@@ -213,16 +197,16 @@ export function DiscountSettings() {
                         <s-number-field
                             label={t("minOrderValue")}
                             value={minOrderValue?.toString() || ""}
-                            step={1}
+                            step={0.01}
                             min={0}
                             placeholder="0.00"
                             prefix={getCurrency()}
-                            onChange={(event: Event) => {
+                            onInput={(event: Event) => {
                                 const target =
                                     event.target as HTMLInputElement;
                                 handleMinOrderValueChange(target.value);
+                                createBlurHandler("minOrderValue")();
                             }}
-                            onBlur={createBlurHandler("minOrderValue")}
                             error={getFieldError("minOrderValue")}
                         />
                         <s-text tone="neutral">
@@ -235,18 +219,16 @@ export function DiscountSettings() {
                             <s-number-field
                                 label={t("maxDiscount")}
                                 value={maxDiscountAmount?.toString() || ""}
-                                step={1}
+                                step={0.01}
                                 min={0}
                                 placeholder={t("noLimit")}
                                 prefix={getCurrency()}
-                                onChange={(event: Event) => {
+                                onInput={(event: Event) => {
                                     const target =
                                         event.target as HTMLInputElement;
-                                    handleMaxDiscountAmountChange(
-                                        target.value,
-                                    );
+                                    handleMaxDiscountAmountChange(target.value);
+                                    createBlurHandler("maxDiscountAmount")();
                                 }}
-                                onBlur={createBlurHandler("maxDiscountAmount")}
                                 error={getFieldError("maxDiscountAmount")}
                             />
                             <s-text tone="neutral">

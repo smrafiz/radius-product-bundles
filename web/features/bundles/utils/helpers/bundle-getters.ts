@@ -12,6 +12,7 @@ import {
     BundleType,
     CREATE_STATUSES,
     DISCOUNT_TYPES,
+    DiscountApplication,
     DiscountConfig,
     DiscountType,
     DisplaySettings,
@@ -166,7 +167,7 @@ export const initialBundleData: Partial<ExtendedBundleFormData> = {
 };
 
 export const initialConfiguration: BundleConfiguration = {
-    discountApplication: "bundle",
+    discountApplication: DiscountApplication.BUNDLE,
 };
 
 /**

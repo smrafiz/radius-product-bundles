@@ -16,28 +16,9 @@ import {
     useSettingsStore,
 } from "@/features/settings";
 import { usePreviewProducts } from "@/features/settings/hooks/customizer/use-preview-products";
-import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
+import { usePreviewLabels } from "@/shared";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
-
-const BOGO_PLACEHOLDERS: PreviewProduct[] = [
-    {
-        id: "trigger-1",
-        title: "Trigger Product",
-        image: PLACEHOLDER_IMAGES[1],
-        price: "$300",
-        quantity: 1,
-        role: "TRIGGER",
-    },
-    {
-        id: "reward-1",
-        title: "Reward Product",
-        image: PLACEHOLDER_IMAGES[2],
-        price: "$0.00",
-        compareAtPrice: "$300",
-        quantity: 1,
-        role: "REWARD",
-    },
-];
+import { useTranslations } from "@/lib/i18n/provider";
 
 const BOGO_PRICING: WidgetPricing = {
     originalPrice: "$600.00",
@@ -51,22 +32,44 @@ export function TemplateBogo({
     activeLayout,
     activeDevice,
 }: BundleTemplateProps) {
+    const t = useTranslations("Bundles.Templates.Bogo");
+    const previewLabels = usePreviewLabels();
     const styles = useEffectiveStyles();
     const serverData = useSettingsStore((s) => s.serverData);
     const savedLabels = serverData?.labels as
         | Record<string, string>
         | undefined;
     const labels = {
-        ...PREVIEW_LABELS,
+        ...previewLabels,
         ...Object.fromEntries(
             Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
         ),
-        bogoTriggerBadgeText: "You Buy",
-        bogoRewardBadgeText: "50% Off",
+        bogoTriggerBadgeText: t("youBuy"),
+        bogoRewardBadgeText: t("fiftyOff"),
     };
 
+    const bogoPlaceholders: PreviewProduct[] = [
+        {
+            id: "trigger-1",
+            title: t("triggerProduct"),
+            image: PLACEHOLDER_IMAGES[1],
+            price: "$300",
+            quantity: 1,
+            role: "TRIGGER",
+        },
+        {
+            id: "reward-1",
+            title: t("rewardProduct"),
+            image: PLACEHOLDER_IMAGES[2],
+            price: "$0.00",
+            compareAtPrice: "$300",
+            quantity: 1,
+            role: "REWARD",
+        },
+    ];
+
     const products = usePreviewProducts({
-        placeholderProducts: BOGO_PLACEHOLDERS,
+        placeholderProducts: bogoPlaceholders,
     });
 
     const layoutProps = {
@@ -75,10 +78,10 @@ export function TemplateBogo({
         displayOptions: DEFAULT_DISPLAY_OPTIONS,
         showEmptyState: false,
         pricing: BOGO_PRICING,
-        cartButtonText: "Add Bundle to Cart",
-        title: "Buy One Get One Free",
-        subtitle: "Limited time promotional offer",
-        badgeText: "BOGO OFFER",
+        cartButtonText: t("cartButton"),
+        title: t("title"),
+        subtitle: t("subtitle"),
+        badgeText: t("badgeText"),
         labels,
         activeDevice,
         bundleType: "BOGO",

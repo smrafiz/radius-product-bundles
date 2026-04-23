@@ -13,13 +13,12 @@
     &__product-price-current {
         font-size: var(--rb-body-font-size);
         font-weight: 600;
-        color: var(--rb-text-color);
+        color: var(--rb-text-color, #333);
     }
 
     &__product-price-compare {
         font-size: calc(var(--rb-body-font-size) - 2px);
-        color: var(--rb-text-color);
-        opacity: 0.5;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
     }
 
@@ -91,9 +90,12 @@
 
     &__price-original {
         font-size: calc(var(--rb-body-font-size) - 2px);
-        color: var(--rb-text-color);
-        opacity: 0.5;
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
+
+        &--no-strikethrough {
+            text-decoration: none;
+        }
     }
 
     &__price-discounted {

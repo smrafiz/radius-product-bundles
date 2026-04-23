@@ -4,10 +4,11 @@ import {
     CustomizerStyles,
     getButtonBgColor,
     getButtonFontSize,
-    getButtonPadding,
     getButtonRadius,
+    getButtonHeight,
 } from "@/features/settings";
 import { PREVIEW_LABELS } from "@/shared";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetAddToCart({
     styles,
@@ -16,9 +17,10 @@ export function WidgetAddToCart({
     styles: CustomizerStyles;
     cartButtonText?: string;
 }) {
+    const t = useTranslations("Common");
     const radius = getButtonRadius(styles.cornerStyle);
     const fontSize = getButtonFontSize(styles.buttonSize);
-    const padding = getButtonPadding(styles.buttonSize);
+    const btnHeight = getButtonHeight(styles.buttonSize);
     const bgColor = getButtonBgColor(styles);
 
     const textColor = "#ffffff";
@@ -28,13 +30,15 @@ export function WidgetAddToCart({
     return (
         <div className="radius-bundle__actions">
             <button
+                type="button"
+                aria-label={t("addBundleToCart")}
                 className="radius-bundle__add-to-cart"
                 style={{
                     display: "inline-flex",
                     justifyContent: "center",
                     alignItems: "center",
                     width: isFullWidth ? "100%" : "auto",
-                    padding,
+                    height: btnHeight,
                     fontSize,
                     fontWeight: 600,
                     borderRadius: radius,

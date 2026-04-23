@@ -3,6 +3,7 @@
  */
 
 import { SortHeaderProps, useBundleSort } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 
 function SortHeader({
     field,
@@ -36,34 +37,35 @@ function SortHeader({
 }
 
 export function AllBundlesTableHeader() {
+    const t = useTranslations("Analytics.AllBundles");
     return (
         <s-table-header-row>
             <s-table-header listSlot="primary">
-                <s-stack padding="small-300">Bundle</s-stack>
+                <s-stack padding="small-300">{t("columnBundle")}</s-stack>
             </s-table-header>
             <s-table-header listSlot="inline">
-                <s-stack paddingBlock="small-300">Status</s-stack>
+                <s-stack paddingBlock="small-300">{t("columnStatus")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Revenue</s-stack>
+                <s-stack paddingBlock="small-300">{t("columnRevenue")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Orders</s-stack>
+                <s-stack paddingBlock="small-300">{t("columnOrders")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Views</s-stack>
+                <s-stack paddingBlock="small-300">{t("columnViews")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Cart %</s-stack>{" "}
+                <s-stack paddingBlock="small-300">{t("columnCart")}</s-stack>{" "}
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Conv %</s-stack>{" "}
+                <s-stack paddingBlock="small-300">{t("columnConv")}</s-stack>{" "}
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Funnel</s-stack>
+                <s-stack paddingBlock="small-300">{t("columnFunnel")}</s-stack>
             </s-table-header>
             <s-table-header>
-                <s-stack paddingBlock="small-300">Health</s-stack>
+                <s-stack paddingBlock="small-300">{t("columnHealth")}</s-stack>
             </s-table-header>
         </s-table-header-row>
     );

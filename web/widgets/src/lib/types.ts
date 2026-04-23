@@ -70,7 +70,7 @@ export interface BundleStructure {
         }>;
     } | string | null;
     labels: {
-        buttonText: string;
+        addToCartText: string;
         regularPriceLabel: string;
         bundlePriceLabel: string;
         youSaveLabel: string;
@@ -97,6 +97,23 @@ export interface BundleStructure {
         checklistLockedLabel?: string;
         checklistUnlockedLabel?: string;
         checklistPricingLockedText?: string;
+        volumeSelectQuantityLabel?: string;
+        volumeYouSaveLabel?: string;
+        volumeUnitLabel?: string;
+        volumeUnitsLabel?: string;
+        volumeTotalCostLabel?: string;
+        volumeCostPerUnitLabel?: string;
+        volumeRegularPriceLabel?: string;
+        volumeSavePercentLabel?: string;
+        volumeSaveAmountLabel?: string;
+        volumeSaveCustomLabel?: string;
+        volumeBuyUnitsLabel?: string;
+        volumeBuyUnitsMoreLabel?: string;
+        volumeSelectLabel?: string;
+        volumeAppliedLabel?: string;
+        bundleNotAvailableText?: string;
+        failedToLoadText?: string;
+        failedToDisplayText?: string;
     };
 }
 
@@ -135,7 +152,6 @@ export interface DiscountConfig {
     bundleName: string;
     discountType: string;
     discountValue: number;
-    requiredLineCount: number;
     minOrderValue: number;
     maxDiscountAmount: number;
     discountApplication: string;
@@ -189,7 +205,9 @@ export interface VolumeContext {
     bundleStructure: BundleStructure | null;
     showImages: boolean;
     showPrices: boolean;
+    showComparePrices: boolean;
     showSavings: boolean;
+    showQuantity: boolean;
     lazyLoadImages: boolean;
     redirectAfterCart: string;
     enableAnalytics: boolean;

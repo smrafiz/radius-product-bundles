@@ -1,4 +1,5 @@
 import { SettingsTabConfig } from "@/features/settings";
+import { PriorityType, RedirectAfterCart } from "@/features/bundles/constants/prisma-enums";
 
 /**
  * General tab configuration
@@ -40,15 +41,11 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     details: "Default percentage or fixed amount",
                     defaultValue: 10,
                     min: 0,
-                    max: 100,
+                    step: 0.01,
                     validation: {
                         min: {
                             value: 0,
                             message: "Discount value must be at least 0",
-                        },
-                        max: {
-                            value: 100,
-                            message: "Discount value cannot exceed 100",
                         },
                     },
                 },
@@ -71,16 +68,16 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     label: "Bundle priority strategy",
                     details:
                         "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the bundle with the highest effective savings.",
-                    defaultValue: "index_based",
+                    defaultValue: PriorityType.INDEX_BASED,
                     fullWidth: true,
                     proFeature: "advanced_cart_controls",
                     options: [
                         {
-                            value: "index_based",
+                            value: PriorityType.INDEX_BASED,
                             label: "Index based (manual priority)",
                         },
                         {
-                            value: "discount_based",
+                            value: PriorityType.DISCOUNT_BASED,
                             label: "Discount based (highest savings wins)",
                         },
                     ],
@@ -91,15 +88,12 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     label: "After add to cart",
                     details:
                         "Select what should happen after a customer adds a bundle to the cart.",
-                    defaultValue: "default",
+                    defaultValue: RedirectAfterCart.DEFAULT,
                     options: [
-                        { value: "default", label: "Default theme behavior" },
-                        { value: "cart", label: "Redirect to cart page" },
-                        { value: "checkout", label: "Redirect to checkout" },
-                        {
-                            value: "none",
-                            label: "Stay on page (show notification)",
-                        },
+                        { value: RedirectAfterCart.DEFAULT, label: "Default theme behavior" },
+                        { value: RedirectAfterCart.CART, label: "Redirect to cart page" },
+                        { value: RedirectAfterCart.CHECKOUT, label: "Redirect to checkout" },
+                        { value: RedirectAfterCart.NONE, label: "Stay on page (show notification)" },
                     ],
                 },
                 {

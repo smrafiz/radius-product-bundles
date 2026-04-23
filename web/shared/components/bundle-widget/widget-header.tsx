@@ -1,8 +1,12 @@
 "use client";
 
 import { WidgetHeaderProps } from "@/shared";
-import { getBadgeRadius, getHeadingFontSize } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import {
+    getBadgeRadius,
+    getFontSize,
+    getHeadingFontSize,
+} from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetHeader({
     styles,
@@ -10,7 +14,10 @@ export function WidgetHeader({
     pricing,
     title,
     subtitle,
+    labels,
+    badgeText,
 }: WidgetHeaderProps) {
+    const t = useTranslations("Bundles.Creation.Preview");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const badgeRadius = getBadgeRadius(styles.cornerStyle);
 
@@ -18,6 +25,7 @@ export function WidgetHeader({
     const textColor = styles.textColor || "#333333";
     const isOutline = styles.badgeStyle === "outline";
     const isInline = styles.badgePosition === "inline";
+    const bodyFontSize = getFontSize(styles.bodySize);
 
     return (
         <div
@@ -41,16 +49,18 @@ export function WidgetHeader({
                         fontSize: headingFontSize,
                         color: textColor,
                         fontWeight: 600,
+                        lineHeight: 1.3,
                     }}
                 >
-                    {title || DEFAULT_LABELS.headingLabel}
+                    {title || labels?.headingLabel || t("headingLabel")}
                 </div>
                 {subtitle && (
                     <p
                         className="radius-bundle__subtitle"
                         style={{
-                            fontSize: "14px",
-                            color: "#6b7280",
+                            fontSize: parseInt(bodyFontSize) - 2,
+                            color: textColor,
+                            opacity: 0.9,
                             fontWeight: 400,
                             margin: "4px 0 0",
                         }}
@@ -60,13 +70,13 @@ export function WidgetHeader({
                 )}
             </div>
 
-            {displayOptions.showSavingsBadge && pricing.hasDiscount && (
+            {displayOptions.showSavingsBadge && (badgeText || pricing.hasDiscount) && (
                 <div
-                    className="radius-bundle__actions"
                     style={{ alignSelf: isInline ? "center" : undefined }}
                 >
                     <span
                         className="radius-bundle__badge"
+                        aria-label={badgeText ?? t("savingsBadge", { percent: String(pricing.savingsPercentage) })}
                         style={{
                             display: "inline-block",
                             borderRadius: badgeRadius,
@@ -82,7 +92,7 @@ export function WidgetHeader({
                                 : "none",
                         }}
                     >
-                        Save {pricing.savingsPercentage}%
+                        {badgeText ?? t("savingsBadge", { percent: String(pricing.savingsPercentage) })}
                     </span>
                 </div>
             )}

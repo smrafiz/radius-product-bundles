@@ -9,6 +9,8 @@ import type {
     DiscountType as PrismaDiscountType,
     Prisma,
 } from "@/prisma/generated/client";
+import { BundleLayout, DiscountApplication, PriorityType } from "@/features/bundles/constants/prisma-enums";
+export { BundleLayout, DiscountApplication, PriorityType };
 import { SerializableFile } from "@/shared";
 import { bundleSchema } from "@/features/bundles";
 
@@ -51,6 +53,9 @@ export interface BundleListItem {
 
     discountType: DiscountType;
     discountValue: number;
+    volumeTiers?: VolumeDiscountConfig;
+    buyQuantity?: number;
+    getQuantity?: number;
 
     products: Array<{
         id: string;
@@ -123,6 +128,15 @@ export interface SelectedItem {
         inventoryQuantity: number;
         productId: string;
     };
+    variants?: Array<{
+        id: string;
+        title: string;
+        price: string;
+        compareAtPrice?: string | null;
+        image?: string;
+        availableForSale: boolean;
+        inventoryQuantity: number;
+    }>;
 }
 
 /**
@@ -278,14 +292,6 @@ export interface CreateBundlePayload {
 }
 
 /*
- * Update bundle payload types
- */
-export interface UpdateBundlePayload extends Partial<CreateBundlePayload> {
-    id: string;
-    status?: PrismaBundleStatus;
-}
-
-/*
  * Extended bundle form data types
  */
 export interface ExtendedBundleFormData extends BundleFormData {
@@ -296,7 +302,7 @@ export interface ExtendedBundleFormData extends BundleFormData {
     mainProductId?: string;
     mainProductHandle?: string;
     mainVariantId?: string;
-    discountApplication?: "bundle" | "products";
+    discountApplication?: DiscountApplication;
     discountedProductIds?: string[];
     freeShipping?: boolean;
     priority?: number;
@@ -306,20 +312,10 @@ export interface ExtendedBundleFormData extends BundleFormData {
     displaySettings?: DisplaySettings;
 }
 
-export type FixedBundleLayout = "GRID" | "CAROUSEL" | "LIST" | "COMPACT";
-export type BogoLayout =
-    | "CLASSIC_CARD"
-    | "COMPACT_GRID"
-    | "MINIMALIST"
-    | "SLEEK"
-    | "CHECKLIST"
-    | "SPLIT_DEAL";
-export type VolumeLayout =
-    | "VOLUME_TIER_LIST"
-    | "VOLUME_PRICING_CARDS"
-    | "VOLUME_SLIDER"
-    | "VOLUME_CALCULATOR";
-export type BundleLayoutType = FixedBundleLayout | BogoLayout | VolumeLayout;
+export type FixedBundleLayout = Extract<BundleLayout, "GRID" | "CAROUSEL" | "LIST" | "COMPACT">;
+export type BogoLayout = Extract<BundleLayout, "CLASSIC_CARD" | "COMPACT_GRID" | "MINIMALIST" | "SLEEK" | "CHECKLIST" | "SPLIT_DEAL">;
+export type VolumeLayout = Extract<BundleLayout, "VOLUME_TIER_LIST" | "VOLUME_PRICING_CARDS" | "VOLUME_SLIDER" | "VOLUME_CALCULATOR">;
+export type BundleLayoutType = BundleLayout;
 
 /*
  * Volume Discount types
@@ -348,7 +344,7 @@ export interface VolumeDiscountConfig {
 }
 
 export interface DisplaySettings {
-    layout: BundleLayoutType;
+    layout: BundleLayout;
     title: string;
     subtitle: string;
     cartButtonText: string;
@@ -363,7 +359,7 @@ export interface DisplaySettings {
 }
 
 export interface BundleConfiguration {
-    discountApplication: "bundle" | "products" | "shipping";
+    discountApplication: DiscountApplication;
 }
 
 /*

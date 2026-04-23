@@ -8,6 +8,7 @@ import {
     settingsQueryKeys,
     useSettingsStore,
 } from "@/features/settings";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Hook to save settings to API
@@ -16,6 +17,7 @@ export function useSaveSettingsMutation() {
     const app = useAppBridge();
     const queryClient = useQueryClient();
     const { setServerData, resetDirty } = useSettingsStore();
+    const t = useTranslations("Settings.Toast");
 
     return useMutation({
         mutationFn: async (data: AppSettingsFormData) => {
@@ -40,7 +42,7 @@ export function useSaveSettingsMutation() {
 
             // Show success notification
             if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                shopify.toast.show("Settings saved successfully", {
+                shopify.toast.show(t("saveSuccess"), {
                     duration: 3000,
                 });
             }
@@ -48,7 +50,7 @@ export function useSaveSettingsMutation() {
         onError: (error: Error) => {
             // Show error notification
             if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                shopify.toast.show(error.message || "Failed to save settings", {
+                shopify.toast.show(error.message || t("saveError"), {
                     duration: 5000,
                     isError: true,
                 });

@@ -7,13 +7,7 @@ import {
     type VolumeTier,
 } from "@/features/bundles";
 import { useState } from "react";
-
-const BADGE_STYLES: { label: string; value: VolumeBadgeStyle }[] = [
-    { label: "None", value: "none" },
-    { label: "Most Popular", value: "popular" },
-    { label: "Best Value", value: "best-value" },
-    { label: "Custom", value: "custom" },
-];
+import { useTranslations } from "@/lib/i18n/provider";
 
 function VolumeTierCard({
     tier,
@@ -27,6 +21,7 @@ function VolumeTierCard({
     titleError,
     onUpdate,
     onRemove,
+    t,
 }: {
     tier: VolumeTier;
     index: number;
@@ -39,6 +34,7 @@ function VolumeTierCard({
     titleError?: string;
     onUpdate: (index: number, updates: Partial<VolumeTier>) => void;
     onRemove: (index: number) => void;
+    t: (key: string, values?: Record<string, string | number>) => string;
 }) {
     const [expanded, setExpanded] = useState(false);
     const [collapsed, setCollapsed] = useState(initialCollapsed ?? false);
@@ -54,7 +50,16 @@ function VolumeTierCard({
             <s-stack gap="base">
                 <div
                     className="cursor-pointer flex items-center justify-between"
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={!collapsed}
                     onClick={() => setCollapsed(!collapsed)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            setCollapsed(!collapsed);
+                        }
+                    }}
                 >
                     <s-stack
                         direction="inline"
@@ -64,9 +69,9 @@ function VolumeTierCard({
                         <s-icon
                             type={collapsed ? "chevron-right" : "chevron-down"}
                         />
-                        <s-heading>Tier {index + 1}</s-heading>
+                        <s-heading>{t("tier", { number: index + 1 })}</s-heading>
                         {(qtyError || discountError || titleError) && (
-                            <s-icon type="alert-circle" tone="critical" />
+                            <s-icon type="alert-circle" tone="critical" aria-label={t("tierHasErrors")} />
                         )}
                     </s-stack>
                     <s-stack direction="inline" gap="base" alignItems="center">
@@ -80,7 +85,7 @@ function VolumeTierCard({
                                 icon="delete"
                                 disabled={isOnly}
                                 onClick={() => onRemove(index)}
-                                accessibilityLabel={`Remove tier ${index + 1}`}
+                                accessibilityLabel={t("removeTier", { number: index + 1 })}
                             />
                         </div>
                     </s-stack>
@@ -97,11 +102,11 @@ function VolumeTierCard({
                                     <div className="flex-1">
                                         <s-number-field
                                             required
-                                            label="Min Quantity"
+                                            label={t("minQuantity")}
                                             value={String(
                                                 tier.minQuantity ?? "",
                                             )}
-                                            details="Minimum items a customer must add to cart."
+                                            details={t("minQuantityDetails")}
                                             error={qtyError}
                                             onInput={(e: Event) => {
                                                 const val = parseInt(
@@ -115,14 +120,16 @@ function VolumeTierCard({
                                     <div className="flex-1">
                                         <s-number-field
                                             required
-                                            label={`Discount (${suffix})`}
+                                            label={t("discount", { suffix })}
                                             value={
                                                 tier.discount !== undefined
                                                     ? String(tier.discount)
                                                     : ""
                                             }
+                                            step={0.01}
+                                            min={0}
                                             suffix={suffix}
-                                            details="Discount applied when this tier is activated."
+                                            details={t("discountDetails")}
                                             error={discountError}
                                             onInput={(e: Event) => {
                                                 const val = parseFloat(
@@ -136,10 +143,10 @@ function VolumeTierCard({
 
                                 <s-text-field
                                     required
-                                    label="Title"
+                                    label={t("tierTitle")}
                                     value={tier.title ?? VOLUME_TIER_DEFAULT_TITLE}
                                     maxLength={50}
-                                    details={`Shown on the storefront. Use {quantity} and {discount} as dynamic variables.`}
+                                    details={t("tierTitleDetails")}
                                     error={titleError}
                                     onInput={(e: Event) => {
                                         onUpdate(index, {
@@ -154,7 +161,16 @@ function VolumeTierCard({
 
                                 <div
                                     className="cursor-pointer"
+                                    role="button"
+                                    tabIndex={0}
+                                    aria-expanded={expanded}
                                     onClick={() => setExpanded(!expanded)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            setExpanded(!expanded);
+                                        }
+                                    }}
                                 >
                                     <s-stack
                                         direction="inline"
@@ -168,7 +184,7 @@ function VolumeTierCard({
                                                     : "chevron-down"
                                             }
                                         />
-                                        <s-heading>Optional Settings</s-heading>
+                                        <s-heading>{t("optionalSettings")}</s-heading>
                                     </s-stack>
                                 </div>
 
@@ -178,10 +194,10 @@ function VolumeTierCard({
                                     <div className="overflow-hidden px-0.75 -mx-0.75">
                                         <s-stack gap="base">
                                             <s-text-field
-                                                label="Subtitle"
+                                                label={t("subtitle")}
                                                 value={tier.subtitle ?? ""}
                                                 maxLength={80}
-                                                details="Secondary text shown below the title on the storefront."
+                                                details={t("subtitleDetails")}
                                                 onInput={(e: Event) => {
                                                     onUpdate(index, {
                                                         subtitle:
@@ -198,61 +214,49 @@ function VolumeTierCard({
                                                 gap="base"
                                             >
                                                 <div className="flex-1">
-                                                    <s-stack gap="small-200">
-                                                        <s-select
-                                                            label="Badge Style"
-                                                            value={
-                                                                tier.badge
-                                                                    ?.style ??
-                                                                "none"
-                                                            }
-                                                            onInput={(
-                                                                e: Event,
-                                                            ) => {
-                                                                const style = (
-                                                                    e.target as HTMLSelectElement
-                                                                )
-                                                                    .value as VolumeBadgeStyle;
-                                                                onUpdate(
-                                                                    index,
-                                                                    {
-                                                                        badge:
-                                                                            style ===
-                                                                            "none"
-                                                                                ? undefined
-                                                                                : {
-                                                                                      style,
-                                                                                      text: tier
-                                                                                          .badge
-                                                                                          ?.text,
-                                                                                  },
-                                                                    },
-                                                                );
-                                                            }}
-                                                        >
-                                                            {BADGE_STYLES.map(
-                                                                (opt) => (
-                                                                    <s-option
-                                                                        key={
-                                                                            opt.value
-                                                                        }
-                                                                        value={
-                                                                            opt.value
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            opt.label
-                                                                        }
-                                                                    </s-option>
-                                                                ),
-                                                            )}
-                                                        </s-select>
-                                                        <span className="text-xs text-[#616161] -mt-1 block">
-                                                            Highlight label
-                                                            displayed on this
-                                                            tier option.
-                                                        </span>
-                                                    </s-stack>
+                                                    <s-select
+                                                        label={t("badgeStyle")}
+                                                        value={
+                                                            tier.badge
+                                                                ?.style ??
+                                                            "none"
+                                                        }
+                                                        details={t("badgeStyleDetails")}
+                                                        onInput={(
+                                                            e: Event,
+                                                        ) => {
+                                                            const style = (
+                                                                e.target as HTMLSelectElement
+                                                            )
+                                                                .value as VolumeBadgeStyle;
+                                                            onUpdate(
+                                                                index,
+                                                                {
+                                                                    badge:
+                                                                        style ===
+                                                                        "none"
+                                                                            ? undefined
+                                                                            : {
+                                                                                  style,
+                                                                                  text: tier
+                                                                                      .badge
+                                                                                      ?.text,
+                                                                              },
+                                                                },
+                                                            );
+                                                        }}
+                                                    >
+                                                        {(["none", "popular", "best-value", "custom"] as VolumeBadgeStyle[]).map(
+                                                            (val) => (
+                                                                <s-option
+                                                                    key={val}
+                                                                    value={val}
+                                                                >
+                                                                    {t(`badgeStyles.${val}`)}
+                                                                </s-option>
+                                                            ),
+                                                        )}
+                                                    </s-select>
                                                 </div>
 
                                                 {tier.badge?.style &&
@@ -260,14 +264,14 @@ function VolumeTierCard({
                                                         "none" && (
                                                         <div className="flex-1">
                                                             <s-text-field
-                                                                label="Badge Text"
+                                                                label={t("badgeText")}
                                                                 value={
                                                                     tier.badge
                                                                         ?.text ??
                                                                     ""
                                                                 }
                                                                 maxLength={30}
-                                                                details="Label text shown inside the badge."
+                                                                details={t("badgeTextDetails")}
                                                                 onInput={(
                                                                     e: Event,
                                                                 ) => {
@@ -294,8 +298,8 @@ function VolumeTierCard({
                                             </s-stack>
 
                                             <s-switch
-                                                label="Pre-select this tier for customers"
-                                                details="This tier will be selected by default when customers view the bundle."
+                                                label={t("preselect")}
+                                                details={t("preselectDetails")}
                                                 checked={
                                                     tier.isDefault ?? false
                                                 }
@@ -320,6 +324,7 @@ function VolumeTierCard({
 }
 
 export function VolumeDiscountSettings() {
+    const t = useTranslations("Bundles.Creation.Discount.VolumeDiscount");
     const {
         config,
         currencySymbol,
@@ -342,13 +347,9 @@ export function VolumeDiscountSettings() {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>Discount Settings</s-heading>
+                        <s-heading>{t("heading")}</s-heading>
                         <s-tooltip id="discount-settings-tooltip">
-                            <s-text>
-                                Set how discounts scale with quantity. Each tier
-                                applies a discount when the customer buys at
-                                least the specified quantity.
-                            </s-text>
+                            <s-text>{t("tooltip")}</s-text>
                         </s-tooltip>
                         <s-icon
                             tone="neutral"
@@ -362,11 +363,12 @@ export function VolumeDiscountSettings() {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-text type="strong">Discount Type</s-text>
+                        <s-text type="strong">{t("discountType")}</s-text>
                         <s-button-group gap="none">
                             <s-button
                                 slot="secondary-actions"
                                 variant="secondary"
+                                aria-pressed={config.discountType === "PERCENTAGE"}
                                 onClick={() =>
                                     updateConfig({ discountType: "PERCENTAGE" })
                                 }
@@ -378,12 +380,13 @@ export function VolumeDiscountSettings() {
                                             : ""
                                     }
                                 >
-                                    Percentage %
+                                    {t("percentage")}
                                 </span>
                             </s-button>
                             <s-button
                                 slot="secondary-actions"
                                 variant="secondary"
+                                aria-pressed={config.discountType === "FIXED_AMOUNT"}
                                 onClick={() =>
                                     updateConfig({
                                         discountType: "FIXED_AMOUNT",
@@ -397,15 +400,15 @@ export function VolumeDiscountSettings() {
                                             : ""
                                     }
                                 >
-                                    Fixed Amount {currencySymbol}
+                                    {t("fixedAmount", { currency: currencySymbol })}
                                 </span>
                             </s-button>
                         </s-button-group>
                     </s-stack>
                     <s-divider />
                     <s-switch
-                        label="Open-ended top tier"
-                        details="Apply the last tier's discount to all quantities above the maximum."
+                        label={t("openEnded")}
+                        details={t("openEndedDetails")}
                         checked={config.openEnded ?? true}
                         onInput={(e: Event) => {
                             updateConfig({
@@ -432,11 +435,12 @@ export function VolumeDiscountSettings() {
                     titleError={tierFieldErrors[index]?.title}
                     onUpdate={updateTier}
                     onRemove={removeTier}
+                    t={t}
                 />
             ))}
 
             {atLimit && (
-                <s-banner tone="info">Maximum of 10 tiers reached.</s-banner>
+                <s-banner tone="info">{t("maxTiersReached")}</s-banner>
             )}
 
             <s-button
@@ -445,7 +449,7 @@ export function VolumeDiscountSettings() {
                 onClick={addTier}
                 disabled={atLimit}
             >
-                Add Tier
+                {t("addTier")}
             </s-button>
         </s-stack>
     );

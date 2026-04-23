@@ -1,0 +1,816 @@
+/* ==========================================================================
+   Volume Discount Preview CSS — compiled from widgets/src/scss/layout/volume-table.scss
+   Used by admin preview components only. Widget stylesheet handles storefront.
+   ========================================================================== */
+
+/* ── Tier List Layout ──────────────────────────────────────────────────── */
+
+.rb-vol__product-header {
+    display: flex;
+    align-items: center;
+    gap: var(--rb-gap-spacing, 12px);
+    margin-bottom: calc(var(--rb-gap-spacing, 12px) + 6px);
+    padding-bottom: calc(var(--rb-gap-spacing, 12px) + 6px);
+    border-bottom: 1px solid var(--rb-border-color, #e5e7eb);
+}
+
+.rb-vol__product-image {
+    width: var(--rb-image-size, 70px);
+    height: var(--rb-image-size, 70px);
+    flex-shrink: 0;
+    border-radius: var(--rb-border-radius, 8px);
+    overflow: hidden;
+    background: var(--rb-product-bg-color, #f9fafb);
+}
+
+.rb-vol__product-image {
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: var(--rb-image-fit, contain);
+    }
+}
+
+.rb-vol__product-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.rb-vol__product-title {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 600;
+    color: var(--rb-text-color, #333);
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.rb-vol__product-base-price {
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    color: color-mix(in srgb, var(--rb-text-color,#333) 75%, transparent);
+}
+
+.rb-vol__tiers {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--rb-gap-spacing, 12px);
+}
+
+.rb-vol__tier {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: var(--rb-gap-spacing, 12px);
+    padding: 14px 16px;
+    border-radius: var(--rb-border-radius, 8px);
+    background: var(--rb-product-bg-color, #fff);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.15s ease, box-shadow 0.15s ease;
+    user-select: none;
+
+    &:hover {
+        border-color: var(--rb-primary-color, #303030);
+        box-shadow: var(--rb-shadow, 0 2px 8px rgba(0, 0, 0, 0.08));
+    }
+
+    &:focus-visible {
+        outline: 1px solid var(--rb-primary-color, #303030);
+        outline-offset: 2px;
+    }
+}
+
+
+
+.rb-vol__tier--selected {
+    border-color: var(--rb-primary-color, #303030);
+    background: color-mix(in srgb, var(--rb-primary-color, #303030) 8%, var(--rb-background-color, #fff));
+}
+
+.rb-vol__tier--selected .rb-vol__tier-radio {
+    background: var(--rb-primary-color, #303030);
+    border-color: var(--rb-primary-color, #303030);
+}
+
+.rb-vol__tier--selected .rb-vol__tier-radio svg {
+    display: block;
+}
+
+.rb-vol__tier--selected .rb-vol__tier-title {
+    color: var(--rb-primary-color, #303030);
+}
+
+.rb-vol__tier-radio {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--rb-border-color, #d1d5db);
+    background: var(--rb-background-color, #fff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    transition: all 0.2s ease;
+}
+
+.rb-vol__tier-radio {
+    svg {
+        display: none;
+        width: 12px;
+        height: 12px;
+        color: #fff;
+    }
+}
+
+.rb-vol__tier-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.rb-vol__tier-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rb-vol__tier-title {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 600;
+    color: var(--rb-text-color, #333);
+    line-height: 1.2;
+    transition: color 0.15s ease;
+}
+
+.rb-vol__tier-subtitle {
+    font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+    color: color-mix(in srgb, var(--rb-text-color,#333) 75%, transparent);
+    line-height: 1.3;
+}
+
+.rb-vol__tier-savings-line {
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    font-weight: 500;
+    color: var(--rb-savings-color, #16a34a);
+    line-height: 1.2;
+}
+
+.rb-vol__tier-badge {
+    display: inline-block;
+    font-size: calc(var(--rb-body-font-size, 14px) - 3px);
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    line-height: 1.5;
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.rb-vol__tier-badge--popular {
+    background: var(--rb-primary-color, #303030);
+    color: #fff;
+}
+
+.rb-vol__tier-badge--best-value {
+    background: var(--rb-savings-color, #16a34a);
+    color: #fff;
+}
+
+.rb-vol__tier-badge--new {
+    background: #2563eb;
+    color: #fff;
+}
+
+.rb-vol__tier-badge--default {
+    background: var(--rb-border-color, #e5e7eb);
+    color: var(--rb-text-color, #333);
+}
+
+.rb-vol__tier-pricing {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+    text-align: end;
+}
+
+.rb-vol__tier-price {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 700;
+    color: var(--rb-text-color, #333);
+}
+
+.rb-vol__tier-original {
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    color: color-mix(in srgb, var(--rb-text-color,#333) 50%, transparent);
+    text-decoration: line-through;
+}
+
+.rb-vol__wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Pricing Cards Layout ──────────────────────────────────────────────── */
+
+.rb-vol__cards-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(var(--rb-gap-spacing, 12px) + 6px);
+    align-items: stretch;
+}
+
+.rb-vol__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 120px;
+    min-width: 180px;
+    padding: 20px 14px 16px;
+    border-radius: var(--rb-border-radius, 8px);
+    background: var(--rb-product-bg-color, #fff);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.2s ease, box-shadow 0.15s ease, background 0.15s ease;
+    user-select: none;
+
+    &:hover {
+        border-color: var(--rb-primary-color, #303030);
+        box-shadow: var(--rb-shadow, 0 2px 8px rgba(0, 0, 0, 0.08));
+    }
+
+    &:focus-visible {
+        outline: 1px solid var(--rb-primary-color, #303030);
+        outline-offset: 2px;
+    }
+}
+
+.rb-vol__card.rb-vol__tier--selected,
+.rb-vol__card--popular.rb-vol__tier--selected {
+    border-color: var(--rb-primary-color, #303030);
+    background: color-mix(in srgb, var(--rb-primary-color, #303030) 8%, var(--rb-background-color, #fff));
+}
+
+.rb-vol__card.rb-vol__tier--selected .rb-vol__card-select-btn,
+.rb-vol__card--popular.rb-vol__tier--selected .rb-vol__card-select-btn {
+    background: var(--rb-primary-color, #303030);
+    color: #fff;
+    border-color: var(--rb-primary-color, #303030);
+}
+
+.rb-vol__card--popular {
+    padding-top: 28px;
+    box-shadow: var(--rb-shadow, 0 2px 8px rgba(0, 0, 0, 0.08));
+}
+
+.rb-vol__card-popular-badge {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--rb-primary-color, #303030);
+    color: #fff;
+    font-size: calc(var(--rb-body-font-size, 14px) - 4px);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.rb-vol__card-popular-badge.rb-vol__tier-badge--popular {
+    background: var(--rb-primary-color, #303030);
+}
+
+.rb-vol__card-popular-badge.rb-vol__tier-badge--best-value {
+    background: var(--rb-savings-color, #16a34a);
+}
+
+.rb-vol__card-popular-badge.rb-vol__tier-badge--new {
+    background: #2563eb;
+}
+
+.rb-vol__card-title {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 700;
+    color: var(--rb-text-color, #333);
+    line-height: 1.2;
+}
+
+.rb-vol__card-subtitle {
+    font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+    color: color-mix(in srgb, var(--rb-text-color,#333) 75%, transparent);
+    line-height: 1.3;
+}
+
+.rb-vol__card-price {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 700;
+    color: var(--rb-text-color, #333);
+    line-height: 1.1;
+    margin-top: 4px;
+}
+
+.rb-vol__card-savings {
+    display: inline-block;
+    background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 12%, transparent);
+    color: var(--rb-savings-color, #16a34a);
+    font-size: calc(var(--rb-body-font-size, 14px) - 3px);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.rb-vol__card-select-btn {
+    width: 100%;
+    margin-top: auto;
+    padding: 8px 12px;
+    background: transparent;
+    color: var(--rb-primary-color, #303030);
+    border: 1px solid var(--rb-primary-color, #303030);
+    border-radius: calc(var(--rb-border-radius, 8px) - 2px);
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    pointer-events: none;
+}
+
+/* ── Volume Slider Layout ──────────────────────────────────────────────── */
+
+.rb-vol-slider__wrap {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--rb-gap-spacing, 12px) + 6px);
+}
+
+.rb-vol-slider__hero-image {
+    position: relative;
+    width: 100%;
+    border-radius: var(--rb-border-radius, 8px);
+    overflow: hidden;
+    background: var(--rb-product-bg-color, #f9fafb);
+    aspect-ratio: 1 / 1;
+    max-height: calc(var(--rb-image-size, 80px) + 220px);
+}
+
+.rb-vol-slider__hero-image {
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: var(--rb-image-fit, cover);
+        display: block;
+    }
+}
+
+.rb-vol-slider__savings-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--rb-savings-color, #16a34a);
+    color: #fff;
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.rb-vol-slider__product-title {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 600;
+    color: var(--rb-text-color, #333);
+    line-height: 1.3;
+}
+
+.rb-vol-slider__price-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: var(--rb-border-radius, 8px);
+    background: var(--rb-product-bg-color, #fff);
+}
+
+.rb-vol-slider__price-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.rb-vol-slider__price-total {
+    font-size: calc(var(--rb-body-font-size, 14px) + 8px);
+    font-weight: 700;
+    color: var(--rb-primary-color, #303030);
+    line-height: 1.1;
+}
+
+.rb-vol-slider__price-unit {
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    color: var(--rb-text-color, #333);
+}
+
+.rb-vol-slider__price-original {
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    color: color-mix(in srgb, var(--rb-text-color,#333) 50%, transparent);
+    text-decoration: line-through;
+}
+
+.rb-vol-slider__price-savings {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.rb-vol-slider__price-savings-amount {
+    font-size: calc(var(--rb-body-font-size, 14px) + 8px);
+    font-weight: 700;
+    color: var(--rb-savings-color, #16a34a);
+    line-height: 1.1;
+}
+
+.rb-vol-slider__price-savings-label {
+    font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+    color: var(--rb-savings-color, #16a34a);
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+.rb-vol-slider__slider-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rb-vol-slider__slider-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rb-vol-slider__qty-label {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 500;
+    color: var(--rb-text-color, #333);
+}
+
+.rb-vol-slider__qty-counter {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 700;
+    color: var(--rb-primary-color, #303030);
+}
+
+.rb-vol-slider__slider-track {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    background: linear-gradient(
+        to right,
+        var(--rb-primary-color, #303030) 0%,
+        var(--rb-border-color, #e5e7eb) var(--rb-slider-fill-pct, 0%),
+        var(--rb-border-color, #e5e7eb) 100%
+    );
+}
+
+.rb-vol-slider__slider-track::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    margin-top: -8px;
+    border-radius: 50%;
+    background: var(--rb-primary-color, #303030);
+    cursor: pointer;
+    border: 3px solid var(--rb-background-color, #fff);
+    box-shadow: 0 0 0 2px var(--rb-primary-color, #303030), 0 2px 6px rgba(0,0,0,0.15);
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.rb-vol-slider__slider-track::-webkit-slider-thumb:active {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px var(--rb-primary-color, #303030), 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.rb-vol-slider__slider-track::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--rb-primary-color, #303030);
+    cursor: pointer;
+    border: 3px solid var(--rb-background-color, #fff);
+    box-shadow: 0 0 0 2px var(--rb-primary-color, #303030), 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.rb-vol-slider__slider-track::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+}
+
+.rb-vol-slider__slider-track::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--rb-border-color, #e5e7eb);
+}
+
+.rb-vol-slider__slider-track:focus-visible {
+    outline: 2px solid var(--rb-primary-color, #303030);
+    outline-offset: 4px;
+}
+
+.rb-vol-slider__slider-markers {
+    position: relative;
+    height: 8px;
+    margin: 0 11px;
+}
+
+.rb-vol-slider__marker {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 8px;
+    background: var(--rb-border-color, #e5e7eb);
+    border-radius: 1px;
+}
+
+.rb-vol-slider__nudge {
+    background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 6%, var(--rb-background-color, #fff));
+    border: 1px solid var(--rb-savings-color, #16a34a);
+    border-radius: var(--rb-border-radius, 8px);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rb-vol-slider__nudge-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--rb-text-color, #333);
+}
+
+.rb-vol-slider__nudge-header svg {
+    flex-shrink: 0;
+}
+
+.rb-vol-slider__nudge-text {
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    font-weight: 600;
+    color: var(--rb-text-color, #333);
+    line-height: 1.3;
+}
+
+.rb-vol-slider__nudge-bar {
+    width: 100%;
+    height: 6px;
+    background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 50%, var(--rb-background-color, #fff));
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.rb-vol-slider__nudge-fill {
+    height: 100%;
+    background: var(--rb-savings-color, #16a34a);
+    border-radius: 3px;
+    transition: width 0.2s ease;
+}
+
+/* ── Volume Calculator Layout ──────────────────────────────────────────── */
+
+.rb-vol-calc__wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rb-gap-spacing, 12px);
+}
+
+.rb-vol-calc__hero-image {
+    position: relative;
+    width: 100%;
+    border-radius: var(--rb-border-radius, 8px);
+    overflow: hidden;
+    background: var(--rb-product-bg-color, #f9fafb);
+    aspect-ratio: 1 / 1;
+    max-height: calc(var(--rb-image-size, 80px) + 220px);
+}
+
+.rb-vol-calc__hero-image {
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: var(--rb-image-fit, cover);
+        display: block;
+    }
+}
+
+.rb-vol-calc__product-title {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 600;
+    color: var(--rb-text-color, #333);
+    line-height: 1.3;
+}
+
+.rb-vol-calc__qty-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px;
+    border-radius: var(--rb-border-radius, 8px);
+    background: color-mix(in srgb, var(--rb-primary-color, #16a34a) 6%, var(--rb-background-color, #fff));
+}
+
+.rb-vol-calc__qty-label {
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    font-weight: 500;
+    color: color-mix(in srgb, var(--rb-text-color,#333) 80%, transparent);
+}
+
+.rb-vol-calc__qty-wrap {
+    display: flex;
+    align-items: stretch;
+    border: 2px solid var(--rb-border-color, #e5e7eb);
+    border-radius: var(--rb-border-radius, 8px);
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+}
+
+.rb-vol-calc__qty-wrap:focus-within {
+    border-color: var(--rb-primary-color, #303030);
+}
+
+.rb-vol-calc__qty-btn {
+    width: 48px;
+    min-width: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--rb-background-color, #fff);
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--rb-text-color, #333);
+    transition: background 0.12s ease;
+    padding: 0;
+}
+
+.rb-vol-calc__qty-btn:hover {
+    background: color-mix(in srgb, var(--rb-primary-color, #303030) 8%, transparent);
+}
+
+.rb-vol-calc__qty-input {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    font-size: calc(var(--rb-body-font-size, 14px) + 8px);
+    font-weight: 700;
+    color: var(--rb-text-color, #333);
+    background: var(--rb-background-color, #fff);
+    border: none;
+    box-shadow: none;
+    border-left: 2px solid var(--rb-border-color, #e5e7eb);
+    border-right: 2px solid var(--rb-border-color, #e5e7eb);
+    padding: 14px 8px;
+    outline: none;
+}
+
+.rb-vol-calc__qty-input::-webkit-outer-spin-button,
+.rb-vol-calc__qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.rb-vol-calc__calc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--rb-border-color, #e5e7eb);
+    border-radius: var(--rb-border-radius, 8px);
+    background: var(--rb-product-bg-color, #fff);
+}
+
+.rb-vol-calc__calc-row--savings {
+    background: color-mix(in srgb, var(--rb-savings-color, #16a34a) 6%, var(--rb-background-color, #fff));
+}
+
+.rb-vol-calc__calc-label {
+    font-size: var(--rb-body-font-size, 14px);
+    font-weight: 500;
+    color: var(--rb-text-color, #333);
+    flex-shrink: 0;
+}
+
+.rb-vol-calc__calc-value-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    text-align: right;
+}
+
+.rb-vol-calc__calc-value {
+    font-size: calc(var(--rb-body-font-size, 14px) + 4px);
+    font-weight: 700;
+    color: var(--rb-text-color, #333);
+    line-height: 1.1;
+}
+
+.rb-vol-calc__calc-sub {
+    font-size: calc(var(--rb-body-font-size, 14px) - 2px);
+    color: color-mix(in srgb, var(--rb-text-color,#333) 50%, transparent);
+    line-height: 1.3;
+}
+
+.rb-vol-calc__calc-sub s {
+    text-decoration: line-through;
+}
+
+.rb-vol-calc__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.rb-vol-calc__pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--rb-primary-color, #303030) 6%, var(--rb-background-color, #fff));
+    color: var(--rb-text-color, #333);
+    font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+    user-select: none;
+    border: none;
+    outline: none;
+}
+
+.rb-vol-calc__pill:hover:not(.rb-vol-calc__pill--active) {
+    background: color-mix(in srgb, var(--rb-primary-color, #303030) 10%, var(--rb-background-color, #fff));
+}
+
+.rb-vol-calc__pill--active {
+    background: var(--rb-primary-color, #303030);
+    color: #fff;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .rb-vol__tier,
+    .rb-vol__card,
+    .rb-vol-slider__nudge-fill,
+    .rb-vol-slider__slider-track,
+    .rb-vol-calc__pill {
+        transition: none !important;
+    }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .rb-vol__tier {
+        padding: 12px 12px;
+        gap: 8px;
+    }
+
+    .rb-vol__tier-title {
+        font-size: calc(var(--rb-body-font-size, 14px) - 1px);
+    }
+}

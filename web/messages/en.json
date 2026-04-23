@@ -66,7 +66,9 @@
     "emptySearchAlt": "Empty search results",
     "emptyStateAlt": "No bundles created yet",
     "cancel": "Cancel",
-    "delete": "Delete"
+    "delete": "Delete",
+    "back": "Back",
+    "addBundleToCart": "Add bundle to cart"
   },
   "Modals": {
     "confirm": "Confirm",
@@ -136,9 +138,30 @@
     "VOLUME_TIERS_REQUIRED": "Volume discount bundles require volume tiers",
     "MIX_MATCH_PRICING": "Mix and match bundles require pricing configuration",
     "SCHEDULED_DATES_REQUIRED": "Scheduled bundles require both start and end dates",
+    "SCHEDULED_START_DATE_REQUIRED": "Scheduled bundles require a start date",
     "MAX_PRODUCTS_20": "Cannot have more than 20 products in a bundle",
     "GROUP_NAME_REQUIRED": "Group name is required",
-    "FILL_REQUIRED_FIELDS": "Please fill in all required fields"
+    "FILL_REQUIRED_FIELDS": "Please fill in all required fields",
+    "MAX_DECIMAL_PLACES": "Maximum 2 decimal places allowed",
+    "QTY_REQUIRED": "Quantity is required",
+    "WHOLE_NUMBER": "Must be a whole number",
+    "DISCOUNT_REQUIRED": "Discount is required",
+    "DISCOUNT_NEGATIVE": "Discount cannot be negative",
+    "DISCOUNT_MAX": "Discount exceeds maximum",
+    "TIER_TITLE_REQUIRED": "Tier title is required",
+    "TIER_TITLE_MAX": "Title must be 50 characters or less",
+    "TIER_SUBTITLE_MAX": "Subtitle must be 80 characters or less",
+    "MIN_TIERS": "At least one tier is required",
+    "MAX_TIERS": "Maximum of 10 tiers allowed",
+    "TIER_ORDER": "Must be greater than tier {index} ({value})",
+    "TIER_PERCENTAGE_MAX": "Percentage discount cannot exceed 99.99%",
+    "TIER_ONE_DEFAULT": "Only one tier can be pre-selected",
+    "ERROR_CREATE_PRODUCT": "Failed to create product",
+    "ERROR_DELETE_PRODUCT": "Failed to delete product",
+    "ERROR_UNEXPECTED": "Unexpected error",
+    "ERROR_SAVE_BUNDLE": "Failed to save bundle",
+    "SUCCESS_BUNDLE_CREATED": "Bundle created successfully!",
+    "SUCCESS_BUNDLE_UPDATED": "Bundle updated successfully!"
   },
   "Dashboard": {
     "title": "Welcome to Radius Bundles",
@@ -147,49 +170,51 @@
     "setupGuide": "Setup guide",
     "SetupGuide": {
       "tasksComplete": "{completed} of {total} tasks complete",
-      "heading": "Get started with Product Bundles",
-      "subheading": "Use this personalized guide to get your app up and running.",
+      "heading": "Let's get you set up",
+      "subheading": "Complete these quick steps and you'll be selling bundles in no time.",
       "dismiss": "Dismiss",
       "collapse": "Collapse",
       "expand": "Expand",
       "upNext": "Up next:",
-      "resumeGuide": "Resume guide",
-      "allComplete": "All tasks complete",
+      "resumeGuide": "Pick up where you left off",
+      "allComplete": "All done!",
+      "allCompleteHeading": "You're all set!",
+      "allCompleteDesc": "Great work! Your Product Bundles app is fully configured and ready for customers.",
       "dismissGuide": "Dismiss guide",
       "toggleGuide": "Toggle setup guide",
-      "markComplete": "Mark as complete",
-      "markIncomplete": "Mark as incomplete",
+      "markComplete": "Mark as done",
+      "markIncomplete": "Mark as not done",
       "steps": {
         "enableAppEmbed": {
-          "title": "Enable the app embed",
-          "description": "Activate the Product Bundles app embed in your theme editor. This is required for bundle widgets, analytics tracking, and storefront functionality to work on your store.",
-          "primaryButton": "Open theme editor",
+          "title": "Turn on the app embed",
+          "description": "We'll open the theme editor with the app embed ready to go — just hit Save to turn it on.",
+          "primaryButton": "Go to theme editor",
           "secondaryButton": "Check status"
         },
         "createFirstBundle": {
-          "title": "Create your first product bundle",
-          "description": "Select a bundle type — Fixed Bundle, BOGO, Volume Discount, or Mix & Match — add products, configure pricing, and publish to start selling.",
+          "title": "Create your first bundle",
+          "description": "Pick a bundle type — Fixed Bundle, BOGO, or Volume Discount — add your products, set the pricing, and hit publish.",
           "primaryButton": "Create bundle"
         },
         "addWidgetToTheme": {
-          "title": "Add bundle widget to your theme",
-          "description": "Add the bundle widget block to your product pages in the theme editor. This displays your bundles on the storefront so customers can see and add them to their cart.",
-          "primaryButton": "Open theme editor",
+          "title": "Add the bundle widget",
+          "description": "We'll open the theme editor with the bundle widget already added to your product page — just hit Save to confirm.",
+          "primaryButton": "Go to theme editor",
           "secondaryButton": "Check status"
         },
         "customizeSettings": {
-          "title": "Customize your settings",
-          "description": "Configure your global display preferences and style the bundle widget to match your store's branding — adjust layout, colors, typography, and button styles.",
+          "title": "Make it yours",
+          "description": "Tweak the layout, colors, fonts, and buttons to match your store's look and feel.",
           "primaryButton": "Go to settings"
         },
         "previewStorefront": {
-          "title": "Preview your live storefront",
-          "description": "Visit your online store to verify how bundles appear to customers. Check the widget layout, discount display, and add-to-cart experience on a real product page.",
+          "title": "See it live",
+          "description": "Visit your store and see exactly what your customers will see on the product page.",
           "primaryButton": "View storefront"
         },
         "monitorAnalytics": {
-          "title": "Monitor bundle analytics",
-          "description": "Track key metrics like bundle views, add-to-cart rate, conversion rate, and revenue generated across all your bundles from the analytics dashboard.",
+          "title": "Keep an eye on performance",
+          "description": "Track views, add-to-carts, conversions, and revenue for all your bundles in one place.",
           "primaryButton": "Go to analytics"
         }
       }
@@ -384,11 +409,20 @@
     "Schedule": {
       "status": "Bundle status",
       "statusTooltip": "Shows the current state of this bundle and how it appears in your store.",
+      "notLiveDraft": "This bundle is a draft and will not be displayed on the storefront until its status is set to Active.",
+      "notLivePaused": "This bundle is paused and is hidden from the storefront. Set status to Active to resume.",
+      "notLiveArchived": "This bundle is archived and will not be displayed on the storefront.",
+      "notLiveScheduled": "This bundle will go live automatically on the scheduled start date.",
+      "notLiveScheduledOn": "This bundle goes live automatically on {date}.",
+      "setToActive": "Set to Active",
       "setDates": "Set schedule dates",
       "resetDates": "Reset dates",
       "scheduleBundle": "Schedule bundle",
-      "dateRangeHint": "Set the date range when this bundle will be active.",
-      "dateRequired": "Please set both start and end dates for scheduled bundles."
+      "startDate": "Start date",
+      "endDate": "End date",
+      "optional": "optional",
+      "dateRangeHint": "Set when this bundle will be active. End date is optional.",
+      "dateRequired": "Please set a start date for scheduled bundles."
     },
     "Common": {
       "breadcrumb": "Bundles",
@@ -396,6 +430,8 @@
       "update": "Update",
       "publish": "Publish",
       "duplicate": "Duplicate",
+      "createNew": "Create new",
+      "lastEdited": "Last edited {time}",
       "create": "Create bundle",
       "edit": "Edit bundle",
       "error": "Error",
@@ -411,7 +447,8 @@
       "duplicateSuccess": "Bundle duplicated successfully",
       "duplicateFailed": "Failed to duplicate bundle",
       "checkStatus": "Health check",
-      "themeReady": "Theme is set up correctly"
+      "themeReady": "Theme is set up correctly",
+      "moreActions": "More actions"
     },
     "Selection": {
       "title": "Select bundle type",
@@ -419,6 +456,7 @@
       "upgradePlan": "Update your plan",
       "upgradePlanDesc": "Unlock advanced features and priority support. Upgrade today to get the most out of your bundles.",
       "seeDetails": "See details",
+      "learnMore": "Learn more",
       "comingSoon": "Coming Soon",
       "select": "Select",
       "createBundle": "Create the bundle",
@@ -458,6 +496,7 @@
         "sameProductLabel": "Same product for both",
         "sameProductBogoDetails": "Customer buys and gets the same product (e.g., Buy 1 Get 1 Free)",
         "sameProductBxgyDetails": "Use the same products for both Buy and Get groups",
+        "sameProductHint": "Select your Buy product(s) first, then enable this toggle to automatically use them as the Get product(s) too.",
         "roleBuy": "Buy",
         "roleGet": "Get",
         "role": "Role",
@@ -466,7 +505,10 @@
         "editVariants": "Edit variants",
         "remove": "Remove",
         "maxReached": "Maximum {count} products reached for this bundle.",
-        "variantsSelected": "{count} of {total} variants selected"
+        "variantsSelected": "{count} of {total} variants selected",
+        "noProductsSelected": "No products selected",
+        "volumeSelectOne": "Select at least one product to apply volume discount tiers to.",
+        "volumeMultiple": "All selected products will share the same volume discount tiers. Customers buying any of these products will see the same volume discounts."
       },
       "Discount": {
         "heading": "Discount Settings",
@@ -496,7 +538,43 @@
         "noProductsYet": "No products in bundle. Add products first.",
         "cancel": "Cancel",
         "freeShipping": "Include free shipping",
-        "freeShippingDetails": "Offer free shipping when this bundle is purchased."
+        "freeShippingDetails": "Offer free shipping when this bundle is purchased.",
+        "VolumeDiscount": {
+          "heading": "Discount Settings",
+          "tooltip": "Set how discounts scale with quantity. Each tier applies a discount when the customer buys at least the specified quantity.",
+          "discountType": "Discount Type",
+          "percentage": "Percentage %",
+          "fixedAmount": "Fixed Amount {currency}",
+          "openEnded": "Open-ended top tier",
+          "openEndedDetails": "Apply the last tier's discount to all quantities above the maximum.",
+          "maxTiersReached": "Maximum of 10 tiers reached.",
+          "addTier": "Add Tier",
+          "tier": "Tier {number}",
+          "removeTier": "Remove tier {number}",
+          "minQuantity": "Min Quantity",
+          "minQuantityDetails": "Minimum items a customer must add to cart.",
+          "discount": "Discount ({suffix})",
+          "discountDetails": "Discount applied when this tier is activated.",
+          "tierTitle": "Title",
+          "tierTitleDetails": "Shown on the storefront. Use {quantity} and {discount} as dynamic variables.",
+          "optionalSettings": "Optional Settings",
+          "subtitle": "Subtitle",
+          "subtitleDetails": "Secondary text shown below the title on the storefront.",
+          "badgeStyle": "Badge Style",
+          "badgeStyleDetails": "Highlight label displayed on this tier option.",
+          "badgeText": "Badge Text",
+          "badgeTextDetails": "Label text shown inside the badge.",
+          "preselect": "Pre-select this tier for customers",
+          "preselectDetails": "This tier will be selected by default when customers view the bundle.",
+          "badgeStyles": {
+            "none": "None",
+            "popular": "Most Popular",
+            "best-value": "Best Value",
+            "custom": "Custom"
+          },
+          "tierHasErrors": "This tier has errors"
+        },
+        "discountTypeLabel": "Discount type"
       },
       "BundleAsProduct": {
         "heading": "Bundle as product",
@@ -516,7 +594,16 @@
         "addMedia": "Add Media",
         "removeImage": "Remove image",
         "uploadImage": "Upload image",
-        "uploadMore": "Upload additional images"
+        "uploadMore": "Upload additional images",
+        "productImageAlt": "Product image",
+        "uploadImageTypes": "Upload image of type jpg, png, or gif",
+        "uploadingImage": "Uploading image",
+        "productTitlePlaceholder": "Bundle Product #5",
+        "uploadInvalidSingle": "File too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC",
+        "uploadInvalidMultiple": "{count} files too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC",
+        "uploadDuplicate": "Duplicate image(s) already added",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Describe this bundle product..."
       },
       "Appearance": {
         "displayHeading": "Display Settings",
@@ -551,9 +638,16 @@
         "customerBuys": "Customer Buys",
         "customerGets": "Customer Gets",
         "free": "FREE",
+        "atFullPrice": "at full price",
         "deal": "Deal",
         "sameProductDeal": "Same product deal",
-        "mode": "Mode"
+        "mode": "Mode",
+        "freeShipping": "Free Shipping",
+        "enabled": "Enabled",
+        "yes": "Yes",
+        "volumeTiersHeading": "Volume Discount Tiers",
+        "percentage": "Percentage",
+        "fixedAmount": "Fixed Amount"
       },
       "Preview": {
         "heading": "Preview",
@@ -572,7 +666,27 @@
         "bogoBadgePercent": "Buy {buy} Get {get} at {discount}% Off",
         "bogoBadgeFixed": "Buy {buy} Get {get} - ${amount} Off",
         "bogoBadgeDefault": "Buy {buy} Get {get}",
-        "emptyState": "Please choose products to see the bundle preview"
+        "emptyState": "Please choose products to see the bundle preview",
+        "decreaseQuantity": "Decrease quantity",
+        "increaseQuantity": "Increase quantity",
+        "bogoBuyFallback": "Buy",
+        "bogoGetFallback": "Get",
+        "bogoFreeFallback": "Free",
+        "bogoAtPercentOff": "at {percent}% Off",
+        "bogoAtAmountOff": "{amount} Off",
+        "configureDiscountTiers": "Configure discount tiers to see a preview.",
+        "volumeBadgePercent": "Up to {discount}% off",
+        "volumeBadgeFixed": "Up to {amount} off",
+        "volumeBadgeCustom": "From {price}",
+        "savingsBadge": "Save {percent}%",
+        "defaultTitle": "Bundle & Save",
+        "defaultAddToCart": "Add Bundle to Cart",
+        "customizerDesktopLabel": "Open desktop customizer",
+        "customizerTabletLabel": "Open tablet customizer",
+        "customizerMobileLabel": "Open mobile customizer",
+        "strategyDiscountBased": "Discount based",
+        "strategyIndexBased": "Index based",
+        "strategyLabel": "Strategy: {label}"
       }
     },
     "Types": {
@@ -796,7 +910,29 @@
       },
       "errors": {
         "loadFailed": "Failed to load bundle data"
+      },
+      "selectAll": "Select all bundles"
+    },
+    "Templates": {
+      "Bogo": {
+        "triggerProduct": "Trigger Product",
+        "rewardProduct": "Reward Product",
+        "title": "Buy One Get One Free",
+        "subtitle": "Limited time promotional offer",
+        "cartButton": "Add Bundle to Cart",
+        "badgeText": "BOGO OFFER",
+        "youBuy": "You Buy",
+        "fiftyOff": "50% Off"
       }
+    },
+    "Submit": {
+      "createProductFailed": "Could not create Shopify product. Please try again.",
+      "deleteProductFailed": "Could not delete the Shopify product.",
+      "invalidMode": "Invalid mode or missing bundle ID for edit.",
+      "bundleCreated": "Your bundle has been created.",
+      "bundleSaved": "Your changes have been saved.",
+      "checkInputs": "Please check your inputs and try again.",
+      "tryAgainLater": "Please try again later."
     }
   },
   "Settings": {
@@ -1055,7 +1191,7 @@
           "bogoRewardBadgeText": {
             "label": "Reward badge text",
             "details": "Badge on the reward (get) product card.",
-            "placeholder": "You Get FREE"
+            "placeholder": "You Get"
           },
           "bogoTotalLabel": {
             "label": "Total label",
@@ -1269,8 +1405,11 @@
         "CLASSIC_CARD": "Classic Card",
         "DETAILED": "Detailed",
         "MINIMAL": "Minimal",
-        "CART_BANNER_LIST": "Detailed",
-        "CART_BANNER_GRID": "Minimal"
+        "CART_BANNER_LIST": "Standard",
+        "VOLUME_TIER_LIST": "Tier List",
+        "VOLUME_PRICING_CARDS": "Pricing Cards",
+        "VOLUME_SLIDER": "Quantity Slider",
+        "VOLUME_CALCULATOR": "Savings Calculator"
       },
       "openStyleCustomizer": "Open style customizer",
       "heading": "Global Customizer - Manage Bundle Styles",
@@ -1284,6 +1423,9 @@
       },
       "inherit": "Inherit",
       "selectColor": "Select color",
+      "responsiveOverrides": "Responsive Overrides",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
       "Presets": {
         "minimal": {
           "name": "Minimal",
@@ -1316,7 +1458,10 @@
         "professional": {
           "name": "Professional",
           "description": "Neutral, structured, and trust-focused"
-        }
+        },
+        "primaryTitle": "Primary",
+        "backgroundTitle": "Background",
+        "accentTitle": "Accent"
       },
       "cartPageBanner": "Cart page banner",
       "bundleProduct": "Bundle product",
@@ -1519,9 +1664,107 @@
         "field_cartBannerIconType_option_none": "No Icon",
         "field_cartBannerIconColor_label": "Icon color"
       }
+    },
+    "MixMatch": {
+      "groupTop": "Choose a Top",
+      "groupBottom": "Choose a Bottom"
+    },
+    "PreviewLabels": {
+      "headingLabel": "Bundle & Save",
+      "addToCartText": "Add Bundle to Cart",
+      "quantityLabel": "Qty:",
+      "regularPriceLabel": "Regular Price:",
+      "bundlePriceLabel": "Bundle Price:",
+      "youSaveLabel": "You Save:",
+      "freeShippingLabel": "Free Shipping",
+      "bogoFreeText": "FREE",
+      "bogoYouPayLabel": "You Pay:",
+      "bogoYouSaveLabel": "You Save:",
+      "bogoTotalLabel": "Bundle Total",
+      "bogoSaveText": "You Save: {amount}",
+      "bogoTriggerBadgeText": "You Buy",
+      "bogoRewardBadgeText": "You Get FREE",
+      "checklistProgressText": "{count}/{total} items added",
+      "checklistHintText": "{remaining} more to unlock!",
+      "checklistCompletedText": "Unlocked!",
+      "checklistLockedLabel": "Unlock by adding all items above",
+      "checklistUnlockedLabel": "Reward Unlocked",
+      "checklistPricingLockedText": "Select all items to see your price",
+      "volumeSelectQuantityLabel": "Select Quantity",
+      "volumeYouSaveLabel": "You save",
+      "volumeUnitLabel": "unit",
+      "volumeUnitsLabel": "units",
+      "volumeTotalCostLabel": "Total Cost",
+      "volumeCostPerUnitLabel": "Cost Per Unit",
+      "volumeRegularPriceLabel": "Regular price",
+      "volumeSelectLabel": "Select",
+      "volumeAppliedLabel": "Applied",
+      "volumeSavePercentLabel": "Save {discount}%",
+      "volumeSaveAmountLabel": "Save {discount} off",
+      "volumeSaveCustomLabel": "Save {discount}",
+      "volumeBuyUnitsLabel": "Buy {qty} Units",
+      "volumeBuyUnitsMoreLabel": "Buy {qty}+ Units",
+      "bannerSavingText": "You're saving {discount} with {name}",
+      "bannerCustomPriceText": "Special price: {price} for {name}",
+      "bannerFreeShippingQualifyText": "{name} qualifies for free shipping!",
+      "bannerFreeShippingText": "Free shipping included!"
+    },
+    "Toast": {
+      "resetSuccess": "Settings reset to defaults",
+      "resetError": "Failed to reset settings",
+      "saveSuccess": "Settings saved successfully",
+      "saveError": "Failed to save settings",
+      "exportError": "Failed to export settings",
+      "exportNone": "No settings found to export",
+      "exportSuccess": "Settings exported successfully",
+      "importError": "Failed to import settings",
+      "importSuccess": "Settings imported successfully",
+      "importFileError": "Failed to read import file",
+      "syncError": "Sync failed",
+      "webhookCheckError": "Failed to check webhooks",
+      "webhookRegisterError": "Failed to register webhooks",
+      "cachePartialError": "Server cache clear failed, client caches cleared",
+      "cacheSuccess": "All caches cleared",
+      "unexpectedError": "An unexpected error occurred"
+    },
+    "Submit": {
+      "createProductFailed": "Could not create Shopify product. Please try again.",
+      "deleteProductFailed": "Could not delete the Shopify product.",
+      "invalidMode": "Invalid mode or missing bundle ID for edit.",
+      "bundleCreated": "Your bundle has been created.",
+      "bundleSaved": "Your changes have been saved.",
+      "checkInputs": "Please check your inputs and try again.",
+      "tryAgainLater": "Please try again later."
+    },
+    "ServiceErrors": {
+      "rateLimitExceeded": "Rate limit exceeded. Maximum {max} bundles per hour. Please try again later.",
+      "shopSuspended": "Shop account is suspended. Please contact support for assistance.",
+      "trialExpired": "Trial period has expired. Please upgrade your plan.",
+      "shopNotConfigured": "Shop is not properly configured. Please complete setup.",
+      "excessiveCreation": "Excessive bundle creation detected ({count} in {hours}h)",
+      "quotaExceeded": "Shop has reached maximum bundle limit ({limit})",
+      "duplicateName": "A bundle with this name already exists",
+      "operationTimedOut": "Operation timed out. Please try again with fewer products.",
+      "operationTimedOutShort": "Operation timed out",
+      "unexpectedError": "An unexpected error occurred",
+      "suspiciousActivity": "Suspicious activity detected. Please contact support."
     }
   },
   "Analytics": {
+    "Badges": {
+      "highConverter": "High Converter",
+      "highConverterTooltip": "Exceptional {rate}% conversion rate. This bundle is highly effective at turning views into sales.",
+      "revenueStar": "Revenue Star",
+      "revenueStarTooltip": "Top revenue performer with {revenue} earned. A major contributor to your store's income.",
+      "hiddenGem": "Hidden Gem",
+      "hiddenGemTooltip": "Strong {rate}% conversion with only {views} views. Consider promoting this bundle more for greater impact.",
+      "trending": "Trending",
+      "trendingTooltip": "Growing fast with {growth}% revenue increase vs previous period. Momentum is building!",
+      "declining": "Declining",
+      "decliningTooltip": "Revenue decreased {drop}% vs previous period. Review pricing, promotion, or bundle composition.",
+      "highInterest": "High Interest",
+      "highInterestTooltip": "Strong {atcRate}% add-to-cart rate shows high customer interest. Focus on improving checkout conversion."
+    },
     "title": "Bundle Analytics & Customer Insights",
     "description": "Comprehensive insights into your bundle performance and customer behavior.",
     "Tabs": {
@@ -1566,7 +1809,13 @@
       "heading": "Top Performing Bundles",
       "tooltip": "Bundles are ranked by total revenue. Low-traffic bundles are excluded to avoid noise. Trends compare current period with previous period of equal length.",
       "noData": "No bundle data yet",
-      "lowSampleSize": "Low sample size - conversion rate may fluctuate"
+      "lowSampleSize": "Low sample size - conversion rate may fluctuate",
+      "columnBundle": "Bundle",
+      "columnAssessment": "Assessment",
+      "columnRevenueAov": "Revenue + AOV",
+      "columnOrders": "Orders",
+      "columnViews": "Views",
+      "columnConversion": "Conversion"
     },
     "AllBundles": {
       "heading": "All Bundles Performance",
@@ -1582,7 +1831,22 @@
       "healthNeedsWork": "Needs Work",
       "healthPoor": "Poor",
       "healthNew": "New",
-      "healthUnknown": "Unknown"
+      "healthUnknown": "Unknown",
+      "columnBundle": "Bundle",
+      "columnStatus": "Status",
+      "columnRevenue": "Revenue",
+      "columnOrders": "Orders",
+      "columnViews": "Views",
+      "columnCart": "Cart %",
+      "columnConv": "Conv %",
+      "columnFunnel": "Funnel",
+      "columnHealth": "Health",
+      "funnelViews": "Views",
+      "funnelCart": "Cart",
+      "funnelOrder": "Order",
+      "loadError": "Failed to load bundle performance data. Please try again.",
+      "showingPage": "Showing page {current} of {total}",
+      "perOrder": "/order"
     },
     "DatePicker": {
       "cancel": "Cancel",
@@ -1631,9 +1895,17 @@
     "plans": {
       "free": {
         "title": "Free",
-        "description": "Perfect for testing and small stores",
+        "description": "Get started with bundle creation at no cost",
         "button": "Current Plan",
-        "currentPlan": "Current Plan"
+        "currentPlan": "Current Plan",
+        "features": {
+          "0": "Up to 5 bundles",
+          "1": "Up to 10 products per bundle",
+          "2": "Fixed bundles, BOGO, Buy X Get Y",
+          "3": "Grid and list layouts",
+          "4": "Basic analytics",
+          "5": "Email support"
+        }
       },
       "starter": {
         "title": "Starter",
@@ -1659,25 +1931,38 @@
         "featured": "Most Popular",
         "description": "Everything you need to grow your bundle revenue",
         "button": "Start Free Trial",
-        "currentPlan": "Current Plan"
+        "currentPlan": "Current Plan",
+        "features": {
+          "0": "Unlimited bundles",
+          "1": "Unlimited products per bundle",
+          "2": "All bundle types",
+          "3": "All layouts",
+          "4": "Full analytics",
+          "5": "Custom CSS",
+          "6": "Priority support"
+        }
       }
     },
     "faqs": {
       "0": {
-        "title": "What's the best plan for high-priced bundles?",
-        "description": "For businesses with high Average Order Value (AOV), tailored payment is key. We're here to help you grow with customized plans designed to fit your unique needs. Contact us to discuss how we can best support your business."
+        "title": "What's included in the Free plan?",
+        "description": "The Free plan includes up to 5 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support."
       },
       "1": {
-        "title": "Can I use the app for free?",
-        "description": "You can test the app for free within the 7-day trial on all plans. Moreover, development stores and test stores can access the app for free without approving any charges."
+        "title": "Can I upgrade or downgrade anytime?",
+        "description": "Yes. You can upgrade to Pro or downgrade to Free at any time. Upgrades take effect immediately, and downgrades apply at the next billing cycle."
       },
       "2": {
-        "title": "Does the subscription fee automatically adjust based on my bundle sales?",
-        "description": "The subscription fee remains constant unless you explicitly approve changes. If you anticipate a decrease in sales, you can downgrade your plan accordingly. Conversely, if your sales exceed your plan's limit, you'll receive an email notification and can approve the upgrade."
+        "title": "Is there a free trial?",
+        "description": "Pro comes with a 14-day free trial. No credit card required to start your trial."
       },
       "3": {
-        "title": "What if I want to change or cancel my plan?",
-        "description": "You can thoroughly test the app during the 7-day trial and cancel without any charges. After that, downgrades are prorated, but cancellations are not. Contact support to explore refund options."
+        "title": "What billing options are available?",
+        "description": "Pro is available on a monthly ($9.99/month) or annual ($99.99/year) billing cycle. Annual billing saves you about 17% compared to monthly."
+      },
+      "4": {
+        "title": "What happens if I exceed my plan limits?",
+        "description": "On the Free plan, you'll be notified when approaching your bundle or product limits. You can upgrade to Pro at any time for unlimited access."
       }
     },
     "billingMonthly": "Monthly",
@@ -1858,7 +2143,8 @@
         "feature4": "Automation tools and priority support"
       },
       "maybeLater": "Maybe later",
-      "viewPlans": "View plans"
+      "viewPlans": "View plans",
+      "upgradeAriaLabel": "upgrade to pro"
     }
   }
 }

@@ -4,6 +4,8 @@
  * Bundle Query Actions - Auth Layer
  *
  * Handles authentication and calls service layer.
+ * NOTE: revalidateTag/revalidatePath belong in mutation actions (create/update/delete),
+ * NOT in read actions — calling them here would bust the cache on every fetch.
  */
 
 import { ApiResponse } from "@/shared";
@@ -25,13 +27,12 @@ export async function getBundlesAction(
     filters?: BundleFilters,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         const result = await getBundlesListService({
             shop,
             sessionToken,
+            accessToken: session.accessToken,
             pagination: { page, itemsPerPage },
             filters,
         });
@@ -62,14 +63,13 @@ export async function getBundleAction(
     bundleId: string,
 ): Promise<ApiResponse> {
     try {
-        const {
-            session: { shop },
-        } = await handleSessionToken(sessionToken);
+        const { shop, session } = await handleSessionToken(sessionToken);
 
         const bundle = await getBundleDetails({
             bundleId,
             shop,
             sessionToken,
+            accessToken: session.accessToken,
         });
 
         return {

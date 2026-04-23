@@ -111,6 +111,14 @@ export function getButtonPadding(size: SizePreset): string {
     return values.padding;
 }
 
+/**
+ * Gets button height based on size preset.
+ */
+export function getButtonHeight(size: SizePreset): number {
+    const values = BUTTON_SIZE_VALUES[size] ?? BUTTON_SIZE_VALUES.medium;
+    return values.height;
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // SHADOW HELPERS
 // ═══════════════════════════════════════════════════════════════════

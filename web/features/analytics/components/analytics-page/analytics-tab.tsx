@@ -6,10 +6,9 @@ import {
     AnalyticsDate,
     AnalyticsMetrics,
 } from "@/features/analytics";
-import { useState } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
 
 const AnalyticsChart = dynamic(
@@ -33,11 +32,12 @@ type TabKey = (typeof TAB_KEYS)[number];
 
 export function AnalyticsTabs() {
     const t = useTranslations("Analytics.Tabs");
+    const tAllBundles = useTranslations("Analytics.AllBundles");
+    const router = useRouter();
     const searchParams = useSearchParams();
     const tabParam = searchParams.get("tab") as TabKey | null;
-    const initialTab =
+    const activeTab: TabKey =
         tabParam && TAB_KEYS.includes(tabParam) ? tabParam : "overview";
-    const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
     const { canUse } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
     const canFullAnalytics = canUse("analytics_full");
@@ -82,7 +82,13 @@ export function AnalyticsTabs() {
                                     : "tertiary"
                             }
                             icon={tab.icon}
-                            onClick={() => setActiveTab(tab.key)}
+                            onClick={() =>
+                                router.replace(
+                                    tab.key === "overview"
+                                        ? "/analytics"
+                                        : `/analytics?tab=${tab.key}`,
+                                )
+                            }
                         >
                             {tab.label}
                         </s-button>
@@ -122,7 +128,7 @@ export function AnalyticsTabs() {
                                     className="cursor-pointer"
                                     onClick={() =>
                                         openCrossSell(
-                                            "All Bundles Performance",
+                                            tAllBundles("heading"),
                                         )
                                     }
                                 >
@@ -133,11 +139,11 @@ export function AnalyticsTabs() {
                                             alignItems="center"
                                         >
                                             <s-heading>
-                                                All Bundles Performance
+                                                {tAllBundles("heading")}
                                             </s-heading>
                                         </s-stack>
                                         <div className="h-48 rounded-lg bg-gray-50 flex items-center justify-center">
-                                            <ProBadge label="All Bundles Performance" />
+                                            <ProBadge label={tAllBundles("heading")} />
                                         </div>
                                     </s-stack>
                                 </div>

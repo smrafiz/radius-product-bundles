@@ -1,0 +1,20 @@
+[
+    {
+        "type": "header",
+        "content": "Bundle Filter"
+    },
+    {
+        "type": "select",
+        "id": "bundle_type",
+        "label": "Bundle type filter",
+        "info": "Display a specific bundle type on this block. Available on Pro plan.",
+        "options": [
+            { "value": "", "label": "Default" },
+            { "value": "FIXED_BUNDLE", "label": "Fixed Bundle" },
+            { "value": "BUY_X_GET_Y", "label": "Buy X Get Y" },
+            { "value": "BOGO", "label": "BOGO" },
+            { "value": "VOLUME_DISCOUNT", "label": "Volume Discount" }
+        ],
+        "default": ""
+    }
+]

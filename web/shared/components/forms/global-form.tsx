@@ -112,6 +112,12 @@ export function GlobalForm<T extends FieldValues>({
             isHtml: true,
             autoHide: false,
         });
+
+        // Show toast so the user knows save was blocked
+        window.shopify?.toast?.show(
+            `${errorCount} ${errorCount === 1 ? "error" : "errors"} found — please fix before saving`,
+            { duration: 5000, isError: true },
+        );
     };
 
     /**

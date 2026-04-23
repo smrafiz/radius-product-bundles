@@ -485,6 +485,118 @@ export const LABELS_TAB: SettingsTabConfig = {
         },
 
         // ─────────────────────────────────────────────────────────────────
+        // VOLUME DISCOUNT LABELS SECTION
+        // ─────────────────────────────────────────────────────────────────
+        {
+            id: "volume-labels",
+            title: "Volume Discount Labels",
+            tooltip: "Labels specific to Volume Discount bundle layouts.",
+            proFeature: "bundle_behavior",
+            columns: 2,
+            fields: [
+                {
+                    type: "text",
+                    name: "volumeSelectQuantityLabel",
+                    label: "Select quantity label",
+                    placeholder: "Select Quantity",
+                    details:
+                        "Label above the quantity slider in volume discount bundles.",
+                    validation: {
+                        maxLength: {
+                            value: 50,
+                            message: "Cannot exceed 50 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "volumeYouSaveLabel",
+                    label: "You save label",
+                    placeholder: "You save",
+                    details:
+                        "Label next to the savings amount in volume discount bundles.",
+                    validation: {
+                        maxLength: {
+                            value: 30,
+                            message: "Cannot exceed 30 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "volumeUnitLabel",
+                    label: "Unit label (singular)",
+                    placeholder: "unit",
+                    details:
+                        "Singular unit text shown after per-unit price (e.g. '$5.00 / unit').",
+                    validation: {
+                        maxLength: {
+                            value: 20,
+                            message: "Cannot exceed 20 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "volumeUnitsLabel",
+                    label: "Units label (plural)",
+                    placeholder: "units",
+                    details:
+                        "Plural unit text shown after quantity (e.g. '5 units').",
+                    validation: {
+                        maxLength: {
+                            value: 20,
+                            message: "Cannot exceed 20 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "volumeTotalCostLabel",
+                    label: "Total cost label",
+                    placeholder: "Total Cost",
+                    details:
+                        "Label for the total cost row in the volume calculator.",
+                    validation: {
+                        maxLength: {
+                            value: 30,
+                            message: "Cannot exceed 30 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "volumeCostPerUnitLabel",
+                    label: "Cost per unit label",
+                    placeholder: "Cost Per Unit",
+                    details:
+                        "Label for the cost per unit row in the volume calculator.",
+                    validation: {
+                        maxLength: {
+                            value: 30,
+                            message: "Cannot exceed 30 characters",
+                        },
+                    },
+                },
+                {
+                    type: "text",
+                    name: "volumeRegularPriceLabel",
+                    label: "Regular price label",
+                    placeholder: "Regular price",
+                    details:
+                        "Label before the original price in the volume calculator.",
+                    fullWidth: true,
+                    validation: {
+                        maxLength: {
+                            value: 30,
+                            message: "Cannot exceed 30 characters",
+                        },
+                    },
+                },
+            ],
+        },
+
+        // ─────────────────────────────────────────────────────────────────
         // CART BANNER SECTION
         // ─────────────────────────────────────────────────────────────────
         {

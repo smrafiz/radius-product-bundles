@@ -1,0 +1,47 @@
+{
+    "bundle": {
+        "headingLabel": "اشترِ باقة ووفّر",
+        "addToCartText": "إضافة الباقة إلى سلة التسوق",
+        "quantityLabel": "الكمية:",
+
+        "addingText": "جارٍ الإضافة...",
+        "addedText": "تمت الإضافة!",
+        "outOfStockText": "نفد من المخزون",
+
+        "regularPriceLabel": "السعر العادي:",
+        "bundlePriceLabel": "سعر الباقة:",
+        "youSaveLabel": "توفّر:",
+        "savingsBadgeText": "وفّر {percent}%",
+
+        "freeShippingLabel": "شحن مجاني",
+        "freeShippingMethodTitle": "شحن مجاني",
+
+        "maxBundlesReachedText": "يُسمح بحد أقصى {count} باقة (باقات) لكل طلب",
+
+        "bogoYouPayLabel": "المبلغ الذي تدفعه:",
+        "bogoYouSaveLabel": "توفّر:",
+        "bogoTriggerBadgeText": "تشتري",
+        "bogoRewardBadgeText": "تحصل على",
+        "bogoBadgeText": "",
+        "bogoFreeText": "مجانًا",
+        "bogoBuyText": "اشترِ",
+        "bogoGetText": "ستحصل على",
+        "bogoTotalLabel": "إجمالي الباقة",
+        "bogoSaveText": "توفّر: {amount}",
+
+        "checklistProgressText": "تمت إضافة {count}/{total} عنصر/عناصر",
+        "checklistHintText": "تبقى {remaining} عنصر/عناصر لفتح العرض!",
+        "checklistCompletedText": "تم الفتح!",
+        "checklistLockedLabel": "افتح المكافأة بإضافة جميع العناصر المذكورة أعلاه",
+        "checklistUnlockedLabel": "تم فتح المكافأة",
+        "checklistPricingLockedText": "حدد جميع العناصر لمعرفة سعرك",
+
+        "bannerSavingText": "أنت توفّر {discount} مع {name}",
+        "bannerCustomPriceText": "سعر خاص: {price} لـ {name}",
+        "bannerFreeShippingQualifyText": "{name} مؤهل للحصول على شحن مجاني!",
+        "bannerFreeShippingText": "يشمل الشحن المجاني!",
+
+        "moreProductsText": "+ {count} منتج/منتجات أخرى",
+        "showLessText": "إظهار أقل"
+    }
+}

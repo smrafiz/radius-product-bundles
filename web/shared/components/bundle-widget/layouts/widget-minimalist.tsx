@@ -49,6 +49,19 @@ function MinimalistItem({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const bodyFontSize = getFontSize(styles.bodySize);
     const imageSizePx = getImageSize(styles.imageSize);
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
+
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
 
     const quantityEl = displayOptions.showQuantity && bundleType !== "BOGO" && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
@@ -61,7 +74,6 @@ function MinimalistItem({
         <div
             style={{
                 display: "flex",
-                alignItems: "center",
                 gap: 10,
                 padding: "15px 10px",
                 background: `color-mix(in srgb, ${roleColor} 6%, ${styles.backgroundColor || "white"})`,
@@ -128,12 +140,14 @@ function MinimalistItem({
                         fontSize: bodyFontSize,
                         fontWeight: 500,
                         color: styles.textColor,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "normal",
                     }}
                 >
-                    {product.title}
+                    {titleEl}
                 </span>
                 {quantityEl}
                 <div

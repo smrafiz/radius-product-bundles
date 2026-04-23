@@ -12,8 +12,8 @@ import {
 } from "@/features/bundles/repositories";
 import { getShop } from "@/shared/repositories";
 import { checkBundleQuota } from "@/shared/services/plan.service";
-import { performSecurityChecks } from "@/features/bundles/services";
 import { getShopWithLimits } from "@/shared/repositories/shop.queries";
+import { getStaticTranslations } from "@/lib/i18n/server";
 
 /**
  * Runs security checks, shop context fetch, and quota check in parallel.
@@ -23,6 +23,7 @@ export async function fetchBundlePreflight(
     shop: string,
 ): Promise<PreflightResult> {
     const oneHourAgo = new Date(Date.now() - 3600000);
+    const t = await getStaticTranslations("Bundles.ServiceErrors");
 
     const [shopData, recentCount, activity] = await Promise.all([
         getShopWithLimits(shop),
@@ -38,17 +39,12 @@ export async function fetchBundlePreflight(
     // Evaluate rate limit
     const maxPerHour = 10;
     if (recentCount >= maxPerHour) {
+        const msg = t("rateLimitExceeded", { max: maxPerHour });
         return {
             security: {
                 success: false,
-                message: `Rate limit exceeded. Maximum ${maxPerHour} bundles per hour. Please try again later.`,
-                errors: {
-                    security: {
-                        _errors: [
-                            `Rate limit exceeded. Maximum ${maxPerHour} bundles per hour.`,
-                        ],
-                    },
-                },
+                message: msg,
+                errors: { security: { _errors: [msg] } },
             },
             context: makeContext(),
             quota: { allowed: false },
@@ -62,19 +58,17 @@ export async function fetchBundlePreflight(
         status === "TRIAL_EXPIRED" ||
         status === "NOT_CONFIGURED"
     ) {
-        const messages: Record<string, string> = {
-            SUSPENDED:
-                "Shop account is suspended. Please contact support for assistance.",
-            TRIAL_EXPIRED:
-                "Trial period has expired. Please upgrade your plan.",
-            NOT_CONFIGURED:
-                "Shop is not properly configured. Please complete setup.",
+        const keyMap: Record<string, string> = {
+            SUSPENDED: "shopSuspended",
+            TRIAL_EXPIRED: "trialExpired",
+            NOT_CONFIGURED: "shopNotConfigured",
         };
+        const msg = t(keyMap[status]);
         return {
             security: {
                 success: false,
-                message: messages[status],
-                errors: { security: { _errors: [messages[status]] } },
+                message: msg,
+                errors: { security: { _errors: [msg] } },
             },
             context: makeContext(),
             quota: { allowed: false },
@@ -84,17 +78,12 @@ export async function fetchBundlePreflight(
     // Evaluate abuse detection
     const EXCESSIVE_CREATION_THRESHOLD = 50;
     if (activity.created > EXCESSIVE_CREATION_THRESHOLD) {
+        const msg = t("excessiveCreation", { count: activity.created, hours: "24" });
         return {
             security: {
                 success: false,
-                message: `Excessive bundle creation detected (${activity.created} in 24h)`,
-                errors: {
-                    security: {
-                        _errors: [
-                            `Excessive bundle creation detected (${activity.created} in 24h)`,
-                        ],
-                    },
-                },
+                message: msg,
+                errors: { security: { _errors: [msg] } },
             },
             context: makeContext(),
             quota: { allowed: false },
@@ -115,37 +104,13 @@ export async function fetchBundlePreflight(
               }
             : {
                   allowed: false,
-                  reason: `Shop has reached maximum bundle limit (${quotaResult.limit})`,
+                  reason: t("quotaExceeded", { limit: quotaResult.limit }),
                   current: quotaResult.current,
                   limit: quotaResult.limit,
               },
     };
 }
 
-/**
- * Perform security checks (rate limit, abuse, shop status)
- */
-export async function checkBundleSecurity(shop: string): Promise<{
-    success: boolean;
-    message?: string;
-    errors?: Record<string, { _errors: string[] }>;
-}> {
-    const securityCheck = await performSecurityChecks(shop);
-
-    if (!securityCheck.passed) {
-        return {
-            success: false,
-            message: securityCheck.reason || "Security check failed",
-            errors: {
-                security: {
-                    _errors: [securityCheck.reason || "Security check failed"],
-                },
-            },
-        };
-    }
-
-    return { success: true };
-}
 
 /**
  * Fetch shop settings for validation context
@@ -198,25 +163,23 @@ export function validateBundleData(
 /**
  * Handle bundle operation errors
  */
-export function handleBundleOperationError(error: unknown): {
+export async function handleBundleOperationError(error: unknown): Promise<{
     success: false;
     message: string;
     errors: Record<string, { _errors: string[] }>;
     bundle: null;
-} {
+}> {
     console.error("[Shared] Unexpected error:", error);
+    const t = await getStaticTranslations("Bundles.ServiceErrors");
 
     if (error instanceof Error) {
         // Prisma unique constraint error
         if (error.message.includes("Unique constraint")) {
+            const msg = t("duplicateName");
             return {
                 success: false,
-                message: "A bundle with this name already exists",
-                errors: {
-                    name: {
-                        _errors: ["A bundle with this name already exists"],
-                    },
-                },
+                message: msg,
+                errors: { name: { _errors: [msg] } },
                 bundle: null,
             };
         }
@@ -225,13 +188,8 @@ export function handleBundleOperationError(error: unknown): {
         if (error.message.includes("timeout")) {
             return {
                 success: false,
-                message:
-                    "Operation timed out. Please try again with fewer products.",
-                errors: {
-                    timeout: {
-                        _errors: ["Operation timed out"],
-                    },
-                },
+                message: t("operationTimedOut"),
+                errors: { timeout: { _errors: [t("operationTimedOutShort")] } },
                 bundle: null,
             };
         }
@@ -240,24 +198,17 @@ export function handleBundleOperationError(error: unknown): {
         return {
             success: false,
             message: error.message,
-            errors: {
-                server: {
-                    _errors: [error.message],
-                },
-            },
+            errors: { server: { _errors: [error.message] } },
             bundle: null,
         };
     }
 
     // Unknown error
+    const msg = t("unexpectedError");
     return {
         success: false,
-        message: "An unexpected error occurred",
-        errors: {
-            server: {
-                _errors: ["An unexpected error occurred"],
-            },
-        },
+        message: msg,
+        errors: { server: { _errors: [msg] } },
         bundle: null,
     };
 }

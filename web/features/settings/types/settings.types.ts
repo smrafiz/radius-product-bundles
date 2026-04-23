@@ -182,13 +182,13 @@ export interface WidgetBehavior {
  */
 export interface ResponsiveSettings {
     mobile: {
-        layout: "LIST" | "GRID" | "SLIDER" | "COMPACT";
+        layout: "LIST" | "GRID" | "CAROUSEL" | "COMPACT";
         columns: number;
         hideImages: boolean;
         compactMode: boolean;
     };
     tablet: {
-        layout: "LIST" | "GRID" | "SLIDER" | "COMPACT";
+        layout: "LIST" | "GRID" | "CAROUSEL" | "COMPACT";
         columns: number;
     };
     breakpoints: {

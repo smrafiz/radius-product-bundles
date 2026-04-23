@@ -19,7 +19,6 @@ jobs:
                       cd /var/www/shopify
                       git pull origin main
                       cd /var/www/shopify/web
-                      rm -rf .next
                       rm -rf node_modules/.cache
                       bun install
                       export NODE_OPTIONS="--max-old-space-size=3072"

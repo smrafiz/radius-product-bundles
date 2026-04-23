@@ -26,19 +26,34 @@ function ClassicProductItem({
     isReward,
     styles,
     displayOptions,
+    labels,
 }: {
     product: PreviewProduct;
     isReward: boolean;
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
+    labels?: WidgetLayoutProps["labels"];
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
     const imageSizePx = getImageSize(styles.imageSize);
     const isHorizontal = styles.imagePosition === "left";
-    const freeText = PREVIEW_LABELS.bogoFreeText;
+    const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = isReward && !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
+
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
 
     const imageBlock = product.image && displayOptions.showImages && (
         <div
@@ -80,7 +95,7 @@ function ClassicProductItem({
                     WebkitBoxOrient: "vertical",
                 }}
             >
-                {product.title}
+                {titleEl}
             </div>
             <div
                 style={{
@@ -153,7 +168,6 @@ export function WidgetClassicCard({
     subtitle,
     badgeText,
     labels,
-    activeDevice,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -162,7 +176,7 @@ export function WidgetClassicCard({
         SPACING_VALUES[styles.spacing] ?? SPACING_VALUES.comfortable;
     const cardRadius = getCardRadius(styles.cornerStyle);
     const badgeRadius = getBadgeRadius(styles.cornerStyle);
-    const showPricingBar = styles.pricingSummaryBox !== false;
+    const showPricingBar = styles.pricingSummaryBox;
     const pricingBarBg = styles.pricingSummaryBg || "#DDEDDF";
     const isButtonOutline = styles.buttonStyle === "outline";
     const buttonBg = getButtonBgColor(styles);
@@ -275,7 +289,7 @@ export function WidgetClassicCard({
                 style={{
                     display: "grid",
                     gridTemplateColumns:
-                        activeDevice === "mobile" ? "1fr" : (styles.splitDealStyle ?? "row") === "column" ? "1fr" : "1fr 1fr",
+                        (styles.splitDealStyle ?? "row") === "column" ? "1fr" : "1fr 1fr",
                     gap: spacingValues.gap + 2,
                     marginTop: 10,
                 }}
@@ -342,6 +356,7 @@ export function WidgetClassicCard({
                                     isReward={variant === "reward"}
                                     styles={styles}
                                     displayOptions={displayOptions}
+                                    labels={labels}
                                 />
                             ))}
                         </div>

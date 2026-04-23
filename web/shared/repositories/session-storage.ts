@@ -161,13 +161,21 @@ export class NoSessionFoundError extends Error {
     }
 }
 
+/**
+ * Find the offline session for a shop directly.
+ * Queries WHERE isOnline = false rather than loading all sessions and
+ * filtering client-side — avoids unnecessary work on shops with many
+ * online sessions.
+ */
 export async function findOfflineSessionByShop(shop: string) {
-    const sessions = await findSessionsByShop(shop);
-    const offlineSession = sessions.find((session) => !session.isOnline);
+    const session = await prisma.session.findFirst({
+        where: { shop, apiKey, isOnline: false },
+        orderBy: { createdAt: "desc" },
+    });
 
-    if (!offlineSession) {
+    if (!session) {
         throw new NoSessionFoundError();
     }
 
-    return offlineSession;
+    return generateShopifySessionFromDB(session);
 }

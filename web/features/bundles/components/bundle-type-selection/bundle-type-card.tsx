@@ -39,6 +39,11 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
         try {
             const navigate = bundleData.create(bundleType.slug);
             navigate();
+
+            setTimeout(() => {
+                const modal = document.getElementById(`modal-${bundleType.id}`);
+                if (modal) modal.remove();
+            }, 300);
         } catch (error) {
             console.error("Navigation error:", error);
             setSelectingBundleId(null);
@@ -102,7 +107,10 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                     : t("select")}
                             </s-button>
                         </s-stack>
-                        <s-button commandFor={`modal-${bundleType.id}`}>
+                        <s-button
+                            commandFor={`modal-${bundleType.id}`}
+                            accessibilityLabel={`${tt(bundleType.id + ".label")} — ${t("learnMore")}`}
+                        >
                             <s-icon type="question-circle" />
                         </s-button>
 
@@ -128,11 +136,11 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                         bundleType.features.length > 0 && (
                                             <s-unordered-list>
                                                 {bundleType.features.map(
-                                                    (feature, index) => (
+                                                    (_, index) => (
                                                         <s-list-item
                                                             key={index}
                                                         >
-                                                            {feature}
+                                                            {tt(`${bundleType.id}.features.${index}`)}
                                                         </s-list-item>
                                                     ),
                                                 )}
@@ -148,6 +156,7 @@ export function BundleTypeCard({ bundleType }: { bundleType: BundleConfig }) {
                                                 : withLoader(handleSelect)
                                         }
                                         loading={isThisCardSelecting}
+                                        disabled={isAnotherCardSelecting}
                                     >
                                         {bundleType.comingSoon
                                             ? t("comingSoon")

@@ -36,6 +36,7 @@ export const BundleTableRow = memo(function BundleTableRow({
                 <s-stack direction="inline" gap="small" alignItems="center">
                     <s-checkbox
                         id={`bundle-listing-item-${bundle.id}`}
+                        aria-label={`Select ${bundle.name}`}
                         checked={isSelected}
                         onChange={(e: Event) => {
                             e.stopPropagation();

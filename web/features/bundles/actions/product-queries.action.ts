@@ -12,12 +12,15 @@ export async function fetchProductByIdAction(
     sessionToken: string,
     productId: string,
 ) {
-    await handleSessionToken(sessionToken);
+    const { shop, session } = await handleSessionToken(sessionToken);
 
+    // Pass { shop, accessToken } directly so executeGraphQLQuery takes the
+    // direct auth path and skips a second handleSessionToken call internally.
     const result = await executeGraphQLQuery<GetProductByIdQuery>({
         query: GetProductByIdDocument,
         variables: { id: productId },
-        sessionToken,
+        shop,
+        accessToken: session.accessToken,
     });
 
     if (!result.data?.product) {

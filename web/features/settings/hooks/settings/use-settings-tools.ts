@@ -27,10 +27,12 @@ import {
     saveSettingsAction,
 } from "@/features/settings/actions/settings.action";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function useSettingsTools(onImportSuccess?: () => void) {
     const app = useAppBridge();
     const queryClient = useQueryClient();
+    const t = useTranslations("Settings.Toast");
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { reset: resetSettings } = useRefetchSettings();
     const { openModal } = useModalStore();
@@ -77,14 +79,14 @@ export function useSettingsTools(onImportSuccess?: () => void) {
 
             if (result.status === "error") {
                 window.shopify?.toast?.show(
-                    result.message || "Failed to export settings",
+                    result.message || t("exportError"),
                     { duration: 5000, isError: true },
                 );
                 return;
             }
 
             if (!result.data) {
-                window.shopify?.toast?.show("No settings found to export", {
+                window.shopify?.toast?.show(t("exportNone"), {
                     duration: 3000,
                     isError: true,
                 });
@@ -93,12 +95,12 @@ export function useSettingsTools(onImportSuccess?: () => void) {
 
             downloadSettingsFile(result.data);
 
-            window.shopify?.toast?.show("Settings exported successfully", {
+            window.shopify?.toast?.show(t("exportSuccess"), {
                 duration: 3000,
             });
         } catch (error) {
             console.error("Export error:", error);
-            window.shopify?.toast?.show("An unexpected error occurred", {
+            window.shopify?.toast?.show(t("unexpectedError"), {
                 duration: 5000,
                 isError: true,
             });
@@ -122,14 +124,13 @@ export function useSettingsTools(onImportSuccess?: () => void) {
 
                     if (result.status === "error") {
                         window.shopify?.toast?.show(
-                            result.message || "Failed to import settings",
+                            result.message || t("importError"),
                             { duration: 5000, isError: true },
                         );
                     } else {
-                        window.shopify?.toast?.show(
-                            "Settings imported successfully",
-                            { duration: 3000 },
-                        );
+                        window.shopify?.toast?.show(t("importSuccess"), {
+                            duration: 3000,
+                        });
                         await resetSettings();
                         onImportSuccess?.();
                     }
@@ -138,7 +139,7 @@ export function useSettingsTools(onImportSuccess?: () => void) {
                     const message =
                         error instanceof Error
                             ? error.message
-                            : "Failed to read import file";
+                            : t("importFileError");
 
                     window.shopify?.toast?.show(message, {
                         duration: 5000,
@@ -164,7 +165,7 @@ export function useSettingsTools(onImportSuccess?: () => void) {
             const result = await syncMetafieldsAction(token);
 
             if (result.status === "error") {
-                window.shopify?.toast?.show(result.message || "Sync failed", {
+                window.shopify?.toast?.show(result.message || t("syncError"), {
                     duration: 5000,
                     isError: true,
                 });
@@ -175,7 +176,7 @@ export function useSettingsTools(onImportSuccess?: () => void) {
             syncModalTriggerRef.current?.click();
         } catch (error) {
             console.error("Sync error:", error);
-            window.shopify?.toast?.show("An unexpected error occurred", {
+            window.shopify?.toast?.show(t("unexpectedError"), {
                 duration: 5000,
                 isError: true,
             });
@@ -193,7 +194,7 @@ export function useSettingsTools(onImportSuccess?: () => void) {
 
             if (result.status === "error") {
                 window.shopify?.toast?.show(
-                    result.message || "Failed to check webhooks",
+                    result.message || t("webhookCheckError"),
                     { duration: 5000, isError: true },
                 );
                 return;
@@ -203,7 +204,7 @@ export function useSettingsTools(onImportSuccess?: () => void) {
             webhookCheckModalTriggerRef.current?.click();
         } catch (error) {
             console.error("Webhook check error:", error);
-            window.shopify?.toast?.show("An unexpected error occurred", {
+            window.shopify?.toast?.show(t("unexpectedError"), {
                 duration: 5000,
                 isError: true,
             });
@@ -225,19 +226,18 @@ export function useSettingsTools(onImportSuccess?: () => void) {
 
             if (result.status === "error") {
                 window.shopify?.toast?.show(
-                    result.message ||
-                        "Server cache clear failed, client caches cleared",
+                    result.message || t("cachePartialError"),
                     { duration: 5000, isError: true },
                 );
                 return;
             }
 
-            window.shopify?.toast?.show("All caches cleared", {
+            window.shopify?.toast?.show(t("cacheSuccess"), {
                 duration: 3000,
             });
         } catch (error) {
             console.error("Clear cache error:", error);
-            window.shopify?.toast?.show("An unexpected error occurred", {
+            window.shopify?.toast?.show(t("unexpectedError"), {
                 duration: 5000,
                 isError: true,
             });
@@ -254,7 +254,7 @@ export function useSettingsTools(onImportSuccess?: () => void) {
 
             if (result.status === "error") {
                 window.shopify?.toast?.show(
-                    result.message || "Failed to reset settings",
+                    result.message || t("resetError"),
                     { duration: 5000, isError: true },
                 );
                 return;
@@ -268,12 +268,12 @@ export function useSettingsTools(onImportSuccess?: () => void) {
             ) as any;
             resetModal?.hideOverlay?.();
 
-            window.shopify?.toast?.show("Settings reset to defaults", {
+            window.shopify?.toast?.show(t("resetSuccess"), {
                 duration: 3000,
             });
         } catch (error) {
             console.error("Reset settings error:", error);
-            window.shopify?.toast?.show("An unexpected error occurred", {
+            window.shopify?.toast?.show(t("unexpectedError"), {
                 duration: 5000,
                 isError: true,
             });
@@ -291,7 +291,7 @@ export function useSettingsTools(onImportSuccess?: () => void) {
 
             if (result.status === "error") {
                 window.shopify?.toast?.show(
-                    result.message || "Failed to register webhooks",
+                    result.message || t("webhookRegisterError"),
                     { duration: 5000, isError: true },
                 );
                 return;
@@ -301,7 +301,7 @@ export function useSettingsTools(onImportSuccess?: () => void) {
             webhookRegisterModalTriggerRef.current?.click();
         } catch (error) {
             console.error("Webhook register error:", error);
-            window.shopify?.toast?.show("An unexpected error occurred", {
+            window.shopify?.toast?.show(t("unexpectedError"), {
                 duration: 5000,
                 isError: true,
             });

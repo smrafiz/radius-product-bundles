@@ -29,6 +29,10 @@ export const setStoreInitializing = (value: boolean) => {
  * Triggers the save bar by dispatching a custom event.
  */
 const callTriggerSaveBar = () => {
+    if (isInitializing) {
+        return;
+    }
+
     if (typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent(TRIGGER_SAVE_BAR));
     }
@@ -42,6 +46,7 @@ export const useBundleStore = create(
         totalSteps: 4,
         bundleData: initialBundleData,
         selectedItems: [],
+        variantDataMap: {},
         pendingMedia: [],
         existingMedia: [],
         removedMediaIds: [],
@@ -194,6 +199,20 @@ export const useBundleStore = create(
         setSelectedItems: (items) => {
             set((state) => {
                 state.selectedItems = items;
+                // Merge variant data into stable map
+                for (const item of items) {
+                    if (item.variants) {
+                        for (const v of item.variants) {
+                            if (v.id && v.title) {
+                                state.variantDataMap[v.id] = {
+                                    title: v.title,
+                                    price: v.price,
+                                    image: v.image,
+                                };
+                            }
+                        }
+                    }
+                }
                 // Update bundle data products
                 state.bundleData.products = items.map((item) => ({
                     productId: item.productId,
@@ -213,7 +232,20 @@ export const useBundleStore = create(
                     quantity: item.quantity || 1,
                 }));
                 state.selectedItems.push(...itemsWithQuantity);
-
+                // Merge variant data into stable map
+                for (const item of items) {
+                    if (item.variants) {
+                        for (const v of item.variants) {
+                            if (v.id && v.title) {
+                                state.variantDataMap[v.id] = {
+                                    title: v.title,
+                                    price: v.price,
+                                    image: v.image,
+                                };
+                            }
+                        }
+                    }
+                }
                 // Update bundle data products
                 state.bundleData.products = state.selectedItems.map((item) => ({
                     productId: item.productId,

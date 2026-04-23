@@ -7,6 +7,7 @@ import {
     type VolumeDiscountConfig,
     type VolumeTier,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useState } from "react";
 import { formatDateLong, getCurrencySymbol, useShopSettings } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -23,7 +24,9 @@ function formatTierDiscount(
 export function VolumeReviewSection() {
     const t = useTranslations("Bundles.Creation.Review");
     const ts = useTranslations("Bundles.Statuses");
-    const { bundleData, selectedItems } = useBundleStore();
+    const { bundleData, selectedItems } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, selectedItems: s.selectedItems })),
+    );
     const { currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
     const [open, setOpen] = useState(true);
@@ -81,11 +84,11 @@ export function VolumeReviewSection() {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <s-heading>Volume Discount Tiers</s-heading>
+                        <s-heading>{t("volumeTiersHeading")}</s-heading>
                         <s-badge tone="info">
                             {discountType === "PERCENTAGE"
-                                ? "Percentage"
-                                : "Fixed Amount"}
+                                ? t("percentage")
+                                : t("fixedAmount")}
                         </s-badge>
                     </s-stack>
 

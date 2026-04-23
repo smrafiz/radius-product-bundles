@@ -9,7 +9,7 @@ import type {
     RawAnalyticsRow,
     RawBundleCountRow,
 } from "@/features/analytics";
-import { format, startOfDay } from "date-fns";
+import { startOfDay } from "date-fns";
 import { prisma } from "@/shared/repositories/prisma-connect";
 
 /**
@@ -26,7 +26,6 @@ export async function trackBundleView(
 
     const hour = dateObj.getHours();
     const date = startOfDay(dateObj);
-    const dateKey = format(date, "yyyy-MM-dd");
 
     let isNewView = false;
 
@@ -36,7 +35,7 @@ export async function trackBundleView(
                 data: {
                     bundleId,
                     customerId,
-                    date: dateKey,
+                    date,
                     timestamp: dateObj,
                 },
             });
@@ -52,7 +51,7 @@ export async function trackBundleView(
                 data: {
                     bundleId,
                     sessionId,
-                    date: dateKey,
+                    date,
                     timestamp: dateObj,
                 },
             });
@@ -209,7 +208,7 @@ export async function aggregateBundleMetrics(
                 COALESCE(SUM(ba."bundleRevenue"), 0) AS "alltimeRevenue"
             FROM bundle_analytics ba
             JOIN bundles b ON ba."bundleId" = b.id
-            WHERE b.shop = ${shop}
+            WHERE b.shop = ${shop} AND b.status != 'DELETED'
         `,
         // Single query: total + active bundle counts
         prisma.$queryRaw<RawBundleCountRow[]>`
@@ -273,7 +272,7 @@ export async function aggregateBundleMetricsByRange(
                 COALESCE(SUM(ba."bundleRevenue"), 0) AS "alltimeRevenue"
             FROM bundle_analytics ba
             JOIN bundles b ON ba."bundleId" = b.id
-            WHERE b.shop = ${shop}
+            WHERE b.shop = ${shop} AND b.status != 'DELETED'
         `,
         prisma.$queryRaw<RawBundleCountRow[]>`
             SELECT
@@ -370,6 +369,30 @@ export async function getAnalyticsTrend(
             date: "asc",
         },
     });
+}
+
+/**
+ * Prune bundle_analytics rows older than the given number of days.
+ * Returns the number of deleted rows.
+ */
+export async function pruneAnalytics(olderThanDays: number): Promise<number> {
+    const cutoff = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000);
+    const { count } = await prisma.bundleAnalytics.deleteMany({
+        where: { date: { lt: cutoff } },
+    });
+    return count;
+}
+
+/**
+ * Prune automation_logs rows older than the given number of days.
+ * Returns the number of deleted rows.
+ */
+export async function pruneAutomationLogs(olderThanDays: number): Promise<number> {
+    const cutoff = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000);
+    const { count } = await prisma.automationLog.deleteMany({
+        where: { createdAt: { lt: cutoff } },
+    });
+    return count;
 }
 
 /**

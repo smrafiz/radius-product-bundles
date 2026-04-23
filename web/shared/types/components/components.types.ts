@@ -103,13 +103,19 @@ export interface BundleWidgetProps {
     subtitle?: string;
     cartButtonText?: string;
     labels?: WidgetLabels;
+    badgeText?: string;
     hideFooter?: boolean;
     hideHeader?: boolean;
+    hidePricing?: boolean;
     hideOriginalPrice?: boolean;
     children: ReactNode;
 }
 
-export interface WidgetLabels extends Partial<AppSettingsLabels> {}
+export interface WidgetLabels extends Partial<AppSettingsLabels> {
+    bundleNotAvailableText?: string;
+    failedToLoadText?: string;
+    failedToDisplayText?: string;
+}
 
 export interface WidgetLayoutProps {
     products: PreviewProduct[];
@@ -133,6 +139,8 @@ export interface WidgetHeaderProps {
     pricing: WidgetPricing;
     title?: string;
     subtitle?: string;
+    labels?: WidgetLabels;
+    badgeText?: string;
 }
 
 export interface WidgetPricingProps {

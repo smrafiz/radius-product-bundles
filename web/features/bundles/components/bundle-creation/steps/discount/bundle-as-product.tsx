@@ -139,9 +139,9 @@ export function BundleAsProduct({ mode }: { mode: "create" | "edit" }) {
                     <s-text-field
                         label={t("title")}
                         name="productTitle"
-                        placeholder="Bundle Product #5"
+                        placeholder={t("productTitlePlaceholder")}
                         value={productTitle || ""}
-                        onChange={(event: Event) => {
+                        onInput={(event: Event) => {
                             const target = event.target as HTMLInputElement;
                             handleTitleChange(target.value);
                         }}

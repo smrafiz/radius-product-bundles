@@ -9,9 +9,11 @@ import { fetchProductsFromShopify } from "@/lib";
 
 export async function getRecentBundlesService({
     shop,
+    accessToken,
     limit = 5,
 }: {
     shop: string;
+    accessToken?: string;
     limit?: number;
 }): Promise<TopBundle[]> {
     const bundles = await getRecentActiveBundles(shop, limit);
@@ -24,7 +26,6 @@ export async function getRecentBundlesService({
     const analyticsRaw = await getAnalyticsForBundles(bundleIds);
     const analyticsMap = new Map(analyticsRaw.map((a) => [a.bundleId, a._sum]));
 
-    // Get mainProductIds and fetch product data from Shopify
     const mainProductIds = bundles
         .filter((b) => b.mainProductId)
         .map((b) => b.mainProductId!)
@@ -32,10 +33,10 @@ export async function getRecentBundlesService({
 
     let productMap: Map<string, any> = new Map();
     if (mainProductIds.length > 0) {
-        const productData = await fetchProductsFromShopify(
-            shop,
-            mainProductIds,
-        );
+        // Use { shop, accessToken } when available so fetchProductsFromShopify
+        // takes the cached path instead of the raw sessionToken fallback.
+        const auth = accessToken ? { shop, accessToken } : shop;
+        const productData = await fetchProductsFromShopify(auth, mainProductIds);
         productMap = productData.productMap;
     }
 
@@ -46,12 +47,11 @@ export async function getRecentBundlesService({
         const revenue = Number(stats?.bundleRevenue ?? 0);
         const addToCarts = stats?.bundleAddToCarts ?? 0;
 
-        // Get main product featured image as primary, fallback to bundle images
         const mainProduct = b.mainProductId
             ? productMap.get(b.mainProductId)
             : null;
-        const mainProductImage = mainProduct?.featuredImage;
-        const displayImage = mainProductImage || b.images?.[0];
+        const mainProductImageUrl = mainProduct?.featuredImage?.url ?? null;
+        const displayImage = mainProductImageUrl || b.images?.[0] || null;
 
         return {
             bundleId: b.id,
@@ -61,7 +61,7 @@ export async function getRecentBundlesService({
             discountType: b.discountType,
             discountValue: b.discountValue ? Number(b.discountValue) : null,
             createdAt: b.createdAt,
-            images: displayImage ? [displayImage] : b.images,
+            images: displayImage ? [displayImage] : (b.images ?? []),
             revenue,
             purchases,
             views,

@@ -32,7 +32,7 @@ export function SettingsTab() {
     const [activeTab, setActiveTab] = useState<SettingsTabId>(
         SETTINGS_TABS[0].id,
     );
-    
+
     const isMobile = useMediaQuery("(max-width: 768px)");
 
     const activeTabConfig = useMemo(

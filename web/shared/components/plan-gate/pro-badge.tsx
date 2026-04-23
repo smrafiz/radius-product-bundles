@@ -1,6 +1,6 @@
 "use client";
 
-import { useCrossSellStore } from "./cross-sell-modal";
+import { useCrossSellStore } from "@/shared";
 
 interface ProBadgeProps {
     label?: string;

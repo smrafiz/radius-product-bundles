@@ -155,9 +155,7 @@ export function AnalyticsDate() {
                                         />
                                     </div>
                                     <div className="absolute inset-0 flex items-center justify-center z-10">
-                                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-md">
-                                            <s-icon type="lock" tone="neutral" />
-                                        </span>
+                                        <ProBadge label="Custom Date Range" />
                                     </div>
                                 </div>
                             )}

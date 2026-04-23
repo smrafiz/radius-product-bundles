@@ -9,6 +9,7 @@ import {
     useBundleField,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useMemo, useState } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
 import { formatDateLong, useShopSettings } from "@/shared";
@@ -17,7 +18,13 @@ export function BxgyReviewSection() {
     const ts = useTranslations("Bundles.Statuses");
     const t = useTranslations("Bundles.Creation.Review");
     const { bundleData, getTriggerProducts, getRewardProducts } =
-        useBundleStore();
+        useBundleStore(
+            useShallow((s) => ({
+                bundleData: s.bundleData,
+                getTriggerProducts: s.getTriggerProducts,
+                getRewardProducts: s.getRewardProducts,
+            })),
+        );
     const { isLoading, currencyCode } = useShopSettings();
     const currencyFormatter = bundleCurrencyFormatter(currencyCode, isLoading);
 
@@ -59,14 +66,18 @@ export function BxgyReviewSection() {
         ? BUNDLE_STATUSES[bundleData.status]
         : BUNDLE_STATUSES.DRAFT;
 
-    let discountLabel = "at a discount";
-    if (discountType === "PERCENTAGE" && discountValue) {
+    let discountLabel = "";
+    if (discountType === "NO_DISCOUNT" || !discountType) {
+        discountLabel = t("atFullPrice");
+    } else if (discountType === "PERCENTAGE" && discountValue) {
         discountLabel =
             discountValue === 100 ? t("free") : `at ${discountValue}% off`;
     } else if (discountType === "FIXED_AMOUNT" && discountValue) {
         discountLabel = `at ${currencyFormatter(discountValue)} off`;
     } else if (discountType === "CUSTOM_PRICE" && discountValue) {
         discountLabel = `for ${currencyFormatter(discountValue)} each`;
+    } else {
+        discountLabel = "at a discount";
     }
 
     const round = (n: number) => Math.round(n * 100) / 100;
@@ -131,10 +142,12 @@ export function BxgyReviewSection() {
         p: (typeof triggerProducts)[0],
         role: "TRIGGER" | "REWARD",
     ) => {
-        const originalPrice = parseFloat(p.price || "0");
+        const qty = p.quantity || 1;
+        const unitPrice = parseFloat(p.price || "0");
+        const originalPrice = round(unitPrice * qty);
         const isReward = role === "REWARD";
         const finalPrice = isReward
-            ? getRewardPrice(originalPrice)
+            ? round(getRewardPrice(unitPrice) * qty)
             : originalPrice;
         const hasDiscount =
             isReward &&
@@ -154,9 +167,9 @@ export function BxgyReviewSection() {
                     direction="inline"
                     justifyContent="space-between"
                     alignItems="center"
-                    gap="base"
+                    gap="small-300"
                 >
-                    <s-stack gap="base" direction="inline">
+                    <s-stack gap="small" direction="inline">
                         {p.image ? (
                             <div className="w-10 h-10 bg-white border border-gray-200 rounded-md flex items-center justify-center overflow-hidden">
                                 <s-image
@@ -175,9 +188,10 @@ export function BxgyReviewSection() {
                         )}
                         <s-stack
                             direction="inline"
-                            gap="small"
+                            gap="small-200"
                             alignItems="center"
                         >
+                            <s-text color="subdued">{p.quantity || 1} x</s-text>
                             <s-heading>
                                 {p.title.replace(/ - .+$/, "")}
                             </s-heading>
@@ -290,17 +304,30 @@ export function BxgyReviewSection() {
                                 : t("notSet")}
                         </s-text>
                     </s-stack>
-                    <s-stack
-                        alignItems="center"
-                        justifyContent="space-between"
-                        direction="inline"
-                        gap="small-300"
-                    >
-                        <s-heading>{t("discountValue")}</s-heading>
-                        <s-text color="subdued">
-                            {isLoading ? "•" : formatDiscount()}
-                        </s-text>
-                    </s-stack>
+                    {discountType !== "NO_DISCOUNT" && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                            gap="small-300"
+                        >
+                            <s-heading>{t("discountValue")}</s-heading>
+                            <s-text color="subdued">
+                                {isLoading ? "•" : formatDiscount()}
+                            </s-text>
+                        </s-stack>
+                    )}
+                    {bundleData.freeShipping && (
+                        <s-stack
+                            alignItems="center"
+                            justifyContent="space-between"
+                            direction="inline"
+                            gap="small-300"
+                        >
+                            <s-heading>{t("freeShipping")}</s-heading>
+                            <s-text color="subdued">{t("yes")}</s-text>
+                        </s-stack>
+                    )}
                 </s-stack>
             </s-section>
 

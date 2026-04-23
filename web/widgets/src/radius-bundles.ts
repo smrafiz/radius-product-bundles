@@ -42,6 +42,7 @@ import "./scss/radius-bundles.scss";
      */
     interface BundleMetafieldData {
         status: string;
+        bundleType?: string;
         discountType: string;
         discountValue: number;
         freeShipping: boolean;
@@ -49,7 +50,13 @@ import "./scss/radius-bundles.scss";
         maxDiscountAmount: number;
         discountApplication: string;
         discountedProductIds: string[];
+        productCount?: number;
         productIds: string[];
+        volumeTiers?: {
+            discountType: string;
+            openEnded?: boolean;
+            tiers: Array<{ minQuantity: number; discount: number }>;
+        };
     }
 
     /**
@@ -96,7 +103,6 @@ import "./scss/radius-bundles.scss";
         bundleName: string;
         discountType: string;
         discountValue: number;
-        requiredLineCount: number;
         minOrderValue: number;
         maxDiscountAmount: number;
         discountApplication: string;
@@ -266,8 +272,9 @@ import "./scss/radius-bundles.scss";
 
                 for (const bundle of bundles) {
                     const itemCount = bundleItemCounts[bundle.bundleId] || 0;
-                    const required = bundle.requiredLineCount || 1;
-                    const hasItems = itemCount >= required;
+                    const settings = this.getBundleSettings(bundle.bundleId);
+                    const expectedCount = settings?.productCount || 1;
+                    const hasItems = itemCount >= expectedCount;
                     const isActive = this.isBundleActive(bundle.bundleId);
 
                     if (!hasItems || !isActive) {
@@ -563,6 +570,7 @@ import "./scss/radius-bundles.scss";
             items.forEach((item) => {
                 const bundleId = item.properties?._bundle_id;
                 if (bundleId) {
+                    // Count unique line items (not total qty) — used to check bundle completeness
                     counts[bundleId] = (counts[bundleId] || 0) + 1;
                 }
             });
@@ -579,18 +587,21 @@ import "./scss/radius-bundles.scss";
 
             bundles.forEach((bundle) => {
                 const itemCount = itemCounts[bundle.bundleId] || 0;
-                const required = bundle.requiredLineCount || 0;
+                const settings = this.cartCleanup.getBundleSettings(bundle.bundleId);
+                const expectedCount = settings?.productCount || 1;
 
                 if (
-                    itemCount >= required &&
-                    required > 0 &&
+                    itemCount >= expectedCount &&
                     this.cartCleanup.isBundleActive(bundle.bundleId)
                 ) {
                     const name = bundle.bundleName || "this bundle";
+                    const settings = this.cartCleanup.getBundleSettings(bundle.bundleId);
                     const message = this.formatBundleHtml(
                         bundle,
                         name,
                         highlightColor,
+                        itemCount,
+                        settings,
                     );
 
                     if (message) {
@@ -624,12 +635,36 @@ import "./scss/radius-bundles.scss";
             bundle: DiscountConfig,
             name: string,
             highlightColor: string,
+            itemCount?: number,
+            settings?: BundleMetafieldData | null,
         ): string | null {
-            // Don't escape HTML - name comes from our own bundle config
             const hl = (text: string) =>
                 `<strong style="color:${highlightColor}">${text}</strong>`;
 
             const labels = this.config.bannerLabels;
+
+            // For volume discounts, resolve the active tier
+            if (settings?.bundleType === "VOLUME_DISCOUNT" && settings.volumeTiers) {
+                const volConfig = typeof settings.volumeTiers === "string"
+                    ? JSON.parse(settings.volumeTiers as string)
+                    : settings.volumeTiers;
+                const tiers = volConfig?.tiers as Array<{ minQuantity: number; discount: number }>;
+                if (tiers?.length && itemCount) {
+                    const activeTier = [...tiers]
+                        .sort((a, b) => b.minQuantity - a.minQuantity)
+                        .find((t) => itemCount >= t.minQuantity);
+                    if (activeTier) {
+                        const discountType = volConfig.discountType || bundle.discountType;
+                        const template = labels?.savingText || "You're saving {discount} with {name}";
+                        const discountText = discountType === "PERCENTAGE"
+                            ? activeTier.discount + "%"
+                            : this.formatMoney(activeTier.discount);
+                        return template
+                            .replace("{discount}", hl(discountText))
+                            .replace("{name}", name);
+                    }
+                }
+            }
 
             switch (bundle.discountType) {
                 case "PERCENTAGE": {

@@ -1,4 +1,5 @@
 import { useBundleStore, useBundleValidation } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 
 /**
  * Step navigation
@@ -12,7 +13,17 @@ export function useStepNavigation() {
         setStep,
         canGoNext,
         canGoPrevious,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            currentStep: s.currentStep,
+            totalSteps: s.totalSteps,
+            nextStep: s.nextStep,
+            prevStep: s.prevStep,
+            setStep: s.setStep,
+            canGoNext: s.canGoNext,
+            canGoPrevious: s.canGoPrevious,
+        })),
+    );
 
     const { canProceedToNextStep } = useBundleValidation();
 

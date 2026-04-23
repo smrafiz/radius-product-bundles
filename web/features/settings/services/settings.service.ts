@@ -17,10 +17,12 @@ import {
 import {
     deleteSettingsByShopId,
     findSettingsByShopDomain,
+    findSettingsWithShop,
     findShopByDomain,
     upsertSettings,
 } from "@/features/settings/repositories";
 import { hasFeature, resolveShopPlan } from "@/shared/services/plan.service";
+import { PriorityType } from "@/features/bundles/constants/prisma-enums";
 import { appSettingsSchema } from "@/features/settings/schema/zod-schema.generator";
 
 /**
@@ -31,16 +33,15 @@ export async function getSettingsService(
 ): Promise<AppSettingsFormData | null> {
     const { shop, locale } = input;
 
-    const settings = await findSettingsByShopDomain(shop);
+    const result = await findSettingsWithShop(shop);
 
-    if (!settings) {
+    if (!result?.appSettings) {
         return null;
     }
 
-    const shopRecord = await findShopByDomain(shop);
-    const effectiveLocale = locale ?? shopRecord?.primaryLocale ?? "en";
+    const effectiveLocale = locale ?? result.primaryLocale ?? "en";
 
-    return transformSettingsToFormData(settings, effectiveLocale);
+    return transformSettingsToFormData(result.appSettings, effectiveLocale);
 }
 
 /**
@@ -72,16 +73,20 @@ export async function saveSettingsService(
 
     const validatedData = validationResult.data;
 
-    // Find shop by domain
-    const shopRecord = await findShopByDomain(shop);
+    // Single query for shop + settings, parallel with plan resolution
+    const [shopResult, plan] = await Promise.all([
+        findSettingsWithShop(shop),
+        resolveShopPlan(shop),
+    ]);
 
-    if (!shopRecord) {
+    if (!shopResult) {
         throw new Error(`Shop not found: ${shop}`);
     }
 
+    const { shopId, primaryLocale, appSettings: existingSettings } = shopResult;
+
     // If locale is provided, merge labels under that locale key
     if (locale && validatedData.labels) {
-        const existingSettings = await findSettingsByShopDomain(shop);
         const existingLabels = existingSettings?.labels as Record<
             string,
             any
@@ -90,7 +95,7 @@ export async function saveSettingsService(
         const allLocaleLabels = isLocaleKeyed(existingLabels)
             ? { ...existingLabels }
             : existingLabels
-              ? { [shopRecord.primaryLocale || "en"]: existingLabels }
+              ? { [primaryLocale || "en"]: existingLabels }
               : {};
 
         // Strip empty strings — they should fall back to defaults on the storefront
@@ -101,9 +106,6 @@ export async function saveSettingsService(
         allLocaleLabels[locale] = sanitizedLabels;
         validatedData.labels = allLocaleLabels as any;
     }
-
-    // Server-side enforcement: strip locked features for plans without access
-    const plan = await resolveShopPlan(shop);
 
     // Strip responsive overrides
     if (!hasFeature(plan, "responsive_overrides") && validatedData.globalStyles) {
@@ -123,7 +125,7 @@ export async function saveSettingsService(
 
     // Strip advanced cart controls — reset to safe defaults
     if (!hasFeature(plan, "advanced_cart_controls")) {
-        validatedData.bundlePriorityType = "index_based";
+        validatedData.bundlePriorityType = PriorityType.INDEX_BASED;
         validatedData.hidePaymentButtons = false;
         validatedData.maxBundlesPerOrder = 0;
         validatedData.showSavingsBanner = false;
@@ -137,7 +139,7 @@ export async function saveSettingsService(
     }
 
     const dbData = transformFormDataToSettings(validatedData, !!locale);
-    const savedSettings = await upsertSettings(shopRecord.id, dbData);
+    const savedSettings = await upsertSettings(shopId, dbData);
 
     return transformSettingsToFormData(savedSettings, locale);
 }
@@ -307,12 +309,15 @@ function transformFormDataToSettings(
         // General - Performance
         lazyLoadImages: data.lazyLoadImages,
 
-        // Labels (JSON field) — if locale pre-merged, pass through; otherwise sanitize flat labels
-        labels: data.labels
-            ? localePreMerged
-                ? data.labels
-                : sanitizeLabels(data.labels as Record<string, string>)
-            : null,
+        // Labels (JSON field) — if locale pre-merged, pass through; otherwise sanitize flat labels.
+        // undefined → omit from write (preserve existing); explicit null → clear.
+        ...(data.labels !== undefined && {
+            labels: data.labels
+                ? localePreMerged
+                    ? data.labels
+                    : sanitizeLabels(data.labels as Record<string, string>)
+                : null,
+        }),
 
         // Style (JSON field)
         globalStyles: data.globalStyles ?? null,

@@ -105,8 +105,15 @@ export async function markDiscountSetupDone(domain: string): Promise<void> {
     });
 }
 
+export async function resetSetupFlags(domain: string): Promise<void> {
+    await prisma.shop.updateMany({
+        where: { domain },
+        data: { setupComplete: false, discountSetupDone: false },
+    });
+}
+
 export async function getShopSubscription(domain: string) {
-    return prisma.shopPlan.findUnique({
-        where: { shop: domain },
+    return prisma.shopPlan.findFirst({
+        where: { shop: { domain } },
     });
 }

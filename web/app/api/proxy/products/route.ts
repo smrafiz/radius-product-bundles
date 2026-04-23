@@ -9,6 +9,7 @@ import { verifyProxyRequest } from "@/lib/shopify/proxy/verify-proxy";
 import { executeProxyGraphQL } from "@/lib/graphql/client/proxy-client";
 import { findBundlesByProductId } from "@/features/bundles/repositories";
 import { calculateDiscountAmount } from "@/features/bundles/utils/calculators/bundle-calculations";
+import { PriorityType } from "@/prisma/generated/client";
 
 async function getAccessTokenForShop(shop: string): Promise<string | null> {
     try {
@@ -51,6 +52,78 @@ function buildProductMap(
 
 function getPrice(product: any): number {
     return parseFloat(product?.variants?.nodes?.[0]?.price || "0");
+}
+
+/**
+ * Estimate max possible savings per bundle type for discount-based priority.
+ * FIXED_BUNDLE: standard discount on total price.
+ * BOGO/BUY_X_GET_Y: discount applied to reward products only.
+ * VOLUME_DISCOUNT: highest tier discount applied to all products.
+ */
+function estimateMaxSavings(bundle: any, productMap: Map<string, any>): number {
+    const products = bundle.bundleProducts || [];
+    const discountType = bundle.discountType || "PERCENTAGE";
+    const discountValue = bundle.discountValue || 0;
+    const maxCap = bundle.maxDiscountAmount || 0;
+
+    if (bundle.type === "BOGO" || bundle.type === "BUY_X_GET_Y") {
+        // Savings = discount on reward products only
+        const rewardTotal = products
+            .filter((bp: any) => bp.role === "REWARD")
+            .reduce(
+                (sum: number, bp: any) =>
+                    sum + getPrice(productMap.get(bp.productId)) * bp.quantity,
+                0,
+            );
+        return calculateDiscountAmount(
+            rewardTotal,
+            discountType,
+            discountValue,
+            maxCap,
+        );
+    }
+
+    if (bundle.type === "VOLUME_DISCOUNT" && bundle.volumeTiers) {
+        // Use highest tier for max savings estimate
+        const config =
+            typeof bundle.volumeTiers === "string"
+                ? JSON.parse(bundle.volumeTiers)
+                : bundle.volumeTiers;
+        const tiers = config?.tiers || [];
+        if (!tiers.length) return 0;
+
+        const bestTier = tiers.reduce(
+            (best: any, tier: any) =>
+                (tier.discount || 0) > (best.discount || 0) ? tier : best,
+            tiers[0],
+        );
+
+        const unitPrice = products.length
+            ? getPrice(productMap.get(products[0].productId))
+            : 0;
+        const totalAtTier = unitPrice * (bestTier.minQuantity || 1);
+        const tierDiscountType = config?.discountType || "PERCENTAGE";
+
+        return calculateDiscountAmount(
+            totalAtTier,
+            tierDiscountType,
+            bestTier.discount || 0,
+            maxCap,
+        );
+    }
+
+    // FIXED_BUNDLE and fallback: discount on full bundle price
+    const bundlePrice = products.reduce(
+        (sum: number, bp: any) =>
+            sum + getPrice(productMap.get(bp.productId)) * bp.quantity,
+        0,
+    );
+    return calculateDiscountAmount(
+        bundlePrice,
+        discountType,
+        discountValue,
+        maxCap,
+    );
 }
 
 export async function GET(request: NextRequest) {
@@ -169,36 +242,24 @@ export async function GET(request: NextRequest) {
         const productMap = buildProductMap(allProducts);
 
         const globalPriorityType =
-            shopRecord?.appSettings?.bundlePriorityType ?? "index_based";
+            shopRecord?.appSettings?.bundlePriorityType ?? PriorityType.INDEX_BASED;
 
         let savingsMap: Map<string, number> | null = null;
-        if (globalPriorityType === "discount_based") {
+        if (globalPriorityType === PriorityType.DISCOUNT_BASED) {
             savingsMap = new Map<string, number>();
             bundles.forEach((b) => {
-                const bundlePrice =
-                    b.bundleProducts?.reduce((sum, bp) => {
-                        return (
-                            sum +
-                            getPrice(productMap.get(bp.productId)) * bp.quantity
-                        );
-                    }, 0) || 0;
-                const savings = calculateDiscountAmount(
-                    bundlePrice,
-                    b.discountType || "PERCENTAGE",
-                    b.discountValue || 0,
-                    b.maxDiscountAmount || 0,
-                );
+                const savings = estimateMaxSavings(b, productMap);
                 savingsMap!.set(b.id, savings);
             });
         }
 
         const sortedBundles = bundles.sort((a, b) => {
             const aScore =
-                globalPriorityType === "discount_based"
+                globalPriorityType === PriorityType.DISCOUNT_BASED
                     ? (savingsMap?.get(a.id) ?? a.discountValue)
                     : (a.priority ?? 0);
             const bScore =
-                globalPriorityType === "discount_based"
+                globalPriorityType === PriorityType.DISCOUNT_BASED
                     ? (savingsMap?.get(b.id) ?? b.discountValue)
                     : (b.priority ?? 0);
 

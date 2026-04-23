@@ -2,7 +2,7 @@
 
 import { handleSessionToken } from "@/lib/shopify";
 import { createSubscriptionService } from "@/features/pricing/services/subscription.service";
-import { BillingInterval } from "@/features/pricing/types/pricing.types";
+import type { BillingInterval } from "@/prisma/generated/client";
 
 interface CreateSubscriptionResponse {
     status: "success" | "error";

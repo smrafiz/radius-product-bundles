@@ -12,7 +12,8 @@ import {
     useEditBundle,
     useEditBundleTransform,
 } from "@/features/bundles";
-import { useCallback, useMemo } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { useCallback, useEffect, useMemo } from "react";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslations } from "@/lib/i18n/provider";
 import { GlobalForm, useAppNavigation } from "@/shared";
@@ -62,7 +63,30 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
         clearPendingMedia,
         clearRemovedMediaIds,
         clearTouchedFields,
-    } = useBundleStore();
+        resetBundle,
+    } = useBundleStore(
+        useShallow((s) => ({
+            setStep: s.setStep,
+            setValidationAttempted: s.setValidationAttempted,
+            setBundleData: s.setBundleData,
+            setDisplaySettings: s.setDisplaySettings,
+            setSelectedItems: s.setSelectedItems,
+            clearPendingMedia: s.clearPendingMedia,
+            clearRemovedMediaIds: s.clearRemovedMediaIds,
+            clearTouchedFields: s.clearTouchedFields,
+            resetBundle: s.resetBundle,
+        })),
+    );
+
+    // Clear store on unmount only. Prevents stale data leaking to the next
+    // bundle edit page. Do NOT reset on mount — resetBundle() fires after
+    // useBundleDataSync/useEditBundle effects and wipes their hydration,
+    // leaving selectedItems permanently empty on second visits.
+    useEffect(() => {
+        return () => {
+            resetBundle();
+        };
+    }, [resetBundle]);
     const initialData = useEditBundleTransform(bundleData);
     useBundleDataSync(bundleData);
 
@@ -255,6 +279,13 @@ export function EditBundlePage({ params }: { params: { id: string } }) {
                     bundleType={bundleData.type}
                     bundleName={bundleData.name}
                     bundleId={bundleId}
+                    updatedAt={
+                        bundleData.updatedAt
+                            ? typeof bundleData.updatedAt === "string"
+                                ? bundleData.updatedAt
+                                : new Date(bundleData.updatedAt).toISOString()
+                            : undefined
+                    }
                 />
             </GlobalForm>
         </BundleFormProvider>

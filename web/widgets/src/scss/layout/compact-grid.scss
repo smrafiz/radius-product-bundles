@@ -38,7 +38,7 @@
     &__banner-text {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 5px;
         min-width: 0;
     }
 
@@ -79,7 +79,7 @@
         display: flex;
         align-items: stretch;
         gap: 4px;
-        padding: var(--rb-gap-spacing, 12px);
+        padding: var(--rb-box-spacing, 12px) var(--rb-box-spacing, 12px) 10px;
         position: relative;
     }
 
@@ -93,7 +93,7 @@
         background: var(--rb-product-bg-color, #fff);
 
         &--trigger {
-            border: 1.5px solid
+            border: 1px solid
                 color-mix(
                     in srgb,
                     var(--rb-primary-color, #e0598b) 13%,
@@ -102,7 +102,7 @@
         }
 
         &--reward {
-            border: 1.5px solid
+            border: 1px solid
                 color-mix(
                     in srgb,
                     var(--rb-savings-color, #16a34a) 13%,
@@ -145,7 +145,7 @@
     }
 
     &__tile--trigger &__tile-image {
-        border: 2px solid
+        border: 1px solid
             color-mix(
                 in srgb,
                 var(--rb-primary-color, #e0598b) 20%,
@@ -154,7 +154,7 @@
     }
 
     &__tile--reward &__tile-image {
-        border: 2px solid
+        border: 1px solid
             color-mix(
                 in srgb,
                 var(--rb-savings-color, #16a34a) 20%,
@@ -197,9 +197,11 @@
         color: var(--rb-text-color, #1a1a2e);
         text-align: center;
         line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
         max-width: 100%;
         margin: 0;
         a {
@@ -223,7 +225,7 @@
     &__tile-price {
         font-size: var(--rb-body-font-size, 14px);
         font-weight: 600;
-        color: var(--rb-text-color, #1a1a2e);
+        color: var(--rb-text-color, #333);
 
         &--reward {
             color: var(--rb-savings-color, #16a34a);
@@ -232,9 +234,8 @@
 
     &__tile-compare {
         font-size: calc(var(--rb-body-font-size) - 2px);
-        color: var(--rb-text-color);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
-        opacity: 0.5;
         font-weight: 500;
     }
 
@@ -302,15 +303,13 @@
     &__connector {
         width: 32px;
         height: 32px;
+        text-align: center;
+        line-height: 28px;
         border-radius: 50%;
         background: var(--rb-background-color, #fff);
-        border: 2px solid var(--rb-border-color, #e5e7eb);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        border: 1px solid var(--rb-border-color, #e5e7eb);
         font-size: 16px;
-        font-weight: 700;
-        color: var(--rb-text-color, #9ca3af);
+        color: var(--rb-text-color, #333);
         flex-shrink: 0;
         align-self: center;
     }
@@ -320,8 +319,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 10px var(--rb-gap-spacing, 12px) var(--rb-gap-spacing, 12px)
-        var(--rb-gap-spacing, 12px);
+        padding: 10px var(--rb-box-spacing, 12px) var(--rb-box-spacing, 12px);
         gap: 12px;
     }
 
@@ -332,14 +330,14 @@
 
     &__footer-label {
         font-size: calc(var(--rb-body-font-size) - 3px);
-        color: var(--rb-text-color, #1a1a2e);
+        color: var(--rb-text-color, #333);
         font-weight: 500;
     }
 
     &__footer-total {
         font-size: var(--rb-heading-font-size, 16px);
         font-weight: 600;
-        color: var(--rb-text-color, #1a1a2e);
+        color: var(--rb-text-color, #333);
         display: flex;
         align-items: baseline;
         flex-wrap: wrap;
@@ -363,6 +361,7 @@
     }
     .rb-cg__footer {
         flex-direction: column;
+        align-items: normal;
     }
     .rb-cg__dots {
         inset-inline: 0;

@@ -85,7 +85,12 @@ export function WidgetPricingDisplay({
                     </span>
                     <span
                         className="radius-bundle__price-original"
-                        style={{ textDecoration: "line-through", opacity: 0.7 }}
+                        style={{
+                            textDecoration: displayOptions.showComparePrices
+                                ? "line-through"
+                                : "none",
+                            opacity: 0.7,
+                        }}
                         aria-label={`Original price: ${pricing.originalPrice}`}
                     >
                         <span aria-hidden="true">{pricing.originalPrice}</span>

@@ -1,17 +1,20 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { triggerSaveBar, useModalStore } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useState } from "react";
 import { fetchProductByIdAction } from "@/features/bundles/actions";
 import { useBundleFormMethods, useBundleStore } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Hook for managing bundle product creation state
  */
 export function useBundleProduct(mode: "create" | "edit") {
-    const { watch, setValue } = useBundleFormMethods();
+    const { setValue } = useBundleFormMethods();
+    const { control } = useFormContext();
     const {
         bundleData,
         pendingMedia,
@@ -29,15 +32,35 @@ export function useBundleProduct(mode: "create" | "edit") {
         setHasManuallyEditedTitle,
         markDirty,
         markFieldTouched,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            bundleData: s.bundleData,
+            pendingMedia: s.pendingMedia,
+            existingMedia: s.existingMedia,
+            removedMediaIds: s.removedMediaIds,
+            addPendingFiles: s.addPendingFiles,
+            setExistingMedia: s.setExistingMedia,
+            removeExistingMedia: s.removeExistingMedia,
+            removePendingMedia: s.removePendingMedia,
+            clearPendingMedia: s.clearPendingMedia,
+            setPendingProductDeletion: s.setPendingProductDeletion,
+            hasLoadedProduct: s.hasLoadedProduct,
+            hasManuallyEditedTitle: s.hasManuallyEditedTitle,
+            setHasLoadedProduct: s.setHasLoadedProduct,
+            setHasManuallyEditedTitle: s.setHasManuallyEditedTitle,
+            markDirty: s.markDirty,
+            markFieldTouched: s.markFieldTouched,
+        })),
+    );
     const { trigger } = useFormContext();
     const { openModal } = useModalStore();
     const app = useAppBridge();
+    const t = useTranslations("Bundles.BundleAsProduct");
 
-    const bundleName = watch("name");
-    const createProduct = watch("createProduct");
-    const productTitle = watch("productTitle");
-    const productDescription = watch("productDescription");
+    const bundleName = useWatch({ control, name: "name" });
+    const createProduct = useWatch({ control, name: "createProduct" });
+    const productTitle = useWatch({ control, name: "productTitle" });
+    const productDescription = useWatch({ control, name: "productDescription" });
     const mainProductId = bundleData.mainProductId;
 
     const [isEnabled, setIsEnabled] = useState<boolean>(() => {
@@ -297,8 +320,8 @@ export function useBundleProduct(mode: "create" | "edit") {
                 if (typeof shopify !== "undefined" && shopify.toast?.show) {
                     shopify.toast.show(
                         invalidFiles.length === 1
-                            ? "File too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC"
-                            : `${invalidFiles.length} files too large or invalid type. Max 20MB. Allowed: JPEG, PNG, WebP, GIF, HEIC`,
+                            ? t("uploadInvalidSingle")
+                            : t("uploadInvalidMultiple", { count: invalidFiles.length }),
                         { isError: true },
                     );
                 }
@@ -331,7 +354,7 @@ export function useBundleProduct(mode: "create" | "edit") {
 
                 if (duplicateCount > 0) {
                     if (typeof shopify !== "undefined" && shopify.toast?.show) {
-                        shopify.toast.show("Duplicate image(s) already added", {
+                        shopify.toast.show(t("uploadDuplicate"), {
                             isError: true,
                             duration: 3000,
                         });

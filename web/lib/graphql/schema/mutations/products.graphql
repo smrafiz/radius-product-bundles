@@ -103,6 +103,19 @@ mutation ProductVariantsBulkUpdate(
     }
 }
 
+mutation ProductStatusUpdate($id: ID!, $status: ProductStatus) {
+    productUpdate(product: { id: $id, status: $status }) {
+        product {
+            id
+            status
+        }
+        userErrors {
+            field
+            message
+        }
+    }
+}
+
 mutation ProductDelete($productId: ID!) {
     productDelete(input: { id: $productId }) {
         deletedProductId

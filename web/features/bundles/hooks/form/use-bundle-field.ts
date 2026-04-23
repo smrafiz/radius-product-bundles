@@ -2,18 +2,21 @@
 
 import { useCallback } from "react";
 import { triggerSaveBar } from "@/shared";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { useBundleFormMethods, useBundleStore } from "@/features/bundles";
 
 /**
  * Hook for managing individual bundle form fields with validation.
+ * Uses useWatch for field-scoped re-renders — only re-renders when
+ * this specific field changes, not on any form field change.
  */
 export function useBundleField<T = string>(fieldName: string) {
-    const { watch, setValue } = useBundleFormMethods();
-    const { markDirty, markFieldTouched } = useBundleStore();
-    const { clearErrors, trigger } = useFormContext();
+    const { setValue } = useBundleFormMethods();
+    const markDirty = useBundleStore((s) => s.markDirty);
+    const markFieldTouched = useBundleStore((s) => s.markFieldTouched);
+    const { clearErrors, trigger, control } = useFormContext();
 
-    const value = watch(fieldName as any) as T;
+    const value = useWatch({ control, name: fieldName as any }) as T;
 
     /**
      * Handle field change with immediate error clearing.

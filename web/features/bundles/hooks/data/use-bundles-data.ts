@@ -64,7 +64,7 @@ export const useBundlesData = () => {
     /**
      * Get queries with current filters
      */
-    const { list, metrics } = bundlesQueries(
+    const { list } = bundlesQueries(
         app,
         pagination.currentPage,
         pagination.itemsPerPage,
@@ -93,19 +93,6 @@ export const useBundlesData = () => {
     });
 
     /**
-     * Fetch metrics
-     */
-    const {
-        data: metricsData,
-        isLoading: metricsLoading,
-        error: metricsError,
-    } = useQuery({
-        ...metrics,
-        staleTime: 2 * 60 * 1000,
-        refetchOnWindowFocus: false,
-    });
-
-    /**
      * Update store when data changes
      */
     useEffect(() => {
@@ -125,30 +112,28 @@ export const useBundlesData = () => {
      * Handle loading states - include fetching for pagination/filter changes
      */
     useEffect(() => {
-        setLoading(bundlesLoading || metricsLoading || bundlesFetching);
-    }, [bundlesLoading, metricsLoading, bundlesFetching, setLoading]);
+        setLoading(bundlesLoading || bundlesFetching);
+    }, [bundlesLoading, bundlesFetching, setLoading]);
 
     /**
      * Handle errors
      */
     useEffect(() => {
-        const error = bundlesError || metricsError;
-        if (error) {
-            const errorMsg = error.message || "Failed to load bundle data";
+        if (bundlesError) {
+            const errorMsg = bundlesError.message || "Failed to load bundle data";
             setError(errorMsg);
             showToast(errorMsg);
             setBundles([]);
         } else {
             setError(null);
         }
-    }, [bundlesError, metricsError, setError, showToast, setBundles]);
+    }, [bundlesError, setError, showToast, setBundles]);
 
     return {
         bundles: bundlesResponse?.bundles || [],
-        metrics: metricsData,
-        isLoading: bundlesLoading || metricsLoading,
+        isLoading: bundlesLoading,
         isFetching: bundlesFetching,
-        error: bundlesError || metricsError,
+        error: bundlesError,
         refetch: refetchBundles,
     };
 };

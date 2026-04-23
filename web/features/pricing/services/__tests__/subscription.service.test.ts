@@ -96,8 +96,7 @@ describe("handleSubscriptionWebhookService — plan resolution", () => {
     it("resolves PRO plan from stored billingId even if plan name changed", async () => {
         mockGetShopPlanRecord.mockResolvedValue({
             id: "1",
-            shop: "test.myshopify.com",
-            shopId: null,
+            shopId: "shop-id-1",
             billingId: "gid://shopify/AppSubscription/999",
             plan: "PRO" as any,
             status: "ACTIVE" as any,

@@ -60,7 +60,7 @@ export function setupGDPRWebHooks(path: string) {
                     // Log the compiled data for the merchant to fulfill the request.
                     // Per GDPR / Shopify requirements, the merchant must provide this
                     // data to the customer within 30 days of the request.
-                    console.log(
+                    console.info(
                         "[GDPR] customers/data_request — compiled customer data for merchant review.",
                         "shop:", shop,
                         "| data_request_id:", dataRequestId,

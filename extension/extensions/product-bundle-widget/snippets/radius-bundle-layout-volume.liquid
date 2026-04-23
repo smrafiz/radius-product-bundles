@@ -4,11 +4,15 @@
 {% render 'radius-bundle-skeleton', layout: 'volume_tier_list', tier_count: tier_count %}
 </div>
 <div class="rb-vol__action-bar">
-<div class="rb-vol__qty-selector" role="group" aria-label="{{ 'bundle.quantityLabel' | t }}">
+{%- if show_quantity -%}
+{%- if layout == 'volume_tier_list' or layout == 'volume_pricing_cards' -%}
+<div class="rb-vol__qty-selector" role="group" aria-label="{{ 'bundle.quantityLabel' | t | default: 'Quantity' }}">
 <button class="rb-vol__qty-btn" data-vol-qty-dec aria-label="Decrease quantity" disabled>−</button>
-<input class="rb-vol__qty-input" type="number" data-vol-qty value="1" min="1" aria-label="{{ 'bundle.quantityLabel' | t }}">
+<input class="rb-vol__qty-input" type="number" data-vol-qty value="1" min="1" aria-label="{{ 'bundle.quantityLabel' | t | default: 'Quantity' }}">
 <button class="rb-vol__qty-btn" data-vol-qty-inc aria-label="Increase quantity">+</button>
 </div>
+{%- endif -%}
+{%- endif -%}
 <div class="rb-vol__atc-wrap">
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text %}
 </div>

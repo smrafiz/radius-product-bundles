@@ -10,12 +10,13 @@ import {
     setStoreInitializing,
     useBundleStore,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import type { z } from "zod";
 import { useEffect, useMemo, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "@/lib/i18n/provider";
 import { useSettingsStore } from "@/features/settings";
-import { blockSaveBar, VALIDATION_ERROR } from "@/shared";
+import { blockSaveBar, usePlan, VALIDATION_ERROR } from "@/shared";
 import { BundleCreationSkeleton } from "@/features/bundles";
 import { FormProvider, type Resolver, useForm } from "react-hook-form";
 
@@ -37,15 +38,29 @@ export function BundleFormProvider({
         resetDirty,
         setStep,
         setValidationAttempted,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            selectedItems: s.selectedItems,
+            setBundleData: s.setBundleData,
+            resetBundle: s.resetBundle,
+            resetDirty: s.resetDirty,
+            setStep: s.setStep,
+            setValidationAttempted: s.setValidationAttempted,
+        })),
+    );
 
     const isEditMode = Boolean(initialData);
     const isInitialized = useRef(false);
     const settingsApplied = useRef(false);
-
     const serverData = useSettingsStore((s) => s.serverData);
     const isSettingsLoading = useSettingsStore((s) => s.isLoading);
     const settings = useSettingsStore.getState().getEffectiveData();
+    const { plan } = usePlan();
+
+    const safeDiscountType = (type: unknown): DiscountType =>
+        typeof type === "string" && plan.limits.allowedDiscountTypes.includes(type as DiscountType)
+            ? (type as DiscountType)
+            : "PERCENTAGE";
 
     const isNewBundle = !initialData;
     const isWaitingForSettings =
@@ -59,8 +74,9 @@ export function BundleFormProvider({
             type: bundleType,
             status: initialData?.status || "DRAFT",
             products: initialData?.products || [],
-            discountType: (initialData?.discountType ??
-                settings.defaultDiscountType) as DiscountType,
+            discountType: initialData?.discountType
+                ? (initialData.discountType as DiscountType)
+                : safeDiscountType(settings.defaultDiscountType),
             discountValue:
                 initialData?.discountValue ??
                 (settings.defaultDiscountValue as number) ??
@@ -95,7 +111,7 @@ export function BundleFormProvider({
                 layout: getDefaultLayout(bundleType),
             },
         },
-        mode: "onChange",
+        mode: "onTouched",
     });
 
     const { setValue, watch } = form;
@@ -116,9 +132,7 @@ export function BundleFormProvider({
                 resetBundle(bundleType);
                 setBundleData({
                     type: bundleType,
-                    discountType:
-                        (settings?.defaultDiscountType as DiscountType) ??
-                        "PERCENTAGE",
+                    discountType: safeDiscountType(settings?.defaultDiscountType),
                     discountValue:
                         (settings?.defaultDiscountValue as number) ?? 0,
                 });
@@ -133,6 +147,52 @@ export function BundleFormProvider({
                 resetDirty();
             }, 300);
         }
+
+        return () => {
+            isInitialized.current = false;
+        };
+    }, []);
+
+    // Reset form when initial data is available in edit mode
+    useEffect(() => {
+        if (!isEditMode || !initialData) {
+            return;
+        }
+
+        form.reset(
+            {
+                name: initialData.name || "",
+                description: initialData.description || "",
+                type: bundleType,
+                status: initialData.status || "DRAFT",
+                products: initialData.products || [],
+                discountType: (initialData.discountType ?? "PERCENTAGE") as DiscountType,
+                discountValue: initialData.discountValue ?? 0,
+                minOrderValue: initialData.minOrderValue || undefined,
+                maxDiscountAmount: initialData.maxDiscountAmount || undefined,
+                startDate: initialData.startDate || undefined,
+                endDate: initialData.endDate || undefined,
+                mainProductId: initialData.mainProductId || undefined,
+                buyQuantity: initialData.buyQuantity ?? (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y" ? 1 : undefined),
+                getQuantity: initialData.getQuantity ?? (bundleType === "BOGO" || bundleType === "BUY_X_GET_Y" ? 1 : undefined),
+                minimumItems: initialData.minimumItems || undefined,
+                maximumItems: initialData.maximumItems || undefined,
+                volumeTiers: initialData.volumeTiers || undefined,
+                allowMixAndMatch: initialData.allowMixAndMatch || false,
+                mixAndMatchPrice: initialData.mixAndMatchPrice || undefined,
+                marketingCopy: initialData.marketingCopy || undefined,
+                seoTitle: initialData.seoTitle || undefined,
+                seoDescription: initialData.seoDescription || undefined,
+                images: initialData.images || [],
+                productGroups: initialData.productGroups || undefined,
+                settings: initialData.settings || {
+                    ...initialDisplaySettings,
+                    layout: getDefaultLayout(bundleType),
+                },
+            },
+            { keepDirty: false },
+        );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Listen for validation errors and navigate to the correct step
@@ -159,8 +219,7 @@ export function BundleFormProvider({
         if (isEditMode || settingsApplied.current || !serverData) return;
 
         const saved = useSettingsStore.getState().getEffectiveData();
-        const discountType =
-            (saved.defaultDiscountType as DiscountType) ?? "PERCENTAGE";
+        const discountType = safeDiscountType(saved.defaultDiscountType);
         const discountValue = (saved.defaultDiscountValue as number) ?? 0;
 
         setValue("discountType", discountType, { shouldDirty: false });
@@ -230,11 +289,11 @@ export function BundleFormProvider({
 
         const subscription = watch((value, { name, type }) => {
             if (name && type === "change") {
-                const updatedData = {
-                    [name]: value[name as keyof BundleFormData],
-                    type: bundleType,
-                };
-                setBundleData(updatedData as any);
+                const newValue = value[name as keyof BundleFormData];
+                const currentValue = (useBundleStore.getState().bundleData as any)[name];
+                // Skip store update if value hasn't actually changed
+                if (newValue === currentValue) return;
+                setBundleData({ [name]: newValue, type: bundleType } as any);
             }
         });
         return () => subscription.unsubscribe();

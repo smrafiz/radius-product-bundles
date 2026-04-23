@@ -46,11 +46,10 @@
     }
 
     &__subtitle {
-        font-size: calc(var(--rb-body-font-size) * 0.9);
-        color: var(--rb-muted-color);
-        font-weight: 400;
+        font-size: var(--rb-body-font-size);
+        color: color-mix(in srgb, var(--rb-text-color, #333) 80%, transparent);
         margin: 4px 0 0;
-        line-height: 1.4;
+        line-height: 1.3;
     }
 
     &__title-skeleton {

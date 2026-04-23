@@ -8,7 +8,12 @@ import {
     useBundleCreationForm,
 } from "@/features/bundles";
 import { TitleBar } from "@shopify/app-bridge-react";
-import { GlobalBanner, usePlan } from "@/shared";
+import {
+    formatRelativeDate,
+    GlobalBanner,
+    useNavigationActions,
+    usePlan,
+} from "@/shared";
 import { WidgetStatusBanner } from "@/features/dashboard";
 
 /**
@@ -18,6 +23,7 @@ export function BundleCreationForm({
     bundleType,
     bundleName,
     bundleId,
+    updatedAt,
 }: BundleCreationFormProps) {
     const {
         tc,
@@ -31,6 +37,7 @@ export function BundleCreationForm({
         isDuplicating,
         isCheckingStatus,
         viewPopoverId,
+        overflowMenuId,
         uniqueProducts,
         mainProductUrl,
         mainProductTitle,
@@ -44,6 +51,9 @@ export function BundleCreationForm({
     } = useBundleCreationForm({ bundleType, bundleName, bundleId });
     const { canUse } = usePlan();
     const canDuplicate = canUse("duplicate_bundle");
+    const { actions: navActions, isLoading: isNavLoading } =
+        useNavigationActions({ createNew: bundleData.create() });
+    const isCreatingNew = isNavLoading("createNew");
     const duplicateLabel = canDuplicate
         ? tc("duplicate")
         : `${tc("duplicate")} (Pro)`;
@@ -51,6 +61,15 @@ export function BundleCreationForm({
     return (
         <s-page heading={isEditMode ? tc("edit") : tc("create")}>
             <TitleBar title={isEditMode ? tc("edit") : tc("create")}>
+                {/*
+                 * `variant` on these <button> elements is intentional and not a
+                 * standard HTML attribute. App Bridge React's <TitleBar> scans its
+                 * children and reads the `variant` prop to determine button placement
+                 * and styling inside the Shopify Admin chrome (breadcrumb, primary, etc.).
+                 * These are processed by App Bridge — not rendered as plain HTML buttons —
+                 * so the non-standard attribute is correct here.
+                 * See: https://shopify.dev/docs/api/app-bridge-library/react-components/titlebar
+                 */}
                 <button variant="breadcrumb" onClick={bundleData.list()}>
                     {tc("breadcrumb")}
                 </button>
@@ -106,25 +125,36 @@ export function BundleCreationForm({
                         />
                     </s-stack>
 
-                    <div className="flex-1 flex items-center justify-between">
-                        <s-stack
-                            direction="inline"
-                            gap="base"
-                            alignItems="center"
-                        >
-                            <s-heading>
-                                <div className="text-xl">{pageProps.title}</div>
-                            </s-heading>
+                    <div className="flex-1 flex items-start justify-between">
+                        <s-stack gap="none">
+                            <s-stack
+                                direction="inline"
+                                gap="base"
+                                alignItems="center"
+                            >
+                                <s-heading>
+                                    <div className="text-xl">
+                                        {pageProps.title}
+                                    </div>
+                                </s-heading>
 
-                            {isEditMode && (
-                                <s-badge tone="neutral">
-                                    {pageProps.badgeLabel}
-                                </s-badge>
+                                {isEditMode && (
+                                    <s-badge tone="neutral">
+                                        {pageProps.badgeLabel}
+                                    </s-badge>
+                                )}
+                            </s-stack>
+                            {isEditMode && updatedAt && (
+                                <s-text color="subdued">
+                                    {tc("lastEdited", {
+                                        time: formatRelativeDate(updatedAt),
+                                    })}
+                                </s-text>
                             )}
                         </s-stack>
 
                         {isEditMode && bundleId && (
-                            <s-stack direction="inline" gap="small">
+                            <s-stack direction="inline" gap="small-300" alignItems="center">
                                 <s-button
                                     variant="secondary"
                                     icon="view"
@@ -144,14 +174,10 @@ export function BundleCreationForm({
                                 </s-button>
                                 <s-button
                                     variant="secondary"
-                                    tone="critical"
-                                    icon="delete"
-                                    onClick={handleDelete}
-                                    loading={isDeleting}
-                                    accessibilityLabel={tc("deleteBundle")}
-                                >
-                                    {tc("deleteBundle")}
-                                </s-button>
+                                    icon="menu-horizontal"
+                                    commandFor={overflowMenuId}
+                                    accessibilityLabel={tc("moreActions")}
+                                />
                             </s-stack>
                         )}
                     </div>
@@ -206,6 +232,35 @@ export function BundleCreationForm({
                                         </>
                                     )}
                                 </s-stack>
+                            </s-stack>
+                        </s-box>
+                    </s-popover>
+                )}
+
+                {/* Overflow menu popover */}
+                {overflowMenuId && (
+                    <s-popover id={overflowMenuId}>
+                        <s-box padding="small">
+                            <s-stack gap="small-200">
+                                <s-button
+                                    variant="tertiary"
+                                    icon="plus"
+                                    onClick={navActions.createNew}
+                                    loading={isCreatingNew}
+                                    disabled={isCreatingNew}
+                                >
+                                    {tc("createNew")}
+                                </s-button>
+                                <s-button
+                                    variant="tertiary"
+                                    tone="critical"
+                                    icon="delete"
+                                    onClick={handleDelete}
+                                    loading={isDeleting}
+                                    disabled={isDeleting}
+                                >
+                                    {tc("deleteBundle")}
+                                </s-button>
                             </s-stack>
                         </s-box>
                     </s-popover>

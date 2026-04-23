@@ -17,25 +17,22 @@ export function ModalHost() {
     const t = useTranslations("Modals");
     const tc = useTranslations("Common");
     const ts = useTranslations("Bundles.Statuses");
-    const [dateRange, setDateRange] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
     const isScheduledModal =
         modal.type === "status" &&
         "newStatus" in modal &&
         modal.newStatus === "SCHEDULED";
 
-    // Reset date range when modal changes
+    // Reset dates when modal changes
     useEffect(() => {
-        setDateRange("");
+        setStartDate("");
+        setEndDate("");
     }, [modal.type]);
 
     const disallowPast = getDisallowPastDates();
-
-    // Parse range value "YYYY-MM-DD--YYYY-MM-DD"
-    const [startDate, endDate] = dateRange.includes("--")
-        ? dateRange.split("--")
-        : ["", ""];
-    const hasValidDates = Boolean(startDate && endDate);
+    const hasValidStart = Boolean(startDate);
 
     const handleConfirm = async () => {
         if (!modal || modal.type === null || !("onConfirm" in modal)) {
@@ -46,10 +43,9 @@ export function ModalHost() {
             setError(null);
             setLoading(true);
 
-            const data =
-                isScheduledModal && hasValidDates
-                    ? { startDate, endDate }
-                    : undefined;
+            const data = isScheduledModal && hasValidStart
+                ? { startDate, endDate: endDate || undefined }
+                : undefined;
 
             await modal.onConfirm?.(data);
 
@@ -107,7 +103,7 @@ export function ModalHost() {
             id="radius-bundles-app-modal"
             accessibilityLabel="bundle app modal"
             heading={heading}
-            size={isScheduledModal ? "small" : "base"}
+            size="base"
         >
             {hasActiveModal && modal.error && (
                 <s-banner tone="critical">
@@ -120,42 +116,59 @@ export function ModalHost() {
             {isScheduledModal && (
                 <s-box paddingBlockStart="base">
                     <s-stack gap="base">
-                        <div className="flex flex-col items-center gap-4">
-                            {hasValidDates ? (
-                                <s-stack
-                                    direction="inline"
-                                    alignItems="center"
-                                    gap="small-300"
-                                >
-                                    <s-icon type="calendar" />
-                                    {formatDateLong(startDate)}
-                                    <s-icon type="arrow-right" />
-                                    <s-icon type="calendar" />
-                                    {formatDateLong(endDate)}
-                                </s-stack>
-                            ) : (
-                                <s-stack
-                                    direction="inline"
-                                    alignItems="center"
-                                    gap="small-300"
-                                >
-                                    <s-icon type="calendar" />
+                        {hasValidStart && (
+                            <s-stack
+                                direction="inline"
+                                alignItems="center"
+                                gap="small-300"
+                            >
+                                <s-icon type="calendar" />
+                                {formatDateLong(startDate)}
+                                {endDate && (
+                                    <>
+                                        <s-icon type="arrow-right" />
+                                        <s-icon type="calendar" />
+                                        {formatDateLong(endDate)}
+                                    </>
+                                )}
+                            </s-stack>
+                        )}
+                        <s-stack direction="inline" gap="base">
+                            <s-stack gap="small-300" alignItems="center">
+                                <s-heading>
+                                    Start date{" "}
+                                    <span style={{ color: "var(--p-color-text-critical)" }}>*</span>
+                                </s-heading>
+                                <s-date-picker
+                                    type="single"
+                                    disallow={disallowPast}
+                                    value={startDate}
+                                    onChange={(event: any) =>
+                                        setStartDate(
+                                            event.currentTarget.value ?? "",
+                                        )
+                                    }
+                                />
+                            </s-stack>
+                            <s-stack gap="small-300" alignItems="center">
+                                <s-heading>
+                                    End date{" "}
                                     <s-text color="subdued">
-                                        Select schedule dates
+                                        (optional)
                                     </s-text>
-                                </s-stack>
-                            )}
-                            <s-date-picker
-                                type="range"
-                                disallow={disallowPast}
-                                value={dateRange}
-                                onChange={(event: any) =>
-                                    setDateRange(
-                                        event.currentTarget.value ?? "",
-                                    )
-                                }
-                            />
-                        </div>
+                                </s-heading>
+                                <s-date-picker
+                                    type="single"
+                                    disallow={disallowPast}
+                                    value={endDate}
+                                    onChange={(event: any) =>
+                                        setEndDate(
+                                            event.currentTarget.value ?? "",
+                                        )
+                                    }
+                                />
+                            </s-stack>
+                        </s-stack>
                     </s-stack>
                 </s-box>
             )}
@@ -170,7 +183,9 @@ export function ModalHost() {
                     onClick={closeModal}
                     disabled={hasActiveModal && modal.loading}
                 >
-                    {(hasActiveModal && "cancelText" in modal && modal.cancelText) ||
+                    {(hasActiveModal &&
+                        "cancelText" in modal &&
+                        modal.cancelText) ||
                         tc("cancel", undefined, "Cancel")}
                 </s-button>
             )}
@@ -180,13 +195,15 @@ export function ModalHost() {
                 slot="primary-action"
                 variant="primary"
                 tone={destructive ? "critical" : undefined}
-                commandFor={isQuotaModal ? "radius-bundles-app-modal" : undefined}
+                commandFor={
+                    isQuotaModal ? "radius-bundles-app-modal" : undefined
+                }
                 command={isQuotaModal ? "--hide" : undefined}
                 onClick={isQuotaModal ? closeModal : handleConfirm}
                 loading={!isQuotaModal && hasActiveModal && modal.loading}
                 disabled={
                     (!isQuotaModal && hasActiveModal && modal.loading) ||
-                    (isScheduledModal && !hasValidDates)
+                    (isScheduledModal && !hasValidStart)
                 }
             >
                 {(hasActiveModal && modal.confirmText) ||

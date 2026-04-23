@@ -35,8 +35,16 @@ export function GlobalBanner() {
         return null;
     }
 
+    // Error messages use assertive live region to interrupt screen readers immediately.
+    // All other types use polite so as not to disrupt ongoing interaction.
+    const hasError = messages.some((m) => m.type === "error");
+
     return (
-        <div role="status" aria-live="polite" aria-atomic="false">
+        <div
+            role={hasError ? "alert" : "status"}
+            aria-live={hasError ? "assertive" : "polite"}
+            aria-atomic="false"
+        >
         <s-stack gap="base">
             {messages.map((message) => (
                 <s-banner

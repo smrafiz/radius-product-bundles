@@ -43,7 +43,18 @@ function ChecklistTriggerItem({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const imageSizePx = getImageSize(styles.imageSize);
     const cardBg = getCardBgColor(styles);
-
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
             {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
@@ -58,7 +69,7 @@ function ChecklistTriggerItem({
                 alignItems: "center",
                 gap: 12,
                 padding: 12,
-                border: `2px solid ${styles.borderColor || "#d1d5db"}`,
+                border: `1px solid ${styles.borderColor || "#d1d5db"}`,
                 borderRadius: cardRadius,
                 background: cardBg,
             }}
@@ -69,7 +80,7 @@ function ChecklistTriggerItem({
                     height: 20,
                     minWidth: 20,
                     borderRadius: 4,
-                    border: `2px solid ${styles.borderColor || "#d1d5db"}`,
+                    border: `1px solid ${styles.borderColor || "#d1d5db"}`,
                     background: styles.backgroundColor || "#fff",
                 }}
             />
@@ -100,12 +111,14 @@ function ChecklistTriggerItem({
                         fontSize: bodyFontSize,
                         fontWeight: 500,
                         color: styles.textColor,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "normal",
                     }}
                 >
-                    {product.title}
+                    {titleEl}
                 </div>
                 {quantityEl}
             </div>
@@ -158,11 +171,15 @@ function ChecklistRewardItem({
 }) {
     const bodyFontSize = getFontSize(styles.bodySize);
     const cardRadius = getCardRadius(styles.cornerStyle);
-    const freeText = PREVIEW_LABELS.bogoFreeText;
+    const freeText = labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText;
     const hasDiscount = !!product.compareAtPrice;
     const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
     const imageSizePx = getImageSize(styles.imageSize);
     const cardBg = getCardBgColor(styles);
+    const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
+    const displayTitle = product.variantTitle && !isDefaultVariant
+        ? `${product.title} / ${product.variantTitle}`
+        : product.title;
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
             {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
@@ -199,12 +216,14 @@ function ChecklistRewardItem({
                         fontSize: bodyFontSize,
                         fontWeight: 500,
                         color: styles.textColor,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
                         overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
+                        whiteSpace: "normal",
                     }}
                 >
-                    {product.title}
+                    {displayTitle}
                 </div>
                 {quantityEl}
                 <div
@@ -322,7 +341,7 @@ export function WidgetChecklist({
             {/* Progress Section */}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {title && (
-                    <div
+                    <h3
                         style={{
                             fontSize: headingFontSize,
                             fontWeight: 600,
@@ -330,10 +349,10 @@ export function WidgetChecklist({
                         }}
                     >
                         {title || PREVIEW_LABELS.headingLabel}
-                    </div>
+                    </h3>
                 )}
                 {subtitle && (
-                    <div
+                    <p
                         style={{
                             fontSize: bodyFontSize,
                             color: styles.textColor,
@@ -343,7 +362,7 @@ export function WidgetChecklist({
                         }}
                     >
                         {subtitle}
-                    </div>
+                    </p>
                 )}
                 <div
                     style={{
@@ -427,8 +446,8 @@ export function WidgetChecklist({
             <div
                 style={{
                     border: isUnlocked
-                        ? `2px dashed ${styles.savingsColor || "#16a34a"}`
-                        : `2px solid ${styles.borderColor || "#d1d5db"}`,
+                        ? `1px dashed ${styles.savingsColor || "#16a34a"}`
+                        : `1px solid ${styles.borderColor || "#d1d5db"}`,
                     borderRadius: cardRadius,
                     padding: 16,
                     background: cardBg,

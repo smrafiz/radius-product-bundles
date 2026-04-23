@@ -126,6 +126,22 @@ export const DEFAULT_LABELS = {
     checklistUnlockedLabel: "",
     checklistPricingLockedText: "",
 
+    // Volume Discount Labels
+    volumeSelectQuantityLabel: "",
+    volumeYouSaveLabel: "",
+    volumeUnitLabel: "",
+    volumeUnitsLabel: "",
+    volumeTotalCostLabel: "",
+    volumeCostPerUnitLabel: "",
+    volumeRegularPriceLabel: "",
+    volumeSavePercentLabel: "",
+    volumeSaveAmountLabel: "",
+    volumeSaveCustomLabel: "",
+    volumeBuyUnitsLabel: "",
+    volumeBuyUnitsMoreLabel: "",
+    volumeSelectLabel: "",
+    volumeAppliedLabel: "",
+
     // Cart Banner
     bannerSavingText: "",
     bannerCustomPriceText: "",
@@ -167,6 +183,20 @@ export const LABEL_PLACEHOLDERS: Record<string, string> = {
     checklistLockedLabel: "Unlock by adding all items above",
     checklistUnlockedLabel: "Reward Unlocked",
     checklistPricingLockedText: "Select all items to see your price",
+    volumeSelectQuantityLabel: "Select Quantity",
+    volumeYouSaveLabel: "You save",
+    volumeUnitLabel: "unit",
+    volumeUnitsLabel: "units",
+    volumeTotalCostLabel: "Total Cost",
+    volumeCostPerUnitLabel: "Cost Per Unit",
+    volumeRegularPriceLabel: "Regular price",
+    volumeSavePercentLabel: "Save {discount}%",
+    volumeSaveAmountLabel: "Save {discount} off",
+    volumeSaveCustomLabel: "Save {discount}",
+    volumeBuyUnitsLabel: "Buy {qty} Units",
+    volumeBuyUnitsMoreLabel: "Buy {qty}+ Units",
+    volumeSelectLabel: "Select",
+    volumeAppliedLabel: "Applied",
     bannerSavingText: "You're saving {discount} with {name}",
     bannerCustomPriceText: "Special price: {price} for {name}",
     bannerFreeShippingQualifyText: "{name} qualifies for free shipping!",
@@ -341,14 +371,7 @@ export const DEFAULT_CUSTOMIZER_STYLES: CustomizerStyles = {
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - BUY X GET Y SPECIFIC
     // ═══════════════════════════════════════════════════════════════════
-    buyGetTierStyle: "cards",
     splitDealStyle: "row",
-
-    // ═══════════════════════════════════════════════════════════════════
-    // ADVANCED - VOLUME DISCOUNT SPECIFIC
-    // ═══════════════════════════════════════════════════════════════════
-    volumeTierHighlightColor: "#303030",
-    volumeTierStyle: "table",
 
     // ═══════════════════════════════════════════════════════════════════
     // ADVANCED - MIX & MATCH SPECIFIC
@@ -622,7 +645,7 @@ export const TEXT_SIZE_VALUES = {
  * Maps button size presets to styles.
  */
 export const BUTTON_SIZE_VALUES = {
-    small: { padding: "8px 16px", fontSize: 14 },
-    medium: { padding: "12px 24px", fontSize: 16 },
-    large: { padding: "16px 32px", fontSize: 18 },
+    small: { padding: "8px 16px", fontSize: 14, height: 36 },
+    medium: { padding: "12px 24px", fontSize: 16, height: 44 },
+    large: { padding: "16px 32px", fontSize: 18, height: 52 },
 } as const;

@@ -8,6 +8,7 @@ import {
     useBundleStore,
     useBundleValidation,
 } from "@/features/bundles";
+import { useShallow } from "zustand/react/shallow";
 import { useCallback, useEffect, useRef } from "react";
 import { useProductPicker } from "@/shared";
 import { useFormContext } from "react-hook-form";
@@ -23,7 +24,16 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
         bundleData,
         setSameProductMode,
         setItemRole,
-    } = useBundleStore();
+    } = useBundleStore(
+        useShallow((s) => ({
+            selectedItems: s.selectedItems,
+            setSelectedItems: s.setSelectedItems,
+            validationAttempted: s.validationAttempted,
+            bundleData: s.bundleData,
+            setSameProductMode: s.setSameProductMode,
+            setItemRole: s.setItemRole,
+        })),
+    );
     const { getAllErrors } = useBundleValidation();
     const { openProductPicker, isLoading } = useProductPicker();
     const { clearErrors } = useFormContext();
@@ -93,7 +103,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                 const mirrored = triggers.map((t) => ({
                     ...t,
                     role: "REWARD" as const,
-                    id: `reward-${t.productId}`,
+                    id: `reward-${t.id}`,
                 }));
                 const combined = [...withRoles, ...mirrored];
                 prevLengthRef.current = combined.length;
@@ -172,7 +182,7 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                 .map((item) => ({
                     ...item,
                     role: "REWARD" as const,
-                    id: `reward-${item.productId}`,
+                    id: `reward-${item.id}`,
                 }));
 
             const combined = [...currentNonReward, ...mirroredRewards];
@@ -245,9 +255,11 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                         )}
                     </s-stack>
                     {productErrorMessage && (
-                        <s-banner tone="critical" data-fieldid="products">
-                            {productErrorMessage}
-                        </s-banner>
+                        <div role="alert">
+                            <s-banner tone="critical" data-fieldid="products">
+                                {productErrorMessage}
+                            </s-banner>
+                        </div>
                     )}
                     {showProductHint && (
                         <s-banner tone="info">
@@ -256,12 +268,12 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                     )}
                     {isVolume && selectedItems.length === 0 && (
                         <s-banner tone="info">
-                            Select at least one product to apply volume discount tiers to.
+                            {t("volumeSelectOne")}
                         </s-banner>
                     )}
                     {isVolume && selectedItems.length > 1 && (
                         <s-banner tone="info">
-                            All selected products will share the same volume discount tiers. Customers buying any of these products will see the same volume discounts.
+                            {t("volumeMultiple")}
                         </s-banner>
                     )}
                     {isAtLimit && (
@@ -275,26 +287,33 @@ export function ProductsStep({ bundleType }: { bundleType: BundleType }) {
                                   })}
                         </s-banner>
                     )}
-                    <ProductList isBxgy={isBxgy} isBogo={isBogo} />
+                    <ProductList isBxgy={isBxgy} isBogo={isBogo} isVolume={isVolume} />
                     {isBxgy && (
-                        <s-switch
-                            label={t("sameProductLabel")}
-                            details={
-                                isBogo
-                                    ? t("sameProductBogoDetails")
-                                    : t("sameProductBxgyDetails")
-                            }
-                            checked={bundleData.sameProductMode || false}
-                            onInput={(event: Event) => {
-                                const target = event.target as HTMLInputElement;
-                                if (
-                                    target.checked !==
-                                    bundleData.sameProductMode
-                                ) {
-                                    handleSameProductToggle();
+                        <s-stack gap="small-200">
+                            <s-switch
+                                label={t("sameProductLabel")}
+                                details={
+                                    isBogo
+                                        ? t("sameProductBogoDetails")
+                                        : t("sameProductBxgyDetails")
                                 }
-                            }}
-                        />
+                                checked={bundleData.sameProductMode || false}
+                                onInput={(event: Event) => {
+                                    const target = event.target as HTMLInputElement;
+                                    if (
+                                        target.checked !==
+                                        bundleData.sameProductMode
+                                    ) {
+                                        handleSameProductToggle();
+                                    }
+                                }}
+                            />
+                            {!bundleData.sameProductMode && selectedItems.length > 0 && (
+                                <s-banner tone="info">
+                                    {t("sameProductHint")}
+                                </s-banner>
+                            )}
+                        </s-stack>
                     )}
                 </s-stack>
             </s-section>

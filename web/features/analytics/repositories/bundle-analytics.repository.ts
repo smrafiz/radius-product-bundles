@@ -216,6 +216,7 @@ export async function getPaginatedBundlesWithAnalytics(
         sortBy,
         sortOrder,
         search,
+        includeDeleted: true,
         ...(useDbPagination ? { page, perPage } : {}),
     });
 
@@ -281,6 +282,7 @@ export async function fetchBundlesWithAnalyticsCore(
         search = "",
         page,
         perPage,
+        includeDeleted = false,
     } = params;
 
     const DB_SORTABLE_FIELDS = [
@@ -297,6 +299,7 @@ export async function fetchBundlesWithAnalyticsCore(
 
     const bundleWhereClause: any = {
         shop,
+        ...(includeDeleted ? {} : { status: { not: "DELETED" as const } }),
     };
 
     if (search && search.trim() !== "") {
@@ -331,7 +334,7 @@ export async function fetchBundlesWithAnalyticsCore(
         prisma.bundleAnalytics.groupBy({
             by: ["bundleId"],
             where: {
-                bundle: { shop },
+                bundle: { shop, status: { not: "DELETED" as const } },
                 date: { gte: startDate, lte: endDate },
             },
             _sum: {

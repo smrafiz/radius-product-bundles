@@ -1,6 +1,13 @@
 jest.unmock("zod");
 jest.unmock("@/shared/constants");
 
+jest.mock("@/prisma/generated/client", () => ({
+    DiscountApplication: {
+        BUNDLE: "BUNDLE",
+        PRODUCTS: "PRODUCTS",
+    },
+}));
+
 jest.mock("@/shared", () => ({
     sanitizeText: (val: string) => val,
 }));
@@ -24,11 +31,30 @@ jest.mock("@/shared/constants", () => ({
         MIX_MATCH_PRICING: "Mix and match pricing required",
         END_DATE_AFTER_START: "End date must be after start date",
         SCHEDULED_DATES_REQUIRED: "Scheduled dates required",
+        SCHEDULED_START_DATE_REQUIRED: "Scheduled start date required",
         VOLUME_TIERS_REQUIRED: "Volume discount bundles require at least one tier",
+        QTY_REQUIRED: "Quantity is required",
+        DISCOUNT_REQUIRED: "Discount is required",
+        WHOLE_NUMBER: "Quantity must be a whole number",
+        MIN_QUANTITY: "Minimum quantity is 1",
+        DISCOUNT_NEGATIVE: "Discount cannot be negative",
+        DISCOUNT_MAX: "Discount exceeds maximum",
+        MAX_DECIMAL_PLACES: "Maximum 2 decimal places",
+        TIER_TITLE_REQUIRED: "Tier title is required",
+        TIER_TITLE_MAX: "Tier title too long",
+        TIER_SUBTITLE_MAX: "Tier subtitle too long",
+        MIN_TIERS: "At least one tier required",
+        MAX_TIERS: "Maximum 10 tiers",
+        TIER_ORDER: "Tier {index} must be greater than {value}",
+        TIER_PERCENTAGE_MAX: "Percentage discount cannot exceed 99.99%",
+        TIER_ONE_DEFAULT: "Only one tier can be pre-selected",
+        GROUP_NAME_REQUIRED: "Group name is required",
+        NO_PRODUCTS_SELECTED_VOLUME: "At least one product must be selected",
+        BXGY_QUANTITIES_REQUIRED_VOLUME: "Buy and get quantities required",
     },
 }));
 
-import { createBundleSchema } from "../zod.schema";
+import { createBundleSchema, volumeDiscountConfigSchema } from "../zod.schema";
 
 const VALIDATION_MESSAGES: Record<string, string> = {
     REQUIRED_FIELD: "This field is required",
@@ -48,7 +74,25 @@ const VALIDATION_MESSAGES: Record<string, string> = {
     MIX_MATCH_PRICING: "Mix and match pricing required",
     END_DATE_AFTER_START: "End date must be after start date",
     SCHEDULED_DATES_REQUIRED: "Scheduled dates required",
+    SCHEDULED_START_DATE_REQUIRED: "Scheduled start date required",
     VOLUME_TIERS_REQUIRED: "Volume discount bundles require at least one tier",
+    QTY_REQUIRED: "Quantity is required",
+    DISCOUNT_REQUIRED: "Discount is required",
+    WHOLE_NUMBER: "Quantity must be a whole number",
+    MIN_QUANTITY: "Minimum quantity is 1",
+    DISCOUNT_NEGATIVE: "Discount cannot be negative",
+    DISCOUNT_MAX: "Discount exceeds maximum",
+    MAX_DECIMAL_PLACES: "Maximum 2 decimal places",
+    TIER_TITLE_REQUIRED: "Tier title is required",
+    TIER_TITLE_MAX: "Tier title too long",
+    TIER_SUBTITLE_MAX: "Tier subtitle too long",
+    MIN_TIERS: "At least one tier required",
+    MAX_TIERS: "Maximum 10 tiers",
+    TIER_ORDER: "Tier {index} must be greater than {value}",
+    TIER_PERCENTAGE_MAX: "Percentage discount cannot exceed 99.99%",
+    TIER_ONE_DEFAULT: "Only one tier can be pre-selected",
+    GROUP_NAME_REQUIRED: "Group name is required",
+    NO_PRODUCTS_SELECTED_VOLUME: "At least one product must be selected",
 };
 
 const v = (key: string) => VALIDATION_MESSAGES[key] ?? key;
@@ -316,6 +360,51 @@ describe("Bundle Zod Schema", () => {
                 volumeBase([{ minQuantity: 2, discount: -5, title: "Bad" }]),
             );
             expect(result.success).toBe(false);
+        });
+
+        it("NaN minQuantity is rejected with 'Quantity is required'", () => {
+            const result = volumeDiscountConfigSchema.safeParse({
+                discountType: "PERCENTAGE",
+                openEnded: true,
+                tiers: [{ minQuantity: NaN, discount: 10, title: "Tier 1" }],
+            });
+            expect(result.success).toBe(false);
+            if (!result.success) {
+                const messages = result.error.issues.map((i) => i.message);
+                expect(messages.some((m) => m.includes("Quantity is required"))).toBe(true);
+            }
+        });
+
+        it("NaN discount is rejected with 'Discount is required'", () => {
+            const result = volumeDiscountConfigSchema.safeParse({
+                discountType: "PERCENTAGE",
+                openEnded: true,
+                tiers: [{ minQuantity: 2, discount: NaN, title: "Tier 1" }],
+            });
+            expect(result.success).toBe(false);
+            if (!result.success) {
+                const messages = result.error.issues.map((i) => i.message);
+                expect(messages.some((m) => m.includes("Discount is required"))).toBe(true);
+            }
+        });
+
+        it("QUANTITY_BREAKS discountValue=0 does not trigger percentage validation", () => {
+            const result = schema.safeParse(
+                makeBase({
+                    type: "VOLUME_DISCOUNT",
+                    discountType: "QUANTITY_BREAKS",
+                    discountValue: 0,
+                    products: [makeProduct()],
+                    volumeTiers: {
+                        discountType: "PERCENTAGE",
+                        openEnded: true,
+                        tiers: [
+                            { minQuantity: 2, discount: 10, title: "Tier 1" },
+                        ],
+                    },
+                }),
+            );
+            expect(result.success).toBe(true);
         });
     });
 
