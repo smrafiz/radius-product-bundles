@@ -67,6 +67,7 @@ export function WidgetList({
                                     justifyContent: "center",
                                     alignItems: "center",
                                     paddingTop: gap,
+                                    paddingBottom: gap,
                                 }}
                             >
                                 {styles.dividerStyle === "plus" ? (
@@ -83,8 +84,7 @@ export function WidgetList({
                                                 backgroundColor:
                                                     styles.primaryColor,
                                                 color: "#fff",
-                                                bottom: `calc(-1 * ${gap} / 2 - 8px)`,
-                                                marginBottom: `calc(${gap} / 2 - 4px)`,
+                                                position: "relative",
                                             }}
                                         >
                                             +
