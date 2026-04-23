@@ -1,33 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="168" height="136" viewBox="0 0 168 136" fill="none">
-  <rect width="168" height="136" rx="8" fill="#F9FAFB"/>
-  <!-- Card 1 -->
-  <rect x="6" y="8" width="46" height="80" rx="6" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
-  <rect x="14" y="16" width="30" height="5" rx="2" fill="#374151" opacity="0.6"/>
-  <rect x="18" y="24" width="22" height="4" rx="2" fill="#9CA3AF" opacity="0.5"/>
-  <rect x="12" y="36" width="34" height="8" rx="2" fill="#374151" opacity="0.7"/>
-  <rect x="14" y="50" width="30" height="12" rx="4" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
-  <text x="22" y="59" font-size="6" fill="#9CA3AF" font-family="system-ui">Select</text>
-  <!-- Card 2 (selected) -->
-  <rect x="58" y="4" width="52" height="88" rx="6" fill="#EEF2FF" stroke="#6366F1" stroke-width="1.5"/>
-  <rect x="67" y="6" width="34" height="10" rx="5" fill="#6366F1"/>
-  <text x="70" y="13" font-size="5" fill="#fff" font-family="system-ui" font-weight="600">POPULAR</text>
-  <rect x="68" y="22" width="32" height="5" rx="2" fill="#6366F1" opacity="0.7"/>
-  <rect x="72" y="30" width="24" height="4" rx="2" fill="#9CA3AF" opacity="0.5"/>
-  <rect x="66" y="42" width="36" height="8" rx="2" fill="#374151" opacity="0.8"/>
-  <rect x="72" y="54" width="24" height="8" rx="10" fill="#E8F5E9"/>
-  <text x="75" y="60" font-size="5" fill="#16A34A" font-family="system-ui" font-weight="600">-10%</text>
-  <rect x="66" y="68" width="36" height="14" rx="5" fill="#6366F1"/>
-  <text x="71" y="78" font-size="6" fill="#fff" font-family="system-ui" font-weight="500">Selected</text>
-  <!-- Card 3 -->
-  <rect x="116" y="8" width="46" height="80" rx="6" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
-  <rect x="124" y="16" width="30" height="5" rx="2" fill="#374151" opacity="0.6"/>
-  <rect x="128" y="24" width="22" height="4" rx="2" fill="#9CA3AF" opacity="0.5"/>
-  <rect x="122" y="36" width="34" height="8" rx="2" fill="#374151" opacity="0.7"/>
-  <rect x="126" y="50" width="26" height="8" rx="10" fill="#E8F5E9"/>
-  <text x="129" y="56" font-size="5" fill="#16A34A" font-family="system-ui" font-weight="600">-20%</text>
-  <rect x="124" y="64" width="30" height="12" rx="4" fill="#fff" stroke="#E5E7EB" stroke-width="1"/>
-  <text x="132" y="73" font-size="6" fill="#9CA3AF" font-family="system-ui">Select</text>
-  <!-- ATC -->
-  <rect x="8" y="108" width="152" height="20" rx="5" fill="#303030"/>
-  <text x="52" y="121" font-size="8" fill="#fff" font-family="system-ui" font-weight="500">Add to Cart</text>
+<svg width="96" height="76" viewBox="0 0 96 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="96" height="76" rx="3" fill="white"/>
+<rect x="8" y="64.4365" width="13.2295" height="2" rx="0.6" fill="#BDC5D7"/>
+<rect x="8.08594" y="67.9365" width="18" height="2" rx="0.6" fill="#BDC5D7"/>
+<rect x="49.7441" y="64.6235" width="38.2148" height="5.12646" rx="1" fill="#004BFF"/>
+<rect x="62.8516" y="66.1865" width="12" height="2" rx="0.6" fill="white"/>
+<line x1="8.25" y1="61.04" x2="87.75" y2="61.04" stroke="#DCDCDC" stroke-width="0.5" stroke-linecap="round"/>
+<line x1="8.25" y1="23.04" x2="87.75" y2="23.04" stroke="#DCDCDC" stroke-width="0.5" stroke-linecap="round"/>
+<g clip-path="url(#clip0_355_7472)">
+<rect x="7.87207" y="27.5" width="38" height="30" rx="1.5" fill="#ECEEF2"/>
+<rect x="14.8721" y="49.3999" width="24" height="4" rx="0.6" fill="#A1ACC9"/>
+<rect x="20.8721" y="50.8999" width="12" height="1" rx="0.2" fill="white"/>
+<rect x="21.8721" y="43.3999" width="10" height="2" rx="0.5" fill="#004BFF"/>
+<rect x="16.8721" y="33.3999" width="20" height="2" rx="0.5" fill="#A1ACC9"/>
+<rect x="19.8721" y="37.3999" width="14" height="1.4" rx="0.5" fill="#A1ACC9"/>
+</g>
+<g clip-path="url(#clip1_355_7472)">
+<rect x="50" y="27.5" width="38" height="30" rx="1.5" fill="#ECEEF2"/>
+<rect x="57" y="49.3999" width="24" height="4" rx="0.6" fill="#A1ACC9"/>
+<rect x="63" y="50.8999" width="12" height="1" rx="0.2" fill="white"/>
+<rect x="64" y="43.3999" width="10" height="2" rx="0.5" fill="#004BFF"/>
+<rect x="59" y="33.3999" width="20" height="2" rx="0.5" fill="#A1ACC9"/>
+<rect x="62" y="37.3999" width="14" height="1.4" rx="0.5" fill="#A1ACC9"/>
+</g>
+<rect x="8" y="7.5" width="80" height="12" rx="1.5" fill="#ECEEF2"/>
+<rect x="10" y="9.5" width="8" height="8" rx="1" fill="#7BA2FE"/>
+<rect x="21.2295" y="11.3999" width="26" height="1.4" rx="0.5" fill="#BDC5D7"/>
+<rect x="21.2295" y="14.3999" width="8" height="1.2" rx="0.5" fill="#004BFF"/>
+<defs>
+<clipPath id="clip0_355_7472">
+<rect x="7.87207" y="27.5" width="38" height="30" rx="1.5" fill="white"/>
+</clipPath>
+<clipPath id="clip1_355_7472">
+<rect x="50" y="27.5" width="38" height="30" rx="1.5" fill="white"/>
+</clipPath>
+</defs>
 </svg>
