@@ -236,5 +236,6 @@ export const ADVANCED_OPTIONS = [
         key: "enableHyperLink" as const,
         title: "Enable product page link",
         description: "Link product titles to their respective product pages.",
+        excludeFor: ["VOLUME_DISCOUNT"] as const,
     },
 ];
