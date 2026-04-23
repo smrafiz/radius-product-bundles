@@ -193,3 +193,12 @@ For each:
 - [Best practices for apps](https://shopify.dev/docs/apps/launch/shopify-app-store/best-practices)
 - [About billing for your app](https://shopify.dev/docs/apps/launch/billing)
 - [Submitting your app for review](https://shopify.dev/docs/apps/launch/app-store-review/submit-app-for-review)
+
+---
+
+## External Skill Reference
+
+The canonical, Shopify-maintained version of these requirements lives at:
+`/Users/radiustheme/.agents/skills/shopify-app-store-review/SKILL.md`
+
+If Shopify updates that skill (new requirements, changed guidance), read it and update this agent definition to stay in sync.

@@ -76,7 +76,7 @@ When blocked, stop immediately and report:
 > `BLOCKED | NEEDS_DECISION | UNCERTAINTY — [task] — [blocker] — [what is needed]`
 
 ## Shopify Platform Context
-- **API version**: 2025-10 (never use older versions)
+- **API version**: 2026-04 (never use older versions)
 - **App type**: Embedded app (direct API access enabled)
 - **Access mode**: Offline (long-lived tokens, no per-session tokens for background jobs)
 - **App Proxy**: `/apps/bundles/` → `/api/proxy/`
@@ -93,6 +93,15 @@ When blocked, stop immediately and report:
 ```
 
 ## Metafield Architecture
+
+### Conventions (from shopify-custom-data skill)
+Reference: `/Users/radiustheme/.agents/skills/shopify-custom-data/SKILL.md`
+- **Definitions**: TOML-first (`shopify.app.toml`), not GraphQL mutations
+- **Namespace**: Always `$app` — never bare `app` or custom namespaces
+- **Writes**: `metafieldsSet` (omit namespace, defaults to `$app`)
+- **Reads**: Via owner type with alias, prefer `jsonValue`
+- **Metaobjects**: `metaobjectUpsert`, type as `$app:typename`
+
 Namespace: `radius_bundles` (app-owned namespace)
 Key structure:
 - `global.styles` — AppSettings style JSON
