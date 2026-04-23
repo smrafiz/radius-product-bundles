@@ -92,6 +92,10 @@
         font-size: calc(var(--rb-body-font-size) - 2px);
         color: color-mix(in srgb, var(--rb-text-color, #333) 50%, transparent);
         text-decoration: line-through;
+
+        &--no-strikethrough {
+            text-decoration: none;
+        }
     }
 
     &__price-discounted {

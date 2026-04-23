@@ -3,7 +3,7 @@
 {%- unless compact -%}
 <div class="radius-bundle__pricing-row">
 <div class="radius-bundle__pricing-label">{{ regular_price_label }}</div>
-<div class="radius-bundle__price-original" data-regular-price><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div></div>
+<div class="radius-bundle__price-original{% unless show_compare_at_price %} radius-bundle__price-original--no-strikethrough{% endunless %}" data-regular-price><div class="radius-bundle__skeleton-text radius-bundle__skeleton-text--price"></div></div>
 </div>
 {%- endunless -%}
 <div class="radius-bundle__pricing-row{% if compact %} radius-bundle__pricing-row--compact{% endif %}{% unless compact %} radius-bundle__pricing-row--highlight{% endunless %}">

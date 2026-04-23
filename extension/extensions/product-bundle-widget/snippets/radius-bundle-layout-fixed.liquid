@@ -29,6 +29,6 @@
 </div>
 {% endif %}
 {%- assign is_compact = false -%}{%- if layout == 'compact' -%}{%- assign is_compact = true -%}{%- endif -%}
-{% render 'radius-bundle-pricing', show_savings: show_savings, show_free_shipping: show_free_shipping, regular_price_label: regular_price_label, bundle_price_label: bundle_price_label, you_save_label: you_save_label, free_shipping_label: free_shipping_label, pricing_summary_box: pricing_summary_box, compact: is_compact %}
+{% render 'radius-bundle-pricing', show_savings: show_savings, show_free_shipping: show_free_shipping, show_compare_at_price: show_compare_at_price, regular_price_label: regular_price_label, bundle_price_label: bundle_price_label, you_save_label: you_save_label, free_shipping_label: free_shipping_label, pricing_summary_box: pricing_summary_box, compact: is_compact %}
 {% render 'radius-bundle-add-to-cart', bundle_id: bundle_id, button_text: button_text %}
 </div>
