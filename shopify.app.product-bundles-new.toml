@@ -17,7 +17,7 @@ automatically_update_urls_on_dev = true
 dev_store_url = "radiusappsdemo.myshopify.com"
 
 [webhooks]
-api_version = "2026-01"
+api_version = "2026-04"
 
   [[webhooks.subscriptions]]
   topics = [
