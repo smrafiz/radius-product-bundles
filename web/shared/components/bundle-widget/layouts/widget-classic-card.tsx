@@ -46,6 +46,15 @@ function ClassicProductItem({
         ? `${product.title} / ${product.variantTitle}`
         : product.title;
 
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
+
     const imageBlock = product.image && displayOptions.showImages && (
         <div
             style={{
@@ -86,7 +95,7 @@ function ClassicProductItem({
                     WebkitBoxOrient: "vertical",
                 }}
             >
-                {displayTitle}
+                {titleEl}
             </div>
             <div
                 style={{

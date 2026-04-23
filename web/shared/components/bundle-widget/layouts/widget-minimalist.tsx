@@ -54,6 +54,15 @@ function MinimalistItem({
         ? `${product.title} / ${product.variantTitle}`
         : product.title;
 
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
+
     const quantityEl = displayOptions.showQuantity && bundleType !== "BOGO" && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
             {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
@@ -138,7 +147,7 @@ function MinimalistItem({
                         whiteSpace: "normal",
                     }}
                 >
-                    {displayTitle}
+                    {titleEl}
                 </span>
                 {quantityEl}
                 <div

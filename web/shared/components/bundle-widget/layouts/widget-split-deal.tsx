@@ -37,6 +37,14 @@ function SplitProductCard({
     const displayTitle = product.variantTitle && !isDefaultVariant
         ? `${product.title} / ${product.variantTitle}`
         : product.title;
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
     const cardBg = getCardBgColor(styles);
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
@@ -89,7 +97,7 @@ function SplitProductCard({
                         WebkitBoxOrient: "vertical",
                     }}
                 >
-                    {displayTitle}
+                    {titleEl}
                 </div>
                 {quantityEl}
                 <div

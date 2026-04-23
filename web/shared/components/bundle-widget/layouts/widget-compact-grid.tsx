@@ -33,6 +33,7 @@ function ProductTile({
         price: string;
         compareAtPrice?: string;
         quantity?: number;
+        url?: string;
     };
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
@@ -58,6 +59,14 @@ function ProductTile({
     const displayTitle = product.variantTitle && !isDefaultVariant
         ? `${product.title} / ${product.variantTitle}`
         : product.title;
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
     const rewardBadgeText =
         labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
     const rewardBadge = isFreePrice
@@ -144,7 +153,7 @@ function ProductTile({
                     maxWidth: "100%",
                 }}
             >
-                {displayTitle}
+                {titleEl}
             </div>
 
             {quantityEl}

@@ -47,7 +47,14 @@ function ChecklistTriggerItem({
     const displayTitle = product.variantTitle && !isDefaultVariant
         ? `${product.title} / ${product.variantTitle}`
         : product.title;
-
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
     const quantityEl = displayOptions.showQuantity && (
         <div style={{ opacity: 0.7, fontSize: "0.9em" }}>
             {labels?.quantityLabel || PREVIEW_LABELS.quantityLabel || "Qty:"}{" "}
@@ -111,7 +118,7 @@ function ChecklistTriggerItem({
                         whiteSpace: "normal",
                     }}
                 >
-                    {displayTitle}
+                    {titleEl}
                 </div>
                 {quantityEl}
             </div>

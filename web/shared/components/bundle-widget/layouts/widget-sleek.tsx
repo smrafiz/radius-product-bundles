@@ -43,6 +43,14 @@ function SleekProductCard({
     const displayTitle = product.variantTitle && !isDefaultVariant
         ? `${product.title} / ${product.variantTitle}`
         : product.title;
+    const titleEl =
+        displayOptions.enableHyperLink && product.url ? (
+            <a href={product.url} className="hover:underline">
+                {displayTitle}
+            </a>
+        ) : (
+            <span>{displayTitle}</span>
+        );
     const rewardBadgeText = isFreePrice
         ? freeText
         : pricing?.hasDiscount && pricing.savingsAmount
@@ -128,7 +136,7 @@ function SleekProductCard({
                         whiteSpace: "normal",
                     }}
                 >
-                    {displayTitle}
+                    {titleEl}
                 </div>
                 {quantityEl}
                 {isTrigger && displayOptions.showSavingsBadge ? (
