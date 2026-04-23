@@ -15,7 +15,6 @@ export function BundleWidget({
     subtitle,
     cartButtonText,
     labels,
-    badgeText,
     hideFooter,
     hideHeader,
     hidePricing,
@@ -31,7 +30,7 @@ export function BundleWidget({
                     pricing={pricing}
                     title={title || labels?.headingLabel}
                     subtitle={subtitle}
-                    badgeText={badgeText}
+                    labels={labels}
                 />
             )}
             {children}

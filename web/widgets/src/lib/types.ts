@@ -104,6 +104,13 @@ export interface BundleStructure {
         volumeTotalCostLabel?: string;
         volumeCostPerUnitLabel?: string;
         volumeRegularPriceLabel?: string;
+        volumeSavePercentLabel?: string;
+        volumeSaveAmountLabel?: string;
+        volumeSaveCustomLabel?: string;
+        volumeBuyUnitsLabel?: string;
+        volumeBuyUnitsMoreLabel?: string;
+        volumeSelectLabel?: string;
+        volumeAppliedLabel?: string;
         bundleNotAvailableText?: string;
         failedToLoadText?: string;
         failedToDisplayText?: string;

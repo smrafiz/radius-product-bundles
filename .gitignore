@@ -157,3 +157,4 @@ extension/extensions/**/*.js
 CLAUDE.md.backup-*
 .claude/supercharger-memory.md
 web/.claude/supercharger-memory.md
+claude-501/

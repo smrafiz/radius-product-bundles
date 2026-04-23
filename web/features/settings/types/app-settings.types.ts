@@ -60,6 +60,13 @@ export interface AppSettingsLabels {
     volumeTotalCostLabel: string;
     volumeCostPerUnitLabel: string;
     volumeRegularPriceLabel: string;
+    volumeSavePercentLabel: string;
+    volumeSaveAmountLabel: string;
+    volumeSaveCustomLabel: string;
+    volumeBuyUnitsLabel: string;
+    volumeBuyUnitsMoreLabel: string;
+    volumeSelectLabel: string;
+    volumeAppliedLabel: string;
 
     // Cart Banner
     bannerSavingText: string;

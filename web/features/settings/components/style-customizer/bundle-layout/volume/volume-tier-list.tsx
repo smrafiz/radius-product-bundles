@@ -13,8 +13,6 @@ import {
 import { useCallback, useState } from "react";
 
 import "@/styles/components/volume-preview.css";
-import { PREVIEW_LABELS } from "@/shared/constants/bundle-widget.constants";
-
 
 function badgeClass(style?: string): string {
     switch (style) {
@@ -83,7 +81,7 @@ export function VolumeTierList({ tiers, product, styles, displayOptions, labels 
                             {product?.title || "Product"}
                         </span>
                         <span className="rb-vol__product-base-price">
-                            {product?.basePrice || "0.00"} / {labels?.volumeUnitLabel || PREVIEW_LABELS.volumeUnitLabel}
+                            {product?.basePrice || "0.00"} / {labels?.volumeUnitLabel || "unit"}
                         </span>
                     </div>
                 </div>
@@ -97,9 +95,12 @@ export function VolumeTierList({ tiers, product, styles, displayOptions, labels 
                 {tiers.map((tier, i) => {
                     const isSelected = i === selectedIndex;
                     const isLast = i === tiers.length - 1;
-                    const qtyLabel = !isLast
-                        ? `Buy ${tier.qty}+ Units`
-                        : `Buy ${tier.qty} Units`;
+                    const moreTemplate = labels?.volumeBuyUnitsMoreLabel ?? "Buy {qty}+ Units";
+                    const exactTemplate = labels?.volumeBuyUnitsLabel ?? "Buy {qty} Units";
+                    const qtyLabel = (!isLast
+                        ? moreTemplate
+                        : exactTemplate
+                    ).replace("{qty}", String(tier.qty));
                     const resolvedTitle = tier.title || qtyLabel;
 
                     return (

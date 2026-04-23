@@ -160,7 +160,8 @@
     "ERROR_UNEXPECTED": "Erreur inattendue",
     "ERROR_SAVE_BUNDLE": "Échec de l'enregistrement de l'offre groupée",
     "SUCCESS_BUNDLE_CREATED": "Offre groupée créée avec succès !",
-    "SUCCESS_BUNDLE_UPDATED": "Offre groupée mise à jour avec succès !"
+    "SUCCESS_BUNDLE_UPDATED": "Offre groupée mise à jour avec succès !",
+    "NO_PRODUCTS_SELECTED_VOLUME": "Au moins un produit doit être sélectionné"
   },
   "Dashboard": {
     "title": "Bienvenue dans Radius Bundles",
@@ -415,7 +416,13 @@
       "endDate": "Date de fin",
       "optional": "facultatif",
       "dateRangeHint": "Définissez la période d'activation de cette offre groupée. La date de fin est facultative.",
-      "dateRequired": "Veuillez définir une date de début pour les offres groupées programmées."
+      "dateRequired": "Veuillez définir une date de début pour les offres groupées programmées.",
+      "notLiveDraft": "Cette offre groupée est à l'état de brouillon et ne sera pas affichée sur la vitrine de la boutique tant que son statut n'aura pas été défini sur Actif.",
+      "notLivePaused": "Cette offre groupée est en pause et n'est pas affichée sur la vitrine. Pour le réactiver, définissez son statut sur Actif.",
+      "notLiveArchived": "Cette offre groupée est archivée et ne sera pas affichée sur la vitrine de la boutique.",
+      "notLiveScheduled": "Cette offre groupée sera mise en ligne automatiquement à la date de début prévue.",
+      "notLiveScheduledOn": "Cette offre groupée sera mise en ligne automatiquement le {date}.",
+      "setToActive": "Définir sur Actif"
     },
     "Common": {
       "breadcrumb": "Offres groupées",
@@ -439,7 +446,8 @@
       "duplicateFailed": "Échec de la duplication de l'offre groupée",
       "checkStatus": "Vérifier le thème",
       "themeReady": "Le thème est correctement configuré",
-      "moreActions": "Plus d'actions"
+      "moreActions": "Plus d'actions",
+      "createNew": "Créer une nouvelle offre groupée"
     },
     "Selection": {
       "title": "Sélectionner le type d'offre groupée",
@@ -497,7 +505,9 @@
         "qty": "Qté :",
         "maxReached": "Nombre maximal de {count} produits atteint pour cette offre groupée.",
         "variantsSelected": "{count} variantes sélectionnées sur {total}",
-        "noProductsSelected": "Aucun produit sélectionné"
+        "noProductsSelected": "Aucun produit sélectionné",
+        "volumeSelectOne": "Sélectionnez au moins un produit auquel appliquer des niveaux de remise sur volume.",
+        "volumeMultiple": "Tous les produits sélectionnés bénéficieront des mêmes niveaux de remise sur volume. Les clients qui achèteront l'un de ces produits bénéficieront des mêmes remises sur volume."
       },
       "Discount": {
         "heading": "Paramètres de remise",
@@ -530,19 +540,19 @@
           "tooltip": "Définissez la progression des remises en fonction de la quantité. Pour chaque palier, une remise s'applique lorsque le client achète au moins la quantité spécifiée.",
           "discountType": "Type de remise",
           "percentage": "Pourcentage %",
-          "fixedAmount": "Fixed Amount {currency}",
+          "fixedAmount": "Montant fixe {currency}",
           "openEnded": "Palier supérieur illimité",
           "openEndedDetails": "Appliquer la remise du dernier palier à toutes les quantités supérieures au maximum.",
           "maxTiersReached": "Nombre maximal de 10 paliers atteint.",
           "addTier": "Ajouter un palier",
-          "tier": "Tier {number}",
-          "removeTier": "Remove tier {number}",
+          "tier": "Niveau {number}",
+          "removeTier": "Supprimer le niveau {number}",
           "minQuantity": "Quantité minimale",
           "minQuantityDetails": "Nombre minimum d'articles qu'un client doit ajouter au panier.",
-          "discount": "Discount ({suffix})",
+          "discount": "Remise ({suffix})",
           "discountDetails": "Remise appliquée lorsque ce niveau est activé.",
           "tierTitle": "Titre",
-          "tierTitleDetails": "Shown on the storefront. Use {quantity} and {discount} as dynamic variables.",
+          "tierTitleDetails": "Affiché sur la vitrine. Utiliser {quantity} et {discount} en tant que variables dynamiques.",
           "optionalSettings": "Paramètres facultatifs",
           "subtitle": "Sous-titre",
           "subtitleDetails": "Texte secondaire affiché sous le titre sur la vitrine.",
@@ -560,7 +570,10 @@
           },
           "tierHasErrors": "Ce niveau comporte des erreurs"
         },
-        "discountTypeLabel": "Type de réduction"
+        "discountTypeLabel": "Type de réduction",
+        "discountValueDesc": "Saisissez la réduction à appliquer lorsque les clients achètent cette offre groupée.",
+        "minOrderValueDesc": "Exiger un montant minimum du panier pour que cette remise s'applique.",
+        "maxDiscountDesc": "Fixer un plafond pour la réduction maximale qu'un client peut obtenir."
       },
       "BundleAsProduct": {
         "heading": "Offre groupée en tant que produit",
@@ -630,7 +643,8 @@
         "yes": "Oui",
         "volumeTiersHeading": "Paliers de remise sur volume",
         "percentage": "Pourcentage",
-        "fixedAmount": "Montant fixe"
+        "fixedAmount": "Montant fixe",
+        "atFullPrice": "au prix plein"
       },
       "Preview": {
         "heading": "Aperçu",
@@ -655,6 +669,10 @@
         "bogoBuyFallback": "Acheter",
         "bogoGetFallback": "Obtenir",
         "bogoFreeFallback": "Gratuit",
+        "bogoAtPercentOff": "avec {percent} % de réduction",
+        "bogoAtAmountOff": "{amount} de réduction",
+        "configureDiscountTiers": "Configurez les niveaux de remise pour afficher un aperçu.",
+        "savingsBadge": "Économisez {percent} %",
         "defaultTitle": "Créer une offre groupée et économiser",
         "defaultAddToCart": "Ajouter l'offre groupée au panier",
         "customizerDesktopLabel": "Ouvrir l'outil de personnalisation pour ordinateur de bureau",
@@ -788,7 +806,11 @@
         "MINIMALIST": "Minimaliste",
         "SLEEK": "Épuré",
         "CHECKLIST": "Liste de contrôle",
-        "SPLIT_DEAL": "Offre partagée"
+        "SPLIT_DEAL": "Offre partagée",
+        "VOLUME_TIER_LIST": "Liste des niveaux",
+        "VOLUME_PRICING_CARDS": "Fiches de tarification",
+        "VOLUME_SLIDER": "Curseur de quantité",
+        "VOLUME_CALCULATOR": "Calculateur d'économies"
       },
       "displaySettings": {
         "showImages": {
@@ -1250,6 +1272,9 @@
         "title": "Outils",
         "Sections": {},
         "Fields": {}
+      },
+      "plan": {
+        "title": "Abonnement et facturation"
       }
     },
     "Tools": {
@@ -1665,6 +1690,13 @@
       "volumeTotalCostLabel": "Coût total",
       "volumeCostPerUnitLabel": "Coût par unité",
       "volumeRegularPriceLabel": "Prix standard",
+      "volumeSelectLabel": "Sélectionner",
+      "volumeAppliedLabel": "Appliqué",
+      "volumeSavePercentLabel": "Économise {discount} % !",
+      "volumeSaveAmountLabel": "Économise {discount} !",
+      "volumeSaveCustomLabel": "Économise {discount} !",
+      "volumeBuyUnitsLabel": "Achète {qty} articles",
+      "volumeBuyUnitsMoreLabel": "Achète {qty} pièces ou plus",
       "bannerSavingText": "Vous économisez {discount} avec {name}",
       "bannerCustomPriceText": "Prix spécial : {price} pour {name}",
       "bannerFreeShippingQualifyText": "{name} : vous bénéficiez de la livraison gratuite !",
@@ -1895,7 +1927,24 @@
         }
       },
       "month": "mois",
-      "year": "année"
+      "year": "année",
+      "starter": {
+        "title": "Starter",
+        "featured": "Meilleur rapport qualité-prix",
+        "description": "Pour les boutiques en pleine croissance qui ont besoin de plus de puissance",
+        "button": "Choisir Starter"
+      },
+      "premium": {
+        "title": "Pro",
+        "description": "Pour les boutiques à fort volume d'activité ayant des besoins avancés",
+        "button": "Choisir Pro"
+      },
+      "features": {
+        "orders": "Traitez jusqu'à 1 000 commandes par mois",
+        "feature1": "Fonctionnalité exceptionnelle",
+        "feature2": "Une autre fonctionnalité vraiment géniale",
+        "support": "Assistance clientèle 24 h/24, 7 j/7"
+      }
     },
     "faqs": {
       "0": {
@@ -1917,6 +1966,102 @@
       "4": {
         "title": "Que se passe-t-il si je dépasse les limites de mon abonnement?",
         "description": "Avec l'offre Gratuite, vous recevrez une notification lorsque vous approcherez des limites de votre forfait ou de vos produits. Vous pouvez passer à l'offre Pro à tout moment pour bénéficier d'un accès illimité."
+      }
+    },
+    "Confirmation": {
+      "activating": "Activation de l'abonnement en cours…",
+      "activatingBody": "Veuillez patienter pendant que nous confirmons votre abonnement.",
+      "success": "Abonnement activé avec succès !",
+      "error": "Échec de l'activation de l'abonnement. Veuillez contacter l'assistance."
+    },
+    "PlanTab": {
+      "pageTitle": "Abonnement et facturation",
+      "back": "Retour",
+      "freePlan": "Formule gratuite",
+      "proPlan": "Formule Pro",
+      "statusActive": "Actif",
+      "statusFree": "Gratuit",
+      "trialDaysLeft": "{days} jours d'essai restants",
+      "upgradeToPro": "Passer à la formule Pro",
+      "billingInterval": "Période de facturation",
+      "nextBillingDate": "Prochaine date de facturation",
+      "price": "Prix",
+      "monthly": "Mensuel",
+      "annual": "Annuel",
+      "switchToMonthly": "Passer à l'abonnement mensuel",
+      "switchToAnnual": "Passer à l'abonnement annuel",
+      "cancelSubscription": "Résilier l'abonnement",
+      "cancelSuccess": "Abonnement résilié.",
+      "cancelError": "Échec de la résiliation de l'abonnement. Veuillez réessayer.",
+      "cancelModalTitle": "Résilier l'abonnement ?",
+      "cancelModalBody": "Vos fonctionnalités Pro resteront actives jusqu'à la fin de la période de facturation en cours. Après cette date, votre compte repassera à la formule Gratuite.",
+      "cancelModalKeep": "Conserver l'abonnement",
+      "cancelModalConfirm": "Résilier l'abonnement"
+    },
+    "PlanStatus": {
+      "title": "Formule",
+      "freePlan": "Gratuit",
+      "proPlan": "Pro",
+      "bundlesLabel": "Offres groupées",
+      "upgradeToPro": "Passer à la formule Pro",
+      "manageSubscription": "Gérer l'abonnement",
+      "nextBilling": "Prochaine facturation : {date}",
+      "trialDaysLeft": "Il reste {days} jours d'essai",
+      "billingMonthly": "Mensuel",
+      "billingAnnual": "Annuel",
+      "statTotalRevenue": "Chiffre d'affaires total",
+      "statOrders": "Commandes (30 jours)",
+      "statActiveBundles": "Offres groupées actives"
+    },
+    "ComparisonTable": {
+      "title": "Comparer les formules",
+      "subtitle": "Découvrez tout ce que chaque formule comprend",
+      "featureCol": "Fonctionnalité",
+      "unlimited": "Illimité",
+      "comingSoon": "Bientôt disponible",
+      "mostPopular": "Le plus populaire",
+      "categories": {
+        "bundles": "Offres groupées",
+        "analytics": "Analyses",
+        "advanced": "Fonctionnalités avancées",
+        "support": "Assistance"
+      },
+      "features": {
+        "maxBundles": "Nombre maximal d'offres groupées",
+        "maxProducts": "Produits par offre groupée",
+        "bundleTypes": "Types d'offres groupées",
+        "discountTypes": "Types de remises",
+        "bundleLayouts": "Mises en page des offres groupées",
+        "scheduledPaused": "Programmer et suspendre les offres groupées",
+        "analytics": "Analyses",
+        "customerJourneyFunnel": "Entonnoir du parcours client",
+        "conversionPerformance": "Performances en matière de conversion",
+        "revenueAnalysis": "Analyse du chiffre d'affaires",
+        "allBundlesPerformance": "Performances de toutes les offres groupées",
+        "exportData": "Exporter les données",
+        "abTesting": "Tests A/B",
+        "automation": "Automatisation",
+        "aiInsights": "Insights IA",
+        "customCss": "CSS personnalisé",
+        "responsiveOverrides": "Remplacements réactifs",
+        "bundleBehavior": "Contrôles du comportement des offres groupées",
+        "advancedDiscountControls": "Contrôles avancés des remises",
+        "maxBundlesPerOrder": "Nombre maximal d'offres groupées par commande",
+        "bundlePriorityStrategy": "Stratégie de priorité des offres groupées",
+        "hidePaymentButtons": "Masquer les boutons de paiement tiers",
+        "savingsBanner": "Afficher la bannière d'économies dans le panier",
+        "discountStacking": "Autoriser le cumul des remises",
+        "duplicateBundle": "Dupliquer l'offre groupée",
+        "autoTranslate": "Traduire automatiquement les libellés",
+        "support": "Type d'assistance"
+      },
+      "values": {
+        "basic": "Basique",
+        "full": "Complet",
+        "email": "E-mail",
+        "priority": "Prioritaire",
+        "layoutsFree": "2 par type",
+        "layoutsPro": "Toutes les mises en page"
       }
     }
   },

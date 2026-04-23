@@ -45,15 +45,24 @@ function calcSavingsDisplay(
     unitPriceCents: number,
     tier: VolumeTier,
     discountType: VolumeTiersConfig["discountType"],
+    savePercentLabel?: string,
+    saveAmountLabel?: string,
+    saveCustomLabel?: string,
 ): string {
     switch (discountType) {
-        case "PERCENTAGE":
-            return `Save ${Math.round(tier.discount)}%`;
-        case "FIXED_AMOUNT":
-            return `Save ${trimMoney(formatMoney(tier.discount * 100))} off`;
+        case "PERCENTAGE": {
+            const tmpl = savePercentLabel ?? "Save {discount}%";
+            return tmpl.replace("{discount}", String(Math.round(tier.discount)));
+        }
+        case "FIXED_AMOUNT": {
+            const tmpl = saveAmountLabel ?? "Save {discount} off";
+            return tmpl.replace("{discount}", trimMoney(formatMoney(tier.discount * 100)));
+        }
         case "CUSTOM_PRICE": {
             const saving = unitPriceCents - tier.discount * 100;
-            return saving > 0 ? `Save ${trimMoney(formatMoney(saving))}` : "";
+            if (saving <= 0) return "";
+            const tmpl = saveCustomLabel ?? "Save {discount}";
+            return tmpl.replace("{discount}", trimMoney(formatMoney(saving)));
         }
         default:
             return "";
@@ -103,27 +112,37 @@ function renderTierRow(
     showPrices: boolean,
     showComparePrices: boolean,
     showSavings: boolean,
+    savePercentLabel?: string,
+    saveAmountLabel?: string,
+    saveCustomLabel?: string,
+    buyUnitsLabel?: string,
+    buyUnitsMoreLabel?: string,
 ): string {
     const isDefault = !!tier.isDefault;
     const isLast = index === config.tiers.length - 1;
-    const qtyLabel = config.openEnded || !isLast
-        ? `${tier.minQuantity}+`
-        : `${tier.minQuantity}`;
+    const isOpenEnded = config.openEnded || !isLast;
+    const qtyStr = String(tier.minQuantity);
 
     const discountedCents = calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType);
     const hasDiscount = config.discountType !== "NO_DISCOUNT" && tier.discount > 0;
     const savingsText = showSavings && hasDiscount
-        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType)
+        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType, savePercentLabel, saveAmountLabel, saveCustomLabel)
         : "";
 
     const badgeHtml = tier.badge?.text
         ? `<span class="rb-vol__tier-badge ${badgeClass(tier.badge.style)}">${escapeHtml(tier.badge.text)}</span>`
         : "";
 
-    // Title: fall back to "Buy X Units"
-    const resolvedTitle = tier.title
-        ? escapeHtml(resolvePlaceholders(tier.title, tier, config.discountType))
-        : `Buy ${escapeHtml(qtyLabel)} Units`;
+    // Title: fall back to translated "Buy X Units" / "Buy X+ Units"
+    let resolvedTitle: string;
+    if (tier.title) {
+        resolvedTitle = escapeHtml(resolvePlaceholders(tier.title, tier, config.discountType));
+    } else {
+        const tmpl = isOpenEnded
+            ? (buyUnitsMoreLabel ?? "Buy {qty}+ Units")
+            : (buyUnitsLabel ?? "Buy {qty} Units");
+        resolvedTitle = escapeHtml(tmpl.replace("{qty}", qtyStr));
+    }
 
     // Savings line below title (green)
     const savingsLineHtml = savingsText
@@ -176,6 +195,7 @@ export function renderVolumeTable(
     showSavings: boolean,
     lazyLoadImages: boolean,
 ): void {
+    const labels = bundleStructure.labels;
     const imageHtml =
         showImages && productImageSrc
             ? `<div class="rb-vol__product-image">${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "thumb" })}</div>`
@@ -183,7 +203,14 @@ export function renderVolumeTable(
 
     const tiersHtml = config.tiers
         .map((tier, i) =>
-            renderTierRow(tier, i, config, unitPriceCents, showPrices, showComparePrices, showSavings),
+            renderTierRow(
+                tier, i, config, unitPriceCents, showPrices, showComparePrices, showSavings,
+                labels?.volumeSavePercentLabel,
+                labels?.volumeSaveAmountLabel,
+                labels?.volumeSaveCustomLabel,
+                labels?.volumeBuyUnitsLabel,
+                labels?.volumeBuyUnitsMoreLabel,
+            ),
         )
         .join("");
 
@@ -214,17 +241,22 @@ function renderPricingCard(
     unitPriceCents: number,
     showPrices: boolean,
     showSavings: boolean,
+    savePercentLabel?: string,
+    saveAmountLabel?: string,
+    saveCustomLabel?: string,
+    buyUnitsLabel?: string,
+    buyUnitsMoreLabel?: string,
+    selectLabel?: string,
 ): string {
     const isDefault = !!tier.isDefault;
     const isLast = index === config.tiers.length - 1;
-    const qtyLabel = config.openEnded || !isLast
-        ? `${tier.minQuantity}+`
-        : `${tier.minQuantity}`;
+    const isOpenEnded = config.openEnded || !isLast;
+    const qtyStr = String(tier.minQuantity);
 
     const discountedCents = calcDiscountedPricePerUnit(unitPriceCents, tier, config.discountType);
     const hasDiscount = config.discountType !== "NO_DISCOUNT" && tier.discount > 0;
     const savingsText = showSavings && hasDiscount
-        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType)
+        ? calcSavingsDisplay(unitPriceCents, tier, config.discountType, savePercentLabel, saveAmountLabel, saveCustomLabel)
         : "";
 
     const resolvedTitle = tier.title
@@ -236,9 +268,12 @@ function renderPricingCard(
         ? `<div class="rb-vol__card-popular-badge ${badgeClass(tier.badge?.style)}" aria-hidden="true">${escapeHtml(badgeText).toUpperCase()}</div>`
         : "";
 
+    const buyTmpl = isOpenEnded
+        ? (buyUnitsMoreLabel ?? "Buy {qty}+ Units")
+        : (buyUnitsLabel ?? "Buy {qty} Units");
     const subtitleText = tier.subtitle
         ? escapeHtml(resolvePlaceholders(tier.subtitle, tier, config.discountType))
-        : `Buy ${escapeHtml(qtyLabel)} Units`;
+        : escapeHtml(buyTmpl.replace("{qty}", qtyStr));
     const subtitleHtml = `<div class="rb-vol__card-subtitle">${subtitleText}</div>`;
 
     const priceHtml = showPrices && unitPriceCents > 0
@@ -249,7 +284,7 @@ function renderPricingCard(
         ? `<div class="rb-vol__card-savings">${escapeHtml(savingsText).toUpperCase()}</div>`
         : "";
 
-    const btnLabel = "Select";
+    const btnLabel = selectLabel ?? "Select";
     const savingsPart = savingsText ? `, ${savingsText}` : "";
     const badgePart = badgeText ? `, ${badgeText}` : "";
 
@@ -260,7 +295,7 @@ function renderPricingCard(
             role="button"
             tabindex="0"
             aria-pressed="${isDefault ? "true" : "false"}"
-            aria-label="${resolvedTitle}, Buy ${escapeHtml(qtyLabel)} units${escapeHtml(savingsPart)}${escapeHtml(badgePart)}">
+            aria-label="${resolvedTitle}, ${qtyStr} units${escapeHtml(savingsPart)}${escapeHtml(badgePart)}">
             ${badgeHtml}
             <div class="rb-vol__card-title">${resolvedTitle}</div>
             ${subtitleHtml}
@@ -284,6 +319,7 @@ export function renderVolumePricingCards(
     showSavings: boolean,
     lazyLoadImages: boolean,
 ): void {
+    const labels = bundleStructure.labels;
     const imageHtml =
         showImages && productImageSrc
             ? `<div class="rb-vol__product-image">${responsiveImg(productImageSrc, productTitle, { lazy: lazyLoadImages, size: "thumb" })}</div>`
@@ -291,7 +327,15 @@ export function renderVolumePricingCards(
 
     const cardsHtml = config.tiers
         .map((tier, i) =>
-            renderPricingCard(tier, i, config, unitPriceCents, showPrices, showSavings),
+            renderPricingCard(
+                tier, i, config, unitPriceCents, showPrices, showSavings,
+                labels?.volumeSavePercentLabel,
+                labels?.volumeSaveAmountLabel,
+                labels?.volumeSaveCustomLabel,
+                labels?.volumeBuyUnitsLabel,
+                labels?.volumeBuyUnitsMoreLabel,
+                labels?.volumeSelectLabel,
+            ),
         )
         .join("");
 

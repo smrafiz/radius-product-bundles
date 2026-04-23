@@ -6,7 +6,7 @@ import {
     getFontSize,
     getHeadingFontSize,
 } from "@/features/settings";
-import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function WidgetHeader({
     styles,
@@ -14,8 +14,9 @@ export function WidgetHeader({
     pricing,
     title,
     subtitle,
-    badgeText,
+    labels,
 }: WidgetHeaderProps) {
+    const t = useTranslations("Bundles.Creation.Preview");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
     const badgeRadius = getBadgeRadius(styles.cornerStyle);
 
@@ -50,7 +51,7 @@ export function WidgetHeader({
                         lineHeight: 1.3,
                     }}
                 >
-                    {title || DEFAULT_LABELS.headingLabel}
+                    {title || labels?.headingLabel || t("headingLabel")}
                 </div>
                 {subtitle && (
                     <p
@@ -68,13 +69,13 @@ export function WidgetHeader({
                 )}
             </div>
 
-            {displayOptions.showSavingsBadge && (badgeText || pricing.hasDiscount) && (
+            {displayOptions.showSavingsBadge && pricing.hasDiscount && (
                 <div
                     style={{ alignSelf: isInline ? "center" : undefined }}
                 >
                     <span
                         className="radius-bundle__badge"
-                        aria-label={badgeText ?? `Save ${pricing.savingsPercentage}%`}
+                        aria-label={t("savingsBadge", { percent: String(pricing.savingsPercentage) })}
                         style={{
                             display: "inline-block",
                             borderRadius: badgeRadius,
@@ -90,7 +91,7 @@ export function WidgetHeader({
                                 : "none",
                         }}
                     >
-                        {badgeText ?? `Save ${pricing.savingsPercentage}%`}
+                        {t("savingsBadge", { percent: String(pricing.savingsPercentage) })}
                     </span>
                 </div>
             )}

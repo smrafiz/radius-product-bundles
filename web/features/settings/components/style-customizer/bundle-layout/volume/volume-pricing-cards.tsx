@@ -13,7 +13,6 @@ import {
 import { useCallback, useState } from "react";
 
 import "@/styles/components/volume-preview.css";
-import { PREVIEW_LABELS } from "@/shared";
 
 function badgeClass(style?: string): string {
     switch (style) {
@@ -89,7 +88,7 @@ export function VolumePricingCards({
                             {product.title}
                         </span>
                         <span className="rb-vol__product-base-price">
-                            {product.basePrice} / {labels?.volumeUnitLabel || PREVIEW_LABELS.volumeUnitLabel}
+                            {product.basePrice} / {labels?.volumeUnitLabel || "unit"}
                         </span>
                     </div>
                 </div>
@@ -103,9 +102,9 @@ export function VolumePricingCards({
                 {tiers.map((tier, i) => {
                     const isSelected = i === selectedIndex;
                     const isLast = i === tiers.length - 1;
-                    const qtyLabel = !isLast
-                        ? `Buy ${tier.qty}+`
-                        : `Buy ${tier.qty}`;
+                    const moreTemplate = labels?.volumeBuyUnitsMoreLabel ?? "Buy {qty}+ Units";
+                    const exactTemplate = labels?.volumeBuyUnitsLabel ?? "Buy {qty} Units";
+                    const qtyFallback = (!isLast ? moreTemplate : exactTemplate).replace("{qty}", String(tier.qty));
                     const resolvedTitle =
                         tier.title ||
                         (i === 0
@@ -116,7 +115,7 @@ export function VolumePricingCards({
                                 ? "Bulk Deal"
                                 : `Tier ${i + 1}`);
                     const subtitleText =
-                        tier.subtitle || `Buy ${qtyLabel} Units`;
+                        tier.subtitle || qtyFallback;
                     const hasBadge = !!tier.badge?.text;
 
                     return (
@@ -182,7 +181,9 @@ export function VolumePricingCards({
                                 tabIndex={-1}
                                 aria-hidden="true"
                             >
-                                {isSelected ? "Applied" : "Select"}
+                                {isSelected
+                                    ? (labels?.volumeAppliedLabel || "Applied")
+                                    : (labels?.volumeSelectLabel || "Select")}
                             </button>
                         </li>
                     );

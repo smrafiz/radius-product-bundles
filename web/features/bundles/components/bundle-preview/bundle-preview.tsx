@@ -59,6 +59,7 @@ function buildVolumeLayoutTiers(
     config: VolumeDiscountConfig,
     currencyCode: string | undefined,
     basePrice?: number,
+    labels?: WidgetLabels,
 ): ReadonlyArray<VolumeLayoutTier> {
     return config.tiers.map((tier, index) => {
         const isLast = index === config.tiers.length - 1;
@@ -68,22 +69,40 @@ function buildVolumeLayoutTiers(
         let savings: string | undefined;
 
         if (config.discountType === "PERCENTAGE") {
-            savings = `Save ${Math.round(tier.discount)}%`;
+            const discountStr = `${Math.round(tier.discount)}%`;
+            const tmpl = labels?.volumeSavePercentLabel ?? "Save {discount}%";
+            savings = tmpl.replace("{discount}", String(Math.round(tier.discount)));
             if (basePrice && basePrice > 0) {
                 const discountedPrice = basePrice * (1 - tier.discount / 100);
                 price = formatPrice(Math.round(discountedPrice * 100) / 100, currencyCode);
                 comparePrice = formatPrice(basePrice, currencyCode);
             } else {
-                price = `${Math.round(tier.discount)}% off`;
+                price = `${discountStr} off`;
             }
-        } else {
-            savings = `Save ${formatPrice(tier.discount, currencyCode)} off`;
+        } else if (config.discountType === "FIXED_AMOUNT") {
+            const discountStr = formatPrice(tier.discount, currencyCode);
+            const tmpl = labels?.volumeSaveAmountLabel ?? "Save {discount} off";
+            savings = tmpl.replace("{discount}", discountStr);
             if (basePrice && basePrice > 0) {
                 const discountedPrice = Math.max(0, basePrice - tier.discount);
                 price = formatPrice(Math.round(discountedPrice * 100) / 100, currencyCode);
                 comparePrice = formatPrice(basePrice, currencyCode);
             } else {
-                price = `-${formatPrice(tier.discount, currencyCode)}`;
+                price = `-${discountStr}`;
+            }
+        } else if (config.discountType === "CUSTOM_PRICE") {
+            if (basePrice && basePrice > 0 && tier.discount < basePrice) {
+                const discountStr = formatPrice(basePrice - tier.discount, currencyCode);
+                const tmpl = labels?.volumeSaveCustomLabel ?? "Save {discount}";
+                savings = tmpl.replace("{discount}", discountStr);
+                price = formatPrice(tier.discount, currencyCode);
+                comparePrice = formatPrice(basePrice, currencyCode);
+            } else {
+                price = formatPrice(tier.discount, currencyCode);
+            }
+        } else {
+            if (basePrice && basePrice > 0) {
+                price = formatPrice(basePrice, currencyCode);
             }
         }
 
@@ -246,7 +265,7 @@ function RenderVolumeLayout({
     const numericBasePrice = rawBasePrice
         ? parseFloat(rawBasePrice.replace(/[^0-9.]/g, "")) || undefined
         : undefined;
-    const tiers = buildVolumeLayoutTiers(config, currencyCode, numericBasePrice);
+    const tiers = buildVolumeLayoutTiers(config, currencyCode, numericBasePrice, labels);
     const highlightColor = styles.primaryColor;
     const product = firstProduct
         ? {
@@ -511,24 +530,6 @@ function useBadgeText(labels: WidgetLabels): string {
     const { currencyCode } = useShopSettings();
     const currencySymbol = getCurrencySymbol(currencyCode);
 
-    // VOLUME_DISCOUNT badge: "Up to X% off" / "Up to $X off" / "From $X"
-    if (bundleData.type === "VOLUME_DISCOUNT") {
-        const volConfig = bundleData.volumeTiers as VolumeDiscountConfig | undefined;
-        if (!volConfig?.tiers?.length) return "";
-        const maxTier = volConfig.tiers[volConfig.tiers.length - 1];
-        const firstTier = volConfig.tiers[0];
-        if (volConfig.discountType === "PERCENTAGE") {
-            return `Up to ${Math.round(maxTier.discount)}% off`;
-        }
-        if (volConfig.discountType === "FIXED_AMOUNT") {
-            return `Up to ${currencySymbol}${maxTier.discount} off`;
-        }
-        if (volConfig.discountType === "CUSTOM_PRICE") {
-            return `From ${currencySymbol}${firstTier.discount}`;
-        }
-        return "";
-    }
-
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
 
     const countExpanded = (role: string) =>
@@ -559,10 +560,10 @@ function useBadgeText(labels: WidgetLabels): string {
         return `${buyWord} ${buy} ${getWord} ${get} ${freeWord}`;
     }
     if (discountType === "PERCENTAGE" && discountValue > 0) {
-        return `${buyWord} ${buy} ${getWord} ${get} at ${discountValue}% Off`;
+        return `${buyWord} ${buy} ${getWord} ${get} ${t("bogoAtPercentOff", { percent: String(discountValue) })}`;
     }
     if (discountType === "FIXED_AMOUNT" && discountValue > 0) {
-        return `${buyWord} ${buy} ${getWord} ${get} - ${currencySymbol}${discountValue} Off`;
+        return `${buyWord} ${buy} ${getWord} ${get} - ${t("bogoAtAmountOff", { amount: `${currencySymbol}${discountValue}` })}`;
     }
     return `${buyWord} ${buy} ${getWord} ${get}`;
 }
@@ -910,7 +911,6 @@ export function BundlePreview() {
                                             title={displaySettings.title}
                                             subtitle={displaySettings.subtitle}
                                             labels={labels}
-                                            badgeText={badgeText}
                                             hideFooter
                                             hidePricing
                                         >
@@ -956,7 +956,7 @@ export function BundlePreview() {
                                     fontSize: 14,
                                 }}
                             >
-                                Configure discount tiers to see a preview.
+                                {t("configureDiscountTiers")}
                             </div>
                         )
                     ) : (
