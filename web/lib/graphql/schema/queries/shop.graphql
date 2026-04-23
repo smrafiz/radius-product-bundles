@@ -11,10 +11,10 @@ query GetShopInfo {
         email
         name
         plan {
-            displayName
+            publicDisplayName
         }
-        billingAddress {
-            countryCode
+        shopAddress {
+            countryCodeV2
         }
         ianaTimezone
     }
