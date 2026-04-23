@@ -172,7 +172,7 @@ export function DiscountSettings() {
             {showDiscountValue && (
                 <s-stack gap="small-200">
                     <s-number-field
-                        label={getDiscountValueLabel()}
+                        label={discountType ? tdt(discountType + ".label") : getDiscountValueLabel()}
                         value={discountValue?.toString() || ""}
                         step={0.01}
                         min={0}

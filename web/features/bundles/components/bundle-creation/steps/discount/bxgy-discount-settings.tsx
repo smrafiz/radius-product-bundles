@@ -178,7 +178,9 @@ export function BxgyDiscountSettings() {
                     label={
                         discountType === "CUSTOM_PRICE"
                             ? t("rewardProductPrice")
-                            : getDiscountValueLabel()
+                            : discountType
+                              ? tdt(discountType + ".label")
+                              : getDiscountValueLabel()
                     }
                     value={discountValue?.toString() || ""}
                     step={0.01}
