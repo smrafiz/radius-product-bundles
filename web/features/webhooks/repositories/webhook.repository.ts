@@ -290,6 +290,9 @@ export async function deleteShopData(shop: string): Promise<void> {
                 await tx.bundle.deleteMany({ where: { shop } });
             }
 
+            // WebhookDelivery has no FK — uses plain shop string
+            await tx.webhookDelivery.deleteMany({ where: { shop } });
+
             if (shopRecord) {
                 const shopId = shopRecord.id;
                 await tx.appSettings.deleteMany({ where: { shopId } });

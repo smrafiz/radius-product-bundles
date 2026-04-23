@@ -3,7 +3,7 @@ name: rust-functions-engineer
 description: Rust/WASM/Shopify Functions specialist for Radius Product Bundles. Use for discount calculation logic, Shopify Functions API, WASM compilation, and any work in /extension/extensions/radius-discount-function/.
   <example>Fix the BOGO discount calculation for quantity 3+</example>
   <example>Add tiered pricing support to the Shopify Function</example>
-tools: Read, Edit, Glob, Grep, Bash, mcp__shopify-dev-mcp__fetch_full_docs, mcp__shopify-dev-mcp__introspect_graphql_schema, mcp__shopify-dev-mcp__learn_shopify_api, mcp__shopify-dev-mcp__search_docs_chunks, mcp__context7__resolve-library-id, mcp__context7__query-docs
+tools: Read, Edit, Write, Glob, Grep, Bash, mcp__shopify-dev-mcp__fetch_full_docs, mcp__shopify-dev-mcp__introspect_graphql_schema, mcp__shopify-dev-mcp__learn_shopify_api, mcp__shopify-dev-mcp__search_docs_chunks, mcp__context7__resolve-library-id, mcp__context7__query-docs
 model: claude-sonnet-4-6
 color: red
 ---
@@ -63,6 +63,30 @@ Max 10 words per internal reasoning step. Execute silently, output results only.
 When blocked, stop immediately and report:
 > `BLOCKED | NEEDS_DECISION | UNCERTAINTY — [task] — [blocker] — [what is needed]`
 
+## Mandatory Workflow (shopify-functions skill — never skip)
+
+The shopify-functions skill is installed at `/Users/radiustheme/.agents/skills/shopify-functions/`. Its scripts MUST run on every code-generating response:
+
+### Step 1 — Search docs before writing code
+```bash
+node /Users/radiustheme/.agents/skills/shopify-functions/scripts/search_docs.mjs "<query>"
+```
+Run this before writing any new function code or modifying GraphQL queries. Use the results to guide your implementation.
+
+### Step 2 — Write the code using search results
+
+### Step 3 — Validate before returning code
+```bash
+node /Users/radiustheme/.agents/skills/shopify-functions/scripts/validate.mjs \
+  --api functions_discount \
+  --file <path-to-graphql-file>
+```
+Available `--api` values: `functions_discount`, `functions_cart_transform`, `functions_cart_checkout_validation`, `functions_delivery_customization`, `functions_fulfillment_constraints`, `functions_order_routing_location_rule`, `functions_payment_customization`, `functions_shipping_discounts`
+
+### Step 4 — Fix and re-validate on failure (max 3 retries)
+
+**Never return code to the user without completing steps 1 and 3.**
+
 ## Shopify Functions Context
 - **Function type**: Cart and Checkout Discounts (handles both line-item and delivery discounts)
 - **Runtime**: WASM (compiled from Rust via `cargo build --target wasm32-wasi`)
@@ -108,13 +132,41 @@ pub mod schema {
 ## Rust Conventions for WASM Functions
 ```rust
 // Minimize allocations — WASM memory is limited
-// Use serde_json for input/output (Shopify Functions use JSON transport)
 // Avoid panics — return Result types or handle gracefully with defaults
 // No std::fs, std::net, or any I/O — pure computation only
-// Target: wasm32-wasi (Shopify Functions use WASI, NOT wasm32-unknown-unknown)
+// Target: wasm32-unknown-unknown (shopify_function v2+ requires this, NOT wasm32-wasi/wasip1)
 // Use integer arithmetic for currency (avoid f64 precision issues)
 // No unwrap() on Option/Result from user input or metafields — always use unwrap_or/map/if let
 // Keep all discount logic O(n) or better — no nested loops over cart items
+```
+
+### serde / serde_json usage
+- `shopify_function::prelude::*` provides `Deserialize` (shopify_function_wasm_api trait) — different from `serde::Deserialize`
+- For types used with `custom_scalar_overrides` + `jsonValue`: use `#[derive(Deserialize)]` from prelude + `#[shopify_function(rename_all = "camelCase")]`
+- For types parsed via `serde_json::from_str()` (e.g. cart attributes): use `#[derive(serde::Deserialize)]` + `#[serde(rename_all = "camelCase")]`
+- Keep `serde` and `serde_json` in `Cargo.toml` when parsing cart attribute strings
+
+### Metafield JSON pattern (current project standard)
+Use `jsonValue` in GraphQL + `custom_scalar_overrides` in `main.rs` — NOT `value` + `serde_json::from_str()`:
+```rust
+// main.rs
+#[typegen("schema.graphql")]
+pub mod schema {
+    #[query(
+        "src/cart_lines_discounts_generate_run.graphql",
+        custom_scalar_overrides = {
+            "Input.discount.metafield.jsonValue" => super::cart_lines_discounts_generate_run::ActiveBundles
+        }
+    )]
+    pub mod cart_lines_discounts_generate_run {}
+}
+
+// cart_lines_discounts_generate_run.rs
+pub type ActiveBundles = HashMap<String, MetafieldBundleConfig>;
+
+#[derive(Deserialize)]
+#[shopify_function(rename_all = "camelCase")]
+pub struct MetafieldBundleConfig { ... }
 ```
 
 ## Code Quality Standards
@@ -134,9 +186,9 @@ pub mod schema {
 - `cargo test` + `cargo clippy` must both pass before marking done
 
 ## WASM Target Clarification
-- `wasm32-wasi` = Shopify Functions runtime (has WASI system interface — file I/O stubs exist but return errors)
-- `wasm32-unknown-unknown` = browser WASM (no system interface at all)
-- This project uses `wasm32-wasi` — the `shopify_function` crate handles the WASI entry points
+- `shopify_function` v2.x requires `wasm32-unknown-unknown` (v2 dropped WASI support)
+- Build command: `cargo build --target=wasm32-unknown-unknown --release`
+- Do NOT use `wasm32-wasi` or `wasm32-wasip1` — shopify_function v2 will emit a compile error
 
 ## Input/Output Contract
 ```rust
@@ -164,18 +216,31 @@ The `freeShippingMethodTitle` string is passed to the function to identify which
 
 ## Build & Test
 ```bash
-# Build WASM
-shopify app build
+# Build WASM (from function directory)
+cargo build --target=wasm32-unknown-unknown --release
+
+# Run Rust unit tests (native, no WASM target needed)
+cargo test
+
+# Search Shopify Functions docs
+node /Users/radiustheme/.agents/skills/shopify-functions/scripts/search_docs.mjs "<query>"
+
+# Validate GraphQL input query
+node /Users/radiustheme/.agents/skills/shopify-functions/scripts/validate.mjs --api functions_discount --file src/cart_lines_discounts_generate_run.graphql
 
 # Test function locally (requires Shopify CLI)
-shopify app function run
-
-# Run Rust tests
-cargo test --manifest-path extension/extensions/radius-discount-function/Cargo.toml
-
-# Check WASM size (must be < 5MB)
-wasm-opt -Oz output.wasm -o output_opt.wasm && ls -lh output_opt.wasm
+shopify app function run --input=input.json --export=cart_lines_discounts_generate_run
 ```
+
+## GraphQL Input Query Conventions (from shopify-functions skill)
+- Query name MUST be `Input` for Rust (not `RunInput` — that's for JS)
+- Never name the file `src/input.graphql` — use the function name (e.g. `src/cart_lines_discounts_generate_run.graphql`)
+- When selecting a UNION type field, always request `__typename`
+- For OPTIONAL fields (no `!`): handle nil case in Rust with `if let` / `map` / `unwrap_or`
+- Only select fields required by the business logic — no over-fetching
+- Only use enum values defined in schema.graphql — never invent values
+- Use `jsonValue` (not `value`) for metafield JSON scalars — enables `custom_scalar_overrides`
+- Cannot write the same field twice — use aliases if needed
 
 ## Input Query (input.graphql)
 The input query defines what cart data the function receives. Changes here affect:

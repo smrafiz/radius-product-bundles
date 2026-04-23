@@ -11,13 +11,15 @@ use crate::schema::Percentage;
 
 use super::schema;
 use schema::cart_delivery_options_discounts_generate_run::input::cart::lines::Merchandise;
-use serde::Deserialize;
 use shopify_function::prelude::*;
 use shopify_function::Result;
 use std::collections::HashMap;
 
+/// Typed alias for the active_bundles metafield JSON (used by custom_scalar_overrides).
+pub type ActiveBundles = HashMap<String, MetafieldBundleConfig>;
+
 /// Bundle config from cart attribute (untrusted - only for identification).
-#[derive(Deserialize)]
+#[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct CartBundleConfig {
     bundle_id: String,
@@ -26,14 +28,14 @@ struct CartBundleConfig {
 
 /// Bundle config from metafield (trusted - source of truth).
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct MetafieldBundleConfig {
-    status: Option<String>,
-    free_shipping: Option<bool>,
-    free_shipping_method_title: Option<String>,
-    product_quantities: Option<HashMap<String, i32>>,
-    product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
-    main_product_id: Option<String>,
+#[shopify_function(rename_all = "camelCase")]
+pub struct MetafieldBundleConfig {
+    pub status: Option<String>,
+    pub free_shipping: Option<bool>,
+    pub free_shipping_method_title: Option<String>,
+    pub product_quantities: Option<HashMap<String, i32>>,
+    pub product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
+    pub main_product_id: Option<String>,
 }
 
 /// Checks if a Shopify product GID belongs to this bundle.
@@ -212,22 +214,7 @@ fn cart_delivery_options_discounts_generate_run(
         None => return Ok(no_discount),
     };
 
-    // metafield.value() returns &String directly
-    let metafield_value = metafield.value();
-
-    // Check if metafield value is empty
-    if metafield_value.is_empty() {
-        return Ok(no_discount);
-    }
-
-    let active_bundles: HashMap<String, MetafieldBundleConfig> =
-        match serde_json::from_str(metafield_value) {
-            Ok(v) => v,
-            Err(e) => {
-                log!("[RadiusDiscount] Failed to parse delivery metafield: {}", e);
-                return Ok(no_discount);
-            }
-        };
+    let active_bundles = metafield.json_value();
 
     if active_bundles.is_empty() {
         return Ok(no_discount);

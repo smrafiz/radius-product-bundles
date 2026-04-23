@@ -12,10 +12,12 @@ use crate::schema::ProductDiscountsAddOperation;
 
 use super::schema;
 use schema::cart_lines_discounts_generate_run::input::cart::lines::Merchandise;
-use serde::Deserialize;
 use shopify_function::prelude::*;
 use shopify_function::Result;
 use std::collections::HashMap;
+
+/// Typed alias for the active_bundles metafield JSON (used by custom_scalar_overrides).
+pub type ActiveBundles = HashMap<String, MetafieldBundleConfig>;
 
 const MAX_QUANTITY: i32 = 10_000;
 
@@ -24,7 +26,7 @@ fn safe_mul(a: i32, b: i32) -> Option<i32> {
 }
 
 /// Bundle config from cart attribute (untrusted - only for identification).
-#[derive(Deserialize)]
+#[derive(serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct CartBundleConfig {
     bundle_id: String,
@@ -33,29 +35,28 @@ struct CartBundleConfig {
 
 /// Bundle config from metafield (trusted - source of truth).
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct MetafieldBundleConfig {
-    status: Option<String>,
-    discount_type: String,
-    discount_value: f64,
+#[shopify_function(rename_all = "camelCase")]
+pub struct MetafieldBundleConfig {
+    pub status: Option<String>,
+    pub discount_type: String,
+    pub discount_value: f64,
     #[allow(dead_code)]
-    free_shipping: Option<bool>,
-    min_order_value: Option<f64>,
-    max_discount_amount: Option<f64>,
-    discount_application: Option<String>,
-    discounted_product_ids: Option<Vec<String>>,
-    product_quantities: Option<HashMap<String, i32>>,
-    product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
-    main_product_id: Option<String>,
+    pub free_shipping: Option<bool>,
+    pub min_order_value: Option<f64>,
+    pub max_discount_amount: Option<f64>,
+    pub discount_application: Option<String>,
+    pub discounted_product_ids: Option<Vec<String>>,
+    pub product_quantities: Option<HashMap<String, i32>>,
+    pub product_variant_ids: Option<HashMap<String, String>>, // productId -> variantId
+    pub main_product_id: Option<String>,
     // BOGO/BXGY fields
-    bundle_type: Option<String>,
-    buy_quantity: Option<i32>,
-    get_quantity: Option<i32>,
-    product_roles: Option<HashMap<String, String>>,
-    variant_roles: Option<HashMap<String, String>>, // variantId -> role (for same-product different-variant BOGO)
+    pub bundle_type: Option<String>,
+    pub buy_quantity: Option<i32>,
+    pub get_quantity: Option<i32>,
+    pub product_roles: Option<HashMap<String, String>>,
+    pub variant_roles: Option<HashMap<String, String>>, // variantId -> role (for same-product different-variant BOGO)
     // Volume discount fields
-    #[allow(dead_code)]
-    volume_tiers: Option<serde_json::Value>,
+    pub volume_tiers: Option<VolumeTierConfig>,
 }
 
 /// Checks if a Shopify product GID belongs to this bundle.
@@ -125,19 +126,19 @@ struct BundleLineInfo<'a> {
 
 /// Volume discount tier configuration (from `volumeTiers` in the metafield).
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct VolumeTierConfig {
-    discount_type: String, // "PERCENTAGE" or "FIXED_AMOUNT"
-    open_ended: bool,
-    tiers: Vec<VolumeTier>,
+#[shopify_function(rename_all = "camelCase")]
+pub struct VolumeTierConfig {
+    pub discount_type: String, // "PERCENTAGE" or "FIXED_AMOUNT"
+    pub open_ended: bool,
+    pub tiers: Vec<VolumeTier>,
 }
 
 /// A single volume discount tier.
 #[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct VolumeTier {
-    min_quantity: u64,
-    discount: f64,
+#[shopify_function(rename_all = "camelCase")]
+pub struct VolumeTier {
+    pub min_quantity: u64,
+    pub discount: f64,
 }
 
 /// Find the highest-matching tier for `cart_qty`.
@@ -170,15 +171,7 @@ fn calculate_volume_discount(
     bundle_lines: &[BundleLineInfo],
     bundle_name: &str,
 ) -> Option<ProductDiscountCandidate> {
-    let raw_tiers = bundle_settings.volume_tiers.as_ref()?;
-
-    let tier_config: VolumeTierConfig = match serde_json::from_value(raw_tiers.clone()) {
-        Ok(c) => c,
-        Err(e) => {
-            log!("[RadiusDiscount] Failed to parse volume_tiers: {}", e);
-            return None;
-        }
-    };
+    let tier_config = bundle_settings.volume_tiers.as_ref()?;
 
     if tier_config.tiers.is_empty() {
         return None;
@@ -807,20 +800,7 @@ fn cart_lines_discounts_generate_run(
         None => return Ok(no_discount),
     };
 
-    let metafield_value = metafield.value();
-
-    if metafield_value.is_empty() {
-        return Ok(no_discount);
-    }
-
-    let active_bundles: HashMap<String, MetafieldBundleConfig> =
-        match serde_json::from_str(metafield_value) {
-            Ok(v) => v,
-            Err(e) => {
-                log!("[RadiusDiscount] Failed to parse metafield: {}", e);
-                return Ok(no_discount);
-            }
-        };
+    let active_bundles = metafield.json_value();
 
     if active_bundles.is_empty() {
         return Ok(no_discount);

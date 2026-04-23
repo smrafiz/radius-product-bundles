@@ -28,7 +28,7 @@ query Input {
     discount {
         discountClasses
         metafield(namespace: "$app", key: "active_bundles") {
-            value
+            jsonValue
         }
     }
 }

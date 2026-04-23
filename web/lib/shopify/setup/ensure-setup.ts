@@ -161,8 +161,19 @@ export async function ensureBundleDiscount(
                 },
             );
 
+        // Check for missing response data (top-level GraphQL errors)
+        if (!createResult.data?.discountAutomaticAppCreate) {
+            console.error(
+                "[EnsureSetup] No response data from discountAutomaticAppCreate",
+            );
+            return {
+                success: false,
+                error: "Empty response from Shopify API",
+            };
+        }
+
         const userErrors =
-            createResult.data?.discountAutomaticAppCreate?.userErrors || [];
+            createResult.data.discountAutomaticAppCreate.userErrors || [];
 
         // Filter out "already exists" errors (race condition handling)
         const realErrors = userErrors.filter(
@@ -176,6 +187,21 @@ export async function ensureBundleDiscount(
             return {
                 success: false,
                 error: realErrors[0].message ?? "Unknown error",
+            };
+        }
+
+        // Verify the discount was actually created
+        const discountId =
+            createResult.data.discountAutomaticAppCreate.automaticAppDiscount
+                ?.discountId;
+
+        if (!discountId) {
+            console.error(
+                "[EnsureSetup] Discount created but no discountId returned",
+            );
+            return {
+                success: false,
+                error: "Missing discountId in response",
             };
         }
 
