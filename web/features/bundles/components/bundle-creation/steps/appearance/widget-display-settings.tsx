@@ -23,13 +23,16 @@ export function WidgetDisplaySettings() {
     const { canUse } = usePlan();
 
     const visibleOptions = useMemo(() => {
-        return ADVANCED_OPTIONS.filter(({ key }) => {
+        return ADVANCED_OPTIONS.filter(({ key, ...rest }) => {
             if (key === "showFreeShipping") {
                 return canUse("bundle_behavior") && bundleData.freeShipping;
             }
+            if ("excludeFor" in rest && bundleData.type) {
+                return !(rest.excludeFor as readonly string[]).includes(bundleData.type);
+            }
             return true;
         });
-    }, [canUse, bundleData.freeShipping]);
+    }, [canUse, bundleData.freeShipping, bundleData.type]);
 
     return (
         <s-section>
