@@ -11,7 +11,7 @@ import { useTranslations } from "@/lib/i18n/provider";
  * Editor WYSIWYG component
  */
 export function EditorWysiwyg({ mode }: { mode: "create" | "edit" }) {
-    const t = useTranslations("Bundles.Creation.Discount.BundleAsProduct");
+    const t = useTranslations("Bundles.Creation.BundleAsProduct");
     const {
         handleDescriptionChange,
         handleDescriptionBlur,
