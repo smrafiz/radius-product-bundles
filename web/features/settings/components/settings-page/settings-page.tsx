@@ -11,7 +11,6 @@ import {
     SettingsFormProvider,
     SettingsTab,
 } from "@/features/settings/components";
-import { TitleBar } from "@shopify/app-bridge-react";
 import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -30,7 +29,6 @@ function SettingsPageContent() {
             resetDirty={resetDirty}
         >
             <s-page heading={t("pageTitle")}>
-                <TitleBar title={t("pageTitle")}></TitleBar>
                 <s-stack paddingBlockStart="large-300" paddingBlockEnd="large">
                     <SettingsTab />
                 </s-stack>

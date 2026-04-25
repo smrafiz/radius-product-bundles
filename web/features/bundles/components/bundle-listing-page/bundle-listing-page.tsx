@@ -6,7 +6,6 @@ import {
     useAppNavigation,
     useNavigationActions,
 } from "@/shared";
-import { TitleBar } from "@shopify/app-bridge-react";
 import {
     BundleTable,
     BundleTableSkeleton,
@@ -48,44 +47,24 @@ export function BundleListingPage() {
 
     return (
         <s-page heading={t("title")}>
-            <TitleBar title={t("title")}>
-                {bundlesLoading || analyticsLoading ? (
-                    <>
-                        <s-button
-                            slot="primary-action"
-                            variant="primary"
-                            disabled={analyticsLoading}
-                            loading={bundlesLoading}
-                        >
-                            {t("createBundle")}
-                        </s-button>
-                        <s-button
-                            slot="secondary-actions"
-                            variant="secondary"
-                            disabled={bundlesLoading}
-                            loading={analyticsLoading}
-                        >
-                            {t("viewAnalytics")}
-                        </s-button>
-                    </>
-                ) : (
-                    <>
-                        <button
-                            variant="primary"
-                            onClick={actions.create}
-                            disabled={bundlesLoading}
-                        >
-                            {t("createBundle")}
-                        </button>
-                        <button
-                            onClick={actions.analytics}
-                            disabled={analyticsLoading}
-                        >
-                            {t("viewAnalytics")}
-                        </button>
-                    </>
-                )}
-            </TitleBar>
+            <s-button
+                variant="primary"
+                slot="primary-action"
+                loading={bundlesLoading}
+                disabled={analyticsLoading}
+                onClick={actions.create}
+            >
+                {t("createBundle")}
+            </s-button>
+            <s-button
+                variant="secondary"
+                slot="secondary-actions"
+                loading={analyticsLoading}
+                disabled={bundlesLoading}
+                onClick={actions.analytics}
+            >
+                {t("viewAnalytics")}
+            </s-button>
 
             <s-stack
                 gap="large"

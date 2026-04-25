@@ -14,7 +14,6 @@ import {
     WidgetStatusBanner,
 } from "@/features/dashboard";
 import { useBundlesPage } from "@/features/bundles";
-import { TitleBar } from "@shopify/app-bridge-react";
 import { useSettingsStore } from "@/features/settings";
 import { GlobalBanner, useNavigationActions } from "@/shared";
 import { AnalyticsDisabledBanner } from "@/features/analytics";
@@ -38,44 +37,23 @@ export function DashboardPage() {
 
     return (
         <s-page heading={t("title")}>
-            <TitleBar title={t("title")}>
-                {bundlesLoading || setupGuide.isShowing ? (
-                    <>
-                        <s-button
-                            slot="primary-action"
-                            variant="primary"
-                            loading={bundlesLoading}
-                            disabled={setupGuide.isShowing}
-                        >
-                            {t("createBundle")}
-                        </s-button>
-                        <s-button
-                            slot="secondary-actions"
-                            variant="secondary"
-                            disabled={guideVisible || bundlesLoading}
-                            loading={setupGuide.isShowing}
-                        >
-                            {t("setupGuide")}
-                        </s-button>
-                    </>
-                ) : (
-                    <>
-                        <button
-                            variant="primary"
-                            onClick={actions.create}
-                            disabled={bundlesLoading}
-                        >
-                            {t("createBundle")}
-                        </button>
-                        <button
-                            onClick={setupGuide.showGuide}
-                            disabled={guideVisible || setupGuide.isShowing}
-                        >
-                            {t("setupGuide")}
-                        </button>
-                    </>
-                )}
-            </TitleBar>
+            <s-button
+                variant="primary"
+                slot="primary-action"
+                loading={bundlesLoading}
+                onClick={actions.create}
+            >
+                {t("createBundle")}
+            </s-button>
+            <s-button
+                variant="secondary"
+                slot="secondary-actions"
+                loading={setupGuide.isShowing}
+                disabled={guideVisible}
+                onClick={setupGuide.showGuide}
+            >
+                {t("setupGuide")}
+            </s-button>
 
             <s-stack
                 gap="large"

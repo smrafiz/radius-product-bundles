@@ -7,14 +7,15 @@ import {
     StepContent,
     useBundleCreationForm,
 } from "@/features/bundles";
-import { TitleBar } from "@shopify/app-bridge-react";
 import {
     formatRelativeDate,
     GlobalBanner,
+    ROUTES,
     useNavigationActions,
     usePlan,
 } from "@/shared";
 import { WidgetStatusBanner } from "@/features/dashboard";
+import { TitleBar } from "@shopify/app-bridge-react";
 
 /**
  * Bundle Creation Form
@@ -60,55 +61,28 @@ export function BundleCreationForm({
 
     return (
         <s-page heading={isEditMode ? tc("edit") : tc("create")}>
-            <TitleBar title={isEditMode ? tc("edit") : tc("create")}>
-                {/*
-                 * `variant` on these <button> elements is intentional and not a
-                 * standard HTML attribute. App Bridge React's <TitleBar> scans its
-                 * children and reads the `variant` prop to determine button placement
-                 * and styling inside the Shopify Admin chrome (breadcrumb, primary, etc.).
-                 * These are processed by App Bridge — not rendered as plain HTML buttons —
-                 * so the non-standard attribute is correct here.
-                 * See: https://shopify.dev/docs/api/app-bridge-library/react-components/titlebar
-                 */}
-                <button variant="breadcrumb" onClick={bundleData.list()}>
-                    {tc("breadcrumb")}
-                </button>
-
-                {isSaving || isDeleting || isDuplicating ? (
-                    <>
-                        <s-button
-                            variant="primary"
-                            disabled={isSaving || (isEditMode && !isDirty)}
-                            loading={isSaving}
-                        >
-                            {isEditMode ? tc("update") : tc("publish")}
-                        </s-button>
-                        {isEditMode && bundleId && (
-                            <s-button
-                                disabled={isDuplicating}
-                                loading={isDuplicating}
-                            >
-                                {duplicateLabel}
-                            </s-button>
-                        )}
-                    </>
-                ) : (
-                    <>
-                        <button
-                            variant="primary"
-                            onClick={handleSubmit}
-                            disabled={!isDirty}
-                        >
-                            {isEditMode ? tc("update") : tc("publish")}
-                        </button>
-                        {isEditMode && bundleId && (
-                            <button onClick={handleDuplicate}>
-                                {duplicateLabel}
-                            </button>
-                        )}
-                    </>
-                )}
-            </TitleBar>
+            <s-link slot="breadcrumb-actions" href={ROUTES.BUNDLES}>
+                {tc("breadcrumb")}
+            </s-link>
+            <s-button
+                variant="primary"
+                slot="primary-action"
+                loading={isSaving}
+                disabled={isEditMode && !isDirty}
+                onClick={handleSubmit}
+            >
+                {isEditMode ? tc("update") : tc("publish")}
+            </s-button>
+            {isEditMode && bundleId && (
+                <s-button
+                    slot="secondary-action"
+                    loading={isDuplicating}
+                    disabled={isDeleting}
+                    onClick={handleDuplicate}
+                >
+                    {duplicateLabel}
+                </s-button>
+            )}
 
             <s-stack
                 gap="large"
@@ -154,7 +128,11 @@ export function BundleCreationForm({
                         </s-stack>
 
                         {isEditMode && bundleId && (
-                            <s-stack direction="inline" gap="small-300" alignItems="center">
+                            <s-stack
+                                direction="inline"
+                                gap="small-300"
+                                alignItems="center"
+                            >
                                 <s-button
                                     variant="secondary"
                                     icon="view"
@@ -212,25 +190,26 @@ export function BundleCreationForm({
                                             {tActions("noProducts")}
                                         </s-text>
                                     )}
-                                    {mainProductUrl && bundleType !== "VOLUME_DISCOUNT" && (
-                                        <>
-                                            <s-divider />
-                                            <s-heading>
-                                                {tActions("bundleProduct")}
-                                            </s-heading>
-                                            <a
-                                                href={mainProductUrl}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="hover:underline"
-                                            >
-                                                <s-text>
-                                                    {mainProductTitle ||
-                                                        bundleName}
-                                                </s-text>
-                                            </a>
-                                        </>
-                                    )}
+                                    {mainProductUrl &&
+                                        bundleType !== "VOLUME_DISCOUNT" && (
+                                            <>
+                                                <s-divider />
+                                                <s-heading>
+                                                    {tActions("bundleProduct")}
+                                                </s-heading>
+                                                <a
+                                                    href={mainProductUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="hover:underline"
+                                                >
+                                                    <s-text>
+                                                        {mainProductTitle ||
+                                                            bundleName}
+                                                    </s-text>
+                                                </a>
+                                            </>
+                                        )}
                                 </s-stack>
                             </s-stack>
                         </s-box>

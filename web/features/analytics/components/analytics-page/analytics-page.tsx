@@ -25,7 +25,6 @@ export function AnalyticsPage() {
 
     return (
         <s-page heading={t("title")}>
-            <TitleBar title={t("title")}></TitleBar>
             <s-stack
                 gap="large"
                 paddingBlockStart="large"
