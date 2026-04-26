@@ -129,6 +129,9 @@ export function BundlePreviewStatus() {
                         padding="small-300"
                         paddingInline="small"
                         type="submit"
+                        accessibilityLabel={`${t("status")}: ${ts(bundleData.status ?? "DRAFT")}`}
+                        aria-haspopup="listbox"
+                        aria-expanded={isOpen}
                         onClick={() => setIsOpen((prev) => !prev)}
                     >
                         <div className="w-full flex justify-between items-center">

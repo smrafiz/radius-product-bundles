@@ -161,6 +161,16 @@ Run after any schema file changes.
 - Quantity inputs must have `aria-label`
 - Color contrast: 4.5:1 minimum
 
+## Shopify Skills
+
+For Liquid templating syntax, filters, and theme development patterns — invoke the `shopify-liquid` skill.
+
+For Hydrogen storefront implementation patterns — invoke the `shopify-hydrogen` skill.
+
+```bash
+# Invoke via Skill tool: shopify-liquid | shopify-hydrogen
+```
+
 ## Before Claiming Done
 1. Run `bun run build:widgets` — no build errors
 2. Run `bun run build:schema` if schema changed

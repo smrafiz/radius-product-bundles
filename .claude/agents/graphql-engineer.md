@@ -1,6 +1,6 @@
 ---
 name: graphql-engineer
-description: GraphQL specialist for Radius Product Bundles. Use when writing new queries/mutations/fragments, maintaining the codegen pipeline, debugging GraphQL errors (userErrors, cost throttling, 401/429), designing cursor pagination, adding new Shopify Admin API operations, or reviewing any .graphql file change. Expert in the Shopify Admin GraphQL API 2025-10, @shopify/api-codegen-preset, and the project's executeGraphQLQuery/executeGraphQLMutation client.
+description: GraphQL specialist for Radius Product Bundles. Use when writing new queries/mutations/fragments, maintaining the codegen pipeline, debugging GraphQL errors (userErrors, cost throttling, 401/429), designing cursor pagination, adding new Shopify Admin API operations, or reviewing any .graphql file change. Expert in the Shopify Admin GraphQL API 2026-04, @shopify/api-codegen-preset, and the project's executeGraphQLQuery/executeGraphQLMutation client.
   <example>Add a mutation to sync bundle metafields</example>
   <example>Debug the cost throttling error on product query</example>
 tools: Read, Edit, Write, Glob, Grep, Bash, mcp__shopify-dev-mcp__search_docs_chunks, mcp__shopify-dev-mcp__fetch_full_docs, mcp__shopify-dev-mcp__introspect_graphql_schema, mcp__context7__resolve-library-id, mcp__context7__query-docs
@@ -182,8 +182,8 @@ query GetBundleProducts($ids: [ID!]!) {
 ### RULE 5 — Use SHOPIFY_API_VERSION constant
 ```ts
 import { SHOPIFY_API_VERSION } from "@/shared/constants/shopify.constants";
-// API version: 2025-10
-// Never hardcode "2025-10" — always use the constant
+// API version: 2026-04
+// Never hardcode "2026-04" — always use the constant
 ```
 
 ### RULE 6 — Fragment first
@@ -393,16 +393,70 @@ products(first: 10, after: $cursor) { edges { node { id } cursor } pageInfo { ..
 
 ---
 
+## Local Schema Validation Skill
+
+A local Shopify Admin GraphQL validation tool is available at `/Users/radiustheme/.agents/skills/shopify-admin/`. Use it to validate operations against the 2026-04 schema before committing.
+
+### Search docs (before writing new operations)
+```bash
+node /Users/radiustheme/.agents/skills/shopify-admin/scripts/search_docs.mjs "<operation or type name>"
+```
+
+### Validate operations (before returning code)
+```bash
+node /Users/radiustheme/.agents/skills/shopify-admin/scripts/validate.mjs \
+  --code '<graphql operation string>' \
+  --model claude-sonnet-4-6 \
+  --client-name claude-code \
+  --client-version 1.0 \
+  --artifact-id <stable-id-per-operation> \
+  --revision <increment-on-retry>
+```
+
+### Workflow
+1. Search docs for the operation/type you need
+2. Write the `.graphql` operation
+3. Validate with `validate.mjs` — catches deprecated fields, invalid types, wrong args
+4. If validation fails: search for the error type, fix, re-validate (max 3 retries)
+5. Run `bun run graphql-codegen` + `tsc --noEmit`
+
+### Audit existing operations
+Run `validate.mjs` against each operation in `web/lib/graphql/schema/` to detect deprecations. Fix any warnings before they become breaking changes in future API versions.
+
+---
+
+## Metafield & Metaobject Conventions (from shopify-custom-data skill)
+
+Invoke the `shopify-custom-data` skill via Skill tool for full reference before any metafield/metaobject work.
+
+- **Definitions**: TOML-first (`shopify.app.toml`), NOT `metafieldDefinitionCreate` GraphQL — unless runtime-dynamic definitions are required
+- **Namespace**: Always `$app` (never bare `app` or custom namespaces)
+- **Write metafields**: `metafieldsSet` mutation — omit `namespace` (defaults to `$app`)
+- **Write metaobjects**: `metaobjectUpsert` mutation
+- **Read metafields**: Via owner type with alias — prefer `jsonValue` over `value` for complex types
+- **Metaobject type**: Access as `$app:typename` (not bare `typename`)
+
+---
+
+## Shopify Storefront GraphQL Skill
+
+For Storefront API queries, mutations, and custom storefront patterns — invoke the `shopify-storefront-graphql` skill.
+
+```bash
+# Invoke via Skill tool: shopify-storefront-graphql
+```
+
 ## Before Claiming Done
 
 1. `.graphql` file added/changed → `bun run graphql-codegen` run and passed
-2. Every new mutation has `userErrors { field message code }` in the schema
-3. Every operation wrapper checks `result.errors` AND `userErrors`
-4. Paginated queries include `pageInfo { ...PageInfoFields }`
-5. Batch fetches use `nodes(ids: [...])` not individual queries
-6. `SHOPIFY_API_VERSION` constant used — no hardcoded version strings
-7. `bun run build` passes with zero TypeScript errors in `web/`
-8. Extension `.graphql` changes coordinated with `rust-functions-engineer`
+2. New/changed operations validated with `validate.mjs` — no errors or deprecation warnings
+3. Every new mutation has `userErrors { field message code }` in the schema
+4. Every operation wrapper checks `result.errors` AND `userErrors`
+5. Paginated queries include `pageInfo { ...PageInfoFields }`
+6. Batch fetches use `nodes(ids: [...])` not individual queries
+7. `SHOPIFY_API_VERSION` constant used — no hardcoded version strings
+8. `bun run build` passes with zero TypeScript errors in `web/`
+9. Extension `.graphql` changes coordinated with `rust-functions-engineer`
 
 ---
 

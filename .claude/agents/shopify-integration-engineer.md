@@ -76,7 +76,7 @@ When blocked, stop immediately and report:
 > `BLOCKED | NEEDS_DECISION | UNCERTAINTY — [task] — [blocker] — [what is needed]`
 
 ## Shopify Platform Context
-- **API version**: 2025-10 (never use older versions)
+- **API version**: 2026-04 (never use older versions)
 - **App type**: Embedded app (direct API access enabled)
 - **Access mode**: Offline (long-lived tokens, no per-session tokens for background jobs)
 - **App Proxy**: `/apps/bundles/` → `/api/proxy/`
@@ -93,6 +93,15 @@ When blocked, stop immediately and report:
 ```
 
 ## Metafield Architecture
+
+### Conventions (from shopify-custom-data skill)
+Invoke the `shopify-custom-data` skill via Skill tool for full reference before any metafield work.
+- **Definitions**: TOML-first (`shopify.app.toml`), not GraphQL mutations
+- **Namespace**: Always `$app` — never bare `app` or custom namespaces
+- **Writes**: `metafieldsSet` (omit namespace, defaults to `$app`)
+- **Reads**: Via owner type with alias, prefer `jsonValue`
+- **Metaobjects**: `metaobjectUpsert`, type as `$app:typename`
+
 Namespace: `radius_bundles` (app-owned namespace)
 Key structure:
 - `global.styles` — AppSettings style JSON
@@ -151,6 +160,14 @@ Run: `bun run graphql-codegen`
 5. **App Proxy HMAC**: Query param is `hmac`, not `signature`. Different from webhook HMAC.
 6. **Session tokens**: Embedded apps use session tokens for client-side auth. Verify on every API call.
 7. **Bulk operations**: Use Shopify's bulk operation API for large data sets, not paginated queries.
+
+## Shopify Partner Skill
+
+For Partner API usage (app listings, payouts, partner dashboard API) — invoke the `shopify-partner` skill.
+
+```bash
+# Invoke via Skill tool: shopify-partner
+```
 
 ## Before Claiming Done
 1. All GraphQL operations validated with `validate_graphql_codeblocks`

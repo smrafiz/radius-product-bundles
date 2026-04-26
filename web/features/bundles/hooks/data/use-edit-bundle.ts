@@ -179,7 +179,7 @@ export function useEditBundle(bundleId: string) {
                         price: activeVariant?.price || "0.00",
                         compareAtPrice: activeVariant?.compareAtPrice || null,
                         image:
-                            selectedVariant?.image?.url ||
+                            (selectedVariant as any)?.media?.nodes?.[0]?.image?.url ||
                             shopifyProduct?.featuredMedia?.image?.url ||
                             "",
                         sku: activeVariant?.sku || "",
@@ -200,7 +200,7 @@ export function useEditBundle(bundleId: string) {
                                   price: selectedVariant.price || "0.00",
                                   compareAtPrice:
                                       selectedVariant.compareAtPrice || null,
-                                  image: selectedVariant.image || null,
+                                  image: (selectedVariant as any).media?.nodes?.[0]?.image || null,
                                   availableForSale:
                                       selectedVariant.availableForSale || false,
                                   sku: selectedVariant.sku || "",

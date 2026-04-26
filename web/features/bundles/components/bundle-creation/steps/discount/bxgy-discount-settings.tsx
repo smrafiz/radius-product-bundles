@@ -78,6 +78,9 @@ export function BxgyDiscountSettings() {
                         padding="small-300"
                         paddingInline="small"
                         type="submit"
+                        accessibilityLabel={t("discountType")}
+                        aria-haspopup="listbox"
+                        aria-expanded={isOpen}
                         onClick={() => setIsOpen((prev) => !prev)}
                     >
                         <div className="w-full flex justify-between items-center">

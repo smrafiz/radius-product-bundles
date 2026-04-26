@@ -1,9 +1,10 @@
+"use client";
+
 import { DashboardSkeleton } from "@/shared/components";
 
-/*
- * Loading Page
+/**
+ * Dashboard page skeleton
  */
-
 export default function Loading() {
     return <DashboardSkeleton />;
 }

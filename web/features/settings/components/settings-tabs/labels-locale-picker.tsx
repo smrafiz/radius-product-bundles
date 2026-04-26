@@ -204,6 +204,7 @@ export function LabelsLocalePicker() {
                         <s-button
                             variant="tertiary"
                             icon="refresh"
+                            accessibilityLabel={t("refreshLabel")}
                             onClick={handleRefresh}
                             disabled={isRefreshing || isLocaleLoading}
                             interestFor="refresh-languages-tooltip"

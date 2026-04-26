@@ -1,5 +1,7 @@
 "use server";
 
+import { after } from "next/server";
+
 import {
     SetupGuideData,
     SetupProgress,
@@ -27,42 +29,41 @@ export async function getSetupGuideAction(
         const { session } = await handleSessionToken(sessionToken);
         const { shop } = session;
 
-        // Scheduler: only run if there are actually scheduled bundles pending.
-        // Checking counts first is cheap (indexed queries) — only pay the full
-        // scheduler cost when there is real work to do.
-        let bundlesTransitioned = false;
-        if (session.accessToken) {
-            const [toActivate, toDeactivate] = await Promise.all([
-                findBundlesReadyToActivate(shop),
-                findBundlesReadyToDeactivate(shop),
-            ]);
-
-            if (toActivate.length > 0 || toDeactivate.length > 0) {
-                const schedulerResult = await processScheduledBundlesForShop(
-                    shop,
-                    session.accessToken,
-                ).catch((err) => {
-                    console.error("[Dashboard] Scheduler check failed:", err);
-                    return { activated: 0, deactivated: 0 };
-                });
-                bundlesTransitioned =
-                    schedulerResult.activated > 0 ||
-                    schedulerResult.deactivated > 0;
-
-                // Bust setup guide cache if bundles transitioned — their
-                // auto-detected step statuses may have changed.
-                if (bundlesTransitioned) {
-                    invalidateSetupGuideCache(shop);
-                }
-            }
-        }
-
-        // Use the cached version — 10 min TTL, busted on step updates/dismiss
         const data = await getCachedSetupGuide(shop);
+
+        // Defer scheduler work until after the response is sent. The cron job
+        // is the source of truth for transitions; this is a best-effort
+        // dashboard-mount catch-up that should never block the initial paint.
+        if (session.accessToken) {
+            const accessToken = session.accessToken;
+            after(async () => {
+                try {
+                    const [toActivate, toDeactivate] = await Promise.all([
+                        findBundlesReadyToActivate(shop),
+                        findBundlesReadyToDeactivate(shop),
+                    ]);
+                    if (
+                        toActivate.length === 0 &&
+                        toDeactivate.length === 0
+                    ) {
+                        return;
+                    }
+                    const result = await processScheduledBundlesForShop(
+                        shop,
+                        accessToken,
+                    );
+                    if (result.activated > 0 || result.deactivated > 0) {
+                        invalidateSetupGuideCache(shop);
+                    }
+                } catch (err) {
+                    console.error("[Dashboard] Deferred scheduler failed:", err);
+                }
+            });
+        }
 
         return {
             status: "success",
-            data: { ...data, bundlesTransitioned },
+            data: { ...data, bundlesTransitioned: false },
         };
     } catch (error) {
         console.error("[getSetupGuide] Error:", error);

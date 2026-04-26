@@ -232,6 +232,12 @@ node /Users/radiustheme/.agents/skills/shopify-functions/scripts/validate.mjs --
 shopify app function run --input=input.json --export=cart_lines_discounts_generate_run
 ```
 
+## Metafield Conventions (from shopify-custom-data skill)
+Reference: `/Users/radiustheme/.agents/skills/shopify-custom-data/SKILL.md`
+- **Namespace**: Always `$app` in input queries — `metafield(namespace: "$app", key: "...")`
+- **Read format**: Use `jsonValue` (not `value`) for JSON scalars — enables `custom_scalar_overrides`
+- **Definitions**: Defined in `shopify.app.toml`, not via GraphQL mutations
+
 ## GraphQL Input Query Conventions (from shopify-functions skill)
 - Query name MUST be `Input` for Rust (not `RunInput` — that's for JS)
 - Never name the file `src/input.graphql` — use the function name (e.g. `src/cart_lines_discounts_generate_run.graphql`)

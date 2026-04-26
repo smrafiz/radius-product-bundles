@@ -15,7 +15,11 @@ export function PricingFaqItem({
 }: PricingFaqItemProps) {
     return (
         <s-box key={id} borderWidth="small" overflow="hidden">
-            <s-clickable onClick={onToggle} aria-expanded={expanded}>
+            <s-clickable
+                onClick={onToggle}
+                aria-expanded={expanded}
+                accessibilityLabel={title}
+            >
                 <s-box padding="base" background="subdued">
                     <s-stack
                         direction="inline"

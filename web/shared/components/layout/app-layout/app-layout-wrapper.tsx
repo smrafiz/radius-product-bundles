@@ -31,7 +31,9 @@ export function AppLayoutWrapper({ children }: { children: ReactNode }) {
             <Suspense fallback={null}>
                 <Navigation />
             </Suspense>
-            {children}
+            <div key={pathname} style={{ display: 'contents' }}>
+                {children}
+            </div>
         </>
     );
 }

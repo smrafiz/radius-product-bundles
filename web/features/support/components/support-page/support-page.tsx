@@ -1,6 +1,5 @@
 "use client";
 
-import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslations } from "@/lib/i18n/provider";
 import { SupportQuickActions } from "../support-quick-actions/support-quick-actions";
 import { SupportFaq } from "../support-faq/support-faq";
@@ -15,14 +14,20 @@ export function SupportPage() {
 
     return (
         <s-page heading={t("title")}>
-            <TitleBar title={t("title")}>
-                <button onClick={() => window.open(`mailto:${SUPPORT_EMAIL}`)}>
-                    {t("email")}
-                </button>
-                <button onClick={() => window.open(DOCS_URL, "_blank")}>
-                    {t("docs")}
-                </button>
-            </TitleBar>
+            <s-button
+                variant="primary"
+                slot="primary-action"
+                onClick={() => window.open(`mailto:${SUPPORT_EMAIL}`)}
+            >
+                {t("email")}
+            </s-button>
+            <s-button
+                variant="secondary"
+                slot="secondary-actions"
+                onClick={() => window.open(DOCS_URL, "_blank")}
+            >
+                {t("docs")}
+            </s-button>
 
             <s-stack gap="large">
                 <SupportQuickActions />

@@ -32,8 +32,8 @@ export const useShopSettings = (options: { enabled?: boolean } = {}) => {
                 email: shopData.email,
                 myshopifyDomain: shopData.myshopifyDomain,
                 currencyCode: shopData.currencyCode || "USD",
-                countryCode: shopData.billingAddress?.countryCode ?? undefined,
-                planDisplayName: shopData.plan?.displayName,
+                countryCode: shopData.shopAddress?.countryCodeV2 ?? undefined,
+                planDisplayName: shopData.plan?.publicDisplayName,
                 timezone: shopData.ianaTimezone || "UTC",
             };
 

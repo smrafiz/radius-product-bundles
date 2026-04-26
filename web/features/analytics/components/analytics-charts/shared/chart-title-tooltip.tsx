@@ -1,5 +1,8 @@
+"use client";
+
 import { useId } from "react";
 import { ChartTitleTooltipProps } from "@/features/analytics";
+import { useTranslations } from "@/lib/i18n/provider";
 
 export function ChartTitleTooltip({
     children,
@@ -9,6 +12,7 @@ export function ChartTitleTooltip({
     formula,
     id,
 }: ChartTitleTooltipProps) {
+    const t = useTranslations("Analytics.Charts");
     const autoId = useId();
     const tooltipId = id || `info-tooltip-${autoId}`;
 
@@ -34,7 +38,16 @@ export function ChartTitleTooltip({
 
     return (
         <>
-            <s-clickable commandFor={tooltipId}>
+            <s-clickable
+                commandFor={tooltipId}
+                accessibilityLabel={
+                    typeof children === "string"
+                        ? `${children} ${t("moreInfoSuffix")}`
+                        : title
+                          ? `${title} ${t("moreInfoSuffix")}`
+                          : t("moreInfo")
+                }
+            >
                 <s-heading>
                     <span
                         style={{

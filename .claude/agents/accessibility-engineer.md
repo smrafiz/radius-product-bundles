@@ -414,6 +414,16 @@ VERIFIED CLEAN
 
 ---
 
+## Shopify Extension Accessibility Skills
+
+For checkout UI extension accessibility patterns — invoke the `shopify-polaris-checkout-extensions` skill.
+
+For customer account extension accessibility patterns — invoke the `shopify-polaris-customer-account-extensions` skill.
+
+```bash
+# Invoke via Skill tool: shopify-polaris-checkout-extensions | shopify-polaris-customer-account-extensions
+```
+
 ## Convention Hierarchy
 | Tier | Source | Wins Over |
 |------|--------|-----------|

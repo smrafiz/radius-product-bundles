@@ -49,8 +49,14 @@ query GetProductsByIds($ids: [ID!]!) {
                     sku
                     inventoryQuantity
                     availableForSale
-                    image {
-                        ...ImageFields
+                    media(first: 1) {
+                        nodes {
+                            ... on MediaImage {
+                                image {
+                                    ...ImageFields
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -7,6 +7,7 @@ import {
     getButtonFontSize,
     getHeadingFontSize,
     getFontSize,
+    getCardBgColor,
     getCardRadius,
     getButtonPadding,
     getImageSize,
@@ -49,6 +50,7 @@ function MinimalistItem({
     const cardRadius = getCardRadius(styles.cornerStyle);
     const bodyFontSize = getFontSize(styles.bodySize);
     const imageSizePx = getImageSize(styles.imageSize);
+    const cardBg = getCardBgColor(styles);
     const isDefaultVariant = product.variantTitle === "Default Title" || product.variantTitle === "Default";
     const displayTitle = product.variantTitle && !isDefaultVariant
         ? `${product.title} / ${product.variantTitle}`
@@ -76,7 +78,7 @@ function MinimalistItem({
                 display: "flex",
                 gap: 10,
                 padding: "15px 10px",
-                background: `color-mix(in srgb, ${roleColor} 6%, ${styles.backgroundColor || "white"})`,
+                background: `color-mix(in srgb, ${roleColor} 6%, ${cardBg})`,
                 border: `1px solid color-mix(in srgb, ${roleColor} 12%, transparent)`,
                 borderRadius: cardRadius,
                 minWidth: 0,

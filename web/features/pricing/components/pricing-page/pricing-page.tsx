@@ -6,7 +6,6 @@ import {
     PlanStatusCard,
     FeatureComparisonTable,
 } from "@/features/pricing";
-import { TitleBar } from "@shopify/app-bridge-react";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function PricingPage() {
@@ -14,7 +13,6 @@ export function PricingPage() {
 
     return (
         <s-page>
-            <TitleBar></TitleBar>
             <s-stack
                 gap="large"
                 paddingBlockStart="large"
