@@ -57,7 +57,6 @@ function SleekProductCard({
           ? `${pricing.savingsAmount} Off`
           : labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
 
-    const bgBase = styles.backgroundColor || "#fff";
     const cardBg = getCardBgColor(styles);
     const cardStyle: React.CSSProperties = isTrigger
         ? {
@@ -66,7 +65,7 @@ function SleekProductCard({
           }
         : {
               background: hasDiscount
-                  ? `linear-gradient(to right, ${savingsColor}1A, ${bgBase})`
+                  ? `linear-gradient(to right, ${savingsColor}1A, ${cardBg})`
                   : cardBg,
               border: hasDiscount
                   ? `1px solid ${savingsColor}33`
