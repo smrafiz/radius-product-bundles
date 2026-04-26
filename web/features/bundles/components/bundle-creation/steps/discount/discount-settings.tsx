@@ -73,6 +73,7 @@ export function DiscountSettings() {
                         padding="small-300"
                         paddingInline="small"
                         type="submit"
+                        accessibilityLabel={t("discountType")}
                         aria-haspopup="listbox"
                         aria-expanded={isOpen}
                         onClick={() => setIsOpen((prev) => !prev)}

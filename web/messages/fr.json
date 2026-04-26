@@ -863,7 +863,8 @@
         "type": "Type",
         "discount": "Remise",
         "status": "Statut",
-        "actions": "Actions"
+        "actions": "Actions",
+        "viewProductsInBundle": "Afficher les produits de {name}"
       },
       "EmptyState": {
         "noDataTitle": "Aucune offre groupée créée pour le moment",
@@ -945,6 +946,7 @@
       "fallbackTooltip": "Si une traduction est absente dans le fichier de langue, les champs vides reviendront à la langue principale ({primary})",
       "primaryBadge": "(Principale)",
       "refresh": "Les langues sont synchronisées à partir des paramètres de votre boutique Shopify. Utilisez le bouton d’actualisation pour mettre à jour la liste si vous avez récemment effectué des modifications dans Shopify.",
+      "refreshLabel": "Actualiser les langues",
       "autoTranslate": "Traduction automatique",
       "autoTranslateTooltip": "Traduit automatiquement les champs d'étiquettes vides depuis la langue principale par traduction automatique. Vous pouvez modifier les résultats avant d'enregistrer.",
       "translating": "Traduction en cours...",
@@ -1801,7 +1803,9 @@
       "revenueTitle": "Analyse du chiffre d'affaires",
       "totalRevenue": "Chiffre d'affaires total",
       "avgOrderValue": "Valeur moyenne des commandes",
-      "revenue": "Chiffre d'affaires"
+      "revenue": "Chiffre d'affaires",
+      "moreInfoSuffix": "— plus d'informations",
+      "moreInfo": "Plus d'informations"
     },
     "TopBundles": {
       "heading": "Offres groupées les plus performantes",

@@ -6,6 +6,7 @@ import {
     ProductListPopover,
     useBundlePreview,
 } from "@/features/bundles";
+import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Bundle products preview
@@ -13,6 +14,7 @@ import {
  * Uses Polaris web components for popover
  */
 export function BundleProductsPreview({ bundle }: { bundle: BundleListItem }) {
+    const t = useTranslations("Bundles.Listing.Table");
     const popoverId = `bundle-products-popover-${bundle.id}`;
 
     const { groupedProducts, displayProducts, remainingCount, arrowClass } =
@@ -22,7 +24,10 @@ export function BundleProductsPreview({ bundle }: { bundle: BundleListItem }) {
         <>
             {/* Clickable activator */}
             <div className="group">
-                <s-clickable commandFor={popoverId}>
+                <s-clickable
+                    commandFor={popoverId}
+                    accessibilityLabel={t("viewProductsInBundle", { name: bundle.name })}
+                >
                     <s-stack direction="inline" alignItems="center">
                         <ProductAvatarStack
                             products={displayProducts}
