@@ -47,9 +47,10 @@ export function useDiscountSettings() {
      * Get filtered discount types based on bundle type.
      */
     const availableDiscountTypes = useMemo(() => {
-        return bundleType
+        const types = bundleType
             ? getDiscountTypesForBundle(bundleType)
             : Object.values(DISCOUNT_TYPES);
+        return types.filter((c) => c.id !== "QUANTITY_BREAKS");
     }, [bundleType]);
 
     const isDiscountTypeLocked = useCallback(
