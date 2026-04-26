@@ -75,7 +75,7 @@ export function BundleCreationForm({
             </s-button>
             {isEditMode && bundleId && (
                 <s-button
-                    slot="secondary-action"
+                    slot="secondary-actions"
                     loading={isDuplicating}
                     disabled={isDeleting}
                     onClick={handleDuplicate}
