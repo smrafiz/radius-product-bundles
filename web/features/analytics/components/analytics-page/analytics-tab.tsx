@@ -6,9 +6,10 @@ import {
     AnalyticsDate,
     AnalyticsMetrics,
 } from "@/features/analytics";
-import { useTranslations } from "@/lib/i18n/provider";
+import { useState } from "react";
 import dynamic from "next/dynamic";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/provider";
 import { ProBadge, useCrossSellStore, usePlan } from "@/shared";
 
 const AnalyticsChart = dynamic(
@@ -33,14 +34,20 @@ type TabKey = (typeof TAB_KEYS)[number];
 export function AnalyticsTabs() {
     const t = useTranslations("Analytics.Tabs");
     const tAllBundles = useTranslations("Analytics.AllBundles");
-    const router = useRouter();
     const searchParams = useSearchParams();
     const tabParam = searchParams.get("tab") as TabKey | null;
-    const activeTab: TabKey =
-        tabParam && TAB_KEYS.includes(tabParam) ? tabParam : "overview";
+    const [activeTab, setActiveTab] = useState<TabKey>(
+        tabParam && TAB_KEYS.includes(tabParam) ? tabParam : "overview",
+    );
     const { canUse } = usePlan();
     const { open: openCrossSell } = useCrossSellStore();
     const canFullAnalytics = canUse("analytics_full");
+
+    const switchTab = (key: TabKey) => {
+        setActiveTab(key);
+        const url = key === "overview" ? "/analytics" : `/analytics?tab=${key}`;
+        window.history.replaceState(null, "", url);
+    };
 
     const TABS = [
         {
@@ -82,13 +89,7 @@ export function AnalyticsTabs() {
                                     : "tertiary"
                             }
                             icon={tab.icon}
-                            onClick={() =>
-                                router.replace(
-                                    tab.key === "overview"
-                                        ? "/analytics"
-                                        : `/analytics?tab=${tab.key}`,
-                                )
-                            }
+                            onClick={() => switchTab(tab.key)}
                         >
                             {tab.label}
                         </s-button>
