@@ -427,7 +427,7 @@ Run `validate.mjs` against each operation in `web/lib/graphql/schema/` to detect
 
 ## Metafield & Metaobject Conventions (from shopify-custom-data skill)
 
-Reference: `/Users/radiustheme/.agents/skills/shopify-custom-data/SKILL.md`
+Invoke the `shopify-custom-data` skill via Skill tool for full reference before any metafield/metaobject work.
 
 - **Definitions**: TOML-first (`shopify.app.toml`), NOT `metafieldDefinitionCreate` GraphQL — unless runtime-dynamic definitions are required
 - **Namespace**: Always `$app` (never bare `app` or custom namespaces)

@@ -261,7 +261,7 @@ grep -rn "public\|static\|serve" web/app/api/upload/
 
 ```bash
 # Run security audit
-cd /Users/srafiz/GithubProjects/radius-product-bundles/web && bun audit 2>&1 || npm audit --json 2>&1 | head -100
+cd /Users/radiustheme/Shopify/radius-product-bundles/web && bun audit 2>&1 || npm audit --json 2>&1 | head -100
 
 # Check Next.js version against known CVEs
 grep '"next"' web/package.json
@@ -306,23 +306,23 @@ Run these across the full codebase for broad coverage:
 
 ```bash
 # SQL injection via raw queries
-grep -rn "\$queryRaw\|\$executeRaw" /Users/srafiz/GithubProjects/radius-product-bundles/web/
+grep -rn "\$queryRaw\|\$executeRaw" /Users/radiustheme/Shopify/radius-product-bundles/web/
 
 # eval() usage
-grep -rn "\beval(" /Users/srafiz/GithubProjects/radius-product-bundles/
+grep -rn "\beval(" /Users/radiustheme/Shopify/radius-product-bundles/
 
 # Hardcoded secrets
 grep -rn "password\s*=\s*['\"][^'\"]\|secret\s*=\s*['\"][^'\"]\|api_key\s*=\s*['\"][^'\"]" \
-  /Users/srafiz/GithubProjects/radius-product-bundles/web/ --include="*.ts" --include="*.js" \
+  /Users/radiustheme/Shopify/radius-product-bundles/web/ --include="*.ts" --include="*.js" \
   | grep -v "test\|spec\|\.env\|process\.env\|placeholder"
 
 # Console.log with sensitive data
 grep -rn "console\.log.*password\|console\.log.*token\|console\.log.*secret" \
-  /Users/srafiz/GithubProjects/radius-product-bundles/web/
+  /Users/radiustheme/Shopify/radius-product-bundles/web/
 
 # TODO/FIXME security markers
 grep -rn "TODO.*security\|FIXME.*auth\|HACK.*skip\|bypass.*auth\|skip.*verify" \
-  /Users/srafiz/GithubProjects/radius-product-bundles/ --include="*.ts" --include="*.rs" --include="*.liquid"
+  /Users/radiustheme/Shopify/radius-product-bundles/ --include="*.ts" --include="*.rs" --include="*.liquid"
 ```
 
 ---

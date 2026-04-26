@@ -95,7 +95,7 @@ When blocked, stop immediately and report:
 ## Metafield Architecture
 
 ### Conventions (from shopify-custom-data skill)
-Reference: `/Users/radiustheme/.agents/skills/shopify-custom-data/SKILL.md`
+Invoke the `shopify-custom-data` skill via Skill tool for full reference before any metafield work.
 - **Definitions**: TOML-first (`shopify.app.toml`), not GraphQL mutations
 - **Namespace**: Always `$app` — never bare `app` or custom namespaces
 - **Writes**: `metafieldsSet` (omit namespace, defaults to `$app`)
