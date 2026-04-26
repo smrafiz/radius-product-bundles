@@ -214,7 +214,7 @@ export function getSetupGuideSteps(
             title: t("steps.enableAppEmbed.title"),
             description: t("steps.enableAppEmbed.description"),
             image: {
-                url: "/assets/setup-guide-step-one.svg",
+                url: "/assets/setup/guide-app-embed.svg",
                 alt: "Enable app embed in theme editor",
             },
             primaryButton: { content: t("steps.enableAppEmbed.primaryButton") },
@@ -228,7 +228,7 @@ export function getSetupGuideSteps(
             title: t("steps.createFirstBundle.title"),
             description: t("steps.createFirstBundle.description"),
             image: {
-                url: "/assets/setup-guide-step-two.svg",
+                url: "/assets/setup/guide-first-bundle.svg",
                 alt: "Create a product bundle",
             },
             primaryButton: {
@@ -242,7 +242,7 @@ export function getSetupGuideSteps(
             title: t("steps.addWidgetToTheme.title"),
             description: t("steps.addWidgetToTheme.description"),
             image: {
-                url: "/assets/setup-guide-step-two.svg",
+                url: "/assets/setup/guide-bundle-widget.svg",
                 alt: "Add bundle widget to product page",
             },
             primaryButton: {
@@ -258,7 +258,7 @@ export function getSetupGuideSteps(
             title: t("steps.customizeSettings.title"),
             description: t("steps.customizeSettings.description"),
             image: {
-                url: "/assets/setup-guide-step-three.svg",
+                url: "/assets/setup/guide-customizer.svg",
                 alt: "Configure settings and style customizer",
             },
             primaryButton: {
@@ -272,7 +272,7 @@ export function getSetupGuideSteps(
             title: t("steps.previewStorefront.title"),
             description: t("steps.previewStorefront.description"),
             image: {
-                url: "/assets/setup-guide-step-four.svg",
+                url: "/assets/setup/guide-storefront.svg",
                 alt: "Preview bundle on storefront",
             },
             primaryButton: {
@@ -285,7 +285,7 @@ export function getSetupGuideSteps(
             title: t("steps.monitorAnalytics.title"),
             description: t("steps.monitorAnalytics.description"),
             image: {
-                url: "/assets/setup-guide-step-five.svg",
+                url: "/assets/setup/guide-analytics.svg",
                 alt: "Bundle analytics dashboard",
             },
             primaryButton: {
