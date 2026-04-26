@@ -102,66 +102,94 @@ export function useSetupGuide() {
 
         let cancelled = false;
 
-        // Check app-embed via App Bridge (theme-level toggle — reliable)
-        if (needsEmbedCheck) {
-            shopify.app
-                .extensions()
-                .then((extensions) => {
-                    if (cancelled) return;
-                    const themeExt = extensions.find(
-                        (e) => e.type === "theme_app_extension",
-                    );
-                    if (!themeExt) return;
+        const runChecks = () => {
+            if (cancelled) return;
 
-                    const activations = themeExt.activations as Array<{
-                        handle: string;
-                        target: string;
-                        status: string;
-                    }>;
-                    const embedActive = activations.some(
-                        (a) =>
-                            a.handle === "app-embed" &&
-                            a.target !== "section" &&
-                            a.status === "active",
-                    );
-                    if (embedActive) {
-                        completeStepMutation.mutate({
-                            key: "appEmbedEnabled",
-                            value: true,
-                        });
-                    }
-                })
-                .catch(() => {});
-        }
+            // Check app-embed via App Bridge (theme-level toggle — reliable)
+            if (needsEmbedCheck) {
+                shopify.app
+                    .extensions()
+                    .then((extensions) => {
+                        if (cancelled) return;
+                        const themeExt = extensions.find(
+                            (e) => e.type === "theme_app_extension",
+                        );
+                        if (!themeExt) return;
 
-        // Check app-block via cached action (2-3 Shopify API calls, 5 min cache)
-        if (needsBlockCheck) {
-            app.idToken()
-                .then((token) => {
-                    if (cancelled) return;
-                    return checkWidgetBlockStatusAction(token);
-                })
-                .then((result) => {
-                    if (cancelled || !result) return;
-                    if (result.status === "success" && result.data) {
-                        widgetStatusStore.setWidgetStatus(result.data);
-                        if (result.data.isFullyIntegrated) {
+                        const activations = themeExt.activations as Array<{
+                            handle: string;
+                            target: string;
+                            status: string;
+                        }>;
+                        const embedActive = activations.some(
+                            (a) =>
+                                a.handle === "app-embed" &&
+                                a.target !== "section" &&
+                                a.status === "active",
+                        );
+                        if (embedActive) {
                             completeStepMutation.mutate({
-                                key: "widgetBlockAdded",
+                                key: "appEmbedEnabled",
                                 value: true,
                             });
                         }
-                    } else {
-                        widgetStatusStore.markChecked();
-                    }
-                })
-                .catch(() => {
-                    if (!cancelled) widgetStatusStore.markChecked();
-                });
+                    })
+                    .catch(() => {});
+            }
+
+            // Check app-block via cached action (2-3 Shopify API calls, 5 min cache)
+            if (needsBlockCheck) {
+                app.idToken()
+                    .then((token) => {
+                        if (cancelled) return;
+                        return checkWidgetBlockStatusAction(token);
+                    })
+                    .then((result) => {
+                        if (cancelled || !result) return;
+                        if (result.status === "success" && result.data) {
+                            widgetStatusStore.setWidgetStatus(result.data);
+                            if (result.data.isFullyIntegrated) {
+                                completeStepMutation.mutate({
+                                    key: "widgetBlockAdded",
+                                    value: true,
+                                });
+                            }
+                        } else {
+                            widgetStatusStore.markChecked();
+                        }
+                    })
+                    .catch(() => {
+                        if (!cancelled) widgetStatusStore.markChecked();
+                    });
+            }
+        };
+
+        // Defer to idle so theme/widget checks don't compete with the
+        // initial paint. Falls back to a short setTimeout when
+        // requestIdleCallback is unavailable (Safari).
+        const ric =
+            typeof window !== "undefined" &&
+            "requestIdleCallback" in window
+                ? window.requestIdleCallback
+                : null;
+        const cic =
+            typeof window !== "undefined" &&
+            "cancelIdleCallback" in window
+                ? window.cancelIdleCallback
+                : null;
+
+        let idleHandle: number | null = null;
+        let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
+        if (ric) {
+            idleHandle = ric(runChecks, { timeout: 2000 });
+        } else {
+            timeoutHandle = setTimeout(runChecks, 200);
         }
 
         return () => {
             cancelled = true;
+            if (idleHandle !== null && cic) cic(idleHandle);
+            if (timeoutHandle !== null) clearTimeout(timeoutHandle);
         };
     }, [data?.dismissed, data?.progress.appEmbedEnabled, data?.progress.widgetBlockAdded]);
 
