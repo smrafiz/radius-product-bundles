@@ -224,6 +224,14 @@ Know which strategy each route uses — wrong choice causes perf or auth bugs:
 - No inline styles except dynamic values
 - Cyclomatic complexity < 10 per function — if higher, extract logic
 
+## Shopify Polaris App Home Skill
+
+For Polaris embedded app UI patterns, admin navigation, app home layout, and Shopify design guidelines — invoke the `shopify-polaris-app-home` skill before implementing any embedded app page structure.
+
+```bash
+# Invoke via Skill tool: shopify-polaris-app-home
+```
+
 ## Before Claiming Done
 1. Check component renders without runtime errors
 2. Check form validation fires on blur AND on submit

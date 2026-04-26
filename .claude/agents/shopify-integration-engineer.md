@@ -161,6 +161,14 @@ Run: `bun run graphql-codegen`
 6. **Session tokens**: Embedded apps use session tokens for client-side auth. Verify on every API call.
 7. **Bulk operations**: Use Shopify's bulk operation API for large data sets, not paginated queries.
 
+## Shopify Partner Skill
+
+For Partner API usage (app listings, payouts, partner dashboard API) — invoke the `shopify-partner` skill.
+
+```bash
+# Invoke via Skill tool: shopify-partner
+```
+
 ## Before Claiming Done
 1. All GraphQL operations validated with `validate_graphql_codeblocks`
 2. Codegen run and types up to date

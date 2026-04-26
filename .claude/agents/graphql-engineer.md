@@ -438,6 +438,14 @@ Reference: `/Users/radiustheme/.agents/skills/shopify-custom-data/SKILL.md`
 
 ---
 
+## Shopify Storefront GraphQL Skill
+
+For Storefront API queries, mutations, and custom storefront patterns — invoke the `shopify-storefront-graphql` skill.
+
+```bash
+# Invoke via Skill tool: shopify-storefront-graphql
+```
+
 ## Before Claiming Done
 
 1. `.graphql` file added/changed → `bun run graphql-codegen` run and passed
