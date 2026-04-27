@@ -1,5 +1,5 @@
 # Testing Quick Start Guide
-## Radius Product Bundles - E2E Testing
+## Radius Bundles - E2E Testing
 
 ---
 
@@ -24,7 +24,7 @@ bun run dev:app
 # Navigate to your development store admin
 https://your-dev-store.myshopify.com/admin
 
-# Click on "Apps" → "Radius Product Bundles"
+# Click on "Apps" → "Radius Bundles"
 # The app will load in an iframe with proper Shopify context
 ```
 

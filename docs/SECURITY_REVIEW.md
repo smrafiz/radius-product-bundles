@@ -1,6 +1,6 @@
 # Shopify App Security Review Report
 
-_Radius Product Bundles - Pre-Submission Assessment_
+_Radius Bundles - Pre-Submission Assessment_
 
 **Review Date:** March 22, 2026  
 **Reviewer:** AI Security Review  
@@ -10,7 +10,7 @@ _Radius Product Bundles - Pre-Submission Assessment_
 
 ## Executive Summary
 
-The Radius Product Bundles app demonstrates solid security foundations with proper OAuth flow, token encryption, input validation, and GDPR compliance. However, **4 critical issues must be resolved before Shopify App Store submission**.
+The Radius Bundles app demonstrates solid security foundations with proper OAuth flow, token encryption, input validation, and GDPR compliance. However, **4 critical issues must be resolved before Shopify App Store submission**.
 
 | Severity | Count |
 | -------- | ----- |
@@ -295,7 +295,7 @@ Ensure no access tokens or PII are ever logged.
 
 ## Summary
 
-The Radius Product Bundles app has a solid security architecture and follows many best practices. After addressing the **4 critical issues** and **5 high priority items**, the app should be ready for Shopify App Store submission.
+The Radius Bundles app has a solid security architecture and follows many best practices. After addressing the **4 critical issues** and **5 high priority items**, the app should be ready for Shopify App Store submission.
 
 **Key Strengths:**
 

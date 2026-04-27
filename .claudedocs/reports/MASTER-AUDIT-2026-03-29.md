@@ -1,4 +1,4 @@
-# MASTER AUDIT REPORT — Radius Product Bundles
+# MASTER AUDIT REPORT — Radius Bundles
 **Date:** 2026-03-29
 **Audited by:** Multi-agent comprehensive audit (Security + UX + A11y + Perf + Arch + Shopify + Deps)
 **Previous score:** 96/100 (security-only)

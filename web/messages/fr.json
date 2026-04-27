@@ -2,7 +2,7 @@
   "Meta": {
     "error": "Une erreur inattendue s'est produite",
     "tryAgain": "Réessayer",
-    "appTitle": "Application Radius Product Bundles pour Shopify",
+    "appTitle": "Application Radius Bundles pour Shopify",
     "pages": {
       "dashboard": {
         "title": "Tableau de bord – Aperçu des offres groupées de produits",
@@ -179,7 +179,7 @@
       "resumeGuide": "Reprendre là où vous en étiez",
       "allComplete": "Tout est fait !",
       "allCompleteHeading": "Vous êtes fin prêt !",
-      "allCompleteDesc": "Bravo ! Votre application Product Bundles est entièrement configurée et prête pour vos clients.",
+      "allCompleteDesc": "Bravo ! Votre application Radius Bundles est entièrement configurée et prête pour vos clients.",
       "dismissGuide": "Fermer le guide",
       "toggleGuide": "Activer/désactiver le guide de configuration",
       "markComplete": "Marquer comme fait",

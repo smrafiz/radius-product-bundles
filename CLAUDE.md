@@ -63,7 +63,7 @@ These constraints enable flow state. Follow the guardrails and you can generate 
 
 ## Project Overview
 
-Radius Product Bundles — an embedded Shopify app for creating and managing product bundles. Built with Next.js 16 (App Router) + React 19 frontend, PostgreSQL + Prisma 7 backend, Zustand state management, and Shopify Polaris UI. Includes a Rust-based Shopify Function for discount calculation and a Liquid theme extension for storefront widget rendering.
+Radius Bundles — an embedded Shopify app for creating and managing product bundles. Built with Next.js 16 (App Router) + React 19 frontend, PostgreSQL + Prisma 7 backend, Zustand state management, and Shopify Polaris UI. Includes a Rust-based Shopify Function for discount calculation and a Liquid theme extension for storefront widget rendering.
 
 ## Commands
 

@@ -1,6 +1,6 @@
-# 🚀 Installation & Setup Guide - Radius Product Bundles
+# 🚀 Installation & Setup Guide - Radius Bundles
 
-Complete guide to set up the Radius Product Bundles Shopify app on your local development environment.
+Complete guide to set up the Radius Bundles Shopify app on your local development environment.
 
 ---
 

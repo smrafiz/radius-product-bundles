@@ -1,8 +1,8 @@
-# Code Review Report: Radius Product Bundles
+# Code Review Report: Radius Bundles
 
 **Date:** February 24, 2026
 **Reviewer:** Claude Code
-**Project:** Radius Product Bundles - Shopify App
+**Project:** Radius Bundles - Shopify App
 
 ---
 

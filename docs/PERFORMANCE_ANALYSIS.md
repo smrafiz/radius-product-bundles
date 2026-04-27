@@ -1,4 +1,4 @@
-# Performance Analysis Report: Radius Product Bundles
+# Performance Analysis Report: Radius Bundles
 
 **Generated**: April 9, 2026  
 **Project**: Next.js 16 + Prisma + Shopify App  
@@ -34,7 +34,7 @@
 
 ## Executive Summary
 
-This document provides a comprehensive analysis of performance bottlenecks in the Radius Product Bundles application. The analysis covers database queries, API patterns, React client-side performance, Next.js configuration, and Shopify API interactions.
+This document provides a comprehensive analysis of performance bottlenecks in the Radius Bundles application. The analysis covers database queries, API patterns, React client-side performance, Next.js configuration, and Shopify API interactions.
 
 ### Key Findings Summary
 
@@ -851,4 +851,4 @@ pm2 status  # Should show multiple instances (1 per CPU core)
 
 **End of Report**
 
-Generated for Radius Product Bundles Performance Optimization Initiative
+Generated for Radius Bundles Performance Optimization Initiative

@@ -1,6 +1,6 @@
 Here's my full review. I'm going to be direct — this app will likely be REJECTED in its current state. Here's the breakdown:
 
-🔴 Shopify App Review Report: Radius Product Bundles
+🔴 Shopify App Review Report: Radius Bundles
 
 Verdict: LIKELY REJECTED — Fix critical issues before resubmitting
 

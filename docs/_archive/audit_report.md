@@ -1,6 +1,6 @@
 # Shopify App Store Readiness Audit
 
-**App Name:** Radius Product Bundles
+**App Name:** Radius Bundles
 **Date:** March 11, 2026
 **Auditor:** Antigravity (Shopify App Reviewer)
 
@@ -61,4 +61,4 @@ Before hitting "Submit", ensure you have prepared the following for the App Stor
 
 ### Final Verdict: **Ready for Pre-Submission Polish**
 
-From a technical and architectural standpoint, `Radius Product Bundles` is incredibly well-structured and fully compliant with Shopify's most complex App Store requirements (Functions, Theme App Extensions, and GDPR webhooks). The codebase uses modern, best-practice implementations. Focusing on the UI polish and listing metadata will guarantee a smooth review process!
+From a technical and architectural standpoint, `Radius Bundles` is incredibly well-structured and fully compliant with Shopify's most complex App Store requirements (Functions, Theme App Extensions, and GDPR webhooks). The codebase uses modern, best-practice implementations. Focusing on the UI polish and listing metadata will guarantee a smooth review process!

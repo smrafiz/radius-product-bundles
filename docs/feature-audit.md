@@ -1,6 +1,6 @@
 # Feature Audit: Competitive Report vs Actual Implementation
 
-> Cross-reference of the competitive analysis recommendations against what Radius Product Bundles actually has today.
+> Cross-reference of the competitive analysis recommendations against what Radius Bundles actually has today.
 
 **Legend:** ✅ Implemented | ⚠️ Partial | ❌ Missing | 🏷️ Type/Schema Only
 

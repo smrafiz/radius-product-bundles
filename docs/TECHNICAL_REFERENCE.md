@@ -1,4 +1,4 @@
-# Radius Product Bundles — Technical Reference
+# Radius Bundles — Technical Reference
 
 ## Table of Contents
 
@@ -997,4 +997,4 @@ bun run build:widgets       # Vite build storefront widgets
 
 ---
 
-_Generated for Radius Product Bundles — Next.js 16 + React 19 + Prisma 7 + Shopify 2025-10_
+_Generated for Radius Bundles — Next.js 16 + React 19 + Prisma 7 + Shopify 2025-10_

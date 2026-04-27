@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This file provides guidance for ALL AI agents working with the Radius Product Bundles repository.
+This file provides guidance for ALL AI agents working with the Radius Bundles repository.
 
 ## 0. Navigation Maps (READ FIRST)
 * **INDEX_MAP.md**: Read FIRST to find documents by keyword/category

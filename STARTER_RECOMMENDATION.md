@@ -597,4 +597,4 @@ After completing this starter, you will understand:
 ---
 
 *Generated: April 2026*
-*For: Radius Product Bundles Starter App*
+*For: Radius Bundles Starter App*

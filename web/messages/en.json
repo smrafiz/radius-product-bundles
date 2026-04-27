@@ -2,14 +2,14 @@
   "Meta": {
     "error": "An unexpected error occurred",
     "tryAgain": "Try again",
-    "appTitle": "Radius Product Bundles App for Shopify",
+    "appTitle": "Radius Bundles App for Shopify",
     "pages": {
       "dashboard": {
-        "title": "Dashboard - Product Bundles Overview",
+        "title": "Dashboard - Radius Bundles Overview",
         "description": "View your bundle performance at a glance. Track revenue, conversion rates, active bundles, and key metrics. Monitor your product bundle campaigns and optimize for maximum sales growth."
       },
       "bundles": {
-        "title": "Product Bundles - Bundle Manager",
+        "title": "Radius Bundles - Bundle Manager",
         "description": "Manage all your product bundles in one place. View performance metrics, edit active offers, track sales, and optimize your bundle campaigns to increase average order value."
       },
       "bundleCreate": {
@@ -179,7 +179,7 @@
       "resumeGuide": "Pick up where you left off",
       "allComplete": "All done!",
       "allCompleteHeading": "You're all set!",
-      "allCompleteDesc": "Great work! Your Product Bundles app is fully configured and ready for customers.",
+      "allCompleteDesc": "Great work! Your Radius Bundles app is fully configured and ready for customers.",
       "dismissGuide": "Dismiss guide",
       "toggleGuide": "Toggle setup guide",
       "markComplete": "Mark as done",

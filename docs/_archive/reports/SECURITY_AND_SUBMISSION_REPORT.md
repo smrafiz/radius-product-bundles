@@ -1,7 +1,7 @@
 # Security & Shopify App Store Submission Report
 
 **Generated:** 2026-03-25
-**App:** Radius Product Bundles
+**App:** Radius Bundles
 **API Version:** 2026-01
 **Status:** READY FOR SUBMISSION (1 administrative blocker remaining)
 
@@ -121,7 +121,7 @@ This report consolidates findings from **10 previous security/audit reports** in
 
 | Requirement | Status | Notes |
 |-------------|--------|-------|
-| App name (< 30 chars, brand first) | VERIFY | "Radius Product Bundles" = 23 chars. Meets requirement. |
+| App name (< 30 chars, brand first) | VERIFY | "Radius Bundles" = 23 chars. Meets requirement. |
 | App icon (1200x1200, JPEG/PNG) | VERIFY | Must prepare before submission. |
 | Screenshots & screencast | VERIFY | Must create before submission. |
 | Primary language listing | VERIFY | Must create in Partner Dashboard. |

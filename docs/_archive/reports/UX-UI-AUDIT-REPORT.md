@@ -1,4 +1,4 @@
-# UX/UI Audit Report — Radius Product Bundles
+# UX/UI Audit Report — Radius Bundles
 
 > Generated: 2026-02-21 | Branch: `caching-test`
 > Sources: Shopify Dev MCP (Design Guidelines, Built for Shopify, App Home API), Next.js MCP (Production Checklist, Accessibility), Codebase Analysis

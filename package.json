@@ -1,5 +1,5 @@
 {
-    "name": "radius-product-bundles",
+    "name": "radius-bundles",
     "description": "AI-powered product bundling for Shopify stores",
     "version": "1.0.0",
     "main": "web/dist/index.js",

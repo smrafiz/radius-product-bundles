@@ -1,4 +1,4 @@
-# Radius Product Bundles - Comprehensive App Review
+# Radius Bundles - Comprehensive App Review
 
 **Review Date:** April 18, 2026  
 **Reviewer:** AI Code Review Agent  
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Radius Product Bundles is a comprehensive embedded Shopify app for creating and managing product bundles. It includes server-side discount calculations via Rust WASM and a Liquid storefront widget. The app demonstrates solid architecture with modern tech stacks including Next.js 16, Prisma 7, React 19, and Tailwind CSS 4.
+Radius Bundles is a comprehensive embedded Shopify app for creating and managing product bundles. It includes server-side discount calculations via Rust WASM and a Liquid storefront widget. The app demonstrates solid architecture with modern tech stacks including Next.js 16, Prisma 7, React 19, and Tailwind CSS 4.
 
 | Category             | Rating | Notes                                                    |
 | -------------------- | ------ | -------------------------------------------------------- |

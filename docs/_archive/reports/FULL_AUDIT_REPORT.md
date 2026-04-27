@@ -1,4 +1,4 @@
-# Radius Product Bundles — Full Application Audit Report
+# Radius Bundles — Full Application Audit Report
 
 **Date**: 2026-03-09
 **Auditor**: Claude Code (Opus 4.6)

@@ -1,4 +1,4 @@
-# App Bridge Migration Report — Radius Product Bundles
+# App Bridge Migration Report — Radius Bundles
 
 > Generated: 2026-02-22 | Branch: `caching-test`
 > Sources: Shopify Dev MCP (App Bridge Migration Guide, React Migration Guide), Codebase Analysis

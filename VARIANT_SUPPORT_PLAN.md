@@ -12,7 +12,7 @@
 
 ## Overview
 
-This document outlines the implementation plan to add variant-level support to the Radius Product Bundles app. Currently, bundles only track products by their parent product ID. The goal is to optionally track specific variants per product, enable variant display in the storefront, and validate variant-level matches in the discount function.
+This document outlines the implementation plan to add variant-level support to the Radius Bundles app. Currently, bundles only track products by their parent product ID. The goal is to optionally track specific variants per product, enable variant display in the storefront, and validate variant-level matches in the discount function.
 
 ---
 

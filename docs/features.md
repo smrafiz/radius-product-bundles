@@ -1,4 +1,4 @@
-# Radius Product Bundles — Complete Feature Guide
+# Radius Bundles — Complete Feature Guide
 
 > The all-in-one Shopify product bundling app. Create bundles, customize your storefront widget, track performance, and boost average order value.
 

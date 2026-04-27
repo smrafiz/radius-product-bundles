@@ -1,4 +1,4 @@
-# Radius Product Bundles - Starter App Extraction Guide
+# Radius Bundles - Starter App Extraction Guide
 
 > Analysis of extractable components for creating a Shopify embedded app starter template.
 
@@ -522,4 +522,4 @@ web/tests/
 ---
 
 *Generated: April 2026*
-*From: Radius Product Bundles repo*
+*From: Radius Bundles repo*
