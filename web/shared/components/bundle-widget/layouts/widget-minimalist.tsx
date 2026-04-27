@@ -43,7 +43,7 @@ function getRewardBadge(
                 return `${amt} Off`;
             }
             const pct = Math.round(((orig - curr) / orig) * 100);
-            return `${pct}%`;
+            return `${pct}% Off`;
         }
     }
 

@@ -2,6 +2,42 @@
 
 import { useState } from "react";
 import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
+
+function getRewardBadge(
+    product: PreviewProduct,
+    labels?: WidgetLayoutProps["labels"],
+    discountType?: string,
+): string {
+    const isFreePrice =
+        !!product.compareAtPrice &&
+        /^[^1-9]*$/.test(product.price || "");
+    if (isFreePrice) return labels?.bogoRewardBadgeText || "You Get";
+
+    if (discountType === "CUSTOM_PRICE") {
+        return labels?.bogoRewardBadgeText || "You Get";
+    }
+
+    if (product.compareAtPrice && product.price) {
+        const parse = (s: string) =>
+            parseFloat(s.replace(/[^0-9.]/g, "")) || 0;
+        const orig = parse(product.compareAtPrice);
+        const curr = parse(product.price);
+        if (orig > curr && orig > 0) {
+            if (discountType === "FIXED_AMOUNT") {
+                const symbol = (product.compareAtPrice.match(/[^0-9.,\s]/) || ["$"])[0];
+                const savings = orig - curr;
+                const amt = savings % 1 === 0
+                    ? `${symbol}${savings}`
+                    : `${symbol}${savings.toFixed(2).replace(/\.00$/, "")}`;
+                return `${amt} Off`;
+            }
+            const pct = Math.round(((orig - curr) / orig) * 100);
+            return `${pct}% Off`;
+        }
+    }
+
+    return labels?.bogoRewardBadgeText || "You Get";
+}
 import {
     getButtonBgColor,
     getButtonRadius,
@@ -238,6 +274,7 @@ export function WidgetClassicCard({
     subtitle,
     badgeText,
     labels,
+    discountType,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -264,14 +301,10 @@ export function WidgetClassicCard({
         : undefined;
     const triggerBadge =
         labels?.bogoTriggerBadgeText || PREVIEW_LABELS.bogoTriggerBadgeText;
-    const anyRewardFree = rewardProducts.some(
-        (p) => !!p.compareAtPrice && /^[^1-9]*$/.test(p.price || ""),
-    );
-    const rewardBadge = anyRewardFree
-        ? labels?.bogoFreeText || PREVIEW_LABELS.bogoFreeText
-        : pricing?.hasDiscount && pricing.savingsAmount
-          ? `${pricing.savingsAmount} Off`
-          : labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
+    const firstReward = rewardProducts[0];
+    const rewardBadge = firstReward
+        ? getRewardBadge(firstReward, labels, discountType)
+        : labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
 
     if (!products.length) {
         return (
