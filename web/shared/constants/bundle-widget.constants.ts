@@ -19,7 +19,7 @@ export const PREVIEW_LABELS: WidgetLabels = {
     bogoTotalLabel: "Bundle Total",
     bogoSaveText: "You Save: {amount}",
     bogoTriggerBadgeText: "You Buy",
-    bogoRewardBadgeText: "You Get FREE",
+    bogoRewardBadgeText: "You Get",
     checklistProgressText: "{count}/{total} items added",
     checklistHintText: "{remaining} more to unlock!",
     checklistCompletedText: "Unlocked!",

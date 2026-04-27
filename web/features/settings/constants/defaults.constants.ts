@@ -174,7 +174,7 @@ export const LABEL_PLACEHOLDERS: Record<string, string> = {
     bogoYouPayLabel: "You Pay Only",
     bogoYouSaveLabel: "You Save",
     bogoTriggerBadgeText: "You Buy",
-    bogoRewardBadgeText: "You Get FREE",
+    bogoRewardBadgeText: "You Get",
     bogoTotalLabel: "Total",
     bogoSaveText: "Save {amount}",
     checklistProgressText: "{count}/{total} items added",
