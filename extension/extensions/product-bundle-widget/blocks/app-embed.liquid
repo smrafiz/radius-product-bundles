@@ -24,9 +24,11 @@
 {% unless hide_payment_buttons == true or hide_payment_buttons == false %}{% assign hide_payment_buttons = false %}{% endunless %}
 {% unless enable_analytics == true or enable_analytics == false %}{% assign enable_analytics = true %}{% endunless %}
 {% unless show_savings_banner == true or show_savings_banner == false %}{% assign show_savings_banner = false %}{% endunless %}
-{% assign customer_locale = request.locale.iso_code | downcase %}
+{% assign customer_locale = request.locale.iso_code %}
+{% assign customer_locale_base = customer_locale | split: '-' | first | downcase %}
 {% assign primary_locale = global.primaryLocale | default: 'en' %}
 {% if global.labels[customer_locale] %}{% assign g_labels_embed = global.labels[customer_locale] %}
+{% elsif global.labels[customer_locale_base] %}{% assign g_labels_embed = global.labels[customer_locale_base] %}
 {% elsif global.labels[primary_locale] %}{% assign g_labels_embed = global.labels[primary_locale] %}
 {% elsif global.labels['en'] %}{% assign g_labels_embed = global.labels['en'] %}
 {% else %}{% assign g_labels_embed = global.labels %}{% endif %}
