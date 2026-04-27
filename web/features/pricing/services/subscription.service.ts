@@ -159,12 +159,30 @@ export async function cancelSubscriptionService(
 
     const payload = result.data?.appSubscriptionCancel;
     if (!payload) {
+        console.error("[Billing] Cancel: empty payload", {
+            shop,
+            billingId: planRecord.billingId,
+            data: result.data,
+        });
         throw new BillingError("No response from Shopify", "SHOPIFY_ERROR");
     }
 
     if (payload.userErrors.length > 0) {
         const msg = payload.userErrors[0]?.message ?? "Shopify billing error";
-        throw new BillingError(msg, "SHOPIFY_ERROR");
+        const alreadyTerminal = payload.userErrors.some((e) =>
+            e.message?.includes("InvalidTransitionError"),
+        );
+        if (!alreadyTerminal) {
+            console.error("[Billing] Cancel: userErrors", {
+                shop,
+                billingId: planRecord.billingId,
+                userErrors: payload.userErrors,
+            });
+            throw new BillingError(msg, "SHOPIFY_ERROR");
+        }
+        console.warn(
+            `[Billing] Subscription ${planRecord.billingId} already in terminal state on Shopify — syncing local plan to FREE`,
+        );
     }
 
     await cancelShopPlan(shop);
@@ -249,9 +267,18 @@ export async function getSubscriptionStatusService(
     const subscriptions = result.data?.currentAppInstallation?.activeSubscriptions ?? [];
 
     if (subscriptions.length === 0) {
+        if (
+            localPlan?.status === ShopifySubscriptionStatus.ACTIVE ||
+            localPlan?.plan === PlanName.PRO
+        ) {
+            console.warn(
+                `[Billing] Drift detected for ${shop}: local=${localPlan.plan}/${localPlan.status} but Shopify has no active subscription — syncing to FREE`,
+            );
+            await cancelShopPlan(shop);
+        }
         return {
             subscription: null,
-            localStatus: localPlan?.status ?? null,
+            localStatus: ShopifySubscriptionStatus.CANCELLED,
             trialEndsAt: localPlan?.trialEndsAt?.toISOString() ?? null,
             trialUsed: localPlan?.trialUsed ?? false,
             status: "NO_SUBSCRIPTION",
@@ -268,6 +295,37 @@ export async function getSubscriptionStatusService(
             ? pricingDetails
             : null;
 
+    const shopifyStatus = sub.status.toUpperCase() as ShopifySubscriptionStatus;
+    const drift =
+        localPlan?.billingId !== sub.id ||
+        localPlan?.status !== shopifyStatus ||
+        (shopifyStatus === ShopifySubscriptionStatus.ACTIVE && localPlan?.plan !== PlanName.PRO);
+
+    let effectiveLocalStatus = localPlan?.status ?? null;
+
+    if (drift) {
+        console.warn(
+            `[Billing] Drift detected for ${shop}: local=${localPlan?.billingId}/${localPlan?.status}/${localPlan?.plan} vs Shopify=${sub.id}/${shopifyStatus} — syncing`,
+        );
+        await upsertShopPlan(shop, {
+            billingId: sub.id,
+            plan:
+                shopifyStatus === ShopifySubscriptionStatus.ACTIVE
+                    ? PlanName.PRO
+                    : (localPlan?.plan ?? PlanName.FREE),
+            status: shopifyStatus,
+            billingInterval: pricing?.interval ?? undefined,
+            currentPeriodEnd: sub.currentPeriodEnd
+                ? new Date(sub.currentPeriodEnd as string)
+                : null,
+            activatedAt:
+                shopifyStatus === ShopifySubscriptionStatus.ACTIVE && !localPlan?.activatedAt
+                    ? new Date()
+                    : undefined,
+        });
+        effectiveLocalStatus = shopifyStatus;
+    }
+
     return {
         subscription: {
             id: sub.id,
@@ -281,7 +339,7 @@ export async function getSubscriptionStatusService(
             currencyCode: pricing?.price?.currencyCode ?? null,
             interval: pricing?.interval ?? null,
         },
-        localStatus: localPlan?.status ?? null,
+        localStatus: effectiveLocalStatus,
         trialEndsAt: localPlan?.trialEndsAt?.toISOString() ?? null,
         trialUsed: localPlan?.trialUsed ?? false,
         status: sub.status,
