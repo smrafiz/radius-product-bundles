@@ -2141,10 +2141,10 @@
       "heading": "Unlock Pro Features",
       "description": "This feature is available on the Pro plan. Upgrade to unlock powerful tools designed to increase your store's revenue and optimize bundle performance.",
       "benefits": {
-        "feature1": "Unlimited bundles with no restrictions",
-        "feature2": "Advanced customization and layout controls",
-        "feature3": "Detailed analytics and performance insights",
-        "feature4": "Automation tools and priority support"
+        "feature1": "Unlimited bundles with no restrictions.",
+        "feature2": "Advanced customization and layout controls.",
+        "feature3": "Detailed analytics and performance insights.",
+        "feature4": "Priority support."
       },
       "maybeLater": "Maybe later",
       "viewPlans": "View plans",

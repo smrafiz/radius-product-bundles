@@ -2139,10 +2139,10 @@
       "heading": "Débloquez les fonctionnalités Pro",
       "description": "{feature} est disponible avec la formule Pro. Passez à la version Pro pour bénéficier d'outils performants conçus pour augmenter le chiffre d'affaires de votre boutique et optimiser les performances de vos offres groupées.",
       "benefits": {
-        "feature1": "Offres groupées illimitées sans restriction",
-        "feature2": "Contrôles avancés de la personnalisation et de la mise en page",
-        "feature3": "Analyses détaillées et informations sur les performances",
-        "feature4": "Outils d'automatisation et assistance prioritaire"
+        "feature1": "Offres groupées illimitées sans restriction.",
+        "feature2": "Contrôles avancés de la personnalisation et de la mise en page.",
+        "feature3": "Analyses détaillées et informations sur les performances.",
+        "feature4": "Assistance prioritaire."
       },
       "maybeLater": "Peut-être plus tard",
       "viewPlans": "Voir les formules",
