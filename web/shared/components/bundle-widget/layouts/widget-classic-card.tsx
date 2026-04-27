@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 import {
     getButtonBgColor,
@@ -154,6 +155,75 @@ function ClassicProductItem({
                     {textBlock}
                 </>
             )}
+        </div>
+    );
+}
+
+function ClassicSlider({
+    items,
+    isReward,
+    styles,
+    displayOptions,
+    labels,
+    dotColor,
+}: {
+    items: PreviewProduct[];
+    isReward: boolean;
+    styles: WidgetLayoutProps["styles"];
+    displayOptions: WidgetLayoutProps["displayOptions"];
+    labels?: WidgetLayoutProps["labels"];
+    dotColor?: string;
+}) {
+    const [index, setIndex] = useState(0);
+    if (items.length === 0) return null;
+    if (items.length === 1) {
+        return (
+            <ClassicProductItem
+                product={items[0]}
+                isReward={isReward}
+                styles={styles}
+                displayOptions={displayOptions}
+                labels={labels}
+            />
+        );
+    }
+    return (
+        <div>
+            <ClassicProductItem
+                product={items[index]}
+                isReward={isReward}
+                styles={styles}
+                displayOptions={displayOptions}
+                labels={labels}
+            />
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 6,
+                    marginTop: 10,
+                }}
+            >
+                {items.map((_, i) => (
+                    <button
+                        key={i}
+                        onClick={() => setIndex(i)}
+                        style={{
+                            width: 6,
+                            height: 6,
+                            borderRadius: "50%",
+                            border: "none",
+                            padding: 0,
+                            cursor: "pointer",
+                            backgroundColor:
+                                i === index
+                                    ? dotColor || "#303030"
+                                    : "#d1d5db",
+                            transition: "background-color 0.2s",
+                        }}
+                    />
+                ))}
+            </div>
         </div>
     );
 }
@@ -339,27 +409,14 @@ export function WidgetClassicCard({
                                 {badge}
                             </span>
                         )}
-                        <div
-                            style={{
-                                display: "grid",
-                                gridTemplateColumns:
-                                    items.length > 1
-                                        ? `repeat(${items.length}, 1fr)`
-                                        : "1fr",
-                                gap: spacingValues.gap,
-                            }}
-                        >
-                            {items.map((p) => (
-                                <ClassicProductItem
-                                    key={p.id}
-                                    product={p}
-                                    isReward={variant === "reward"}
-                                    styles={styles}
-                                    displayOptions={displayOptions}
-                                    labels={labels}
-                                />
-                            ))}
-                        </div>
+                        <ClassicSlider
+                            items={items}
+                            isReward={variant === "reward"}
+                            styles={styles}
+                            displayOptions={displayOptions}
+                            labels={labels}
+                            dotColor={color}
+                        />
                     </div>
                 ))}
             </div>
