@@ -934,6 +934,19 @@
       "bundleSaved": "Your changes have been saved.",
       "checkInputs": "Please check your inputs and try again.",
       "tryAgainLater": "Please try again later."
+    },
+    "ServiceErrors": {
+      "rateLimitExceeded": "Rate limit exceeded. Maximum {max} bundles per hour. Please try again later.",
+      "shopSuspended": "Shop account is suspended. Please contact support for assistance.",
+      "trialExpired": "Trial period has expired. Please upgrade your plan.",
+      "shopNotConfigured": "Shop is not properly configured. Please complete setup.",
+      "excessiveCreation": "Excessive bundle creation detected ({count} in {hours}h)",
+      "quotaExceeded": "Shop has reached maximum bundle limit ({limit})",
+      "duplicateName": "A bundle with this name already exists",
+      "operationTimedOut": "Operation timed out. Please try again with fewer products.",
+      "operationTimedOutShort": "Operation timed out",
+      "unexpectedError": "An unexpected error occurred",
+      "suspiciousActivity": "Suspicious activity detected. Please contact support."
     }
   },
   "Settings": {
@@ -1728,28 +1741,6 @@
       "cachePartialError": "Server cache clear failed, client caches cleared",
       "cacheSuccess": "All caches cleared",
       "unexpectedError": "An unexpected error occurred"
-    },
-    "Submit": {
-      "createProductFailed": "Could not create Shopify product. Please try again.",
-      "deleteProductFailed": "Could not delete the Shopify product.",
-      "invalidMode": "Invalid mode or missing bundle ID for edit.",
-      "bundleCreated": "Your bundle has been created.",
-      "bundleSaved": "Your changes have been saved.",
-      "checkInputs": "Please check your inputs and try again.",
-      "tryAgainLater": "Please try again later."
-    },
-    "ServiceErrors": {
-      "rateLimitExceeded": "Rate limit exceeded. Maximum {max} bundles per hour. Please try again later.",
-      "shopSuspended": "Shop account is suspended. Please contact support for assistance.",
-      "trialExpired": "Trial period has expired. Please upgrade your plan.",
-      "shopNotConfigured": "Shop is not properly configured. Please complete setup.",
-      "excessiveCreation": "Excessive bundle creation detected ({count} in {hours}h)",
-      "quotaExceeded": "Shop has reached maximum bundle limit ({limit})",
-      "duplicateName": "A bundle with this name already exists",
-      "operationTimedOut": "Operation timed out. Please try again with fewer products.",
-      "operationTimedOutShort": "Operation timed out",
-      "unexpectedError": "An unexpected error occurred",
-      "suspiciousActivity": "Suspicious activity detected. Please contact support."
     }
   },
   "Analytics": {
@@ -1903,7 +1894,7 @@
         "button": "Current Plan",
         "currentPlan": "Current Plan",
         "features": {
-          "0": "Up to 5 bundles",
+          "0": "Up to 3 bundles",
           "1": "Up to 10 products per bundle",
           "2": "Fixed bundles, BOGO, Buy X Get Y",
           "3": "Grid and list layouts",
@@ -1950,7 +1941,7 @@
     "faqs": {
       "0": {
         "title": "What's included in the Free plan?",
-        "description": "The Free plan includes up to 5 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support."
+        "description": "The Free plan includes up to 3 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support."
       },
       "1": {
         "title": "Can I upgrade or downgrade anytime?",

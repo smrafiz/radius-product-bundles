@@ -10,7 +10,7 @@ const FREE_CONFIG: PlanConfig = {
     id: "FREE" as PlanName,
     name: "Free",
     limits: {
-        maxBundles: 5,
+        maxBundles: 3,
         maxProductsPerBundle: 10,
         allowedLayouts: {
             FIXED_BUNDLE: ["GRID", "LIST"],

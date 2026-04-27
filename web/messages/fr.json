@@ -933,6 +933,19 @@
       "bundleSaved": "Vos modifications ont été enregistrées.",
       "checkInputs": "Veuillez vérifier les informations que vous avez saisies et réessayer.",
       "tryAgainLater": "Veuillez réessayer plus tard."
+    },
+    "ServiceErrors": {
+      "rateLimitExceeded": "Limite de débit dépassée. Maximum de {max} groupes par heure. Veuillez réessayer plus tard.",
+      "shopSuspended": "Le compte de la boutique est suspendu. Veuillez contacter l'assistance pour obtenir de l'aide.",
+      "trialExpired": "La période d'essai a expiré. Veuillez passer à un forfait supérieur.",
+      "shopNotConfigured": "La boutique n'est pas correctement configurée. Veuillez terminer la configuration.",
+      "excessiveCreation": "Création excessive de groupes détectée ({count} en {hours} h)",
+      "quotaExceeded": "La boutique a atteint la limite maximale d'offres groupées ({limit})",
+      "duplicateName": "Une offre groupée portant ce nom existe déjà",
+      "operationTimedOut": "L'opération a expiré. Veuillez réessayer avec moins de produits.",
+      "operationTimedOutShort": "Délai d'exécution de l'opération dépassé",
+      "unexpectedError": "Une erreur inattendue s'est produite",
+      "suspiciousActivity": "Activité suspecte détectée. Veuillez contacter l'assistance."
     }
   },
   "Settings": {
@@ -1726,28 +1739,6 @@
       "cachePartialError": "Échec de la suppression du cache du serveur ; caches du client supprimés",
       "cacheSuccess": "Tous les caches ont été vidés",
       "unexpectedError": "Une erreur inattendue s'est produite"
-    },
-    "Submit": {
-      "createProductFailed": "Impossible de créer le produit Shopify. Veuillez réessayer.",
-      "deleteProductFailed": "Impossible de supprimer le produit Shopify.",
-      "invalidMode": "Mode non valide ou identifiant d'offre groupée manquant pour la modification.",
-      "bundleCreated": "Votre offre groupée a été créée.",
-      "bundleSaved": "Vos modifications ont été enregistrées.",
-      "checkInputs": "Veuillez vérifier les informations que vous avez saisies et réessayer.",
-      "tryAgainLater": "Veuillez réessayer plus tard."
-    },
-    "ServiceErrors": {
-      "rateLimitExceeded": "Limite de débit dépassée. Maximum de {max} groupes par heure. Veuillez réessayer plus tard.",
-      "shopSuspended": "Le compte de la boutique est suspendu. Veuillez contacter l'assistance pour obtenir de l'aide.",
-      "trialExpired": "La période d'essai a expiré. Veuillez passer à un forfait supérieur.",
-      "shopNotConfigured": "La boutique n'est pas correctement configurée. Veuillez terminer la configuration.",
-      "excessiveCreation": "Création excessive de groupes détectée ({count} en {hours} h)",
-      "quotaExceeded": "La boutique a atteint la limite maximale d'offres groupées ({limit})",
-      "duplicateName": "Une offre groupée portant ce nom existe déjà",
-      "operationTimedOut": "L'opération a expiré. Veuillez réessayer avec moins de produits.",
-      "operationTimedOutShort": "Délai d'exécution de l'opération dépassé",
-      "unexpectedError": "Une erreur inattendue s'est produite",
-      "suspiciousActivity": "Activité suspecte détectée. Veuillez contacter l'assistance."
     }
   },
   "Analytics": {
@@ -1911,7 +1902,7 @@
         "button": "Formule actuelle",
         "currentPlan": "Formule actuelle",
         "features": {
-          "0": "Jusqu'à 5 offres groupées",
+          "0": "Jusqu'à 3 offres groupées",
           "1": "Jusqu'à 10 produits par offre groupée",
           "2": "Offres groupées fixes, un acheté = un offert, Achetez X, obtenez Y",
           "3": "Mises en page en grille et en liste",
@@ -1958,7 +1949,7 @@
     "faqs": {
       "0": {
         "title": "Que comprend l'offre Gratuite?",
-        "description": "L'offre Gratuite comprend jusqu'à 5 offres groupées, jusqu'à 10 produits par offre groupée, les types d'offres groupées Offre groupée fixe, Un acheté, un offert et Achetez X, obtenez Y, des mises en page sous forme de grille et de liste, des analyses de base et une assistance par e-mail."
+        "description": "L'offre Gratuite comprend jusqu'à 3 offres groupées, jusqu'à 10 produits par offre groupée, les types d'offres groupées Offre groupée fixe, Un acheté, un offert et Achetez X, obtenez Y, des mises en page sous forme de grille et de liste, des analyses de base et une assistance par e-mail."
       },
       "1": {
         "title": "Puis-je passer à une formule supérieure ou inférieure à tout moment?",

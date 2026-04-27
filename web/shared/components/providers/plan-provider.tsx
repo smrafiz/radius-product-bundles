@@ -18,7 +18,7 @@ const DEFAULT_PLAN_DATA: ClientPlanData = {
     limits: PLAN_CONFIGS[DEFAULT_PLAN_ID].limits,
     features: PLAN_CONFIGS[DEFAULT_PLAN_ID].features,
     quota: {
-        bundles: { allowed: true, current: 0, limit: 5 },
+        bundles: { allowed: true, current: 0, limit: 3 },
         products: { allowed: true, current: 0, limit: 10 },
     },
 };

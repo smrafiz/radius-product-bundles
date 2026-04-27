@@ -36,7 +36,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         title: "Free",
         description: "Get started with bundle creation at no cost",
         features: [
-            "Up to 5 bundles",
+            "Up to 3 bundles",
             "Up to 10 products per bundle",
             "Fixed bundles, BOGO, Buy X Get Y",
             "Grid and list layouts",
@@ -86,7 +86,7 @@ export const PRICING_FAQ_ITEM = [
         id: "0",
         title: "What's included in the Free plan?",
         description:
-            "The Free plan includes up to 5 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support.",
+            "The Free plan includes up to 3 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support.",
     },
     {
         id: "1",
