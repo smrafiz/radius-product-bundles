@@ -116,6 +116,7 @@ features/<name>/
 | Document | Purpose |
 | --- | --- |
 | [**Agent Guardrails**](docs/AGENT_GUARDRAILS.md) | **MANDATORY** safety protocols for ALL AI agents |
+| [App Store Submission](docs/APP_STORE_SUBMISSION.md) | Pre-submission checklist + protected customer data declarations |
 
 ---
 
