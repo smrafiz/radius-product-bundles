@@ -14,11 +14,10 @@ import {
 import {
     BundleTemplateProps,
     useEffectiveStyles,
-    useSettingsStore,
 } from "@/features/settings";
 import { usePreviewProducts } from "@/features/settings/hooks/customizer/use-preview-products";
 import { PLACEHOLDER_IMAGES } from "@/features/settings/constants/customizer.constants";
-import { usePreviewLabels } from "@/shared";
+import { useMergedPreviewLabels } from "@/shared";
 
 const BXGY_PLACEHOLDERS: PreviewProduct[] = [
     {
@@ -61,16 +60,9 @@ export function TemplateBuyGet({
     activeDevice,
 }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
-    const previewLabels = usePreviewLabels();
-    const serverData = useSettingsStore((s) => s.serverData);
-    const savedLabels = serverData?.labels as
-        | Record<string, string>
-        | undefined;
+    const previewLabels = useMergedPreviewLabels();
     const labels = {
         ...previewLabels,
-        ...Object.fromEntries(
-            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
-        ),
         bogoTriggerBadgeText: "You Buy",
         bogoRewardBadgeText: "50% Off",
     };

@@ -48,7 +48,7 @@ import {
 import { useCallback, useMemo } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useTranslations } from "@/lib/i18n/provider";
-import { usePreviewLabels } from "@/shared/hooks/use-preview-labels";
+import { useMergedPreviewLabels } from "@/shared/hooks/use-preview-labels";
 import { RESPONSIVE_FIELDS } from "@/features/settings/configs/customizer.config";
 import { BOGO_LAYOUT_VALUES } from "@/features/bundles/constants/bundle-details.constants";
 import { DEFAULT_CUSTOMIZER_STYLES } from "@/features/settings/constants/defaults.constants";
@@ -499,23 +499,7 @@ function useWidgetPricing(currencyCode?: string): WidgetPricing {
 }
 
 function useWidgetLabels(): WidgetLabels {
-    const serverData = useSettingsStore((s) => s.serverData);
-    const savedLabels = serverData?.labels as
-        | Record<string, string>
-        | undefined;
-    const i18nLabels = usePreviewLabels();
-    return useMemo(
-        () => ({
-            ...i18nLabels,
-            ...Object.fromEntries(
-                Object.entries(savedLabels ?? {}).filter(
-                    ([, val]) => val !== "",
-                ),
-            ),
-        }),
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [savedLabels],
-    );
+    return useMergedPreviewLabels();
 }
 
 function useBadgeText(labels: WidgetLabels): string {
