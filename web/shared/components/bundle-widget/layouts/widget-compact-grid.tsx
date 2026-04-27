@@ -512,8 +512,8 @@ export function WidgetCompactGrid({
                     labels={labels}
                     pricing={pricing}
                     dotColor={primaryColor}
-                    perPage={2}
-                    flexVal={singleEach ? 1 : 2}
+                    perPage={1}
+                    flexVal={1}
                     activeDevice={activeDevice}
                     bundleType={bundleType}
                 />
