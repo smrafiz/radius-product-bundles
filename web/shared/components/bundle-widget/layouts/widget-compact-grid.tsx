@@ -17,6 +17,42 @@ import {
 } from "@/features/settings";
 import { DEFAULT_LABELS } from "@/features/settings/constants/defaults.constants";
 
+function getRewardBadge(
+    product: { price: string; compareAtPrice?: string },
+    labels?: WidgetLayoutProps["labels"],
+    discountType?: string,
+): string {
+    const isFreePrice =
+        !!product.compareAtPrice &&
+        /^[^1-9]*$/.test(product.price || "");
+    if (isFreePrice) return labels?.bogoRewardBadgeText || "You Get";
+
+    if (discountType === "CUSTOM_PRICE") {
+        return labels?.bogoRewardBadgeText || "You Get";
+    }
+
+    if (product.compareAtPrice && product.price) {
+        const parse = (s: string) =>
+            parseFloat(s.replace(/[^0-9.]/g, "")) || 0;
+        const orig = parse(product.compareAtPrice);
+        const curr = parse(product.price);
+        if (orig > curr && orig > 0) {
+            if (discountType === "FIXED_AMOUNT") {
+                const symbol = (product.compareAtPrice.match(/[^0-9.,\s]/) || ["$"])[0];
+                const savings = orig - curr;
+                const amt = savings % 1 === 0
+                    ? `${symbol}${savings}`
+                    : `${symbol}${savings.toFixed(2).replace(/\.00$/, "")}`;
+                return `${amt} Off`;
+            }
+            const pct = Math.round(((orig - curr) / orig) * 100);
+            return `${pct}%`;
+        }
+    }
+
+    return labels?.bogoRewardBadgeText || "You Get";
+}
+
 function ProductTile({
     product,
     variant,
@@ -25,6 +61,7 @@ function ProductTile({
     labels,
     pricing,
     bundleType,
+    discountType,
 }: {
     product: {
         title: string;
@@ -41,6 +78,7 @@ function ProductTile({
     labels?: WidgetLayoutProps["labels"];
     pricing?: WidgetLayoutProps["pricing"];
     bundleType?: string;
+    discountType?: string;
 }) {
     const isTrigger = variant === "trigger";
     const isReward = !isTrigger;
@@ -67,13 +105,7 @@ function ProductTile({
         ) : (
             <span>{displayTitle}</span>
         );
-    const rewardBadgeText =
-        labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
-    const rewardBadge = isFreePrice
-        ? freeText
-        : pricing?.hasDiscount && pricing.savingsAmount
-          ? `${pricing.savingsAmount} Off`
-          : rewardBadgeText;
+    const rewardBadge = getRewardBadge(product, labels, discountType);
     const cardBg = styles.customizeCardStyle
         ? getCardBgColor(styles)
         : undefined;
@@ -210,6 +242,7 @@ function TileSlider({
     flexVal,
     activeDevice,
     bundleType,
+    discountType,
 }: {
     products: PreviewProduct[];
     variant: "trigger" | "reward";
@@ -222,6 +255,7 @@ function TileSlider({
     flexVal: number;
     activeDevice?: "desktop" | "tablet" | "mobile";
     bundleType?: string;
+    discountType?: string;
 }) {
     const pages = chunk(products, perPage);
     const [activeSlide, setActiveSlide] = useState(0);
@@ -328,6 +362,7 @@ function TileSlider({
                                     labels={labels}
                                     pricing={pricing}
                                     bundleType={bundleType}
+                                    discountType={discountType}
                                 />
                             ))}
                         </div>
@@ -381,6 +416,7 @@ export function WidgetCompactGrid({
     labels,
     activeDevice,
     bundleType,
+    discountType,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -516,6 +552,7 @@ export function WidgetCompactGrid({
                     flexVal={1}
                     activeDevice={activeDevice}
                     bundleType={bundleType}
+                    discountType={discountType}
                 />
 
                 <div
@@ -555,6 +592,7 @@ export function WidgetCompactGrid({
                     flexVal={1}
                     activeDevice={activeDevice}
                     bundleType={bundleType}
+                    discountType={discountType}
                 />
             </div>
 
