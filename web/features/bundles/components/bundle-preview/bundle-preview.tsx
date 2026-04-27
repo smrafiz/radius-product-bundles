@@ -492,7 +492,7 @@ function useWidgetPricing(currencyCode?: string): WidgetPricing {
     return {
         originalPrice: formatPrice(pricing.originalPrice, currencyCode),
         finalPrice: formatPrice(pricing.finalPrice, currencyCode),
-        savingsAmount: formatPrice(pricing.discountAmount, currencyCode),
+        savingsAmount: formatPrice(pricing.discountAmount, currencyCode).replace(/\.00$/, ""),
         savingsPercentage: pricing.savingsPercentage,
         hasDiscount: pricing.hasDiscount,
     };
@@ -583,6 +583,7 @@ function RenderLayout({
     labels,
     activeDevice,
     bundleType,
+    discountType,
 }: {
     layout: DisplaySettings["layout"];
     products: PreviewProduct[];
@@ -596,6 +597,7 @@ function RenderLayout({
     labels?: WidgetLabels;
     activeDevice?: "desktop" | "tablet" | "mobile";
     bundleType?: string;
+    discountType?: string;
 }) {
     const t = useTranslations("Bundles.Creation.Preview");
     const layoutProps = {
@@ -603,6 +605,7 @@ function RenderLayout({
         styles,
         displayOptions,
         bundleType,
+        discountType,
         labels,
     };
 
@@ -1032,6 +1035,7 @@ export function BundlePreview() {
                                             labels={labels}
                                             activeDevice="mobile"
                                             bundleType={bundleData.type}
+                                            discountType={bundleData.discountType}
                                         />
                                     </BundleWidget>
                                 </div>

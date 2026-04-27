@@ -17,14 +17,36 @@ import { SPACING_VALUES } from "@/features/settings/constants/defaults.constants
 function getRewardBadge(
     product: PreviewProduct,
     labels?: WidgetLayoutProps["labels"],
-    pricing?: WidgetLayoutProps["pricing"],
+    discountType?: string,
 ): string {
-    const freeText = labels?.bogoFreeText || "FREE";
-    const hasDiscount = !!product.compareAtPrice;
-    const isFreePrice = hasDiscount && /^[^1-9]*$/.test(product.price || "");
-    if (isFreePrice) return freeText;
-    if (pricing?.hasDiscount && pricing.savingsAmount)
-        return `${pricing.savingsAmount} Off`;
+    const isFreePrice =
+        !!product.compareAtPrice &&
+        /^[^1-9]*$/.test(product.price || "");
+    if (isFreePrice) return labels?.bogoRewardBadgeText || "You Get";
+
+    if (discountType === "CUSTOM_PRICE") {
+        return labels?.bogoRewardBadgeText || "You Get";
+    }
+
+    if (product.compareAtPrice && product.price) {
+        const parse = (s: string) =>
+            parseFloat(s.replace(/[^0-9.]/g, "")) || 0;
+        const orig = parse(product.compareAtPrice);
+        const curr = parse(product.price);
+        if (orig > curr && orig > 0) {
+            if (discountType === "FIXED_AMOUNT") {
+                const symbol = (product.compareAtPrice.match(/[^0-9.,\s]/) || ["$"])[0];
+                const savings = orig - curr;
+                const amt = savings % 1 === 0
+                    ? `${symbol}${savings}`
+                    : `${symbol}${savings.toFixed(2).replace(/\.00$/, "")}`;
+                return `${amt} Off`;
+            }
+            const pct = Math.round(((orig - curr) / orig) * 100);
+            return `${pct}%`;
+        }
+    }
+
     return labels?.bogoRewardBadgeText || "You Get";
 }
 
@@ -203,6 +225,7 @@ export function WidgetMinimalist({
     labels,
     activeDevice,
     bundleType,
+    discountType,
 }: WidgetLayoutProps) {
     const triggerProduct = products.find((p) => p.role === "TRIGGER");
     const headingFontSize = getHeadingFontSize(styles.headingSize);
@@ -394,7 +417,7 @@ export function WidgetMinimalist({
                             ? savingsColor
                             : primaryColor;
                         const roleBadgeText = isReward
-                            ? getRewardBadge(product, labels, pricing)
+                            ? getRewardBadge(product, labels, discountType)
                             : triggerBadge;
 
                         return (
