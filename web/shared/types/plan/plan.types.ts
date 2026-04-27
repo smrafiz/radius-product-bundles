@@ -13,6 +13,7 @@ export type FeatureId =
     | "ai_insights"
     | "custom_css"
     | "responsive_overrides"
+    | "custom_breakpoint"
     | "templates"
     | "export_data"
     | "remove_branding"
