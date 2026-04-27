@@ -100,7 +100,7 @@ export function BundleListingPage() {
                     <s-stack gap="base">
                         <s-grid
                             gridTemplateColumns="repeat(auto-fit, minmax(200px, 1fr))"
-                            gap="base"
+                            gap="small"
                             justifyContent="center"
                         >
                             {metrics.map((metric, index) => (
