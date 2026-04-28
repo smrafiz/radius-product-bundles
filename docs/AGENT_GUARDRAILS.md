@@ -298,7 +298,6 @@ OUT OF SCOPE (DO NOT TOUCH):
 - [PROJECT_CONTEXT_TEMPLATE.md](standards/PROJECT_CONTEXT_TEMPLATE.md) - Project Bible template
 - [ADVERSARIAL_TESTING.md](standards/ADVERSARIAL_TESTING.md) - Breaker agent, fuzz testing
 - [DEPENDENCY_GOVERNANCE.md](standards/DEPENDENCY_GOVERNANCE.md) - Package allow-list
-- [INFRASTRUCTURE_STANDARDS.md](standards/INFRASTRUCTURE_STANDARDS.md) - IaC, Terraform, drift detection
 - [OPERATIONAL_PATTERNS.md](standards/OPERATIONAL_PATTERNS.md) - Health checks, circuit breakers
 - [LOGGING_PATTERNS.md](standards/LOGGING_PATTERNS.md) - Structured logging
 - [MODULAR_DOCUMENTATION.md](standards/MODULAR_DOCUMENTATION.md) - 500-line rule

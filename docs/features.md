@@ -516,7 +516,7 @@ Cold-start recovery: webhooks auto-re-register if missing.
 
 ### GraphQL Integration
 
-- Shopify Admin API 2025-10
+- Shopify Admin API 2026-04
 - Auto-generated TypeScript types via `graphql-codegen`
 - Product creation/update/status sync
 - Metafield read/write operations

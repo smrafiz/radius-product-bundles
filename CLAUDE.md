@@ -2,12 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 0. Navigation Maps (READ FIRST)
-* **INDEX_MAP.md**: Read this FIRST to find documents by keyword/category. Saves 60-80% tokens.
-* **HEADER_MAP.md**: Find specific sections with file:line references for targeted reading.
-* **Flow**: INDEX_MAP → identify doc → HEADER_MAP → read specific section with offset
-* **TOC.md**: Complete file listing and organization structure
-
 ## Project Overview
 ---
 
@@ -49,7 +43,6 @@ These constraints enable flow state. Follow the guardrails and you can generate 
 * **NO RE-READING**: Trust your context; do not re-read files just edited.
 * **TARGETED CONTEXT**: Read ONLY files explicitly relevant to the request.
 * **CONCISE PLANS**: Bullet points only. No "thinking out loud".
-* **USE MAPS**: Always check INDEX_MAP.md before reading full documents.
 
 ## 3. Workflow
 * **Tests**: Run ONLY relevant tests.
@@ -59,7 +52,6 @@ These constraints enable flow state. Follow the guardrails and you can generate 
 
 ## 4. Documentation Standards
 * **500-Line Max**: No document over 500 lines.
-* **Update Maps**: Update INDEX_MAP.md and HEADER_MAP.md when adding/changing docs.
 
 ## Project Overview
 
@@ -98,7 +90,7 @@ bun run prisma:studio       # Open Prisma Studio
 ### Code Quality (run from /web)
 
 ```bash
-bun run graphql-codegen     # Generate types from Shopify Admin API 2025-10
+bun run graphql-codegen     # Generate types from Shopify Admin API 2026-04
 bun run test                # Jest
 bun run test:watch          # Jest watch mode
 bun run test:coverage       # Jest with coverage
@@ -181,7 +173,7 @@ Cross-feature utilities: `components/` (Polaris-based UI), `hooks/`, `utils/`, `
 
 ### Shopify Integration
 
-- **API version**: 2025-10
+- **API version**: 2026-04
 - **GraphQL types**: Auto-generated via `graphql-codegen` from Shopify Admin API schema
 - **App Proxy**: `/apps/bundles/` → `/api/proxy/`
 - **Direct API access**: Offline mode, embedded app direct API enabled

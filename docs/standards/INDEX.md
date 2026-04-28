@@ -17,7 +17,6 @@ This directory contains documentation standards that ensure consistency, maintai
 | [TEST_PRODUCTION_SEPARATION.md](./TEST_PRODUCTION_SEPARATION.md) | Test/production isolation | MANDATORY separation requirements |
 | [MODULAR_DOCUMENTATION.md](./MODULAR_DOCUMENTATION.md) | 500-line max rule | No doc over 500 lines |
 | [LOGGING_PATTERNS.md](./LOGGING_PATTERNS.md) | Array-based logging | Standard log format |
-| [LOGGING_INTEGRATION.md](./LOGGING_INTEGRATION.md) | External logging hooks | Hook interface spec |
 | [API_SPECIFICATIONS.md](./API_SPECIFICATIONS.md) | OpenAPI + OpenSpec | When to use each |
 
 ---
@@ -56,16 +55,6 @@ Establishes array-based structured logging patterns for agent operations.
 - Log array management
 - Output formats
 
-### LOGGING_INTEGRATION.md
-Defines hooks and interfaces for integrating with external logging systems.
-
-**Key sections:**
-- Standard hook interface
-- Webhook integration patterns
-- File-based integration
-- Queue-based integration
-- Error handling
-
 ### API_SPECIFICATIONS.md
 Guidance on choosing between OpenAPI and OpenSpec for API documentation.
 
@@ -84,7 +73,6 @@ These standards support the [AGENT_GUARDRAILS.md](../AGENT_GUARDRAILS.md) requir
 
 - **Test/production separation** → TEST_PRODUCTION_SEPARATION.md
 - **Audit requirements** → LOGGING_PATTERNS.md
-- **External integration** → LOGGING_INTEGRATION.md
 - **Documentation quality** → MODULAR_DOCUMENTATION.md
 - **API documentation** → API_SPECIFICATIONS.md
 
