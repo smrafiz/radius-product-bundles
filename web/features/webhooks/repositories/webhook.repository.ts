@@ -16,6 +16,37 @@ import { deleteShopPlan } from "@/features/pricing/repositories/shop-plan.reposi
  */
 
 /**
+ * Claim a deterministic webhook delivery slot for an order.
+ *
+ * Returns true if the caller is the first to process this order, false if
+ * a prior delivery already claimed the slot. Used to dedup orders/create
+ * deliveries that arrive with different X-Shopify-Webhook-Id headers (e.g.
+ * Shopify retry on transient 5xx) but reference the same order.
+ */
+export async function claimOrderDelivery(
+    shop: string,
+    orderId: string | number,
+): Promise<boolean> {
+    const id = `order-create:${shop}:${orderId}`;
+    try {
+        await prisma.webhookDelivery.create({
+            data: { id, topic: "orders/create:order", shop },
+        });
+        return true;
+    } catch (e: unknown) {
+        if (
+            typeof e === "object" &&
+            e !== null &&
+            "code" in e &&
+            (e as { code: string }).code === "P2002"
+        ) {
+            return false;
+        }
+        throw e;
+    }
+}
+
+/**
  * Get all registered webhooks from Shopify
  */
 export async function getRegisteredWebhooks(
