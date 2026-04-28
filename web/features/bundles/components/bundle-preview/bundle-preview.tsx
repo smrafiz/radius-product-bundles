@@ -534,6 +534,23 @@ function useBadgeText(labels: WidgetLabels): string {
 
     if (labels.bogoBadgeText) return labels.bogoBadgeText;
 
+    // Non-BXGY bundles (FIXED_BUNDLE, MIX_AND_MATCH, etc.) should show a
+    // simple discount badge, not the "Buy X Get Y" phrasing.
+    if (bundleData.type !== "BOGO" && bundleData.type !== "BUY_X_GET_Y") {
+        const dt = bundleData.discountType;
+        const dv = bundleData.discountValue ?? 0;
+        if (dt === "PERCENTAGE" && dv > 0) {
+            return t("savingsBadge", { percent: String(Math.round(dv)) });
+        }
+        if (dt === "FIXED_AMOUNT" && dv > 0) {
+            return `Save ${currencySymbol}${dv}`;
+        }
+        if (dt === "CUSTOM_PRICE" && dv > 0) {
+            return `Only ${currencySymbol}${dv}`;
+        }
+        return "";
+    }
+
     const countExpanded = (role: string) =>
         selectedItems
             .filter((i) => i.role === role)
@@ -1018,6 +1035,7 @@ export function BundlePreview() {
                                                 "COMPACT" &&
                                             bundleData.type === "FIXED_BUNDLE"
                                         }
+                                        badgeText={badgeText}
                                     >
                                         <RenderLayout
                                             layout={displaySettings.layout}
