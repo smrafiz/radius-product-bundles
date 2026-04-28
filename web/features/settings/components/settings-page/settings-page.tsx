@@ -6,13 +6,36 @@ import {
     useSettingsQuery,
     useLocales,
 } from "@/features/settings";
-import { GlobalForm } from "@/shared";
+import { GlobalForm, submitForm } from "@/shared";
 import {
     SettingsFormProvider,
     SettingsTab,
 } from "@/features/settings/components";
 import SettingsPageSkeleton from "@/app/(dashboard)/settings/loading";
 import { useTranslations } from "@/lib/i18n/provider";
+import { useFormContext } from "react-hook-form";
+
+/**
+ * Primary "Save Settings" button rendered into the s-page primary slot.
+ */
+function SettingsSaveButton() {
+    const t = useTranslations("Settings");
+    const {
+        formState: { isDirty, isSubmitting },
+    } = useFormContext<AppSettingsFormData>();
+
+    return (
+        <s-button
+            slot="primary-action"
+            variant="primary"
+            disabled={!isDirty || isSubmitting}
+            loading={isSubmitting}
+            onClick={() => submitForm("settings")}
+        >
+            {t("save")}
+        </s-button>
+    );
+}
 
 /**
  * Settings page content component.
@@ -29,6 +52,7 @@ function SettingsPageContent() {
             resetDirty={resetDirty}
         >
             <s-page heading={t("pageTitle")}>
+                <SettingsSaveButton />
                 <s-stack paddingBlockStart="large-300" paddingBlockEnd="large">
                     <SettingsTab />
                 </s-stack>
