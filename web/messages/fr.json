@@ -298,9 +298,7 @@
       "submitFeedback": "Envoyer des commentaires",
       "whatCanWeImprove": "Que pouvons-nous améliorer ?",
       "whatDidYouLikeMost": "Qu'avez-vous le plus apprécié ?",
-      "helpBySharing": "Aidez-nous en partageant votre expérience",
-      "rateOnAppStore": "Évaluer sur l'App Store",
-      "shareWithFriends": "Partager avec des amis",
+      "thanksForFeedback": "Merci pour vos gentils mots ! Vos commentaires nous aident à nous améliorer.",
       "needImmediateHelp": "Besoin d'une aide immédiate ?",
       "contactSupport": "Contacter l'assistance",
       "viewHelpCenter": "Consulter le Centre d'aide",
@@ -1900,6 +1898,8 @@
     "toggleBillingInterval": "Modifier la fréquence de facturation",
     "subscriptionError": "Échec de la mise à jour de l'abonnement. Veuillez réessayer.",
     "trialBadge": "Essai gratuit de {days} jours",
+    "switchToMonthly": "Passer en mensuel",
+    "switchToAnnual": "Passer en annuel",
     "plans": {
       "free": {
         "title": "Gratuit",
@@ -1977,7 +1977,9 @@
       "activating": "Activation de l'abonnement en cours…",
       "activatingBody": "Veuillez patienter pendant que nous confirmons votre abonnement.",
       "success": "Abonnement activé avec succès !",
-      "error": "Échec de l'activation de l'abonnement. Veuillez contacter l'assistance."
+      "error": "Échec de l'activation de l'abonnement. Veuillez contacter l'assistance.",
+      "declined": "Abonnement non activé",
+      "declinedBody": "Vous avez refusé ou annulé l'approbation de l'abonnement. Vous pouvez réessayer quand vous le souhaitez."
     },
     "PlanTab": {
       "pageTitle": "Abonnement et facturation",

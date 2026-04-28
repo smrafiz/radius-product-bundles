@@ -24,7 +24,9 @@ export async function createSubscriptionAction(
             return { status: "error", error: "No access token" };
         }
 
-        const returnUrl = `${process.env.HOST}/pricing/plan`;
+        // billing_status is set to "pending" so the return page can detect
+        // a decline (Shopify drops charge_id but preserves our query params).
+        const returnUrl = `${process.env.HOST}/pricing/plan?billing_status=pending`;
 
         const result = await createSubscriptionService(shop, accessToken, interval, returnUrl);
 

@@ -298,9 +298,7 @@
       "submitFeedback": "Submit feedback",
       "whatCanWeImprove": "What can we improve?",
       "whatDidYouLikeMost": "What did you like most?",
-      "helpBySharing": "Help us by sharing your experience",
-      "rateOnAppStore": "Rate on App Store",
-      "shareWithFriends": "Share with friends",
+      "thanksForFeedback": "Thanks for the kind words! Your feedback helps us keep improving.",
       "needImmediateHelp": "Need immediate help?",
       "contactSupport": "Contact Support",
       "viewHelpCenter": "View Help Center",
@@ -1975,11 +1973,15 @@
     "toggleBillingInterval": "Toggle billing interval",
     "subscriptionError": "Failed to update subscription. Please try again.",
     "trialBadge": "{days}-day free trial",
+    "switchToMonthly": "Switch to Monthly",
+    "switchToAnnual": "Switch to Annual",
     "Confirmation": {
       "activating": "Activating subscription...",
       "activatingBody": "Please wait while we confirm your subscription.",
       "success": "Subscription activated successfully!",
-      "error": "Failed to activate subscription. Please contact support."
+      "error": "Failed to activate subscription. Please contact support.",
+      "declined": "Subscription not activated",
+      "declinedBody": "You declined or cancelled the subscription approval. You can try again whenever you're ready."
     },
     "PlanTab": {
       "pageTitle": "Plan & Billing",
