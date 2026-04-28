@@ -673,6 +673,7 @@
         "bogoFreeFallback": "Gratuit",
         "bogoAtPercentOff": "avec {percent} % de réduction",
         "bogoAtAmountOff": "{amount} de réduction",
+        "bogoAtCustomPrice": "pour {price}",
         "configureDiscountTiers": "Configurez les niveaux de remise pour afficher un aperçu.",
         "volumeBadgePercent": "Jusqu'à {discount} % de réduction",
         "volumeBadgeFixed": "Jusqu'à {amount} de réduction",

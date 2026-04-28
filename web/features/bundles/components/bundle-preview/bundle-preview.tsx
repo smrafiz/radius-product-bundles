@@ -567,6 +567,9 @@ function useBadgeText(labels: WidgetLabels): string {
     if (discountType === "FIXED_AMOUNT" && discountValue > 0) {
         return `${buyWord} ${buy} ${getWord} ${get} - ${t("bogoAtAmountOff", { amount: `${currencySymbol}${discountValue}` })}`;
     }
+    if (discountType === "CUSTOM_PRICE" && discountValue > 0) {
+        return `${buyWord} ${buy} ${getWord} ${get} ${t("bogoAtCustomPrice", { price: `${currencySymbol}${discountValue}` })}`;
+    }
     return `${buyWord} ${buy} ${getWord} ${get}`;
 }
 

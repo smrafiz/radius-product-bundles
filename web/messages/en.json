@@ -674,6 +674,7 @@
         "bogoFreeFallback": "Free",
         "bogoAtPercentOff": "at {percent}% Off",
         "bogoAtAmountOff": "{amount} Off",
+        "bogoAtCustomPrice": "for {price}",
         "configureDiscountTiers": "Configure discount tiers to see a preview.",
         "volumeBadgePercent": "Up to {discount}% off",
         "volumeBadgeFixed": "Up to {amount} off",
