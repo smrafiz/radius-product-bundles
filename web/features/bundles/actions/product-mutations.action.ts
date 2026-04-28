@@ -32,6 +32,10 @@ import {
     PublishablePublishMutation,
     StagedUploadsCreateDocument,
     StagedUploadsCreateMutation,
+    FileCreateDocument,
+    FileCreateMutation,
+    FileStatusByIdsDocument,
+    FileStatusByIdsQuery,
 } from "@/lib/graphql/generated/graphql";
 import { executeGraphQLMutation } from "@/lib";
 import { handleSessionToken } from "@/lib/shopify";
@@ -465,6 +469,123 @@ export async function createStagedUploadsAction(
                     ? error.message
                     : "Failed to stage uploads",
             stagedTargets: null,
+        };
+    }
+}
+
+/**
+ * Ingest staged uploads into Shopify Files and return permanent CDN URLs.
+ *
+ * Reads `image.url` from fileCreate response when available; for files still
+ * processing, polls FileStatusByIds (max ~3s) until READY.
+ */
+export async function ingestStagedUploadsAction(
+    sessionToken: string,
+    stagedResourceUrls: string[],
+    altText?: string,
+): Promise<{ success: boolean; urls: string[]; error?: string }> {
+    if (stagedResourceUrls.length === 0) {
+        return { success: true, urls: [] };
+    }
+
+    try {
+        await handleSessionToken(sessionToken);
+
+        const files = stagedResourceUrls.map((url) => ({
+            originalSource: url,
+            contentType: "IMAGE" as const,
+            alt: altText,
+        }));
+
+        const result = await executeGraphQLMutation<FileCreateMutation>({
+            query: FileCreateDocument,
+            variables: { files },
+            sessionToken,
+        });
+
+        if (result.errors && result.errors.length > 0) {
+            console.error("[ingestStagedUploads] Errors:", result.errors);
+            return {
+                success: false,
+                urls: [],
+                error: result.errors[0].message,
+            };
+        }
+
+        const userErrors = result.data?.fileCreate?.userErrors ?? [];
+        if (userErrors.length > 0) {
+            console.error("[ingestStagedUploads] User errors:", userErrors);
+            return { success: false, urls: [], error: userErrors[0].message };
+        }
+
+        const created = result.data?.fileCreate?.files ?? [];
+
+        // Resolve URL: prefer image.url from response, otherwise mark for poll
+        type Pending = { id: string; index: number };
+        const urls: (string | null)[] = new Array(created.length).fill(null);
+        const pending: Pending[] = [];
+
+        created.forEach((file, index) => {
+            if (!file?.id) return;
+            const url =
+                "image" in file && file.image?.url ? file.image.url : null;
+            if (url) {
+                urls[index] = url;
+            } else {
+                pending.push({ id: file.id, index });
+            }
+        });
+
+        // Short fallback poll (max 6 attempts × 500ms = 3s)
+        const MAX_ATTEMPTS = 6;
+        const DELAY_MS = 500;
+
+        for (let attempt = 0; pending.length > 0 && attempt < MAX_ATTEMPTS; attempt++) {
+            await new Promise((r) => setTimeout(r, DELAY_MS));
+
+            const pollResult = await executeGraphQLQuery<FileStatusByIdsQuery>({
+                query: FileStatusByIdsDocument,
+                variables: { ids: pending.map((p) => p.id) },
+                sessionToken,
+            });
+
+            const nodes = pollResult.data?.nodes ?? [];
+            const stillPending: Pending[] = [];
+
+            pending.forEach((p) => {
+                const node = nodes.find(
+                    (n) => n && "id" in n && n.id === p.id,
+                );
+                if (
+                    node &&
+                    "fileStatus" in node &&
+                    node.fileStatus === "READY" &&
+                    "image" in node &&
+                    node.image?.url
+                ) {
+                    urls[p.index] = node.image.url;
+                } else {
+                    stillPending.push(p);
+                }
+            });
+
+            pending.length = 0;
+            pending.push(...stillPending);
+        }
+
+        // Drop entries that never resolved
+        const resolved = urls.filter((u): u is string => Boolean(u));
+
+        return { success: true, urls: resolved };
+    } catch (error) {
+        console.error("[ingestStagedUploads] Error:", error);
+        return {
+            success: false,
+            urls: [],
+            error:
+                error instanceof Error
+                    ? error.message
+                    : "Failed to ingest files",
         };
     }
 }
