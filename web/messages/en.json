@@ -239,7 +239,7 @@
     },
     "Features": {
       "heading": "Powerful Bundle Features",
-      "bundleTypes": "Multiple bundle types — Fixed, BOGO, Volume, Mix & Match",
+      "bundleTypes": "Multiple bundle types — Fixed, BOGO, Volume, Buy X Get Y",
       "discounts": "Flexible discounts — Percentage, fixed amount, custom pricing",
       "styleCustomizer": "Style customizer — Match your store's branding with zero code",
       "analytics": "Built-in analytics — Track views, conversions, and revenue",
@@ -2100,7 +2100,7 @@
     "faq1Q": "How does the bundle discount get applied — is it a discount code?",
     "faq1A": "<p>No code needed. The discount is built into Shopify’s checkout itself. When a customer has all the required products in their cart, it applies automatically at checkout.</p><p>It works alongside Shopify Payments and Shop Pay with no conflicts, and doesn’t require any changes to your theme code.</p>",
     "faq2Q": "The bundle widget isn’t showing on my product pages. How do I fix it?",
-    "faq2A": "<p>The widget has to be added to your theme manually. Here’s how:</p><ol><li>Go to <strong>Online Store → Themes → Customize</strong></li><li>Open your product template</li><li>Click <strong>Add block</strong> in the left sidebar</li><li>Select <strong>Radius Bundles Widget</strong></li><li>Drag it where you want it and save</li></ol><p><strong><em>Still not showing?</em></strong> Check that:</p><ul><li>The product is part of an <strong>Active bundle</strong> — Draft and Paused bundles don’t display the widget.</li><li>You’ve added the block to every product template you use (they don’t share automatically).</li></ul>",
+    "faq2A": "<p>The widget has to be added to your theme manually. Here’s how:</p><ol><li>Go to <strong>Online Store → Themes → Edit theme</strong></li><li>Open your product template</li><li>Click <strong>Add block</strong> in the left sidebar</li><li>Select <strong>Radius Bundles Widget</strong></li><li>Drag it where you want it and save</li></ol><p><strong><em>Still not showing?</em></strong> Check that:</p><ul><li>The product is part of an <strong>Active bundle</strong> — Draft and Paused bundles don’t display the widget.</li><li>You’ve added the block to every product template you use (they don’t share automatically).</li></ul>",
     "faq3Q": "What’s the difference between Fixed Bundle, BOGO, Volume Discount, and Buy X Get Y?",
     "faq3A": "<p>Each one fits a different goal:</p><ul><li><strong>Fixed Bundle</strong> — Specific products sold together at a set price. Suitable for curated sets like gift boxes or starter kits.</li><li><strong>BOGO (Buy One Get One)</strong> — A free or discounted reward when a qualifying product is bought. Ideal for promotional campaigns.</li><li><strong>Volume Discount</strong> — Bigger discount as quantity goes up (e.g. buy 3, save 15%). Perfect for moving stock or rewarding bulk buyers.</li><li><strong>Buy X Get Y —</strong> Buy specific product X to unlock a discount on product Y. Best for cross-selling related items. Like buying a phone and getting 30% off a case.</li></ul>",
     "faq4Q": "My customer added all the bundle products but no discount appeared at checkout. Why?",
