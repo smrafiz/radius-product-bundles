@@ -12,7 +12,14 @@ export function SupportFaq() {
     const faqs = Array.from({ length: FAQ_COUNT }, (_, i) => ({
         id: String(i),
         title: t(`faq${i + 1}Q` as Parameters<typeof t>[0]),
-        description: t(`faq${i + 1}A` as Parameters<typeof t>[0]),
+        description: (
+            <div
+                className="prose prose-sm max-w-none [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-2 [&_li]:mt-1 [&_p]:mb-2 [&_strong]:font-semibold"
+                dangerouslySetInnerHTML={{
+                    __html: t(`faq${i + 1}A` as Parameters<typeof t>[0]),
+                }}
+            />
+        ),
     }));
 
     return (

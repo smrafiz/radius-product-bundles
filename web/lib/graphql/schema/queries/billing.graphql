@@ -12,6 +12,7 @@ query GetActiveSubscription {
                 id
                 plan {
                     pricingDetails {
+                        __typename
                         ... on AppRecurringPricing {
                             price {
                                 amount

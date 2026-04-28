@@ -1,4 +1,4 @@
-export const SUPPORT_EMAIL = "support@radiusbundles.com";
+export const SUPPORT_EMAIL = "support@radiustheme.com";
 export const DOCS_URL = "https://docs.radiusbundles.com";
 export const VIDEOS_URL = "https://youtube.com/@radiusbundles";
 export const APP_STORE_URL = "https://apps.shopify.com/radius-product-bundles";

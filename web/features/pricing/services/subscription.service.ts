@@ -51,9 +51,14 @@ export async function createSubscriptionService(
     subscriptionId: string;
 }> {
     const existingPlan = await getShopPlanRecord(shop);
-    if (existingPlan?.status === ShopifySubscriptionStatus.ACTIVE) {
+    const isActive = existingPlan?.status === ShopifySubscriptionStatus.ACTIVE;
+    const isSameInterval = existingPlan?.billingInterval === interval;
+
+    // Block re-subscribe to the same interval, but allow interval switch
+    // (Shopify replaces the active subscription via replacementBehavior).
+    if (isActive && isSameInterval) {
         throw new BillingError(
-            "Already has active subscription",
+            "Already on this plan",
             "ALREADY_ACTIVE",
         );
     }
@@ -62,11 +67,23 @@ export async function createSubscriptionService(
     const forceAnnualTest = process.env.NEXT_PUBLIC_FORCE_ANNUAL_TEST === "true";
     const isTest = process.env.NODE_ENV !== "production" && !forceAnnualTest;
 
+    // Append shop param using URL API so existing query string (e.g. billing_status=pending)
+    // is preserved with proper '&' separator instead of a malformed double '?'.
+    const returnUrlWithShop = (() => {
+        const url = new URL(returnUrl);
+        url.searchParams.set("shop", shop);
+        return url.toString();
+    })();
+
+    // Only grant the trial once per shop. trialUsed flips to true on first
+    // successful confirmation and persists across cancel/resubscribe cycles.
+    const trialDays = existingPlan?.trialUsed ? 0 : PRO_TRIAL_DAYS;
+
     const variables: CreateAppSubscriptionMutationVariables = {
         name: PRO_PLAN_NAME,
-        returnUrl: `${returnUrl}?shop=${shop}`,
+        returnUrl: returnUrlWithShop,
         test: isTest,
-        trialDays: PRO_TRIAL_DAYS,
+        trialDays,
         replacementBehavior:
             AppSubscriptionReplacementBehavior.ApplyImmediately,
         lineItems: [
@@ -285,7 +302,17 @@ export async function getSubscriptionStatusService(
         };
     }
 
-    const sub = subscriptions[0];
+    // Shopify can briefly return >1 active subscription during interval switches.
+    // Pick the most recently created so we always reflect the latest plan.
+    if (subscriptions.length > 1) {
+        console.warn(
+            `[Billing] ${shop} has ${subscriptions.length} active subscriptions — using most recent`,
+            subscriptions.map((s) => ({ id: s.id, status: s.status, createdAt: s.createdAt })),
+        );
+    }
+    const sub = [...subscriptions].sort(
+        (a, b) => new Date(b.createdAt as string).getTime() - new Date(a.createdAt as string).getTime(),
+    )[0];
     const lineItem = sub.lineItems?.[0];
     const pricingDetails = lineItem?.plan?.pricingDetails;
     const pricing =

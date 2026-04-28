@@ -9,3 +9,15 @@ query filesCheckOrphaned($fileQuery: String!) {
         }
     }
 }
+
+query FileStatusByIds($ids: [ID!]!) {
+    nodes(ids: $ids) {
+        ... on MediaImage {
+            id
+            fileStatus
+            image {
+                url
+            }
+        }
+    }
+}

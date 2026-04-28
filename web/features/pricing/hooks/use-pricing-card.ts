@@ -33,6 +33,15 @@ export function usePricingCard() {
         ((PRO_MONTHLY_PRICE * 12 - PRO_ANNUAL_PRICE) / (PRO_MONTHLY_PRICE * 12)) * 100
     );
     const currentPlanId = plan.id.toLowerCase();
+    const currentInterval = billingData?.subscription?.interval ?? null;
+
+    // For PRO, "current" requires plan + interval match.
+    // For FREE, plan match is sufficient (no interval).
+    const isCurrentPlan = (planId: string): boolean => {
+        if (currentPlanId !== planId) return false;
+        if (planId === SUBSCRIPTION_PLANS.FREE) return true;
+        return currentInterval === billingInterval;
+    };
 
     const handleSubscribe = async (planId: SubscriptionPlanType): Promise<void> => {
         setLoadingPlan(planId);
@@ -96,15 +105,28 @@ export function usePricingCard() {
         return t("trialBadge", { days: String(PRO_TRIAL_DAYS) });
     };
 
+    // True when merchant is on PRO but viewing the other interval card.
+    const isIntervalSwitch = (planId: string): boolean => {
+        return (
+            planId === SUBSCRIPTION_PLANS.PRO &&
+            currentPlanId === SUBSCRIPTION_PLANS.PRO &&
+            currentInterval !== null &&
+            currentInterval !== billingInterval
+        );
+    };
+
     const getButtonContent = (planId: string): string => {
-        if (currentPlanId === planId) {
+        if (loadingPlan === planId) {
+            return t("pleaseWait");
+        }
+        if (isCurrentPlan(planId)) {
             return t("currentPlan");
+        }
+        if (isIntervalSwitch(planId)) {
+            return isMonthly ? t("switchToMonthly") : t("switchToAnnual");
         }
         if (planId === SUBSCRIPTION_PLANS.FREE) {
             return t("downgradeFree");
-        }
-        if (loadingPlan === planId) {
-            return t("pleaseWait");
         }
         if (planId === SUBSCRIPTION_PLANS.PRO && trialUsed) {
             return t("upgradePro");
@@ -116,7 +138,7 @@ export function usePricingCard() {
         const baseProps = PRICING_CARD.find((p) => p.id === planId)
             ?.primaryButton.props ?? { variant: "primary" as const };
 
-        if (currentPlanId === planId) {
+        if (isCurrentPlan(planId)) {
             return { ...baseProps, variant: "secondary" as const, disabled: true };
         }
         if (planId === SUBSCRIPTION_PLANS.FREE) {
