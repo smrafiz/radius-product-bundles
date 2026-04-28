@@ -51,7 +51,7 @@ These constraints enable flow state. Follow the guardrails and you can generate 
 * **Checkpoints**: Use MCP checkpoints before/after critical operations.
 
 ## 4. Documentation Standards
-* **500-Line Max**: No document over 500 lines.
+* **Length**: Prefer ≤ 500 lines. Reference docs (TECHNICAL_REFERENCE, QA walkthroughs) may exceed if cohesive. Split only when distinct concerns would each stand alone.
 
 ## Project Overview
 
