@@ -4,6 +4,7 @@ import {
     ShopifyLineItemProperty,
 } from "@/shared";
 import { trackBundlePurchase } from "@/features/analytics/repositories";
+import prisma from "@/shared/repositories/prisma-connect";
 
 /**
  * Handle ORDERS_CREATE webhook
@@ -16,6 +17,32 @@ export async function handleOrdersCreate(
 ): Promise<void> {
     try {
         const order: ShopifyOrder = JSON.parse(body);
+
+        // Order-level idempotency. Shopify can deliver the same orders/create
+        // event with multiple webhook IDs (e.g. retry on transient 5xx),
+        // bypassing the per-webhook-id dedup in the route handler. Using a
+        // deterministic key on order.id so retries with new webhook IDs are
+        // still suppressed for analytics purposes.
+        const orderDedupKey = `order-create:${shop}:${order.id}`;
+        try {
+            await prisma.webhookDelivery.create({
+                data: {
+                    id: orderDedupKey,
+                    topic: "orders/create:order",
+                    shop,
+                },
+            });
+        } catch (e: unknown) {
+            if (
+                typeof e === "object" &&
+                e !== null &&
+                "code" in e &&
+                (e as { code: string }).code === "P2002"
+            ) {
+                return;
+            }
+            throw e;
+        }
 
         // Find line items with the bundle_id property
         const bundleItems = order.line_items.filter((item: ShopifyLineItem) =>
