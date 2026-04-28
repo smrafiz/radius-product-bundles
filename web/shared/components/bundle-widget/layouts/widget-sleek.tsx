@@ -13,22 +13,58 @@ import {
     getCardBgColor,
 } from "@/features/settings";
 
+function getRewardBadge(
+    product: PreviewProduct,
+    labels?: WidgetLayoutProps["labels"],
+    discountType?: string,
+): string {
+    const isFreePrice =
+        !!product.compareAtPrice &&
+        /^[^1-9]*$/.test(product.price || "");
+    if (isFreePrice) return labels?.bogoRewardBadgeText || "You Get";
+
+    if (discountType === "CUSTOM_PRICE") {
+        return labels?.bogoRewardBadgeText || "You Get";
+    }
+
+    if (product.compareAtPrice && product.price) {
+        const parse = (s: string) =>
+            parseFloat(s.replace(/[^0-9.]/g, "")) || 0;
+        const orig = parse(product.compareAtPrice);
+        const curr = parse(product.price);
+        if (orig > curr && orig > 0) {
+            if (discountType === "FIXED_AMOUNT") {
+                const symbol = (product.compareAtPrice.match(/[^0-9.,\s]/) || ["$"])[0];
+                const savings = orig - curr;
+                const amt = savings % 1 === 0
+                    ? `${symbol}${savings}`
+                    : `${symbol}${savings.toFixed(2).replace(/\.00$/, "")}`;
+                return `${amt} Off`;
+            }
+            const pct = Math.round(((orig - curr) / orig) * 100);
+            return `${pct}% Off`;
+        }
+    }
+
+    return labels?.bogoRewardBadgeText || "You Get";
+}
+
 function SleekProductCard({
     product,
     variant,
     styles,
     displayOptions,
     labels,
-    pricing,
     bundleType,
+    discountType,
 }: {
     product: PreviewProduct;
     variant: "trigger" | "reward";
     styles: WidgetLayoutProps["styles"];
     displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
-    pricing?: WidgetLayoutProps["pricing"];
     bundleType?: string;
+    discountType?: string;
 }) {
     const isTrigger = variant === "trigger";
     const isReward = !isTrigger;
@@ -51,11 +87,7 @@ function SleekProductCard({
         ) : (
             <span>{displayTitle}</span>
         );
-    const rewardBadgeText = isFreePrice
-        ? freeText
-        : pricing?.hasDiscount && pricing.savingsAmount
-          ? `${pricing.savingsAmount} Off`
-          : labels?.bogoRewardBadgeText || PREVIEW_LABELS.bogoRewardBadgeText;
+    const rewardBadgeText = getRewardBadge(product, labels, discountType);
 
     const cardBg = getCardBgColor(styles);
     const cardStyle: React.CSSProperties = isTrigger
@@ -224,6 +256,7 @@ export function WidgetSleek({
     subtitle,
     labels,
     bundleType,
+    discountType,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -288,9 +321,9 @@ export function WidgetSleek({
                     variant="trigger"
                     styles={styles}
                     labels={labels}
-                    pricing={pricing}
                     displayOptions={displayOptions}
                     bundleType={bundleType}
+                    discountType={discountType}
                 />
             ))}
 
@@ -341,9 +374,9 @@ export function WidgetSleek({
                     variant="reward"
                     styles={styles}
                     labels={labels}
-                    pricing={pricing}
                     displayOptions={displayOptions}
                     bundleType={bundleType}
+                    discountType={discountType}
                 />
             ))}
 

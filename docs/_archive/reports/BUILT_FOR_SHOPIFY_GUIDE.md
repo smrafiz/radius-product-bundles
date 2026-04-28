@@ -1,7 +1,7 @@
 # Built for Shopify Badge Guide
 
 **Generated:** 2026-03-25
-**App:** Radius Product Bundles
+**App:** Radius Bundles
 **Category:** Product Merchandising > Bundles
 **Reference:** [Official BFS Requirements](https://shopify.dev/docs/apps/launch/built-for-shopify/requirements)
 
@@ -149,7 +149,7 @@ This is the **most critical BFS requirement** for your app category.
 |-------------|--------|-------|
 | 4.1.1 Follow UX best practices | PASS | Polaris web components, card-based layout, consistent spacing |
 | 4.1.2 Mobile-friendly | PASS | Responsive grid (`md:col-span-7`), no horizontal scroll |
-| 4.1.3 Concise app name | PASS | "Radius Product Bundles" fits without truncation |
+| 4.1.3 Concise app name | PASS | "Radius Bundles" fits without truncation |
 | 4.1.4 Use the nav menu (`s-app-nav`) | **ACTION NEEDED** | Must verify `s-app-nav` or `NavMenu` integration |
 | 4.1.5 Use contextual save bar | PASS | `SaveBar` from App Bridge in `GlobalForm` |
 | 4.1.6 Use modals appropriately | PASS | `s-modal` with proper `heading`, `primary-action`, `secondary-actions` slots |
@@ -316,4 +316,4 @@ Month 5:      Apply for Built for Shopify
 
 ---
 
-*This guide is specific to Radius Product Bundles and should be updated as the app evolves and Shopify updates its requirements.*
+*This guide is specific to Radius Bundles and should be updated as the app evolves and Shopify updates its requirements.*

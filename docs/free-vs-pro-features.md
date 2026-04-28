@@ -1,4 +1,4 @@
-# Radius Product Bundles — Free vs Pro Feature Breakdown
+# Radius Bundles — Free vs Pro Feature Breakdown
 
 > Based on competitive analysis of Bundler ($0–$19.99/mo), Fast Bundle ($0–$139/mo), PickyStory ($99.50/mo+), Wide Bundles ($18–$36/mo), and Shopify bundle app market standards.
 

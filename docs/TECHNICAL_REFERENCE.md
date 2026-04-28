@@ -1,4 +1,4 @@
-# Radius Product Bundles — Technical Reference
+# Radius Bundles — Technical Reference
 
 ## Table of Contents
 
@@ -42,7 +42,6 @@
 | @shopify/app-bridge-react | 4.2.10  | Embedded app bridge        |
 | tailwindcss               | 4.2.0   | Utility-first CSS          |
 | tailwind-merge            | 3.5.0   | Merge Tailwind classes     |
-| framer-motion             | 12.34.3 | Animation                  |
 | recharts                  | 3.7.0   | Charting                   |
 | @dnd-kit/core             | 6.3.1   | Drag & drop                |
 | @dnd-kit/sortable         | 10.0.0  | Sortable lists             |
@@ -70,7 +69,7 @@
 | @shopify/shopify-api        | 12.3.0  | Admin API SDK            |
 | @graphql-codegen/cli        | 6.1.1   | Type generation          |
 | @shopify/api-codegen-preset | 1.2.2   | Shopify-specific codegen |
-| API version                 | 2025-10 | Shopify Admin API        |
+| API version                 | 2026-04 | Shopify Admin API        |
 
 ### Dev & Build Tools
 
@@ -927,7 +926,7 @@ bun run build:widgets       # Vite build storefront widgets
 
 | Command                   | Purpose                                       |
 | ------------------------- | --------------------------------------------- |
-| `bun run graphql-codegen` | Generate types from Shopify Admin API 2025-10 |
+| `bun run graphql-codegen` | Generate types from Shopify Admin API 2026-04 |
 | `bun run test`            | Jest test suite                               |
 | `bun run test:watch`      | Jest watch mode                               |
 | `bun run test:coverage`   | Jest with coverage report                     |
@@ -946,7 +945,7 @@ bun run build:widgets       # Vite build storefront widgets
 | `SHOPIFY_API_SECRET`  | Root `.env` | OAuth secret + HMAC key              |
 | `SCOPES`              | Root `.env` | Comma-separated OAuth scopes         |
 | `HOST`                | Root `.env` | Public app URL (auto-updated by CLI) |
-| `SHOPIFY_API_VERSION` | Root `.env` | API version (2025-10)                |
+| `SHOPIFY_API_VERSION` | Root `.env` | API version (2026-04)                |
 | `DATABASE_URL`        | Web `.env`  | PostgreSQL connection (Neon pooled)  |
 | `DIRECT_DATABASE_URL` | Web `.env`  | Direct DB connection (migrations)    |
 | `NEXT_PUBLIC_SHOP`    | Web `.env`  | Shop domain (client-side fallback)   |
@@ -997,4 +996,4 @@ bun run build:widgets       # Vite build storefront widgets
 
 ---
 
-_Generated for Radius Product Bundles — Next.js 16 + React 19 + Prisma 7 + Shopify 2025-10_
+_Generated for Radius Bundles — Next.js 16 + React 19 + Prisma 7 + Shopify 2026-04_

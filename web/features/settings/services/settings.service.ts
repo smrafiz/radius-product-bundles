@@ -41,7 +41,11 @@ export async function getSettingsService(
 
     const effectiveLocale = locale ?? result.primaryLocale ?? "en";
 
-    return transformSettingsToFormData(result.appSettings, effectiveLocale);
+    return transformSettingsToFormData(
+        result.appSettings,
+        effectiveLocale,
+        result.primaryLocale ?? undefined,
+    );
 }
 
 /**
@@ -141,7 +145,11 @@ export async function saveSettingsService(
     const dbData = transformFormDataToSettings(validatedData, !!locale);
     const savedSettings = await upsertSettings(shopId, dbData);
 
-    return transformSettingsToFormData(savedSettings, locale);
+    return transformSettingsToFormData(
+        savedSettings,
+        locale,
+        primaryLocale ?? undefined,
+    );
 }
 
 /**
@@ -190,19 +198,32 @@ function isLocaleKeyed(labels: any): boolean {
 }
 
 /**
- * Extract labels for a specific locale from locale-keyed or flat structure
+ * Extract labels for a specific locale from locale-keyed or flat structure.
+ * Falls back to base locale (e.g. "fr" from "fr-FR"), then primary locale,
+ * then "en", then undefined.
  */
-function extractLocaleLabels(labels: any, locale: string): any {
+function extractLocaleLabels(
+    labels: any,
+    locale: string,
+    primaryLocale?: string,
+): any {
     if (!labels) {
         return undefined;
     }
 
-    if (isLocaleKeyed(labels)) {
-        return labels[locale] ?? undefined;
+    if (!isLocaleKeyed(labels)) {
+        // Flat structure — return as-is (backward compat)
+        return labels;
     }
 
-    // Flat structure — return as-is (backward compat)
-    return labels;
+    const base = locale.split("-")[0];
+    return (
+        labels[locale] ??
+        labels[base] ??
+        (primaryLocale ? labels[primaryLocale] : undefined) ??
+        labels.en ??
+        undefined
+    );
 }
 
 /**
@@ -238,6 +259,7 @@ function stripEmptyStrings(
 function transformSettingsToFormData(
     settings: any,
     locale?: string,
+    primaryLocale?: string,
 ): AppSettingsFormData {
     return {
         // General - Defaults
@@ -263,7 +285,7 @@ function transformSettingsToFormData(
 
         // Labels — extract for requested locale or return flat for backward compat
         labels: locale
-            ? extractLocaleLabels(settings.labels, locale)
+            ? extractLocaleLabels(settings.labels, locale, primaryLocale)
             : settings.labels,
 
         // Style (JSON field) - flat structure

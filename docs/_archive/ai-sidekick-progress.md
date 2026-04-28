@@ -7,7 +7,7 @@
 
 ## Overview
 
-This document tracks the AI Sidekick integration project for the Radius Product Bundles app. It complements the detailed plan in `docs/ai-sidekick-integration-plan.md`.
+This document tracks the AI Sidekick integration project for the Radius Bundles app. It complements the detailed plan in `docs/ai-sidekick-integration-plan.md`.
 
 ---
 

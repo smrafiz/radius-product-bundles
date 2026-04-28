@@ -10,7 +10,7 @@ const FREE_CONFIG: PlanConfig = {
     id: "FREE" as PlanName,
     name: "Free",
     limits: {
-        maxBundles: 5,
+        maxBundles: 3,
         maxProductsPerBundle: 10,
         allowedLayouts: {
             FIXED_BUNDLE: ["GRID", "LIST"],
@@ -18,7 +18,7 @@ const FREE_CONFIG: PlanConfig = {
             BUY_X_GET_Y: ["COMPACT_GRID", "MINIMALIST"],
         },
         allowedBundleTypes: ["FIXED_BUNDLE", "BOGO", "BUY_X_GET_Y"],
-        allowedStatuses: ["DRAFT", "ACTIVE", "ARCHIVED"],
+        allowedStatuses: ["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"],
         allowedDiscountTypes: ["PERCENTAGE", "FIXED_AMOUNT", "NO_DISCOUNT"],
     },
     features: [
@@ -27,7 +27,8 @@ const FREE_CONFIG: PlanConfig = {
         { feature: "automation", gateMode: "lock-overlay" },
         { feature: "ai_insights", gateMode: "lock-overlay" },
         { feature: "custom_css", gateMode: "lock-overlay" },
-        { feature: "responsive_overrides", gateMode: "lock-overlay" },
+        { feature: "responsive_overrides", gateMode: "enabled" },
+        { feature: "custom_breakpoint", gateMode: "lock-overlay" },
         { feature: "templates", gateMode: "lock-overlay" },
         { feature: "export_data", gateMode: "lock-overlay" },
         { feature: "remove_branding", gateMode: "lock-overlay" },

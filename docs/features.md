@@ -1,4 +1,4 @@
-# Radius Product Bundles — Complete Feature Guide
+# Radius Bundles — Complete Feature Guide
 
 > The all-in-one Shopify product bundling app. Create bundles, customize your storefront widget, track performance, and boost average order value.
 
@@ -516,7 +516,7 @@ Cold-start recovery: webhooks auto-re-register if missing.
 
 ### GraphQL Integration
 
-- Shopify Admin API 2025-10
+- Shopify Admin API 2026-04
 - Auto-generated TypeScript types via `graphql-codegen`
 - Product creation/update/status sync
 - Metafield read/write operations

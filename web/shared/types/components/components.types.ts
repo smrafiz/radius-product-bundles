@@ -131,6 +131,7 @@ export interface WidgetLayoutProps {
     labels?: WidgetLabels;
     activeDevice?: "desktop" | "tablet" | "mobile";
     bundleType?: string;
+    discountType?: string;
 }
 
 export interface WidgetHeaderProps {

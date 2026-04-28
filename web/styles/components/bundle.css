@@ -72,12 +72,18 @@
     .radius-bundle__product-price-compare {
         margin-inline-start: 6px;
     }
+    .radius-bundle__product-image {
+        margin-bottom: 16px;
+    }
 }
 
 /* carousel layout */
 .slider-layout {
     .radius-bundle__product-price-compare {
         margin-inline-start: 6px;
+    }
+    .radius-bundle__product-image {
+        margin-bottom: 16px;
     }
 }
 

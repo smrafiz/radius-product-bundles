@@ -1,4 +1,4 @@
-# Radius Product Bundles — Free Plan Features (QA Guide)
+# Radius Bundles — Free Plan Features (QA Guide)
 
 > **Audience:** QA tester — covers every feature available on the FREE plan, how to access it, and what to test.
 
@@ -6,7 +6,7 @@
 
 ## App Overview
 
-Radius Product Bundles is a Shopify embedded app that lets merchants create product bundles with discounts. It has two plans:
+Radius Bundles is a Shopify embedded app that lets merchants create product bundles with discounts. It has two plans:
 
 | | Free | Pro ($9.99/mo) |
 |---|---|---|

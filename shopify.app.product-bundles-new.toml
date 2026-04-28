@@ -1,6 +1,6 @@
 # Avoid writing to toml directly. Use your .env file instead
 
-name = "Product Bundles"
+name = "Radius Bundles"
 handle = "product-bundles-112"
 client_id = "669f6e833a3de3aa7a758c91373e5b85"
 application_url = "https://shopify.radiusdirectory.net"

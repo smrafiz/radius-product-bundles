@@ -1,4 +1,4 @@
-# Radius Product Bundles — Full Product Vision & Roadmap
+# Radius Bundles — Full Product Vision & Roadmap
 
 > Current state + planned features across 5 phases. Schema readiness and dependencies noted per feature.
 

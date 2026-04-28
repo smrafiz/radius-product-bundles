@@ -1,4 +1,4 @@
-# Server Action Optimization Plan — Radius Product Bundles
+# Server Action Optimization Plan — Radius Bundles
 
 > Generated: 2026-02-22 | Sources: Shopify Dev MCP (GraphQL rate limits, MetafieldsSet batching), Next.js MCP (caching, React `cache()`), Prisma schema analysis, Neon serverless config review
 

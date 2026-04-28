@@ -47,7 +47,10 @@ export function usePricingCard() {
                         Authorization: `Bearer ${sessionToken}`,
                     },
                 });
-                if (!res.ok) throw new Error("Cancel failed");
+                if (!res.ok) {
+                    const body = (await res.json().catch(() => ({}))) as { error?: string };
+                    throw new Error(body.error ?? `Cancel failed: ${res.status}`);
+                }
                 window.location.reload();
                 return;
             }

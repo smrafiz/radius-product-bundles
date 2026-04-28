@@ -22,7 +22,12 @@ export function useSaveSettingsMutation() {
     return useMutation({
         mutationFn: async (data: AppSettingsFormData) => {
             const token = await app.idToken();
-            const result = await saveSettingsAction(token, data);
+            const locale = useSettingsStore.getState().labelsLocale;
+            const result = await saveSettingsAction(
+                token,
+                data,
+                locale ?? undefined,
+            );
 
             if (result.status === "error") {
                 throw new Error(result.message);
@@ -38,6 +43,12 @@ export function useSaveSettingsMutation() {
                 // Update Zustand store
                 setServerData(savedData);
                 resetDirty();
+
+                // Invalidate per-locale labels caches so previews pick up
+                // newly-saved translations across all locales.
+                queryClient.invalidateQueries({
+                    queryKey: settingsQueryKeys.allLabels(),
+                });
             }
 
             // Show success notification

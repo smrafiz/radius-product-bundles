@@ -2,14 +2,14 @@
   "Meta": {
     "error": "An unexpected error occurred",
     "tryAgain": "Try again",
-    "appTitle": "Radius Product Bundles App for Shopify",
+    "appTitle": "Radius Bundles App for Shopify",
     "pages": {
       "dashboard": {
-        "title": "Dashboard - Product Bundles Overview",
+        "title": "Dashboard - Radius Bundles Overview",
         "description": "View your bundle performance at a glance. Track revenue, conversion rates, active bundles, and key metrics. Monitor your product bundle campaigns and optimize for maximum sales growth."
       },
       "bundles": {
-        "title": "Product Bundles - Bundle Manager",
+        "title": "Radius Bundles - Bundle Manager",
         "description": "Manage all your product bundles in one place. View performance metrics, edit active offers, track sales, and optimize your bundle campaigns to increase average order value."
       },
       "bundleCreate": {
@@ -179,7 +179,7 @@
       "resumeGuide": "Pick up where you left off",
       "allComplete": "All done!",
       "allCompleteHeading": "You're all set!",
-      "allCompleteDesc": "Great work! Your Product Bundles app is fully configured and ready for customers.",
+      "allCompleteDesc": "Great work! Your Radius Bundles app is fully configured and ready for customers.",
       "dismissGuide": "Dismiss guide",
       "toggleGuide": "Toggle setup guide",
       "markComplete": "Mark as done",
@@ -408,7 +408,7 @@
     },
     "Schedule": {
       "status": "Bundle status",
-      "statusTooltip": "Shows the current state of this bundle and how it appears in your store.",
+      "statusTooltip": "Set to Active to show this bundle on your store. Draft and Paused bundles stay hidden.",
       "notLiveDraft": "This bundle is a draft and will not be displayed on the storefront until its status is set to Active.",
       "notLivePaused": "This bundle is paused and is hidden from the storefront. Set status to Active to resume.",
       "notLiveArchived": "This bundle is archived and will not be displayed on the storefront.",
@@ -657,7 +657,7 @@
         "customizerTablet": "Customize for tablet",
         "customizerMobile": "Customize for mobile",
         "priorityHeading": "Bundle priority",
-        "priorityTooltipIndex": "The bundle with the highest priority is displayed when multiple bundles apply to a product.",
+        "priorityTooltipIndex": "If a product belongs to more than one bundle, the one with the highest priority is shown.",
         "priorityTooltipDiscount": "The bundle with the highest discount value is displayed when multiple bundles apply to a product.",
         "changeStrategy": "Change strategy",
         "priority": "Priority",
@@ -934,6 +934,19 @@
       "bundleSaved": "Your changes have been saved.",
       "checkInputs": "Please check your inputs and try again.",
       "tryAgainLater": "Please try again later."
+    },
+    "ServiceErrors": {
+      "rateLimitExceeded": "Rate limit exceeded. Maximum {max} bundles per hour. Please try again later.",
+      "shopSuspended": "Shop account is suspended. Please contact support for assistance.",
+      "trialExpired": "Trial period has expired. Please upgrade your plan.",
+      "shopNotConfigured": "Shop is not properly configured. Please complete setup.",
+      "excessiveCreation": "Excessive bundle creation detected ({count} in {hours}h)",
+      "quotaExceeded": "Shop has reached maximum bundle limit ({limit})",
+      "duplicateName": "A bundle with this name already exists",
+      "operationTimedOut": "Operation timed out. Please try again with fewer products.",
+      "operationTimedOutShort": "Operation timed out",
+      "unexpectedError": "An unexpected error occurred",
+      "suspiciousActivity": "Suspicious activity detected. Please contact support."
     }
   },
   "Settings": {
@@ -999,7 +1012,7 @@
           },
           "bundlePriorityType": {
             "label": "Bundle priority strategy",
-            "details": "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the bundle with the highest effective savings.",
+            "details": "When more than one bundle applies to a product, this decides which one shows. Index based, you set the priority manually. Discount based, the bundle with the biggest saving wins automatically.",
             "options": {
               "index_based": "Index based (manual priority)",
               "discount_based": "Discount based (highest savings wins)"
@@ -1262,7 +1275,7 @@
         "Sections": {
           "custom-css": {
             "title": "Custom CSS",
-            "tooltip": "Add custom CSS for advanced styling. Only use if you have CSS knowledge."
+            "tooltip": "For advanced styling you can add custom CSS. We recommend you to use this only if you have CSS knowledge."
           }
         },
         "Fields": {
@@ -1685,7 +1698,7 @@
       "bogoTotalLabel": "Bundle Total",
       "bogoSaveText": "You Save: {amount}",
       "bogoTriggerBadgeText": "You Buy",
-      "bogoRewardBadgeText": "You Get FREE",
+      "bogoRewardBadgeText": "You Get",
       "checklistProgressText": "{count}/{total} items added",
       "checklistHintText": "{remaining} more to unlock!",
       "checklistCompletedText": "Unlocked!",
@@ -1728,28 +1741,6 @@
       "cachePartialError": "Server cache clear failed, client caches cleared",
       "cacheSuccess": "All caches cleared",
       "unexpectedError": "An unexpected error occurred"
-    },
-    "Submit": {
-      "createProductFailed": "Could not create Shopify product. Please try again.",
-      "deleteProductFailed": "Could not delete the Shopify product.",
-      "invalidMode": "Invalid mode or missing bundle ID for edit.",
-      "bundleCreated": "Your bundle has been created.",
-      "bundleSaved": "Your changes have been saved.",
-      "checkInputs": "Please check your inputs and try again.",
-      "tryAgainLater": "Please try again later."
-    },
-    "ServiceErrors": {
-      "rateLimitExceeded": "Rate limit exceeded. Maximum {max} bundles per hour. Please try again later.",
-      "shopSuspended": "Shop account is suspended. Please contact support for assistance.",
-      "trialExpired": "Trial period has expired. Please upgrade your plan.",
-      "shopNotConfigured": "Shop is not properly configured. Please complete setup.",
-      "excessiveCreation": "Excessive bundle creation detected ({count} in {hours}h)",
-      "quotaExceeded": "Shop has reached maximum bundle limit ({limit})",
-      "duplicateName": "A bundle with this name already exists",
-      "operationTimedOut": "Operation timed out. Please try again with fewer products.",
-      "operationTimedOutShort": "Operation timed out",
-      "unexpectedError": "An unexpected error occurred",
-      "suspiciousActivity": "Suspicious activity detected. Please contact support."
     }
   },
   "Analytics": {
@@ -1888,7 +1879,7 @@
   },
   "Pricing": {
     "title": "Pricing & Plans",
-    "description": "Choose the right plan for your business",
+    "description": "Pick the best one that suits your business perfectly",
     "back": "Back",
     "faq": "FAQ",
     "faqDescription": "Find answers to the most common questions about our pricing and billing model below.",
@@ -1899,11 +1890,11 @@
     "plans": {
       "free": {
         "title": "Free",
-        "description": "Get started with bundle creation at no cost",
+        "description": "Try bundles in your store, free forever.",
         "button": "Current Plan",
         "currentPlan": "Current Plan",
         "features": {
-          "0": "Up to 5 bundles",
+          "0": "Up to 3 bundles",
           "1": "Up to 10 products per bundle",
           "2": "Fixed bundles, BOGO, Buy X Get Y",
           "3": "Grid and list layouts",
@@ -1933,7 +1924,7 @@
       "pro": {
         "title": "Pro",
         "featured": "Most Popular",
-        "description": "Everything you need to grow your bundle revenue",
+        "description": "Everything you need to scale bundles across your store.",
         "button": "Start Free Trial",
         "currentPlan": "Current Plan",
         "features": {
@@ -1950,7 +1941,7 @@
     "faqs": {
       "0": {
         "title": "What's included in the Free plan?",
-        "description": "The Free plan includes up to 5 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support."
+        "description": "The Free plan includes up to 3 bundles, up to 10 products per bundle, Fixed Bundle, BOGO, and Buy X Get Y bundle types, grid and list layouts, basic analytics, and email support."
       },
       "1": {
         "title": "Can I upgrade or downgrade anytime?",
@@ -2098,7 +2089,7 @@
     "linkAppStore": "Rate on App Store",
     "linkCommunity": "Community Forum",
     "proTipTitle": "Pro Tip",
-    "proTip": "Include your store URL and a screenshot when emailing — it helps us resolve issues 2× faster.",
+    "proTip": "To help us resolve your issue faster, please include your store URL and a screenshot in your email. It typically cuts our response time in half.",
     "faq1Q": "How does the bundle discount get applied — is it a discount code?",
     "faq1A": "No discount code needed. Radius Bundles uses a native Shopify Function that runs server-side inside Shopify's checkout engine. When a customer has all the required bundle products in their cart, the discount is calculated and applied automatically at checkout — no scripts injected into your storefront, no conflicts with Shopify Payments or Shop Pay, and no customer action required.",
     "faq2Q": "The bundle widget isn't showing on my product pages. How do I fix it?",
@@ -2141,10 +2132,10 @@
       "heading": "Unlock Pro Features",
       "description": "This feature is available on the Pro plan. Upgrade to unlock powerful tools designed to increase your store's revenue and optimize bundle performance.",
       "benefits": {
-        "feature1": "Unlimited bundles with no restrictions",
-        "feature2": "Advanced customization and layout controls",
-        "feature3": "Detailed analytics and performance insights",
-        "feature4": "Automation tools and priority support"
+        "feature1": "Unlimited bundles with no restrictions.",
+        "feature2": "Advanced customization and layout controls.",
+        "feature3": "Detailed analytics and performance insights.",
+        "feature4": "Priority support."
       },
       "maybeLater": "Maybe later",
       "viewPlans": "View plans",

@@ -2,7 +2,7 @@
 
 > The 500-line rule and document organization.
 
-**Related:** [DOCUMENTATION_UPDATES.md](../workflows/DOCUMENTATION_UPDATES.md) | [INDEX_MAP.md](../../INDEX_MAP.md)
+**Related:** [DOCUMENTATION_UPDATES.md](../workflows/DOCUMENTATION_UPDATES.md)
 
 ---
 
@@ -149,7 +149,6 @@ SPLITTING STRATEGY:
 
 4. Update cross-references
    - Fix all internal links
-   - Update INDEX_MAP.md and HEADER_MAP.md
 ```
 
 ### Split Example
@@ -288,8 +287,6 @@ Or create DOC_C.md for shared content.
 [ ] Has required sections (Overview, Quick Reference)
 [ ] Title describes content accurately
 [ ] Related docs linked
-[ ] Added to INDEX_MAP.md
-[ ] Headers added to HEADER_MAP.md
 [ ] Added to directory INDEX.md
 [ ] No broken links
 [ ] Markdown renders correctly

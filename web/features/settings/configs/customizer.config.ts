@@ -436,7 +436,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     label: "Custom breakpoint",
                     details: "Override preset with exact pixel values",
                     defaultValue: false,
-                    proFeature: "responsive_overrides",
+                    proFeature: "custom_breakpoint",
                 },
                 {
                     type: "range",

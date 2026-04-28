@@ -48,7 +48,7 @@ export function MetricCard({
                     ) : (
                         <s-stack direction="inline" gap="small-200">
                             <s-text tone="info">
-                                <div className="text-[20px]">{value}</div>
+                                <div className="text-[16px]">{value}</div>
                             </s-text>
 
                             {tone && growth !== null && growth !== 0 && (

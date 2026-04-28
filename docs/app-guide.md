@@ -1,4 +1,4 @@
-# Radius Product Bundles — App Guide
+# Radius Bundles — App Guide
 
 > A non-technical walkthrough of the entire app experience. Written for product managers, QA, and onboarding teams. Covers every screen, every action, and every flow a merchant encounters.
 

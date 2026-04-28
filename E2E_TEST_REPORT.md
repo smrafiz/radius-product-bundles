@@ -1,5 +1,5 @@
 # Comprehensive E2E Test Report
-## Radius Product Bundles - Shopify App
+## Radius Bundles - Shopify App
 
 **Test Date:** 2026-03-30
 **App Version:** 1.0.0
@@ -693,7 +693,7 @@ UPLOAD_URL=<cdn_url>
 
 ## 📝 Summary
 
-The **Radius Product Bundles** app is a complex Shopify embedded application with:
+The **Radius Bundles** app is a complex Shopify embedded application with:
 - **9 implemented features** (Bundle CRUD, Analytics, Settings, etc.)
 - **6 schema-only features** (AI, A/B Testing, Automation, etc.)
 - **23 database models**

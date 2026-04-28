@@ -2,7 +2,7 @@
   "Meta": {
     "error": "Une erreur inattendue s'est produite",
     "tryAgain": "Réessayer",
-    "appTitle": "Application Radius Product Bundles pour Shopify",
+    "appTitle": "Application Radius Bundles pour Shopify",
     "pages": {
       "dashboard": {
         "title": "Tableau de bord – Aperçu des offres groupées de produits",
@@ -179,7 +179,7 @@
       "resumeGuide": "Reprendre là où vous en étiez",
       "allComplete": "Tout est fait !",
       "allCompleteHeading": "Vous êtes fin prêt !",
-      "allCompleteDesc": "Bravo ! Votre application Product Bundles est entièrement configurée et prête pour vos clients.",
+      "allCompleteDesc": "Bravo ! Votre application Radius Bundles est entièrement configurée et prête pour vos clients.",
       "dismissGuide": "Fermer le guide",
       "toggleGuide": "Activer/désactiver le guide de configuration",
       "markComplete": "Marquer comme fait",
@@ -408,7 +408,7 @@
     },
     "Schedule": {
       "status": "Statut de l'offre groupée",
-      "statusTooltip": "Affiche l'état actuel de cette offre groupée et son apparence dans votre boutique.",
+      "statusTooltip": "Définissez l'option sur Actif pour afficher cette offre groupée dans votre boutique. Les offres groupées à l'état de brouillon et en pause restent masquées.",
       "setDates": "Définir les dates de programmation",
       "resetDates": "Réinitialiser les dates",
       "scheduleBundle": "Programmer l'offre groupée",
@@ -656,7 +656,7 @@
         "customizerTablet": "Personnaliser pour tablette",
         "customizerMobile": "Personnaliser pour mobile",
         "priorityHeading": "Priorité de l'offre groupée",
-        "priorityTooltipIndex": "Lorsque plusieurs offres groupées s'appliquent à un produit, l'offre groupée la plus prioritaire s'affiche.",
+        "priorityTooltipIndex": "Si un produit fait partie de plusieurs offres groupées, celle qui a la priorité la plus élevée est affichée.",
         "priorityTooltipDiscount": "Lorsque plusieurs offres groupées s'appliquent à un produit, celle dont la remise est la plus élevée est affichée.",
         "changeStrategy": "Stratégie de changement",
         "priority": "Priorité",
@@ -933,6 +933,19 @@
       "bundleSaved": "Vos modifications ont été enregistrées.",
       "checkInputs": "Veuillez vérifier les informations que vous avez saisies et réessayer.",
       "tryAgainLater": "Veuillez réessayer plus tard."
+    },
+    "ServiceErrors": {
+      "rateLimitExceeded": "Limite de débit dépassée. Maximum de {max} groupes par heure. Veuillez réessayer plus tard.",
+      "shopSuspended": "Le compte de la boutique est suspendu. Veuillez contacter l'assistance pour obtenir de l'aide.",
+      "trialExpired": "La période d'essai a expiré. Veuillez passer à un forfait supérieur.",
+      "shopNotConfigured": "La boutique n'est pas correctement configurée. Veuillez terminer la configuration.",
+      "excessiveCreation": "Création excessive de groupes détectée ({count} en {hours} h)",
+      "quotaExceeded": "La boutique a atteint la limite maximale d'offres groupées ({limit})",
+      "duplicateName": "Une offre groupée portant ce nom existe déjà",
+      "operationTimedOut": "L'opération a expiré. Veuillez réessayer avec moins de produits.",
+      "operationTimedOutShort": "Délai d'exécution de l'opération dépassé",
+      "unexpectedError": "Une erreur inattendue s'est produite",
+      "suspiciousActivity": "Activité suspecte détectée. Veuillez contacter l'assistance."
     }
   },
   "Settings": {
@@ -998,7 +1011,7 @@
           },
           "bundlePriorityType": {
             "label": "Stratégie de priorité des offres groupées",
-            "details": "Lorsque plusieurs offres groupées s’appliquent à un produit, cette stratégie détermine laquelle est affichée. L’option basée sur l’index utilise des numéros de priorité manuels ; l’option basée sur la remise sélectionne l’offre groupée permettant de réaliser les économies effectives les plus importantes.",
+            "details": "Lorsque plusieurs offres groupées s'appliquent à un produit, ce paramètre détermine laquelle est affichée. Sur la base de l'indice; vous définissez la priorité manuellement. Sur la base de la réduction, l'offre groupée permettant de réaliser la plus grande économie l'emporte automatiquement.",
             "options": {
               "index_based": "Basé sur l’index (priorité manuelle)",
               "discount_based": "Basé sur la remise (l’offre la plus avantageuse l’emporte)"
@@ -1260,7 +1273,7 @@
         "Sections": {
           "custom-css": {
             "title": "CSS personnalisé",
-            "tooltip": "Ajoutez du CSS personnalisé pour un style avancé. À utiliser uniquement si vous avez des connaissances en CSS."
+            "tooltip": "Pour un style plus élaboré, vous pouvez ajouter du code CSS personnalisé. Nous vous recommandons de n'utiliser cette option que si vous avez des connaissances en CSS."
           }
         },
         "Fields": {
@@ -1682,8 +1695,8 @@
       "bogoYouSaveLabel": "Vous économisez :",
       "bogoTotalLabel": "Total de l'offre groupée",
       "bogoSaveText": "Vous économisez : {amount}",
-      "bogoTriggerBadgeText": "Vous achetez :",
-      "bogoRewardBadgeText": "Vous obtenez GRATUITEMENT :",
+      "bogoTriggerBadgeText": "Vous achetez",
+      "bogoRewardBadgeText": "Vous obtenez",
       "checklistProgressText": "{count}/{total} articles ajoutés",
       "checklistHintText": "Encore {remaining} articles à ajouter pour débloquer l'offre !",
       "checklistCompletedText": "Déverrouillé !",
@@ -1726,28 +1739,6 @@
       "cachePartialError": "Échec de la suppression du cache du serveur ; caches du client supprimés",
       "cacheSuccess": "Tous les caches ont été vidés",
       "unexpectedError": "Une erreur inattendue s'est produite"
-    },
-    "Submit": {
-      "createProductFailed": "Impossible de créer le produit Shopify. Veuillez réessayer.",
-      "deleteProductFailed": "Impossible de supprimer le produit Shopify.",
-      "invalidMode": "Mode non valide ou identifiant d'offre groupée manquant pour la modification.",
-      "bundleCreated": "Votre offre groupée a été créée.",
-      "bundleSaved": "Vos modifications ont été enregistrées.",
-      "checkInputs": "Veuillez vérifier les informations que vous avez saisies et réessayer.",
-      "tryAgainLater": "Veuillez réessayer plus tard."
-    },
-    "ServiceErrors": {
-      "rateLimitExceeded": "Limite de débit dépassée. Maximum de {max} groupes par heure. Veuillez réessayer plus tard.",
-      "shopSuspended": "Le compte de la boutique est suspendu. Veuillez contacter l'assistance pour obtenir de l'aide.",
-      "trialExpired": "La période d'essai a expiré. Veuillez passer à un forfait supérieur.",
-      "shopNotConfigured": "La boutique n'est pas correctement configurée. Veuillez terminer la configuration.",
-      "excessiveCreation": "Création excessive de groupes détectée ({count} en {hours} h)",
-      "quotaExceeded": "La boutique a atteint la limite maximale d'offres groupées ({limit})",
-      "duplicateName": "Une offre groupée portant ce nom existe déjà",
-      "operationTimedOut": "L'opération a expiré. Veuillez réessayer avec moins de produits.",
-      "operationTimedOutShort": "Délai d'exécution de l'opération dépassé",
-      "unexpectedError": "Une erreur inattendue s'est produite",
-      "suspiciousActivity": "Activité suspecte détectée. Veuillez contacter l'assistance."
     }
   },
   "Analytics": {
@@ -1886,7 +1877,7 @@
   },
   "Pricing": {
     "title": "Tarifs et formules",
-    "description": "Choisissez la formule adaptée à votre entreprise",
+    "description": "Choisissez l'option qui correspond le mieux à votre entreprise",
     "back": "Retour",
     "faq": "FAQ",
     "faqDescription": "Vous trouverez ci-dessous les réponses aux questions les plus fréquentes sur notre modèle de tarification et de facturation.",
@@ -1911,7 +1902,7 @@
         "button": "Formule actuelle",
         "currentPlan": "Formule actuelle",
         "features": {
-          "0": "Jusqu'à 5 offres groupées",
+          "0": "Jusqu'à 3 offres groupées",
           "1": "Jusqu'à 10 produits par offre groupée",
           "2": "Offres groupées fixes, un acheté = un offert, Achetez X, obtenez Y",
           "3": "Mises en page en grille et en liste",
@@ -1922,7 +1913,7 @@
       "pro": {
         "title": "Pro",
         "featured": "Le plus populaire",
-        "description": "Tout ce dont vous avez besoin pour développer votre chiffre d'affaires grâce aux offres groupées",
+        "description": "Tout ce dont vous avez besoin pour déployer des offres groupées à l'échelle de votre boutique.",
         "button": "Démarrer l'essai gratuit",
         "currentPlan": "Formule actuelle",
         "features": {
@@ -1958,7 +1949,7 @@
     "faqs": {
       "0": {
         "title": "Que comprend l'offre Gratuite?",
-        "description": "L'offre Gratuite comprend jusqu'à 5 offres groupées, jusqu'à 10 produits par offre groupée, les types d'offres groupées Offre groupée fixe, Un acheté, un offert et Achetez X, obtenez Y, des mises en page sous forme de grille et de liste, des analyses de base et une assistance par e-mail."
+        "description": "L'offre Gratuite comprend jusqu'à 3 offres groupées, jusqu'à 10 produits par offre groupée, les types d'offres groupées Offre groupée fixe, Un acheté, un offert et Achetez X, obtenez Y, des mises en page sous forme de grille et de liste, des analyses de base et une assistance par e-mail."
       },
       "1": {
         "title": "Puis-je passer à une formule supérieure ou inférieure à tout moment?",
@@ -2096,7 +2087,7 @@
     "linkAppStore": "Évaluez-nous sur l’App Store",
     "linkCommunity": "Forum de la communauté",
     "proTipTitle": "Astuce de pro",
-    "proTip": "Dans votre e-mail, veuillez indiquer l’URL de votre boutique et joindre une capture d’écran — cela nous permet de résoudre les problèmes 2× plus vite.",
+    "proTip": "Afin de nous aider à résoudre votre problème plus rapidement, veuillez inclure l'URL de votre boutique et une capture d'écran dans votre e-mail. En général, cela permet de réduire notre temps de réponse de moitié.",
     "faq1Q": "Comment la réduction sur l’offre groupée est-elle appliquée — s’agit-il d’un code de réduction ?",
     "faq1A": "Aucun code de réduction n’est nécessaire. Radius Bundles utilise une Shopify Function native qui s’exécute côté serveur au sein du moteur de paiement de Shopify. Lorsqu’un client a tous les produits requis dans son panier, la réduction est calculée et appliquée automatiquement au moment du paiement — aucun script n’est injecté dans votre boutique, aucun conflit avec Shopify Payments ou Shop Pay, et aucune action n’est requise de la part du client.",
     "faq2Q": "Le widget d’offre groupée ne s’affiche pas sur mes pages produits. Comment résoudre ce problème ?",
@@ -2139,10 +2130,10 @@
       "heading": "Débloquez les fonctionnalités Pro",
       "description": "{feature} est disponible avec la formule Pro. Passez à la version Pro pour bénéficier d'outils performants conçus pour augmenter le chiffre d'affaires de votre boutique et optimiser les performances de vos offres groupées.",
       "benefits": {
-        "feature1": "Offres groupées illimitées sans restriction",
-        "feature2": "Contrôles avancés de la personnalisation et de la mise en page",
-        "feature3": "Analyses détaillées et informations sur les performances",
-        "feature4": "Outils d'automatisation et assistance prioritaire"
+        "feature1": "Offres groupées illimitées sans restriction.",
+        "feature2": "Contrôles avancés de la personnalisation et de la mise en page.",
+        "feature3": "Analyses détaillées et informations sur les performances.",
+        "feature4": "Assistance prioritaire."
       },
       "maybeLater": "Peut-être plus tard",
       "viewPlans": "Voir les formules",

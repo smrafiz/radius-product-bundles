@@ -1,6 +1,6 @@
-# 🚀 Installation & Setup Guide - Radius Product Bundles
+# 🚀 Installation & Setup Guide - Radius Bundles
 
-Complete guide to set up the Radius Product Bundles Shopify app on your local development environment.
+Complete guide to set up the Radius Bundles Shopify app on your local development environment.
 
 ---
 
@@ -105,10 +105,10 @@ SHOPIFY_API_SECRET=                 # Leave empty for now
 SCOPES=read_customers,read_orders,read_price_rules,read_products,read_themes,write_app_proxy,write_price_rules,write_products,write_script_tags
 
 # App Configuration
-APP_NAME="Product Bundles"
-APP_HANDLE="product-bundles"        # Change if you want a unique handle
+APP_NAME="Radius Bundles"
+APP_HANDLE="radius-bundles"         # Change if you want a unique handle
 HOST=                                # Auto-filled by Shopify CLI
-SHOPIFY_API_VERSION="2025-10"
+SHOPIFY_API_VERSION="2026-04"
 POS_EMBEDDED=false
 DIRECT_API_MODE="offline"
 EMBEDDED_APP_DIRECT_API_ACCESS=true

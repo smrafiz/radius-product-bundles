@@ -9,7 +9,6 @@ import {
     getButtonRadius,
     useEffectiveStyles,
     usePreviewProducts,
-    useSettingsStore,
     VolumeCalculator,
     VolumePricingCards,
     VolumeSlider,
@@ -18,7 +17,7 @@ import {
 import type { CustomizerStyles } from "@/features/settings";
 import { DEMO_TIERS } from "@/features/settings/constants/customizer.constants";
 import { DEFAULT_DISPLAY_OPTIONS, PLACEHOLDER_PRODUCTS } from "@/shared/constants/bundle-widget.constants";
-import { usePreviewLabels } from "@/shared";
+import { useMergedPreviewLabels } from "@/shared";
 import { useTranslations } from "@/lib/i18n/provider";
 
 import type { WidgetDisplayOptions } from "@/shared";
@@ -129,16 +128,8 @@ function VolumeFooter({ styles, displayOptions, addToCartText }: { styles: Custo
 
 export function TemplateVolume({ activeLayout }: BundleTemplateProps) {
     const styles = useEffectiveStyles();
-    const previewLabels = usePreviewLabels();
+    const labels = useMergedPreviewLabels();
     const highlightColor = styles.primaryColor;
-    const serverData = useSettingsStore((s) => s.serverData);
-    const savedLabels = serverData?.labels as Record<string, string> | undefined;
-    const labels = {
-        ...previewLabels,
-        ...Object.fromEntries(
-            Object.entries(savedLabels ?? {}).filter(([, val]) => val !== ""),
-        ),
-    };
 
     const products = usePreviewProducts({
         placeholderProducts: PLACEHOLDER_PRODUCTS,

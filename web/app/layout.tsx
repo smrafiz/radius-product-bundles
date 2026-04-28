@@ -13,7 +13,7 @@ import {
 } from "@/shared";
 
 export const metadata: Metadata = {
-    title: "Radius Product Bundles App for Shopify",
+    title: "Radius Bundles App for Shopify",
     other: {
         "shopify-app-origins": process.env.NEXT_PUBLIC_HOST || "",
     },

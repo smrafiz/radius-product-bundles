@@ -1,4 +1,4 @@
-# Radius Product Bundles — Shopify Dev Compliance Report
+# Radius Bundles — Shopify Dev Compliance Report
 
 > Generated: 2026-02-21 | Branch: `caching-test`
 > Source: Shopify Dev MCP documentation + project package analysis

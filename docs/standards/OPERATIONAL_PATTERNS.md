@@ -2,7 +2,7 @@
 
 > **Self-healing systems.** Build resilience into your applications.
 
-**Related:** [INFRASTRUCTURE_STANDARDS.md](./INFRASTRUCTURE_STANDARDS.md) | [LOGGING_PATTERNS.md](./LOGGING_PATTERNS.md)
+**Related:** [LOGGING_PATTERNS.md](./LOGGING_PATTERNS.md)
 
 ---
 

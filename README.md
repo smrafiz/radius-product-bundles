@@ -1,4 +1,4 @@
-# Radius Product Bundles
+# Radius Bundles
 
 An embedded Shopify app for creating and managing product bundles. Includes a Rust-based discount function (WASM) and a Liquid storefront widget, with analytics and a 4-section style customizer.
 
@@ -116,6 +116,12 @@ features/<name>/
 | Document | Purpose |
 | --- | --- |
 | [**Agent Guardrails**](docs/AGENT_GUARDRAILS.md) | **MANDATORY** safety protocols for ALL AI agents |
+| [App Store Submission](docs/APP_STORE_SUBMISSION.md) | Pre-submission checklist + protected customer data declarations |
+| [Features](docs/features.md) | Full feature catalog |
+| [App Guide](docs/app-guide.md) | Merchant-facing how-to |
+| [Free vs Pro](docs/free-vs-pro-features.md) | Plan tier matrix |
+| [Installation](docs/INSTALLATION.md) | Local dev setup |
+| [Technical Reference](docs/TECHNICAL_REFERENCE.md) | Architecture + schema cheat-sheet |
 
 ---
 

@@ -1,4 +1,4 @@
-# Radius Product Bundles — QA App Walkthrough
+# Radius Bundles — QA App Walkthrough
 
 > **Purpose:** Screen-by-screen guide to every page, section, button, and interactive element in the app. Use this alongside `QA_FREE_FEATURES_GUIDE.md` for feature details.
 

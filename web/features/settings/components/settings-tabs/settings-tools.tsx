@@ -344,11 +344,7 @@ export function SettingsTools() {
             >
                 {syncResult ? (
                     <s-stack gap="base">
-                        <s-stack
-                            direction="inline"
-                            justifyContent="space-between"
-                            alignItems="center"
-                        >
+                        <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 16, padding: "12px 0", alignItems: "start" }}>
                             <s-heading>
                                 {t("modals.syncResult.status")}
                             </s-heading>
@@ -361,33 +357,25 @@ export function SettingsTools() {
                                     ? t("modals.syncResult.complete")
                                     : t("modals.syncResult.failed")}
                             </s-badge>
-                        </s-stack>
+                        </div>
 
                         <s-divider />
 
                         {syncResult.success ? (
                             <>
-                                <s-stack
-                                    direction="inline"
-                                    justifyContent="space-between"
-                                    alignItems="start"
-                                >
+                                <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 16, padding: "12px 0", alignItems: "start" }}>
                                     <s-heading>
                                         {t("modals.syncResult.synced")}
                                     </s-heading>
-                                    <s-stack gap="small-200" alignItems="end">
+                                    <s-stack gap="small-200">
                                         {syncResult.syncedItems.map((item) => (
                                             <s-text key={item}>{item}</s-text>
                                         ))}
                                     </s-stack>
-                                </s-stack>
+                                </div>
                             </>
                         ) : (
-                            <s-stack
-                                direction="inline"
-                                justifyContent="space-between"
-                                alignItems="center"
-                            >
+                            <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 16, padding: "12px 0", alignItems: "start" }}>
                                 <s-heading>
                                     {t("modals.syncResult.error")}
                                 </s-heading>
@@ -395,7 +383,7 @@ export function SettingsTools() {
                                     {syncResult.error ||
                                         t("modals.syncResult.unknownError")}
                                 </s-text>
-                            </s-stack>
+                            </div>
                         )}
                     </s-stack>
                 ) : (
@@ -421,114 +409,79 @@ export function SettingsTools() {
                 accessibilityLabel="Webhook check result"
             >
                 {webhookCheckResult ? (
-                    <s-stack gap="base">
-                        <s-grid
-                            gridTemplateColumns="1fr auto"
-                            alignItems="start"
-                            gap="large-400"
-                        >
-                            <s-heading>
-                                {t("modals.webhookCheck.status")}
-                            </s-heading>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                        {/* Header row: Status + badge */}
+                        <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 16, padding: "12px 0", alignItems: "start" }}>
+                            <s-text type="strong">{t("modals.webhookCheck.status")}</s-text>
                             {webhookCheckResult.missingTopics.length === 0 ? (
                                 <s-badge tone="success">
                                     {t("modals.webhookCheck.allRegistered")}
                                 </s-badge>
                             ) : (
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                                 <s-badge tone="warning">
                                     {t("modals.webhookCheck.missingCount", {
-                                        count: String(
-                                            webhookCheckResult.missingTopics
-                                                .length,
-                                        ),
+                                        count: String(webhookCheckResult.missingTopics.length),
                                     })}
                                 </s-badge>
+                                </div>
                             )}
-                        </s-grid>
+                        </div>
 
                         <s-divider />
 
-                        <s-grid
-                            gridTemplateColumns="1fr auto"
-                            alignItems="start"
-                            gap="large-400"
-                        >
-                            <s-heading>
+                        {/* Registered row */}
+                        <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 16, padding: "12px 0", alignItems: "start" }}>
+                            <s-text type="strong">
                                 {t("modals.webhookCheck.registeredCount", {
-                                    count: String(
-                                        webhookCheckResult.totalCount,
-                                    ),
+                                    count: String(webhookCheckResult.totalCount),
                                 })}
-                            </s-heading>
-
-                            <s-grid
-                                gridTemplateColumns="repeat(3, auto)"
-                                gap="small-200"
-                            >
+                            </s-text>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                                 {webhookCheckResult.webhooks.map((wh) => (
                                     <s-badge key={wh.id} tone="success">
                                         {wh.topic}
                                     </s-badge>
                                 ))}
-                            </s-grid>
-                        </s-grid>
+                            </div>
+                        </div>
 
                         {webhookCheckResult.missingTopics.length > 0 && (
                             <>
                                 <s-divider />
-                                <s-grid
-                                    gridTemplateColumns="1fr auto"
-                                    alignItems="start"
-                                    gap="large-400"
-                                >
-                                    <s-heading>
+                                <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 16, padding: "12px 0", alignItems: "start" }}>
+                                    <s-text type="strong">
                                         {t("modals.webhookCheck.missing")}
-                                    </s-heading>
-                                    <s-grid
-                                        gridTemplateColumns="repeat(3, auto)"
-                                        gap="small"
-                                    >
-                                        {webhookCheckResult.missingTopics.map(
-                                            (topic) => (
-                                                <s-badge
-                                                    key={topic}
-                                                    tone="warning"
-                                                >
-                                                    {topic}
-                                                </s-badge>
-                                            ),
-                                        )}
-                                    </s-grid>
-                                </s-grid>
+                                    </s-text>
+                                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                                        {webhookCheckResult.missingTopics.map((topic) => (
+                                            <s-badge key={topic} tone="warning">
+                                                {topic}
+                                            </s-badge>
+                                        ))}
+                                    </div>
+                                </div>
                             </>
                         )}
 
                         <s-divider />
 
-                        <s-grid
-                            gridTemplateColumns="1fr auto"
-                            alignItems="start"
-                            gap="large-400"
-                        >
-                            <s-heading>
+                        {/* GDPR row */}
+                        <div style={{ display: "grid", gridTemplateColumns: "110px 1fr", gap: 16, padding: "12px 0", alignItems: "start" }}>
+                            <s-text type="strong">
                                 {t("modals.webhookCheck.gdprCount", {
-                                    count: String(
-                                        webhookCheckResult.gdprTopics.length,
-                                    ),
+                                    count: String(webhookCheckResult.gdprTopics.length),
                                 })}
-                            </s-heading>
-                            <s-grid
-                                gridTemplateColumns="repeat(3, auto)"
-                                gap="small-200"
-                            >
+                            </s-text>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                                 {webhookCheckResult.gdprTopics.map((topic) => (
                                     <s-badge key={topic} tone="info">
                                         {topic}
                                     </s-badge>
                                 ))}
-                            </s-grid>
-                        </s-grid>
-                    </s-stack>
+                            </div>
+                        </div>
+                    </div>
                 ) : (
                     <s-text color="subdued">
                         {t("modals.webhookCheck.noResults")}

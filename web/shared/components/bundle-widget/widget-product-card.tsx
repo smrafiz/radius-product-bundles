@@ -126,12 +126,6 @@ export function WidgetProductCard({
             {displayOptions.showComparePrices && product.compareAtPrice && (
                 <span
                     className="radius-bundle__product-price-compare"
-                    style={{
-                        textDecoration: "line-through",
-                        opacity: 0.6,
-                        fontSize: "0.9em",
-                        marginInlineStart: "6px",
-                    }}
                 >
                     {product.compareAtPrice}
                 </span>
@@ -182,7 +176,7 @@ export function WidgetProductCard({
                         fontWeight: 500,
                         marginBottom: "8px",
                         display: "-webkit-box",
-                        WebkitLineClamp: 2,
+                        WebkitLineClamp: 3,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                         whiteSpace: "normal",
@@ -240,7 +234,7 @@ export function WidgetProductCard({
                         fontWeight: 500,
                         marginBottom: "4px",
                         display: "-webkit-box",
-                        WebkitLineClamp: 2,
+                        WebkitLineClamp: 3,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                         whiteSpace: "normal",

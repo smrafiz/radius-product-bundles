@@ -18,8 +18,6 @@ This document defines procedures for keeping documentation current after code ch
 
 | Document Type | Update Required | When |
 |---------------|-----------------|------|
-| INDEX_MAP.md | If new docs created | After adding docs |
-| HEADER_MAP.md | If sections added/changed | After doc changes |
 | README.md | If features/setup changed | After feature work |
 | API docs | If API changed | After API changes |
 | Changelog | Always | After every sprint |
@@ -80,10 +78,6 @@ AFTER COMPLETING A SPRINT:
 [ ] Workflow Documents
     - Procedures still accurate?
     - New workflows documented?
-
-[ ] INDEX_MAP.md / HEADER_MAP.md
-    - All documents listed?
-    - Line numbers accurate?
 ```
 
 ---
@@ -187,9 +181,7 @@ WHEN RENAMING/MOVING DOCS:
 
 2. Update all references to new path
 
-3. Update INDEX_MAP.md and HEADER_MAP.md
-
-4. Verify no broken links
+3. Verify no broken links
 ```
 
 ### Link Validation
@@ -239,8 +231,6 @@ VERIFY BEFORE COMMITTING DOCS:
 
 | Event | Documentation Action |
 |-------|---------------------|
-| New file created | Add to INDEX_MAP.md |
-| Headers changed | Update HEADER_MAP.md |
 | API endpoint added | Update API docs |
 | Config option added | Update README |
 | Feature completed | Update changelog |
@@ -280,8 +270,6 @@ Quarterly:
 |   [ ] Add changelog entry                                         |
 +------------------------------------------------------------------+
 | AFTER ADDING DOCUMENTS:                                           |
-|   [ ] Add to INDEX_MAP.md                                         |
-|   [ ] Add headers to HEADER_MAP.md                                |
 |   [ ] Add to relevant INDEX.md                                    |
 +------------------------------------------------------------------+
 | AFTER SPRINT:                                                     |

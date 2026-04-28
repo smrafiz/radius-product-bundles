@@ -67,7 +67,7 @@ export const GENERAL_TAB: SettingsTabConfig = {
                     name: "bundlePriorityType",
                     label: "Bundle priority strategy",
                     details:
-                        "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the bundle with the highest effective savings.",
+                        "When more than one bundle applies to a product, this decides which one shows. Index based, you set the priority manually. Discount based, the bundle with the biggest saving wins automatically.",
                     defaultValue: PriorityType.INDEX_BASED,
                     fullWidth: true,
                     proFeature: "advanced_cart_controls",

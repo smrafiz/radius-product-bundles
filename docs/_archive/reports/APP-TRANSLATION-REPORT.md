@@ -1,4 +1,4 @@
-# App Translation & Internationalization Report — Radius Product Bundles
+# App Translation & Internationalization Report — Radius Bundles
 
 > Generated: 2026-02-22 | Sources: Shopify Dev MCP (Localize Your App, App Home Config API, AppProvider i18n, Extension Localization), Codebase Analysis
 
@@ -21,7 +21,7 @@
 
 ## 1. Executive Summary
 
-The Radius Product Bundles app currently has **no internationalization infrastructure**. All admin UI strings are hardcoded in English, the storefront widget uses English-only label defaults, and there is no mechanism to detect the merchant's locale.
+The Radius Bundles app currently has **no internationalization infrastructure**. All admin UI strings are hardcoded in English, the storefront widget uses English-only label defaults, and there is no mechanism to detect the merchant's locale.
 
 Shopify provides the merchant's locale to embedded apps via two mechanisms:
 

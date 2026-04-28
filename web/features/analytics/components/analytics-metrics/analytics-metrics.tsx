@@ -42,7 +42,7 @@ export function AnalyticsMetrics() {
     return (
         <s-grid
             gridTemplateColumns="repeat(auto-fit, minmax(180px, 1fr))"
-            gap="base"
+            gap="small"
         >
             {cards.map((_card) => (
                 <s-grid-item key={_card.title} gridColumn="auto">

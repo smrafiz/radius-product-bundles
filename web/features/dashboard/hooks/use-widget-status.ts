@@ -44,9 +44,16 @@ export function useWidgetStatus({
         }
     }, [app, shopDomain, setWidgetStatus]);
 
-    // Initial check — runs once per session
+    // Initial check — runs on mount; silently rechecks if cached status
+    // is unhealthy (e.g. user just toggled the embed in another tab and
+    // came back via in-app navigation, which doesn't fire visibilitychange).
     useEffect(() => {
-        if (!app || !shopDomain || isChecked) {
+        if (!app || !shopDomain) {
+            return;
+        }
+        const cachedHealthy =
+            widgetStatus?.hasAppEmbed && widgetStatus?.isFullyIntegrated;
+        if (isChecked && cachedHealthy) {
             return;
         }
 
@@ -90,7 +97,7 @@ export function useWidgetStatus({
         return () => {
             cancelled = true;
         };
-    }, [app, shopDomain, isChecked, setWidgetStatus, markChecked]);
+    }, [app, shopDomain, isChecked, widgetStatus, setWidgetStatus, markChecked]);
 
     // Background recheck when the tab regains focus (e.g. returning from theme editor)
     useEffect(() => {

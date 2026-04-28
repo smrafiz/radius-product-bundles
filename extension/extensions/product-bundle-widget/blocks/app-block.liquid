@@ -2,8 +2,8 @@
 {% if bundle_ids != blank and bundle_ids.size > 0 %}
 {% assign global = shop.metafields['$app'].global_settings.value %}
 {% assign bundles = shop.metafields['$app'].active_bundles.value %}
-{% assign customer_locale = request.locale.iso_code | downcase %}
-{% assign customer_locale_base = customer_locale | split: '-' | first %}
+{% assign customer_locale = request.locale.iso_code %}
+{% assign customer_locale_base = customer_locale | split: '-' | first | downcase %}
 {% assign primary_locale = global.primaryLocale | default: 'en' %}
 {% if global.labels[customer_locale] %}
 {% assign g_labels = global.labels[customer_locale] %}

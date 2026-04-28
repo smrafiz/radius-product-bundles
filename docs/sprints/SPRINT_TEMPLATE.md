@@ -231,7 +231,7 @@ LOOP BEHAVIOR:
 | **Test Infrastructure** | Manual check | Test infrastructure is separate | YES | [ ] |
 | **Test Environment** | Manual check | Test environment isolated | YES | [ ] |
 | **Committed** | `git log -1 --oneline` | Shows sprint commit | YES | [ ] |
-| **Docs Updated** | Manual check | INDEX_MAP.md current (if applicable) | NO | [ ] |
+| **Docs Updated** | Manual check | docs/ INDEX.md files current (if applicable) | NO | [ ] |
 | **No Secrets** | `git diff --cached` | No API keys, tokens, passwords | YES | [ ] |
 | **No Prod Creds in Tests** | `grep -i "prod" test/*` | No production credentials in test files | YES | [ ] |
 | **No Test Creds in Prod** | `grep -i "test" src/*` | No test credentials in production code | YES | [ ] |
