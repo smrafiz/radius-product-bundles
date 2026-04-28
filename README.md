@@ -117,6 +117,11 @@ features/<name>/
 | --- | --- |
 | [**Agent Guardrails**](docs/AGENT_GUARDRAILS.md) | **MANDATORY** safety protocols for ALL AI agents |
 | [App Store Submission](docs/APP_STORE_SUBMISSION.md) | Pre-submission checklist + protected customer data declarations |
+| [Features](docs/features.md) | Full feature catalog |
+| [App Guide](docs/app-guide.md) | Merchant-facing how-to |
+| [Free vs Pro](docs/free-vs-pro-features.md) | Plan tier matrix |
+| [Installation](docs/INSTALLATION.md) | Local dev setup |
+| [Technical Reference](docs/TECHNICAL_REFERENCE.md) | Architecture + schema cheat-sheet |
 
 ---
 
