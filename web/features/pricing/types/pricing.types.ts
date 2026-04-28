@@ -1,3 +1,4 @@
+import type React from "react";
 import type { BillingInterval, PlanName, ShopifySubscriptionStatus } from "@/prisma/generated/client";
 
 /**
@@ -50,7 +51,7 @@ export interface BillingStatusResponse {
 export interface PricingFaqItemInfo {
     id: string;
     title: string;
-    description: string;
+    description: React.ReactNode;
 }
 
 /**
