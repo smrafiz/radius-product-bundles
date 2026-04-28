@@ -150,8 +150,13 @@ export const BUNDLE_TYPES = {
         label: "Fixed bundle",
         id: "FIXED_BUNDLE",
         slug: "fixed-bundle",
-        description: "Bundle products together at a fixed price with discount",
-        features: ["Fixed bundle price", "Multiple products"],
+        description:
+            "Group specific products into one package with a single discounted price.",
+        features: [
+            "Gift boxes or holiday sets.",
+            "Full outfits (blazer + pants + shirt + shoes).",
+            "Product bundles with accessories (phone + case + charger).",
+        ],
         bundleImage: "/assets/fixed-bundle.svg",
         modalImage: "/assets/fixed-bundle-popup.png",
         namePatterns: BUNDLE_NAME_PATTERNS.FIXED_BUNDLE,
@@ -163,8 +168,12 @@ export const BUNDLE_TYPES = {
         id: "BUY_X_GET_Y",
         slug: "buy-x-get-y",
         description:
-            "Customer buys X items and gets Y items free or discounted",
-        features: ["Buy 2 Get 1 Free", "Buy 3 Get 2nd 50% Off"],
+            "Buy a specific product to unlock a discount on a different product.",
+        features: [
+            "Cross-selling related items (Buy a laptop, get 30% off a mouse)",
+            "Pairing accessories with main products (Buy a camera, get a memory card free)",
+            "Strategic upsells (Buy skincare, get a travel bag 50% off)"
+        ],
         bundleImage: "/assets/buy-x-get-y.svg",
         modalImage: "/assets/buy-x-get-y-popup.png",
         namePatterns: BUNDLE_NAME_PATTERNS.BUY_X_GET_Y,
@@ -176,8 +185,12 @@ export const BUNDLE_TYPES = {
         id: "BOGO",
         slug: "bogo",
         description:
-            "Classic buy one get one offer with various discount options",
-        features: ["Buy 1 Get 1 Free", "Buy 1 Get 1 50% Off"],
+            "Buy one product, get another one free or discounted. Usually the same product or product type.",
+        features: [
+            "Classic promotions (Buy 1 Get 1 Free on t-shirts).",
+            "Moving slow-selling inventory fast.",
+            "Increasing order quantity without dropping unit price."
+        ],
         bundleImage: "/assets/bogo.svg",
         modalImage: "/assets/bogo-popup.png",
         namePatterns: BUNDLE_NAME_PATTERNS.BOGO,
@@ -188,8 +201,12 @@ export const BUNDLE_TYPES = {
         label: "Volume discount",
         id: "VOLUME_DISCOUNT",
         slug: "volume-discount",
-        description: "Offer discounts based on quantity purchased",
-        features: ["Buy 2 Save 10%", "Buy 5 Save 20%"],
+        description: "The more they buy, the bigger the discount. Applied to the same product.",
+        features: [
+            "Bulk purchases (Buy 3, save 10%; Buy 5, save 20%).",
+            "Wholesale or B2B scenarios.",
+            "Clearing stock or rewarding loyal customers."
+        ],
         bundleImage: "/assets/volume-discount.svg",
         modalImage: "/assets/volume-discount-popup.png",
         namePatterns: BUNDLE_NAME_PATTERNS.VOLUME_DISCOUNT,

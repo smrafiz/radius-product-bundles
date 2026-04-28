@@ -692,34 +692,38 @@
     "Types": {
       "FIXED_BUNDLE": {
         "label": "Offre groupée à prix fixe",
-        "description": "Regrouper des produits à un prix fixe avec remise",
+        "description": "Regroupez des produits spécifiques dans un seul pack, proposé à un prix réduit unique.",
         "features": [
-          "Prix fixe de l'offre groupée",
-          "Plusieurs produits"
+          "Coffrets cadeaux ou coffrets pour les fêtes.",
+          "Tenues complètes (blazer + pantalon + chemise + chaussures).",
+          "Lots de produits avec accessoires (téléphone + étui + chargeur)."
         ]
       },
       "BUY_X_GET_Y": {
         "label": "Achetez X, obtenez Y",
         "description": "Pour l'achat de X articles, le client obtient Y articles gratuits ou à prix réduit",
         "features": [
-          "2 achetés, 1 offert",
-          "Pour 3 articles achetés, le 2e à -50 %"
+          "Vente croisée d'articles connexes (pour l'achat d'un ordinateur portable, bénéficiez de 30% de réduction sur une souris)",
+          "Associer des accessoires aux produits principaux (Pour l'achat d'un appareil photo, recevez une carte mémoire gratuite)",
+          "Ventes incitatives stratégiques (Pour l'achat d'un produit de soin pour la peau, bénéficiez de 50% de réduction sur une trousse de voyage)"
         ]
       },
       "BOGO": {
         "label": "BOGO",
-        "description": "Offre classique « 1 acheté, 1 offert » avec diverses options de réduction",
+        "description": "Pour l'achat d'un produit, bénéficiez d'un autre produit gratuit ou à prix réduit. Généralement le même produit ou le même type de produit.",
         "features": [
-          "1 acheté, 1 offert",
-          "1 acheté, 1 à -50 %"
+          "Promotions classiques (1 acheté, 1 offert sur les t-shirts).",
+          "Écouler rapidement les stocks qui se vendent lentement.",
+          "Augmenter la quantité commandée sans baisser le prix unitaire."
         ]
       },
       "VOLUME_DISCOUNT": {
         "label": "Remise sur quantité",
-        "description": "Remises en fonction de la quantité achetée",
+        "description": "Plus ils achètent, plus la réduction est importante. Appliquée au même produit.",
         "features": [
-          "2 achetés : -10 %",
-          "-20 % pour 5 articles achetés"
+          "Achats en gros (pour 3 articles achetés, 10% d'économie; pour 5 articles achetés, 20% d'économie).",
+          "Scénarios de vente en gros ou B2B.",
+          "Liquidation de stocks ou récompense des clients fidèles."
         ]
       },
       "MIX_AND_MATCH": {
