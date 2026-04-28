@@ -16,7 +16,7 @@ export default function PricingPageSkeleton() {
             <PageHeaderSkeleton
                 showBackButton={true}
                 heading="Pricing & Plans"
-                subtext="Choose the right plan for your business"
+                subtext="Pick the best one that suits your business perfectly"
             />
 
             <s-section padding="base">

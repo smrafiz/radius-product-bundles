@@ -34,7 +34,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
     {
         id: SUBSCRIPTION_PLANS.FREE,
         title: "Free",
-        description: "Get started with bundle creation at no cost",
+        description: "Try bundles in your store, free forever.",
         features: [
             "Up to 3 bundles",
             "Up to 10 products per bundle",
@@ -58,7 +58,7 @@ export const PRICING_CARD: PricingCardItemInfo[] = [
         id: SUBSCRIPTION_PLANS.PRO,
         title: "Pro",
         featuredText: "Most Popular",
-        description: "Everything you need to grow your bundle revenue",
+        description: "Everything you need to scale bundles across your store.",
         features: [
             "Unlimited bundles",
             "Unlimited products per bundle",

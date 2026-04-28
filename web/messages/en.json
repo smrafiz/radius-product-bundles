@@ -408,7 +408,7 @@
     },
     "Schedule": {
       "status": "Bundle status",
-      "statusTooltip": "Shows the current state of this bundle and how it appears in your store.",
+      "statusTooltip": "Set to Active to show this bundle on your store. Draft and Paused bundles stay hidden.",
       "notLiveDraft": "This bundle is a draft and will not be displayed on the storefront until its status is set to Active.",
       "notLivePaused": "This bundle is paused and is hidden from the storefront. Set status to Active to resume.",
       "notLiveArchived": "This bundle is archived and will not be displayed on the storefront.",
@@ -657,7 +657,7 @@
         "customizerTablet": "Customize for tablet",
         "customizerMobile": "Customize for mobile",
         "priorityHeading": "Bundle priority",
-        "priorityTooltipIndex": "The bundle with the highest priority is displayed when multiple bundles apply to a product.",
+        "priorityTooltipIndex": "If a product belongs to more than one bundle, the one with the highest priority is shown.",
         "priorityTooltipDiscount": "The bundle with the highest discount value is displayed when multiple bundles apply to a product.",
         "changeStrategy": "Change strategy",
         "priority": "Priority",
@@ -1012,7 +1012,7 @@
           },
           "bundlePriorityType": {
             "label": "Bundle priority strategy",
-            "details": "When multiple bundles apply to a product, determines which one is displayed. Index-based uses manual priority numbers; Discount-based picks the bundle with the highest effective savings.",
+            "details": "When more than one bundle applies to a product, this decides which one shows. Index based, you set the priority manually. Discount based, the bundle with the biggest saving wins automatically.",
             "options": {
               "index_based": "Index based (manual priority)",
               "discount_based": "Discount based (highest savings wins)"
@@ -1275,7 +1275,7 @@
         "Sections": {
           "custom-css": {
             "title": "Custom CSS",
-            "tooltip": "Add custom CSS for advanced styling. Only use if you have CSS knowledge."
+            "tooltip": "For advanced styling you can add custom CSS. We recommend you to use this only if you have CSS knowledge."
           }
         },
         "Fields": {
@@ -1879,7 +1879,7 @@
   },
   "Pricing": {
     "title": "Pricing & Plans",
-    "description": "Choose the right plan for your business",
+    "description": "Pick the best one that suits your business perfectly",
     "back": "Back",
     "faq": "FAQ",
     "faqDescription": "Find answers to the most common questions about our pricing and billing model below.",
@@ -1890,7 +1890,7 @@
     "plans": {
       "free": {
         "title": "Free",
-        "description": "Get started with bundle creation at no cost",
+        "description": "Try bundles in your store, free forever.",
         "button": "Current Plan",
         "currentPlan": "Current Plan",
         "features": {
@@ -1924,7 +1924,7 @@
       "pro": {
         "title": "Pro",
         "featured": "Most Popular",
-        "description": "Everything you need to grow your bundle revenue",
+        "description": "Everything you need to scale bundles across your store.",
         "button": "Start Free Trial",
         "currentPlan": "Current Plan",
         "features": {
@@ -2089,7 +2089,7 @@
     "linkAppStore": "Rate on App Store",
     "linkCommunity": "Community Forum",
     "proTipTitle": "Pro Tip",
-    "proTip": "Include your store URL and a screenshot when emailing — it helps us resolve issues 2× faster.",
+    "proTip": "To help us resolve your issue faster, please include your store URL and a screenshot in your email. It typically cuts our response time in half.",
     "faq1Q": "How does the bundle discount get applied — is it a discount code?",
     "faq1A": "No discount code needed. Radius Bundles uses a native Shopify Function that runs server-side inside Shopify's checkout engine. When a customer has all the required bundle products in their cart, the discount is calculated and applied automatically at checkout — no scripts injected into your storefront, no conflicts with Shopify Payments or Shop Pay, and no customer action required.",
     "faq2Q": "The bundle widget isn't showing on my product pages. How do I fix it?",
