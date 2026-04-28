@@ -10,6 +10,8 @@ export function BillingConfirmation() {
     const t = useTranslations("Pricing.Confirmation");
     const searchParams = useSearchParams();
     const chargeId = searchParams.get("charge_id");
+    const billingStatus = searchParams.get("billing_status");
+    const declined = !chargeId && billingStatus === "pending";
     const { confirmSubscription } = useBillingStatus();
     const { showSuccess, showError } = useGlobalBanner();
     const confirmed = useRef(false);
@@ -35,6 +37,14 @@ export function BillingConfirmation() {
         // confirmed.current ref guards against double-execution in React Strict Mode.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chargeId, confirmSubscription, showSuccess, showError, t]);
+
+    if (declined) {
+        return (
+            <s-banner tone="warning" heading={t("declined")}>
+                {t("declinedBody")}
+            </s-banner>
+        );
+    }
 
     if (!chargeId) return null;
 

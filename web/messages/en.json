@@ -239,7 +239,7 @@
     },
     "Features": {
       "heading": "Powerful Bundle Features",
-      "bundleTypes": "Multiple bundle types — Fixed, BOGO, Volume, Mix & Match",
+      "bundleTypes": "Multiple bundle types — Fixed, BOGO, Volume, Buy X Get Y",
       "discounts": "Flexible discounts — Percentage, fixed amount, custom pricing",
       "styleCustomizer": "Style customizer — Match your store's branding with zero code",
       "analytics": "Built-in analytics — Track views, conversions, and revenue",
@@ -298,9 +298,7 @@
       "submitFeedback": "Submit feedback",
       "whatCanWeImprove": "What can we improve?",
       "whatDidYouLikeMost": "What did you like most?",
-      "helpBySharing": "Help us by sharing your experience",
-      "rateOnAppStore": "Rate on App Store",
-      "shareWithFriends": "Share with friends",
+      "thanksForFeedback": "Thanks for the kind words! Your feedback helps us keep improving.",
       "needImmediateHelp": "Need immediate help?",
       "contactSupport": "Contact Support",
       "viewHelpCenter": "View Help Center",
@@ -674,6 +672,7 @@
         "bogoFreeFallback": "Free",
         "bogoAtPercentOff": "at {percent}% Off",
         "bogoAtAmountOff": "{amount} Off",
+        "bogoAtCustomPrice": "for {price}",
         "configureDiscountTiers": "Configure discount tiers to see a preview.",
         "volumeBadgePercent": "Up to {discount}% off",
         "volumeBadgeFixed": "Up to {amount} off",
@@ -692,34 +691,38 @@
     "Types": {
       "FIXED_BUNDLE": {
         "label": "Fixed bundle",
-        "description": "Bundle products together at a fixed price with discount",
+        "description": "Group specific products into one package with a single discounted price.",
         "features": [
-          "Fixed bundle price",
-          "Multiple products"
+          "Gift boxes or holiday sets.",
+          "Full outfits (blazer + pants + shirt + shoes).",
+          "Product bundles with accessories (phone + case + charger)."
         ]
       },
       "BUY_X_GET_Y": {
         "label": "Buy X Get Y",
-        "description": "Customer buys X items and gets Y items free or discounted",
+        "description": "Buy a specific product to unlock a discount on a different product.",
         "features": [
-          "Buy 2 Get 1 Free",
-          "Buy 3 Get 2nd 50% Off"
+          "Cross-selling related items (Buy a laptop, get 30% off a mouse)",
+          "Pairing accessories with main products (Buy a camera, get a memory card free)",
+          "Strategic upsells (Buy skincare, get a travel bag 50% off)"
         ]
       },
       "BOGO": {
         "label": "BOGO",
-        "description": "Classic buy one get one offer with various discount options",
+        "description": "Buy one product, get another one free or discounted. Usually the same product or product type.",
         "features": [
-          "Buy 1 Get 1 Free",
-          "Buy 1 Get 1 50% Off"
+          "Classic promotions (Buy 1 Get 1 Free on t-shirts).",
+          "Moving slow-selling inventory fast.",
+          "Increasing order quantity without dropping unit price."
         ]
       },
       "VOLUME_DISCOUNT": {
         "label": "Volume discount",
-        "description": "Offer discounts based on quantity purchased",
+        "description": "The more they buy, the bigger the discount. Applied to the same product.",
         "features": [
-          "Buy 2 Save 10%",
-          "Buy 5 Save 20%"
+          "Bulk purchases (Buy 3, save 10%; Buy 5, save 20%).",
+          "Wholesale or B2B scenarios.",
+          "Clearing stock or rewarding loyal customers."
         ]
       },
       "MIX_AND_MATCH": {
@@ -1970,11 +1973,15 @@
     "toggleBillingInterval": "Toggle billing interval",
     "subscriptionError": "Failed to update subscription. Please try again.",
     "trialBadge": "{days}-day free trial",
+    "switchToMonthly": "Switch to Monthly",
+    "switchToAnnual": "Switch to Annual",
     "Confirmation": {
       "activating": "Activating subscription...",
       "activatingBody": "Please wait while we confirm your subscription.",
       "success": "Subscription activated successfully!",
-      "error": "Failed to activate subscription. Please contact support."
+      "error": "Failed to activate subscription. Please contact support.",
+      "declined": "Subscription not activated",
+      "declinedBody": "You declined or cancelled the subscription approval. You can try again whenever you're ready."
     },
     "PlanTab": {
       "pageTitle": "Plan & Billing",
@@ -2091,15 +2098,15 @@
     "proTipTitle": "Pro Tip",
     "proTip": "To help us resolve your issue faster, please include your store URL and a screenshot in your email. It typically cuts our response time in half.",
     "faq1Q": "How does the bundle discount get applied — is it a discount code?",
-    "faq1A": "No discount code needed. Radius Bundles uses a native Shopify Function that runs server-side inside Shopify's checkout engine. When a customer has all the required bundle products in their cart, the discount is calculated and applied automatically at checkout — no scripts injected into your storefront, no conflicts with Shopify Payments or Shop Pay, and no customer action required.",
-    "faq2Q": "The bundle widget isn't showing on my product pages. How do I fix it?",
-    "faq2A": "The widget is added as an app block — it won't appear automatically. Open the Theme Editor (Online Store → Themes → Customise), navigate to your product template, click 'Add block' in the left sidebar, and select the Radius Bundles Widget block. Position it where you want it on the page and save. If the block is present but nothing renders, check that the product is included in at least one Active bundle — Draft and Paused bundles don't display the widget. You'll need to add the block to each product template variant where you want it to appear.",
-    "faq3Q": "What's the difference between Fixed Bundle, BOGO, Volume Discount, and Mix & Match?",
-    "faq3A": "Fixed Bundle groups specific products at a set discount — ideal for curated gift sets or starter kits. BOGO (Buy One Get One) gives a free or discounted reward product when a qualifying product is purchased. Volume Discount rewards customers who buy more quantity (e.g. buy 3, get 15% off). Mix & Match lets customers build their own combination from a defined product pool with a shared discount. Use Fixed for predictable sets, BOGO/BuyXGetY for promotional campaigns, and Mix & Match when customers should have flexibility.",
+    "faq1A": "<p>No code needed. The discount is built into Shopify’s checkout itself. When a customer has all the required products in their cart, it applies automatically at checkout.</p><p>It works alongside Shopify Payments and Shop Pay with no conflicts, and doesn’t require any changes to your theme code.</p>",
+    "faq2Q": "The bundle widget isn’t showing on my product pages. How do I fix it?",
+    "faq2A": "<p>The widget has to be added to your theme manually. Here’s how:</p><ol><li>Go to <strong>Online Store → Themes → Edit theme</strong></li><li>Open your product template</li><li>Click <strong>Add block</strong> in the left sidebar</li><li>Select <strong>Radius Bundles Widget</strong></li><li>Drag it where you want it and save</li></ol><p><strong><em>Still not showing?</em></strong> Check that:</p><ul><li>The product is part of an <strong>Active bundle</strong> — Draft and Paused bundles don’t display the widget.</li><li>You’ve added the block to every product template you use (they don’t share automatically).</li></ul>",
+    "faq3Q": "What’s the difference between Fixed Bundle, BOGO, Volume Discount, and Buy X Get Y?",
+    "faq3A": "<p>Each one fits a different goal:</p><ul><li><strong>Fixed Bundle</strong> — Specific products sold together at a set price. Suitable for curated sets like gift boxes or starter kits.</li><li><strong>BOGO (Buy One Get One)</strong> — A free or discounted reward when a qualifying product is bought. Ideal for promotional campaigns.</li><li><strong>Volume Discount</strong> — Bigger discount as quantity goes up (e.g. buy 3, save 15%). Perfect for moving stock or rewarding bulk buyers.</li><li><strong>Buy X Get Y —</strong> Buy specific product X to unlock a discount on product Y. Best for cross-selling related items. Like buying a phone and getting 30% off a case.</li></ul>",
     "faq4Q": "My customer added all the bundle products but no discount appeared at checkout. Why?",
-    "faq4A": "Check four things: (1) Bundle status must be Active — Draft and Paused bundles don't apply discounts. (2) If you set a date range, confirm today falls within it. (3) The customer must have the exact required products and variants in their cart at the correct quantities. (4) If you use a third-party checkout replacement app, Shopify Functions may not run — the discount engine requires Shopify's native checkout.",
-    "faq5Q": "Can I customise how the bundle widget looks on my storefront?",
-    "faq5A": "Yes — go to Settings → Style Customiser. Four sections let you control everything: Appearance (colours, border radius, background), Product Cards (image ratio, layout direction), Button & Badge (CTA text, discount badge style), and Advanced (custom CSS, spacing). You can also set different styles per device using the Responsive Overrides toggle — useful if you want a stacked layout on mobile and a side-by-side layout on desktop. All changes preview live before you save."
+    "faq4A": "<p>Usually one of these four. Check in order:</p><ol><li><strong>Bundle status is Active.</strong> Draft and Paused bundles don’t apply discounts.</li><li><strong>Today falls within the date range</strong> (if you set one).</li><li><strong>The cart has the exact required products, variants, and quantities</strong>. A different size or colour won’t qualify unless you included it.</li><li><strong>You’re using Shopify’s native checkout</strong>. Some third-party checkout apps replace it, which can stop the discount from running.</li></ol><p>If all four look right and it’s still not applying, reach out and we’ll look at the specific bundle.</p>",
+    "faq5Q": "Can I customize how the bundle widget looks on my storefront?",
+    "faq5A": "<p>Yes. Go to <strong>Settings → Style</strong> Customizer, where you’ll find four sections:</p><ul><li><strong>Appearance</strong> — colours, border radius, background.</li><li><strong>Product Cards</strong> — image ratio, layout direction.</li><li><strong>Button &amp; Badge</strong> — CTA text, discount badge style.</li><li><strong>Advanced</strong> — custom CSS, spacing.</li></ul><p>You can also set different styles for mobile and desktop using the Responsive Overrides toggle — useful for stacked-on-mobile, side-by-side-on-desktop layouts. Changes preview live before you save.</p>"
   },
   "ABTesting": {
     "title": "A/B Testing",

@@ -1,6 +1,7 @@
 /**
  * Webhook types and interfaces
  */
+import { ShopifyLineItem } from "@/shared";
 
 /*
  * WebhookSubscription interface
@@ -29,4 +30,12 @@ export interface InitializationStatus {
     setupComplete: boolean;
     webhooksRegistered: boolean;
     needsInitialization: boolean;
+}
+
+/*
+ * BundleAggregation interface
+ */
+export interface BundleAggregation {
+    items: ShopifyLineItem[];
+    totalRevenue: number;
 }

@@ -633,10 +633,13 @@ import type { VolumeContext } from "./lib/types";
                         const formattedAmount = trimMoney(
                             formatMoney(structure.discountValue * 100),
                         );
-                        badgeText = formatLabel(
-                            structure.labels?.savingsBadgeText ?? "Save {amount}",
-                            { percent: "", amount: formattedAmount },
-                        );
+                        const tmpl = structure.labels?.savingsBadgeText;
+                        const template =
+                            tmpl?.includes("{amount}") ? tmpl : "Save {amount}";
+                        badgeText = formatLabel(template, {
+                            percent: "",
+                            amount: formattedAmount,
+                        });
                         break;
                     }
 
@@ -644,10 +647,13 @@ import type { VolumeContext } from "./lib/types";
                         const formattedAmount = trimMoney(
                             formatMoney(structure.discountValue * 100),
                         );
-                        badgeText = formatLabel(
-                            structure.labels?.savingsBadgeText || "Only {amount}",
-                            { percent: "", amount: formattedAmount },
-                        );
+                        const cpTmpl = structure.labels?.savingsBadgeText;
+                        const cpTemplate =
+                            cpTmpl?.includes("{amount}") ? cpTmpl : "Only {amount}";
+                        badgeText = formatLabel(cpTemplate, {
+                            percent: "",
+                            amount: formattedAmount,
+                        });
                         break;
                     }
                 }

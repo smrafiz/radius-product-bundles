@@ -127,22 +127,9 @@ export function DashboardReviewBanner() {
                         rows={3}
                     />
 
-                    {/* Additional Actions for High Ratings */}
+                    {/* Thanks message for High Ratings */}
                     {currentRating >= 4 && (
-                        <s-stack
-                            gap="small"
-                            padding="small"
-                            background="subdued"
-                            borderRadius="base"
-                        >
-                            <s-heading>{t("helpBySharing")}</s-heading>
-                            <s-stack direction="inline" gap="small">
-                                <s-button icon="external">
-                                    {t("rateOnAppStore")}
-                                </s-button>
-                                <s-button>{t("shareWithFriends")}</s-button>
-                            </s-stack>
-                        </s-stack>
+                        <s-text color="subdued">{t("thanksForFeedback")}</s-text>
                     )}
 
                     {/* Support Options for Low Ratings */}

@@ -3,6 +3,7 @@
 import {
     attachMediaToProductAction,
     createStagedUploadsAction,
+    ingestStagedUploadsAction,
 } from "@/features/bundles/actions";
 import { uploadFilesToShopify } from "@/shared";
 import { useAppBridge } from "@shopify/app-bridge-react";
@@ -51,7 +52,7 @@ export function useMediaUpload() {
                 };
             }
 
-            const resourceUrls = await uploadFilesToShopify(
+            const stagedResourceUrls = await uploadFilesToShopify(
                 files,
                 stagedResult.stagedTargets.map((target) => ({
                     url: target.url,
@@ -64,7 +65,7 @@ export function useMediaUpload() {
                 sessionToken,
             );
 
-            if (resourceUrls.length === 0) {
+            if (stagedResourceUrls.length === 0) {
                 return {
                     success: false,
                     resourceUrls: [],
@@ -72,7 +73,21 @@ export function useMediaUpload() {
                 };
             }
 
-            return { success: true, resourceUrls };
+            // Ingest staged uploads → permanent CDN URLs
+            const ingestResult = await ingestStagedUploadsAction(
+                sessionToken,
+                stagedResourceUrls,
+            );
+
+            if (!ingestResult.success || ingestResult.urls.length === 0) {
+                return {
+                    success: false,
+                    resourceUrls: [],
+                    error: ingestResult.error || "Failed to ingest uploads",
+                };
+            }
+
+            return { success: true, resourceUrls: ingestResult.urls };
         } catch (error) {
             console.error("File upload error:", error);
             return {

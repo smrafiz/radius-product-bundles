@@ -239,7 +239,7 @@
     },
     "Features": {
       "heading": "Fonctionnalités avancées pour les offres groupées",
-      "bundleTypes": "Plusieurs types d'offres groupées — Forfait, un acheté = un offert, volume, mix & match",
+      "bundleTypes": "Plusieurs types d'offres groupées — Forfait, Un acheté=Un offert, Volume, Achetez X, obtenez Y",
       "discounts": "Remises flexibles — Pourcentage, montant fixe, tarification personnalisée",
       "styleCustomizer": "Outil de personnalisation du style — Adaptez l'offre à l'image de marque de votre boutique, sans code",
       "analytics": "Analyses intégrées — Suivez les vues, les conversions et le chiffre d'affaires",
@@ -298,9 +298,7 @@
       "submitFeedback": "Envoyer des commentaires",
       "whatCanWeImprove": "Que pouvons-nous améliorer ?",
       "whatDidYouLikeMost": "Qu'avez-vous le plus apprécié ?",
-      "helpBySharing": "Aidez-nous en partageant votre expérience",
-      "rateOnAppStore": "Évaluer sur l'App Store",
-      "shareWithFriends": "Partager avec des amis",
+      "thanksForFeedback": "Merci pour vos gentils mots ! Vos commentaires nous aident à nous améliorer.",
       "needImmediateHelp": "Besoin d'une aide immédiate ?",
       "contactSupport": "Contacter l'assistance",
       "viewHelpCenter": "Consulter le Centre d'aide",
@@ -673,6 +671,7 @@
         "bogoFreeFallback": "Gratuit",
         "bogoAtPercentOff": "avec {percent} % de réduction",
         "bogoAtAmountOff": "{amount} de réduction",
+        "bogoAtCustomPrice": "pour {price}",
         "configureDiscountTiers": "Configurez les niveaux de remise pour afficher un aperçu.",
         "volumeBadgePercent": "Jusqu'à {discount} % de réduction",
         "volumeBadgeFixed": "Jusqu'à {amount} de réduction",
@@ -691,34 +690,38 @@
     "Types": {
       "FIXED_BUNDLE": {
         "label": "Offre groupée à prix fixe",
-        "description": "Regrouper des produits à un prix fixe avec remise",
+        "description": "Regroupez des produits spécifiques dans un seul pack, proposé à un prix réduit unique.",
         "features": [
-          "Prix fixe de l'offre groupée",
-          "Plusieurs produits"
+          "Coffrets cadeaux ou coffrets pour les fêtes.",
+          "Tenues complètes (blazer + pantalon + chemise + chaussures).",
+          "Lots de produits avec accessoires (téléphone + étui + chargeur)."
         ]
       },
       "BUY_X_GET_Y": {
         "label": "Achetez X, obtenez Y",
         "description": "Pour l'achat de X articles, le client obtient Y articles gratuits ou à prix réduit",
         "features": [
-          "2 achetés, 1 offert",
-          "Pour 3 articles achetés, le 2e à -50 %"
+          "Vente croisée d'articles connexes (pour l'achat d'un ordinateur portable, bénéficiez de 30% de réduction sur une souris)",
+          "Associer des accessoires aux produits principaux (Pour l'achat d'un appareil photo, recevez une carte mémoire gratuite)",
+          "Ventes incitatives stratégiques (Pour l'achat d'un produit de soin pour la peau, bénéficiez de 50% de réduction sur une trousse de voyage)"
         ]
       },
       "BOGO": {
         "label": "BOGO",
-        "description": "Offre classique « 1 acheté, 1 offert » avec diverses options de réduction",
+        "description": "Pour l'achat d'un produit, bénéficiez d'un autre produit gratuit ou à prix réduit. Généralement le même produit ou le même type de produit.",
         "features": [
-          "1 acheté, 1 offert",
-          "1 acheté, 1 à -50 %"
+          "Promotions classiques (1 acheté, 1 offert sur les t-shirts).",
+          "Écouler rapidement les stocks qui se vendent lentement.",
+          "Augmenter la quantité commandée sans baisser le prix unitaire."
         ]
       },
       "VOLUME_DISCOUNT": {
         "label": "Remise sur quantité",
-        "description": "Remises en fonction de la quantité achetée",
+        "description": "Plus ils achètent, plus la réduction est importante. Appliquée au même produit.",
         "features": [
-          "2 achetés : -10 %",
-          "-20 % pour 5 articles achetés"
+          "Achats en gros (pour 3 articles achetés, 10% d'économie; pour 5 articles achetés, 20% d'économie).",
+          "Scénarios de vente en gros ou B2B.",
+          "Liquidation de stocks ou récompense des clients fidèles."
         ]
       },
       "MIX_AND_MATCH": {
@@ -1895,6 +1898,8 @@
     "toggleBillingInterval": "Modifier la fréquence de facturation",
     "subscriptionError": "Échec de la mise à jour de l'abonnement. Veuillez réessayer.",
     "trialBadge": "Essai gratuit de {days} jours",
+    "switchToMonthly": "Passer en mensuel",
+    "switchToAnnual": "Passer en annuel",
     "plans": {
       "free": {
         "title": "Gratuit",
@@ -1972,7 +1977,9 @@
       "activating": "Activation de l'abonnement en cours…",
       "activatingBody": "Veuillez patienter pendant que nous confirmons votre abonnement.",
       "success": "Abonnement activé avec succès !",
-      "error": "Échec de l'activation de l'abonnement. Veuillez contacter l'assistance."
+      "error": "Échec de l'activation de l'abonnement. Veuillez contacter l'assistance.",
+      "declined": "Abonnement non activé",
+      "declinedBody": "Vous avez refusé ou annulé l'approbation de l'abonnement. Vous pouvez réessayer quand vous le souhaitez."
     },
     "PlanTab": {
       "pageTitle": "Abonnement et facturation",
@@ -2088,16 +2095,16 @@
     "linkCommunity": "Forum de la communauté",
     "proTipTitle": "Astuce de pro",
     "proTip": "Afin de nous aider à résoudre votre problème plus rapidement, veuillez inclure l'URL de votre boutique et une capture d'écran dans votre e-mail. En général, cela permet de réduire notre temps de réponse de moitié.",
-    "faq1Q": "Comment la réduction sur l’offre groupée est-elle appliquée — s’agit-il d’un code de réduction ?",
-    "faq1A": "Aucun code de réduction n’est nécessaire. Radius Bundles utilise une Shopify Function native qui s’exécute côté serveur au sein du moteur de paiement de Shopify. Lorsqu’un client a tous les produits requis dans son panier, la réduction est calculée et appliquée automatiquement au moment du paiement — aucun script n’est injecté dans votre boutique, aucun conflit avec Shopify Payments ou Shop Pay, et aucune action n’est requise de la part du client.",
-    "faq2Q": "Le widget d’offre groupée ne s’affiche pas sur mes pages produits. Comment résoudre ce problème ?",
-    "faq2A": "Le widget est ajouté en tant que bloc d’application — il n’apparaîtra pas automatiquement. Ouvrez l’éditeur de thèmes (Boutique en ligne → Thèmes → Personnaliser), accédez à votre modèle de produit, cliquez sur « Ajouter un bloc » dans la barre latérale gauche et sélectionnez le bloc Radius Bundles Widget. Placez-le à l’endroit souhaité sur la page et enregistrez. Si le bloc est présent mais que rien ne s’affiche, vérifiez que le produit est inclus dans au moins un bundle Actif — les bundles en Brouillon et en Pause n’affichent pas le widget. Vous devrez ajouter le bloc à chaque variante de modèle de produit où vous souhaitez qu’il apparaïsse.",
-    "faq3Q": "Quelle est la différence entre Fixed Bundle, BOGO, Volume Discount et Mix & Match ?",
-    "faq3A": "Le Fixed Bundle regroupe des produits spécifiques avec une remise définie — idéal pour les coffrets cadeaux ou les kits de démarrage. BOGO (Buy One Get One) offre un produit gratuit ou à prix réduit lors de l’achat d’un produit éligible. La remise sur volume récompense les clients qui achètent en plus grande quantité (ex. : achetez-en 3, bénéficiez de 15 % de remise). Mix & Match permet à vos clients de composer leur propre combinaison depuis un catalogue défini avec une remise partagée. Utilisez Fixed pour les ensembles préétablis, BOGO/BuyXGetY pour les campagnes promotionnelles et Mix & Match lorsque vous souhaitez offrir de la flexibilité.",
-    "faq4Q": "Mon client a ajouté tous les produits du bundle mais aucune réduction n’est apparue au paiement. Pourquoi ?",
-    "faq4A": "Vérifiez quatre points : (1) Le statut du bundle doit être Actif — les bundles en Brouillon et en Pause n’appliquent pas de remise. (2) Si vous avez défini une période, confirmez que la date du jour s’y situe. (3) Le client doit avoir dans son panier les produits et variantes exacts requis, dans les quantités correctes. (4) Si vous utilisez une application tierce remplaçant le paiement natif, les Shopify Functions peuvent ne pas s’exécuter — le moteur de remise nécessite le paiement natif de Shopify.",
-    "faq5Q": "Puis-je personnaliser l’apparence du widget sur ma boutique ?",
-    "faq5A": "Oui — accédez à Paramètres → Personnalisateur de style. Quatre sections vous permettent de tout contrôler : Apparence (couleurs, rayon des bordures, arrière-plan), Fiches produit (format de l’image, orientation de la mise en page), Bouton et badge (texte de l’appel à l’action, style du badge de remise) et Avancé (CSS personnalisé, espacement). Vous pouvez également définir des styles différents par appareil via le bouton Remplacements responsives — utile pour une mise en page empilée sur mobile et côte à côte sur ordinateur. Toutes les modifications sont prévisualisées en temps réel avant d’enregistrer."
+    "faq1Q": "Comment la réduction sur l’offre groupée est-elle appliquée — s’agit-il d’un code de réduction?",
+    "faq1A": "<p>Aucun code nécessaire. La réduction est intégrée directement dans le paiement Shopify. Lorsqu’un client a tous les produits requis dans son panier, elle s’applique automatiquement au moment du paiement.</p><p>Elle fonctionne avec Shopify Payments et Shop Pay sans aucun conflit, et ne nécessite aucune modification du code de votre thème.</p>",
+    "faq2Q": "Le widget d’offre groupée ne s’affiche pas sur mes pages produits. Comment résoudre ce problème?",
+    "faq2A": "<p>Le widget doit être ajouté manuellement à votre thème. Voici comment:</p><ol><li>Accédez à <strong>Boutique en ligne → Thèmes → Personnaliser</strong></li><li>Ouvrez votre modèle de produit</li><li>Cliquez sur <strong>Ajouter un bloc</strong> dans la barre latérale gauche</li><li>Sélectionnez <strong>Radius Bundles Widget</strong></li><li>Faites-le glisser où vous le souhaitez et enregistrez</li></ol><p><strong><em>Toujours pas visible?</em></strong> Vérifiez que:</p><ul><li>Le produit fait partie d’un <strong>bundle Actif</strong> — les bundles en Brouillon et en Pause n’affichent pas le widget.</li><li>Vous avez ajouté le bloc à chaque modèle de produit utilisé (ils ne le partagent pas automatiquement).</li></ul>",
+    "faq3Q": "Quelle est la différence entre Fixed Bundle, BOGO, Volume Discount et Buy X Get Y?",
+    "faq3A": "<p>Chacun correspond à un objectif différent:</p><ul><li><strong>Fixed Bundle</strong> — Des produits spécifiques vendus ensemble à un prix fixe. Idéal pour les coffrets cadeaux ou les kits de démarrage.</li><li><strong>BOGO (Buy One Get One)</strong> — Un produit gratuit ou à prix réduit lors de l’achat d’un produit éligible. Idéal pour les campagnes promotionnelles.</li><li><strong>Volume Discount</strong> — Réduction croissante avec la quantité (ex.: achetez-en 3, économisez 15%). Parfait pour écouler le stock ou récompenser les acheteurs en gros.</li><li><strong>Buy X Get Y —</strong> Achetez le produit X pour débloquer une réduction sur le produit Y. Idéal pour la vente croisée. Comme acheter un téléphone et obtenir 30% de réduction sur un étui.</li></ul>",
+    "faq4Q": "Mon client a ajouté tous les produits du bundle mais aucune réduction n’est apparue au paiement. Pourquoi?",
+    "faq4A": "<p>Généralement l’un de ces quatre points. Vérifiez dans l’ordre:</p><ol><li><strong>Le statut du bundle est Actif.</strong> Les bundles en Brouillon et en Pause n’appliquent pas de remise.</li><li><strong>La date du jour est dans la période définie</strong> (si vous en avez configuré une).</li><li><strong>Le panier contient exactement les produits, variantes et quantités requis</strong>. Une taille ou couleur différente ne sera pas éligible si vous ne l’avez pas incluse.</li><li><strong>Vous utilisez le paiement natif de Shopify</strong>. Certaines applications tierces le remplacent, ce qui peut empêcher le déclenchement de la remise.</li></ol><p>Si les quatre points sont corrects et que la remise ne s’applique toujours pas, contactez-nous et nous examinerons le bundle en question.</p>",
+    "faq5Q": "Puis-je personnaliser l’apparence du widget sur ma boutique?",
+    "faq5A": "<p>Oui. Accédez à <strong>Paramètres → Style</strong> Personnalisateur, où vous trouverez quatre sections:</p><ul><li><strong>Apparence</strong> — couleurs, rayon des bordures, arrière-plan.</li><li><strong>Fiches produit</strong> — format de l’image, orientation de la mise en page.</li><li><strong>Bouton &amp; Badge</strong> — texte de l’appel à l’action, style du badge de remise.</li><li><strong>Avancé</strong> — CSS personnalisé, espacement.</li></ul><p>Vous pouvez également définir des styles différents pour mobile et bureau via le bouton Remplacements responsives — utile pour une mise en page empilée sur mobile et côte à côte sur bureau. Toutes les modifications sont prévisualisées en temps réel avant d’enregistrer.</p>"
   },
   "ABTesting": {
     "title": "A/B Testing",
