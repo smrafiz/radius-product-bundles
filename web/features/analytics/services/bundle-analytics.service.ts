@@ -121,7 +121,7 @@ export async function generateBundleBadges(stats: any, trend: any): Promise<Bund
     // High Converter Badge
     if (stats.conversionRate >= 15) {
         badges.push({
-            icon: "🔥",
+            icon: "assets/high-converter.svg",
             label: t("highConverter"),
             tone: "success",
             tooltip: t("highConverterTooltip", { rate: stats.conversionRate }),
@@ -131,7 +131,7 @@ export async function generateBundleBadges(stats: any, trend: any): Promise<Bund
     // Revenue Star Badge
     if (stats.revenue >= 5000) {
         badges.push({
-            icon: "💰",
+            icon: "assets/revenue-star.svg",
             label: t("revenueStar"),
             tone: "success",
             tooltip: t("revenueStarTooltip", { revenue: formatCurrencyCompact(stats.revenue) }),
@@ -141,7 +141,7 @@ export async function generateBundleBadges(stats: any, trend: any): Promise<Bund
     // Hidden Gem Badge (low views, high conversion)
     if (stats.views < 100 && stats.conversionRate >= 10) {
         badges.push({
-            icon: "💎",
+            icon: "assets/hidden-gam.svg",
             label: t("hiddenGem"),
             tone: "info",
             tooltip: t("hiddenGemTooltip", { rate: stats.conversionRate, views: stats.views }),
@@ -151,7 +151,7 @@ export async function generateBundleBadges(stats: any, trend: any): Promise<Bund
     // Trending Up Badge
     if (trend.trendPercentage >= 25) {
         badges.push({
-            icon: "📈",
+            icon: "assets/trending.svg",
             label: t("trending"),
             tone: "success",
             tooltip: t("trendingTooltip", { growth: trend.trendPercentage.toFixed(0) }),
@@ -161,7 +161,7 @@ export async function generateBundleBadges(stats: any, trend: any): Promise<Bund
     // Needs Attention Badge (declining)
     if (trend.trendPercentage <= -25) {
         badges.push({
-            icon: "⚠️",
+            icon: "assets/declining.svg",
             label: t("declining"),
             tone: "attention",
             tooltip: t("decliningTooltip", { drop: Math.abs(trend.trendPercentage).toFixed(0) }),
@@ -171,7 +171,7 @@ export async function generateBundleBadges(stats: any, trend: any): Promise<Bund
     // Strong Add-to-Cart Badge
     if (stats.addToCartRate >= 30) {
         badges.push({
-            icon: "🛒",
+            icon: "assets/high-interest.svg",
             label: t("highInterest"),
             tone: "info",
             tooltip: t("highInterestTooltip", { atcRate: stats.addToCartRate.toFixed(0) }),
