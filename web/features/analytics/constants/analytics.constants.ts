@@ -74,9 +74,9 @@ export const CHART_METRICS = [
         formatter: (value: number) => formatCurrency(value),
         yAxisFormatter: (value: number) => {
             if (value >= 1000) {
-                return `$${Math.round(value / 100)}K`;
+                return `$${(value / 1000).toFixed(1)}K`;
             }
-            return `$${Math.round(value / 100)}`;
+            return `$${Math.round(value)}`;
         },
     },
     {
