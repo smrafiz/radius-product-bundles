@@ -10,6 +10,7 @@ import { formatByType, MetricCardProps } from "@/shared";
 export const BUNDLE_LISTING_METRICS = (
     metrics: any,
     t: (key: string) => string,
+    currencyCode?: string,
 ): MetricCardProps[] => [
     {
         title: t("activeBundles"),
@@ -48,7 +49,7 @@ export const BUNDLE_LISTING_METRICS = (
         title: t("totalRevenue"),
         value:
             metrics?.revenueAllTime !== undefined
-                ? formatByType(metrics.revenueAllTime, "currency")
+                ? formatByType(metrics.revenueAllTime, "currency", currencyCode)
                 : "",
         tone: "info",
         img: {

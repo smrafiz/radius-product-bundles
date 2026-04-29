@@ -7,17 +7,22 @@ import {
     useTopBundles,
 } from "@/features/analytics";
 import { EmptyState, formatByType, useAppNavigation, usePlan } from "@/shared";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import { useTranslations } from "@/lib/i18n/provider";
 
 /**
  * Calculate Average Order Value
  */
-function calculateAOV(revenue: number, purchases: number): string {
+function calculateAOV(
+    revenue: number,
+    purchases: number,
+    currencyCode?: string,
+): string {
     if (purchases === 0) {
-        return "$0";
+        return formatByType(0, "currency", currencyCode);
     }
 
-    return formatByType(revenue / purchases, "currency");
+    return formatByType(revenue / purchases, "currency", currencyCode);
 }
 
 /**
@@ -112,6 +117,9 @@ export function TopBundlesTable() {
     const limit = canUse("analytics_full") ? 10 : 3;
     const { data: bundles, isLoading, error } = useTopBundles(limit);
     const { bundleData } = useAppNavigation();
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     /**
      * Handle bundle name click - navigate to edit page
@@ -177,6 +185,7 @@ export function TopBundlesTable() {
                         const aov = calculateAOV(
                             bundle.revenue,
                             bundle.purchases,
+                            currencyCode,
                         );
                         const lowConfidence = hasLowConfidence(bundle.views);
 
@@ -263,6 +272,7 @@ export function TopBundlesTable() {
                                                 {formatByType(
                                                     bundle.revenue,
                                                     "currency",
+                                                    currencyCode,
                                                 )}
                                             </span>
                                         </s-text>

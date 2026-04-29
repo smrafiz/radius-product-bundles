@@ -7,11 +7,15 @@ import {
 } from "@/features/analytics";
 import { useMemo } from "react";
 import { formatByType, MetricCard } from "@/shared";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import { useTranslations } from "@/lib/i18n/provider";
 
 export function AnalyticsMetrics() {
     const { metrics, isFetching } = useAnalyticsMetrics();
     const t = useTranslations("Analytics.Metrics");
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     const cards = useMemo(() => {
         const metricsData: Partial<AnalyticsMetricsData> = {
@@ -34,10 +38,14 @@ export function AnalyticsMetrics() {
             icon: cfg.icon,
             tone: cfg.tone,
             img: cfg.img,
-            value: formatByType(metricsData?.[cfg.key] ?? 0, cfg.format),
+            value: formatByType(
+                metricsData?.[cfg.key] ?? 0,
+                cfg.format,
+                currencyCode,
+            ),
             growth: growthData[cfg.key],
         }));
-    }, [metrics, t]);
+    }, [metrics, t, currencyCode]);
 
     return (
         <s-grid

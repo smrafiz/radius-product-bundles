@@ -12,6 +12,7 @@ import {
     TablePagination,
     useAppNavigation,
 } from "@/shared";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import { getBundleStatusBadge, stripDeletedSuffix } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -153,6 +154,9 @@ export function AllBundlesTable() {
         prevPage,
     } = useAllBundlesTableWithPagination();
     const { bundleData } = useAppNavigation();
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     /**
      * Handle bundle name click - navigate to edit page
@@ -315,6 +319,7 @@ export function AllBundlesTable() {
                                                 {formatByType(
                                                     bundle.revenue,
                                                     "currency",
+                                                    currencyCode,
                                                 )}
                                             </span>
                                         </s-text>
@@ -323,6 +328,7 @@ export function AllBundlesTable() {
                                                 {formatByType(
                                                     bundle.averageOrderValue,
                                                     "currency",
+                                                    currencyCode,
                                                 )}
                                                 {t("perOrder")}
                                             </s-text>

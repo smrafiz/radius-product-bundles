@@ -3,10 +3,14 @@
 import { DashboardBundlesTableHeader } from "./dashboard-bundles-table-header";
 import { DashboardBundlesListProps } from "@/features/dashboard/types/components.types";
 import { formatByType, useAppNavigation } from "@/shared";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import { formatBundleType, getBundleStatusBadge } from "@/features/bundles";
 
 export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
     const { bundleData } = useAppNavigation();
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     return (
         <div className="relative overflow-hidden">
@@ -83,7 +87,11 @@ export function DashboardBundlesList({ bundles }: DashboardBundlesListProps) {
                             </s-table-cell>
                             <s-table-cell>
                                 <span className="block w-20">
-                                    {formatByType(bundle.revenue, "currency")}
+                                    {formatByType(
+                                        bundle.revenue,
+                                        "currency",
+                                        currencyCode,
+                                    )}
                                 </span>
                             </s-table-cell>
                             <s-table-cell>
