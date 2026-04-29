@@ -12,6 +12,7 @@ import {
     TablePagination,
     useAppNavigation,
 } from "@/shared";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import { getBundleStatusBadge, stripDeletedSuffix } from "@/features/bundles";
 import { useTranslations } from "@/lib/i18n/provider";
 
@@ -92,7 +93,7 @@ function FunnelBar({
                         style={{
                             width: "100px",
                             height: "6px",
-                            backgroundColor: "#ffa55f",
+                            backgroundColor: "#FF8B32",
                             borderRadius: "2px",
                         }}
                     />
@@ -108,7 +109,7 @@ function FunnelBar({
                             width: `${cartPercentage}px`,
                             maxWidth: "100px",
                             height: "6px",
-                            backgroundColor: "#5C6AC4",
+                            backgroundColor: "#3E5DFA",
                             borderRadius: "2px",
                         }}
                     />
@@ -124,7 +125,7 @@ function FunnelBar({
                             width: `${orderPercentage}px`,
                             maxWidth: "100px",
                             height: "6px",
-                            backgroundColor: "#50B83C",
+                            backgroundColor: "#0ECE2B",
                             borderRadius: "2px",
                         }}
                     />
@@ -153,6 +154,9 @@ export function AllBundlesTable() {
         prevPage,
     } = useAllBundlesTableWithPagination();
     const { bundleData } = useAppNavigation();
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     /**
      * Handle bundle name click - navigate to edit page
@@ -315,6 +319,7 @@ export function AllBundlesTable() {
                                                 {formatByType(
                                                     bundle.revenue,
                                                     "currency",
+                                                    currencyCode,
                                                 )}
                                             </span>
                                         </s-text>
@@ -323,6 +328,7 @@ export function AllBundlesTable() {
                                                 {formatByType(
                                                     bundle.averageOrderValue,
                                                     "currency",
+                                                    currencyCode,
                                                 )}
                                                 {t("perOrder")}
                                             </s-text>

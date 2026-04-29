@@ -5,6 +5,7 @@ import { MetricCard } from "@/shared/components";
 import { useAnalyticsMetrics } from "@/features/analytics";
 import { getDashboardMetrics } from "@/features/dashboard";
 import { formatByType } from "@/shared";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import { useTranslations } from "@/lib/i18n/provider";
 
 /**
@@ -13,6 +14,9 @@ import { useTranslations } from "@/lib/i18n/provider";
 export function DashboardMetrics() {
     const { metrics, isFetching } = useAnalyticsMetrics(9999);
     const t = useTranslations("Dashboard.Metrics");
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     const cards = useMemo(() => {
         const metricsData: Record<string, number> = {
@@ -32,11 +36,11 @@ export function DashboardMetrics() {
             icon: cfg.icon,
             tone: cfg.tone,
             img: cfg.img,
-            value: formatByType(metricsData[cfg.key], cfg.format),
+            value: formatByType(metricsData[cfg.key], cfg.format, currencyCode),
             growth: growthData[cfg.key],
             action: cfg.action,
         }));
-    }, [metrics, t]);
+    }, [metrics, t, currencyCode]);
 
     return (
         <s-grid

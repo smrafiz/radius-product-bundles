@@ -2,18 +2,21 @@
  * Format metric value based on type (compact, card-friendly)
  */
 
-import { formatCurrencyCompact } from "./currency";
-import { getCurrencySymbol } from "./currency";
+import { formatCurrency, formatCurrencyCompact } from "./currency";
 import { MetricFormat } from "@/shared/types/ui/metrics.types";
 
-export function formatByType(value: number, format: MetricFormat): string {
+export function formatByType(
+    value: number,
+    format: MetricFormat,
+    currencyCode?: string,
+): string {
     switch (format) {
         case "currency":
-            // Whole-dollar for small values, compact suffix for large
+            // Preserve cents for small values; compact suffix for large.
             if (Math.abs(value) < 1000) {
-                return `${getCurrencySymbol("USD")}${Math.round(value).toLocaleString()}`;
+                return formatCurrency(value, currencyCode);
             }
-            return formatCurrencyCompact(value);
+            return formatCurrencyCompact(value, { currencyCode });
         case "percentage":
             return `${Math.round(value)}%`;
         case "number":

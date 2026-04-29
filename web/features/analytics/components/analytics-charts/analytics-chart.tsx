@@ -21,6 +21,7 @@ import {
 } from "@/features/analytics";
 import { useState } from "react";
 import { useTranslations } from "@/lib/i18n/provider";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import {
     Area,
     AreaChart,
@@ -42,6 +43,9 @@ export function AnalyticsChart() {
     const [activeMetric, setActiveMetric] = useState<
         "revenue" | "views" | "purchases"
     >("revenue");
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     // Format data for the chart
     const formattedData = useFormattedChartData(chartData, (point) => ({
@@ -199,7 +203,10 @@ export function AnalyticsChart() {
                                     return ["-", label];
                                 }
                                 return [
-                                    currentMetric.formatter(Number(value)),
+                                    currentMetric.formatter(
+                                        Number(value),
+                                        currencyCode,
+                                    ),
                                     label,
                                 ];
                             }}
@@ -211,7 +218,9 @@ export function AnalyticsChart() {
                         {/* Y-Axis */}
                         <YAxis
                             {...CHART_YAXIS_CONFIG}
-                            tickFormatter={currentMetric.yAxisFormatter}
+                            tickFormatter={(v) =>
+                                currentMetric.yAxisFormatter(v, currencyCode)
+                            }
                             width={50}
                         />
 

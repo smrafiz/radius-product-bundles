@@ -30,20 +30,20 @@ function getBundleId(item: ShopifyLineItem): string | undefined {
 }
 
 function calculateLineRevenue(item: ShopifyLineItem): number {
-    const originalPrice = parseFloat(item.price);
+    // item.price is unit price; discount_allocations.amount is the TOTAL
+    // discount applied to the line (already accounts for quantity).
+    // Compute gross then subtract — clamp at 0 to guard against allocator
+    // edge cases where discount > gross (rounding, multi-line allocation).
+    const unitPrice = parseFloat(item.price);
     const quantity = item.quantity;
+    const gross = unitPrice * quantity;
 
-    let totalDiscount = 0;
     const allocations = (item as { discount_allocations?: { amount: string }[] })
         .discount_allocations;
-    if (allocations) {
-        for (const allocation of allocations) {
-            totalDiscount += parseFloat(allocation.amount);
-        }
-    }
+    const totalDiscount =
+        allocations?.reduce((sum, a) => sum + parseFloat(a.amount), 0) ?? 0;
 
-    const actualPrice = originalPrice - totalDiscount;
-    return actualPrice * quantity;
+    return Math.max(0, gross - totalDiscount);
 }
 
 function aggregateByBundle(

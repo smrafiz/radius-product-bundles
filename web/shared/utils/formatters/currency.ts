@@ -37,7 +37,9 @@ export const formatCurrency = (
         const symbol = getCurrencySymbol(finalCurrencyCode);
 
         if (symbol && !formatted.includes(symbol)) {
-            return `${symbol}${Number(amount).toLocaleString(finalLocale)}`;
+            const num = Number(amount);
+            const sign = num < 0 ? "-" : "";
+            return `${sign}${symbol}${Math.abs(num).toLocaleString(finalLocale)}`;
         }
 
         return formatted;

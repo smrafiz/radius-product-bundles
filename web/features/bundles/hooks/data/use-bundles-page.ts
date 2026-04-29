@@ -7,6 +7,7 @@ import {
     useInitialBundleState,
 } from "@/features/bundles";
 import { useAppNavigation, useCreateBundleNav } from "@/shared";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import { useEffect, useMemo, useState } from "react";
 import { useAnalytics } from "@/features/analytics";
 import { useTranslations } from "@/lib/i18n/provider";
@@ -29,6 +30,9 @@ export function useBundlesPage() {
         hasData: bundles.length > 0,
         isLoading,
     });
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     /**
      * Transform analytics data to flat structure for metric cards
@@ -60,7 +64,7 @@ export function useBundlesPage() {
     }, [toast.active, toast.message, hideToast]);
 
     return {
-        metrics: BUNDLE_LISTING_METRICS(transformedMetrics, t),
+        metrics: BUNDLE_LISTING_METRICS(transformedMetrics, t, currencyCode),
         isMetricsLoading: isMetricsFetching,
         showTableSkeleton: showSkeleton,
         toast,
