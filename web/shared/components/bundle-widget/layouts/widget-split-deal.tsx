@@ -430,7 +430,7 @@ export function WidgetSplitDeal({
             </div>
 
             {/* Savings Summary */}
-            {pricing?.hasDiscount && showPricingBar && (
+            {pricing && (
                 <div
                     style={{
                         display: "flex",
@@ -468,7 +468,7 @@ export function WidgetSplitDeal({
                             {pricing.finalPrice}
                         </span>
                     </div>
-                    {displayOptions.showSavings && (
+                    {displayOptions.showSavings && pricing?.hasDiscount && showPricingBar &&(
                         <div style={{ textAlign: "right" }}>
                             <span
                                 style={{
