@@ -50,6 +50,11 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
             );
             const rewardPrice = round(calculateBundlePrice(rewardItems));
             const discountValue = bundleData.discountValue ?? 0;
+            // Total reward units — discount is applied per unit (matches usePreviewProducts per-item logic)
+            const rewardUnitCount = rewardItems.reduce(
+                (sum, i) => sum + (i.quantity ?? 1),
+                0,
+            );
 
             let discountAmount = 0;
             if (discountValue > 0) {
@@ -61,12 +66,12 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
                         break;
                     case "FIXED_AMOUNT":
                         discountAmount = round(
-                            Math.min(discountValue, rewardPrice),
+                            Math.min(discountValue * rewardUnitCount, rewardPrice),
                         );
                         break;
                     case "CUSTOM_PRICE":
                         discountAmount = round(
-                            Math.max(0, rewardPrice - discountValue),
+                            Math.max(0, rewardPrice - discountValue * rewardUnitCount),
                         );
                         break;
                 }
