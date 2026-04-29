@@ -564,14 +564,19 @@ import "./scss/radius-bundles.scss";
             return response.json();
         }
 
-        private countBundleItems(items: CartItem[]): Record<string, number> {
-            const counts: Record<string, number> = {};
+        private countBundleItems(
+            items: CartItem[],
+        ): Record<string, { lines: number; totalQty: number }> {
+            const counts: Record<string, { lines: number; totalQty: number }> = {};
 
             items.forEach((item) => {
                 const bundleId = item.properties?._bundle_id;
                 if (bundleId) {
-                    // Count unique line items (not total qty) — used to check bundle completeness
-                    counts[bundleId] = (counts[bundleId] || 0) + 1;
+                    if (!counts[bundleId]) {
+                        counts[bundleId] = { lines: 0, totalQty: 0 };
+                    }
+                    counts[bundleId].lines += 1;
+                    counts[bundleId].totalQty += item.quantity || 0;
                 }
             });
 
@@ -580,27 +585,33 @@ import "./scss/radius-bundles.scss";
 
         private buildMessages(
             bundles: DiscountConfig[],
-            itemCounts: Record<string, number>,
+            itemCounts: Record<string, { lines: number; totalQty: number }>,
             highlightColor: string,
         ): string[] {
             const messages: string[] = [];
 
             bundles.forEach((bundle) => {
-                const itemCount = itemCounts[bundle.bundleId] || 0;
+                const counts = itemCounts[bundle.bundleId] || {
+                    lines: 0,
+                    totalQty: 0,
+                };
                 const settings = this.cartCleanup.getBundleSettings(bundle.bundleId);
+                const isVolume = settings?.bundleType === "VOLUME_DISCOUNT";
                 const expectedCount = settings?.productCount || 1;
+                const passesGate = isVolume
+                    ? counts.totalQty >= 1
+                    : counts.lines >= expectedCount;
 
                 if (
-                    itemCount >= expectedCount &&
+                    passesGate &&
                     this.cartCleanup.isBundleActive(bundle.bundleId)
                 ) {
                     const name = bundle.bundleName || "this bundle";
-                    const settings = this.cartCleanup.getBundleSettings(bundle.bundleId);
                     const message = this.formatBundleHtml(
                         bundle,
                         name,
                         highlightColor,
-                        itemCount,
+                        isVolume ? counts.totalQty : counts.lines,
                         settings,
                     );
 
