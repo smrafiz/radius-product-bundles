@@ -20,7 +20,8 @@ import {
     useSmartChartDisplay,
 } from "@/features/analytics";
 import { useTranslations } from "@/lib/i18n/provider";
-import { formatCurrency } from "@/shared";
+import { formatCurrency, formatCurrencyCompact } from "@/shared";
+import { useShopSettingsStore } from "@/shared/stores/shop-settings.store";
 import {
     Bar,
     CartesianGrid,
@@ -43,6 +44,9 @@ export function RevenueAOVChart() {
     const { chartData, isChartLoading } = useAnalytics();
     const { preset } = useAnalyticsStore();
     const display = useSmartChartDisplay(chartData, preset);
+    const currencyCode = useShopSettingsStore(
+        (s) => s.settings?.currencyCode,
+    );
 
     // Format data with AOV calculation
     const formattedData = useFormattedChartData(chartData, (point) => {
@@ -92,9 +96,12 @@ export function RevenueAOVChart() {
             summaryStats={[
                 {
                     label: t("totalRevenue"),
-                    value: formatCurrency(totals.revenue),
+                    value: formatCurrency(totals.revenue, currencyCode),
                 },
-                { label: t("avgOrderValue"), value: formatCurrency(avgAOV) },
+                {
+                    label: t("avgOrderValue"),
+                    value: formatCurrency(avgAOV, currencyCode),
+                },
             ]}
         >
             <ResponsiveContainer width="100%" height={240}>
@@ -108,7 +115,10 @@ export function RevenueAOVChart() {
                         {...CHART_TOOLTIP_CONFIG}
                         formatter={(value, name) => {
                             if (value == null) return ["—", name ?? ""];
-                            return [formatCurrency(Number(value)), name ?? ""];
+                            return [
+                                formatCurrency(Number(value), currencyCode),
+                                name ?? "",
+                            ];
                         }}
                     />
 
@@ -122,11 +132,12 @@ export function RevenueAOVChart() {
                         tickLine={false}
                         tick={{ fill: "#008CFF", fontSize: 11 }}
                         tickFormatter={(value) =>
-                            value >= 1000
-                                ? `$${(value / 1000).toFixed(1)}K`
-                                : `$${Math.round(value)}`
+                            formatCurrencyCompact(value, {
+                                currencyCode,
+                                decimals: 0,
+                            })
                         }
-                        width={50}
+                        width={60}
                     />
 
                     {/* Right Y-Axis for AOV */}
@@ -137,11 +148,12 @@ export function RevenueAOVChart() {
                         tickLine={false}
                         tick={{ fill: "#FF6B6B", fontSize: 11 }}
                         tickFormatter={(value) =>
-                            value >= 1000
-                                ? `$${(value / 1000).toFixed(1)}K`
-                                : `$${Math.round(value)}`
+                            formatCurrencyCompact(value, {
+                                currencyCode,
+                                decimals: 0,
+                            })
                         }
-                        width={50}
+                        width={60}
                     />
 
                     {/* Revenue Bars */}
