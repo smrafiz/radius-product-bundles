@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 
 function getRewardBadge(
@@ -202,6 +202,7 @@ function ClassicSlider({
     displayOptions,
     labels,
     dotColor,
+    activeDevice,
 }: {
     items: PreviewProduct[];
     isReward: boolean;
@@ -209,10 +210,29 @@ function ClassicSlider({
     displayOptions: WidgetLayoutProps["displayOptions"];
     labels?: WidgetLayoutProps["labels"];
     dotColor?: string;
+    activeDevice?: "desktop" | "tablet" | "mobile";
 }) {
     const [index, setIndex] = useState(0);
-    if (items.length === 0) return null;
-    if (items.length === 1) {
+    const [paused, setPaused] = useState(false);
+    const total = items.length;
+    const nav = styles.carouselNavigation ?? "both";
+    const showArrows = total > 1 && (nav === "arrows" || nav === "both");
+    const showDots = total > 1 && (nav === "dots" || nav === "both");
+    const autoplay = !!styles.autoplay;
+    const autoplaySpeed = styles.autoplaySpeed ?? 5;
+    const isMobile = activeDevice === "mobile";
+    const arrowsVisible = isMobile || paused;
+
+    useEffect(() => {
+        if (!autoplay || total <= 1 || paused) return;
+        const id = window.setInterval(() => {
+            setIndex((i) => (i >= total - 1 ? 0 : i + 1));
+        }, autoplaySpeed * 1000);
+        return () => window.clearInterval(id);
+    }, [autoplay, autoplaySpeed, total, paused]);
+
+    if (total === 0) return null;
+    if (total === 1) {
         return (
             <ClassicProductItem
                 product={items[0]}
@@ -224,7 +244,11 @@ function ClassicSlider({
         );
     }
     return (
-        <div>
+        <div
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            style={{ position: "relative" }}
+        >
             <ClassicProductItem
                 product={items[index]}
                 isReward={isReward}
@@ -232,36 +256,98 @@ function ClassicSlider({
                 displayOptions={displayOptions}
                 labels={labels}
             />
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    gap: 6,
-                    marginTop: 10,
-                }}
-            >
-                {items.map((_, i) => (
+            {showArrows && (
+                <>
                     <button
-                        key={i}
-                        onClick={() => setIndex(i)}
-                        style={{
-                            width: 6,
-                            height: 6,
-                            borderRadius: "50%",
-                            border: "none",
-                            padding: 0,
-                            cursor: "pointer",
-                            backgroundColor:
-                                i === index
-                                    ? dotColor || "#303030"
-                                    : "#d1d5db",
-                            transition: "background-color 0.2s",
-                        }}
-                    />
-                ))}
-            </div>
+                        onClick={() => setIndex((i) => Math.max(0, i - 1))}
+                        disabled={index <= 0}
+                        aria-label="Previous"
+                        style={classicArrowStyle(
+                            "prev",
+                            index <= 0,
+                            arrowsVisible,
+                        )}
+                    >
+                        ‹
+                    </button>
+                    <button
+                        onClick={() =>
+                            setIndex((i) => Math.min(total - 1, i + 1))
+                        }
+                        disabled={index >= total - 1}
+                        aria-label="Next"
+                        style={classicArrowStyle(
+                            "next",
+                            index >= total - 1,
+                            arrowsVisible,
+                        )}
+                    >
+                        ›
+                    </button>
+                </>
+            )}
+            {showDots && (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        gap: 6,
+                        marginTop: 10,
+                    }}
+                >
+                    {items.map((_, i) => (
+                        <button
+                            key={i}
+                            onClick={() => setIndex(i)}
+                            style={{
+                                width: 6,
+                                height: 6,
+                                borderRadius: "50%",
+                                border: "none",
+                                padding: 0,
+                                cursor: "pointer",
+                                backgroundColor:
+                                    i === index
+                                        ? dotColor || "#303030"
+                                        : "#d1d5db",
+                                transition: "background-color 0.2s",
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
+}
+
+function classicArrowStyle(
+    dir: "prev" | "next",
+    disabled: boolean,
+    visible: boolean,
+): React.CSSProperties {
+    return {
+        position: "absolute",
+        top: "40%",
+        transform: "translateY(-50%)",
+        [dir === "prev" ? "left" : "right"]: visible ? 4 : -10,
+        width: 26,
+        height: 26,
+        borderRadius: "50%",
+        background: "#fff",
+        border: "1px solid #e5e7eb",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: visible ? (disabled ? 0.4 : 0.95) : 0,
+        pointerEvents: visible ? "auto" : "none",
+        transition: "opacity 0.2s, left 0.2s, right 0.2s",
+        zIndex: 2,
+        padding: 0,
+        fontSize: 16,
+        lineHeight: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    };
 }
 
 export function WidgetClassicCard({
@@ -275,6 +361,7 @@ export function WidgetClassicCard({
     badgeText,
     labels,
     discountType,
+    activeDevice,
 }: WidgetLayoutProps) {
     const triggerProducts = products.filter((p) => p.role === "TRIGGER");
     const rewardProducts = products.filter((p) => p.role === "REWARD");
@@ -449,6 +536,7 @@ export function WidgetClassicCard({
                             displayOptions={displayOptions}
                             labels={labels}
                             dotColor={color}
+                            activeDevice={activeDevice}
                         />
                     </div>
                 ))}

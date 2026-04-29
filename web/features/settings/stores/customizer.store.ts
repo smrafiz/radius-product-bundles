@@ -13,6 +13,7 @@ import {
     STYLE_PRESETS,
 } from "@/features/settings/constants/defaults.constants";
 import { RESPONSIVE_FIELDS } from "@/features/settings/configs/customizer.config";
+import { CUSTOMIZER_LAYOUTS_MAPPING } from "@/features/settings/constants/customizer.constants";
 
 function deepClone<T>(obj: T): T {
     return structuredClone(obj);
@@ -198,7 +199,7 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
             },
 
             setActiveBundleType: (type: PreviewTemplateId | null) => {
-                const { styles } = get();
+                const { styles, activeLayout } = get();
                 let preset: string | null = null;
                 if (type && type !== "CART_BANNER") {
                     preset =
@@ -209,7 +210,21 @@ export const useCustomizerStore = create<CustomizerStoreState>()(
                 } else {
                     preset = styles.stylePreset ?? null;
                 }
-                set({ activeBundleType: type, activePreset: preset });
+
+                let nextLayout = activeLayout;
+                if (type) {
+                    const allowed = CUSTOMIZER_LAYOUTS_MAPPING[type];
+                    const allowedValues = allowed.map((l) => l.value);
+                    if (!allowedValues.includes(activeLayout)) {
+                        nextLayout = allowed[0].value as WidgetLayout;
+                    }
+                }
+
+                set({
+                    activeBundleType: type,
+                    activePreset: preset,
+                    activeLayout: nextLayout,
+                });
             },
 
             /**

@@ -559,16 +559,11 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     },
                 },
 
-                // Carousel Layout Specific
+                // Carousel / Slider Layout Specific
                 {
                     type: "heading",
                     label: "Slider Layout",
-                    layouts: ["CAROUSEL"],
-                    showWhen: {
-                        field: "_bundleType",
-                        operator: "notIn",
-                        value: ["BOGO", "BUY_X_GET_Y"],
-                    },
+                    layouts: ["CAROUSEL", "COMPACT_GRID", "CLASSIC_CARD"],
                 },
                 {
                     type: "buttonGroup",
@@ -600,24 +595,14 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                         { value: "both", label: "Both" },
                     ],
                     defaultValue: "both",
-                    layouts: ["CAROUSEL"],
-                    showWhen: {
-                        field: "_bundleType",
-                        operator: "notIn",
-                        value: ["BOGO", "BUY_X_GET_Y"],
-                    },
+                    layouts: ["CAROUSEL", "COMPACT_GRID", "CLASSIC_CARD"],
                 },
                 {
                     type: "switch",
                     name: "autoplay",
                     label: "Autoplay",
                     defaultValue: false,
-                    layouts: ["CAROUSEL"],
-                    showWhen: {
-                        field: "_bundleType",
-                        operator: "notIn",
-                        value: ["BOGO", "BUY_X_GET_Y"],
-                    },
+                    layouts: ["CAROUSEL", "COMPACT_GRID", "CLASSIC_CARD"],
                 },
                 {
                     type: "range",
@@ -627,7 +612,7 @@ export const CUSTOMIZER_CONFIG: CustomizerPanelConfig = {
                     min: 2,
                     max: 10,
                     defaultValue: 5,
-                    layouts: ["CAROUSEL"],
+                    layouts: ["CAROUSEL", "COMPACT_GRID", "CLASSIC_CARD"],
                     showWhen: {
                         field: "autoplay",
                         operator: "equals",

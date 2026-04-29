@@ -189,51 +189,97 @@ export class BundleSlider {
     }
 
     private initDrag(track: HTMLElement): void {
+        const DRAG_THRESHOLD = 5;
+        let pointerDown = false;
+        let moved = false;
+
+        const cleanupWin = () => {
+            window.removeEventListener("mousemove", onWinMove);
+            window.removeEventListener("mouseup", onWinUp);
+        };
+
+        const onWinMove = (e: MouseEvent) => {
+            if (!pointerDown) return;
+            const dx = e.pageX - this.state.startX;
+            if (!moved && Math.abs(dx) < DRAG_THRESHOLD) return;
+            if (!moved) {
+                moved = true;
+                this.state.isDragging = true;
+                track.classList.add("is-dragging");
+            }
+            e.preventDefault();
+            track.scrollLeft = this.state.scrollStart - dx * 1.2;
+        };
+
+        const onWinUp = () => {
+            if (!pointerDown) return;
+            pointerDown = false;
+            cleanupWin();
+            if (moved) {
+                this.state.isDragging = false;
+                this.snapToNearest();
+                requestAnimationFrame(() => {
+                    track.classList.remove("is-dragging");
+                });
+            }
+            if (this.config.autoplay) this.startAutoplay();
+        };
+
         track.addEventListener("mousedown", (e) => {
-            this.state.isDragging = true;
+            if (e.button !== 0) return;
+            pointerDown = true;
+            moved = false;
             this.state.startX = e.pageX;
             this.state.scrollStart = track.scrollLeft;
-            track.classList.add("is-dragging");
             this.stopAutoplay();
+            window.addEventListener("mousemove", onWinMove);
+            window.addEventListener("mouseup", onWinUp);
         });
 
-        track.addEventListener("mousemove", (e) => {
-            if (!this.state.isDragging) return;
-            e.preventDefault();
-            const walk = (e.pageX - this.state.startX) * 1.2;
-            track.scrollLeft = this.state.scrollStart - walk;
-        });
+        track.addEventListener(
+            "click",
+            (e) => {
+                if (moved) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    moved = false;
+                }
+            },
+            true,
+        );
 
-        track.addEventListener("mouseup", () => {
-            this.state.isDragging = false;
-            track.classList.remove("is-dragging");
-            this.snapToNearest();
+        let touchStartX = 0;
+        let touchMoved = false;
+
+        track.addEventListener(
+            "touchstart",
+            (e) => {
+                touchStartX = e.touches[0].pageX;
+                touchMoved = false;
+                this.state.startX = e.touches[0].pageX;
+                this.state.scrollStart = track.scrollLeft;
+                this.stopAutoplay();
+            },
+            { passive: true },
+        );
+
+        track.addEventListener(
+            "touchmove",
+            (e) => {
+                const dx = e.touches[0].pageX - touchStartX;
+                if (!touchMoved && Math.abs(dx) < DRAG_THRESHOLD) return;
+                touchMoved = true;
+                track.scrollLeft = this.state.scrollStart - dx * 1.2;
+            },
+            { passive: true },
+        );
+
+        const endTouch = () => {
+            if (touchMoved) this.snapToNearest();
             if (this.config.autoplay) this.startAutoplay();
-        });
-
-        track.addEventListener("mouseleave", () => {
-            if (this.state.isDragging) {
-                this.state.isDragging = false;
-                track.classList.remove("is-dragging");
-                this.snapToNearest();
-            }
-        });
-
-        track.addEventListener("touchstart", (e) => {
-            this.state.startX = e.touches[0].pageX;
-            this.state.scrollStart = track.scrollLeft;
-            this.stopAutoplay();
-        });
-
-        track.addEventListener("touchmove", (e) => {
-            const walk = (e.touches[0].pageX - this.state.startX) * 1.2;
-            track.scrollLeft = this.state.scrollStart - walk;
-        });
-
-        track.addEventListener("touchend", () => {
-            this.snapToNearest();
-            if (this.config.autoplay) this.startAutoplay();
-        });
+        };
+        track.addEventListener("touchend", endTouch);
+        track.addEventListener("touchcancel", endTouch);
     }
 
     private snapToNearest(): void {
