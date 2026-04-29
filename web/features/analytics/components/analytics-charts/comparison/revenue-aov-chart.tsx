@@ -130,7 +130,7 @@ export function RevenueAOVChart() {
                         orientation="left"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: "#008CFF", fontSize: 11 }}
+                        tick={{ fill: "#4F46E5", fontSize: 11 }}
                         tickFormatter={(value) =>
                             formatCurrencyCompact(value, {
                                 currencyCode,
@@ -146,7 +146,7 @@ export function RevenueAOVChart() {
                         orientation="right"
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: "#FF6B6B", fontSize: 11 }}
+                        tick={{ fill: "#F59E0B", fontSize: 11 }}
                         tickFormatter={(value) =>
                             formatCurrencyCompact(value, {
                                 currencyCode,
@@ -160,10 +160,11 @@ export function RevenueAOVChart() {
                     <Bar
                         yAxisId="left"
                         dataKey="revenue"
-                        fill="#008CFF"
-                        fillOpacity={0.7}
-                        radius={[4, 4, 0, 0]}
+                        fill="#6366F1"
+                        fillOpacity={0.85}
+                        radius={[6, 6, 0, 0]}
                         name={t("revenue")}
+                        maxBarSize={48}
                     />
 
                     {/* AOV Line */}
@@ -171,11 +172,11 @@ export function RevenueAOVChart() {
                         yAxisId="right"
                         type="monotone"
                         dataKey="aov"
-                        stroke="#FF6B6B"
+                        stroke="#F59E0B"
                         strokeWidth={2.5}
                         name={t("avgOrderValue")}
                         dot={false}
-                        activeDot={getActiveDotConfig("#FF6B6B")}
+                        activeDot={getActiveDotConfig("#F59E0B")}
                     />
 
                     <Legend {...CHART_LEGEND_CONFIG} />
