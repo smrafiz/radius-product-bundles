@@ -92,7 +92,7 @@ function FunnelBar({
                         style={{
                             width: "100px",
                             height: "6px",
-                            backgroundColor: "#ffa55f",
+                            backgroundColor: "#FF8B32",
                             borderRadius: "2px",
                         }}
                     />
@@ -108,7 +108,7 @@ function FunnelBar({
                             width: `${cartPercentage}px`,
                             maxWidth: "100px",
                             height: "6px",
-                            backgroundColor: "#5C6AC4",
+                            backgroundColor: "#3E5DFA",
                             borderRadius: "2px",
                         }}
                     />
@@ -124,7 +124,7 @@ function FunnelBar({
                             width: `${orderPercentage}px`,
                             maxWidth: "100px",
                             height: "6px",
-                            backgroundColor: "#50B83C",
+                            backgroundColor: "#0ECE2B",
                             borderRadius: "2px",
                         }}
                     />
