@@ -82,8 +82,22 @@ export const formatCurrencyCompact = (
     const finalCurrencyCode = currencyCode || "USD";
     const finalLocale = locale || convertShopifyLocale("en-US");
 
-    // Small numbers → normal currency (preserves 2-decimal precision)
+    // Small numbers → standard currency. Respect `decimals` when caller wants
+    // a clean axis label (e.g. decimals: 0 → "$100"); otherwise preserve cents.
     if (Math.abs(value) < 1000) {
+        if (decimals === 0) {
+            try {
+                return new Intl.NumberFormat(finalLocale, {
+                    style: "currency",
+                    currency: finalCurrencyCode,
+                    currencyDisplay: "symbol",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                }).format(value);
+            } catch {
+                // fall through to default formatCurrency
+            }
+        }
         return formatCurrency(value, finalCurrencyCode, finalLocale);
     }
 
