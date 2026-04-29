@@ -123,10 +123,10 @@ export function RevenueAOVChart() {
                         tick={{ fill: "#008CFF", fontSize: 11 }}
                         tickFormatter={(value) =>
                             value >= 1000
-                                ? `$${Math.round(value / 100)}K`
-                                : `$${Math.round(value / 100)}`
+                                ? `$${(value / 1000).toFixed(1)}K`
+                                : `$${Math.round(value)}`
                         }
-                        width={45}
+                        width={50}
                     />
 
                     {/* Right Y-Axis for AOV */}
@@ -138,10 +138,10 @@ export function RevenueAOVChart() {
                         tick={{ fill: "#FF6B6B", fontSize: 11 }}
                         tickFormatter={(value) =>
                             value >= 1000
-                                ? `$${Math.round(value / 100)}K`
-                                : `$${Math.round(value / 100)}`
+                                ? `$${(value / 1000).toFixed(1)}K`
+                                : `$${Math.round(value)}`
                         }
-                        width={45}
+                        width={50}
                     />
 
                     {/* Revenue Bars */}
