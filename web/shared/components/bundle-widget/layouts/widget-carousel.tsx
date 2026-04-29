@@ -15,6 +15,13 @@ export function WidgetCarousel({
     const [activeIndex, setActiveIndex] = useState(0);
     const isTeleporting = useRef(false);
     const scrollEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const dragRef = useRef({
+        dragging: false,
+        startX: 0,
+        scrollStart: 0,
+        moved: false,
+    });
+    const [isDragging, setIsDragging] = useState(false);
     const gap = getSpacing(styles.spacing);
 
     const slidesPerView = styles.slidesPerView || 3;
@@ -93,6 +100,48 @@ export function WidgetCarousel({
         scrollToIndex(looped);
     };
 
+    const onMouseDown = (e: React.MouseEvent) => {
+        const el = carouselRef.current;
+        if (!el) return;
+        dragRef.current = {
+            dragging: true,
+            startX: e.pageX,
+            scrollStart: el.scrollLeft,
+            moved: false,
+        };
+        setIsDragging(true);
+    };
+
+    useEffect(() => {
+        if (!isDragging) return;
+        const onMove = (e: MouseEvent) => {
+            const el = carouselRef.current;
+            if (!el || !dragRef.current.dragging) return;
+            e.preventDefault();
+            const dx = e.pageX - dragRef.current.startX;
+            if (Math.abs(dx) > 4) dragRef.current.moved = true;
+            el.scrollLeft = dragRef.current.scrollStart - dx * 1.2;
+        };
+        const onUp = () => {
+            dragRef.current.dragging = false;
+            setIsDragging(false);
+        };
+        const onClickCapture = (e: MouseEvent) => {
+            if (dragRef.current.moved) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        };
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseup", onUp);
+        window.addEventListener("click", onClickCapture, true);
+        return () => {
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseup", onUp);
+            window.removeEventListener("click", onClickCapture, true);
+        };
+    }, [isDragging]);
+
     if (!products.length && showEmptyState) {
         return (
             <div className="flex flex-col items-center justify-around gap-3">
@@ -168,12 +217,15 @@ export function WidgetCarousel({
             <div
                 ref={carouselRef}
                 onScroll={handleScroll}
+                onMouseDown={onMouseDown}
                 style={{
                     display: "flex",
                     overflowX: "auto",
-                    scrollBehavior: "smooth",
+                    scrollBehavior: isDragging ? "auto" : "smooth",
                     gap,
                     scrollbarWidth: "none",
+                    cursor: isDragging ? "grabbing" : "grab",
+                    userSelect: "none",
                 }}
             >
                 {preClones.map((product, i) => (

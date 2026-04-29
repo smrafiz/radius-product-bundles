@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { WidgetLayoutProps, PreviewProduct, PREVIEW_LABELS } from "@/shared";
 import {
     getButtonBgColor,
@@ -230,6 +230,36 @@ function chunk<T>(arr: T[], size: number): T[][] {
     return pages;
 }
 
+function arrowStyle(
+    dir: "prev" | "next",
+    disabled: boolean,
+    visible: boolean,
+): React.CSSProperties {
+    return {
+        position: "absolute",
+        top: "50%",
+        transform: "translateY(-50%)",
+        [dir === "prev" ? "left" : "right"]: visible ? 4 : -10,
+        width: 26,
+        height: 26,
+        borderRadius: "50%",
+        background: "#fff",
+        border: "1px solid #e5e7eb",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: visible ? (disabled ? 0.4 : 0.95) : 0,
+        pointerEvents: visible ? "auto" : "none",
+        transition: "opacity 0.2s, left 0.2s, right 0.2s",
+        zIndex: 2,
+        padding: 0,
+        fontSize: 16,
+        lineHeight: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    };
+}
+
 function TileSlider({
     products,
     variant,
@@ -259,11 +289,19 @@ function TileSlider({
 }) {
     const pages = chunk(products, perPage);
     const [activeSlide, setActiveSlide] = useState(0);
-    const hasDots = pages.length > 1;
+    const hasMulti = pages.length > 1;
+    const nav = styles.carouselNavigation ?? "both";
+    const showArrows = hasMulti && (nav === "arrows" || nav === "both");
+    const showDots = hasMulti && (nav === "dots" || nav === "both");
+    const autoplay = !!styles.autoplay;
+    const autoplaySpeed = styles.autoplaySpeed ?? 5;
+    const isMobile = activeDevice === "mobile";
     const containerRef = useRef<HTMLDivElement>(null);
     const dragRef = useRef({ startX: 0, dragging: false });
     const [dragPx, setDragPx] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
+    const [paused, setPaused] = useState(false);
+    const arrowsVisible = isMobile || paused;
 
     const sw = () => containerRef.current?.offsetWidth || 0;
 
@@ -297,13 +335,36 @@ function TileSlider({
         [activeSlide, goTo],
     );
 
+    useEffect(() => {
+        if (!isDragging) return;
+        const move = (e: MouseEvent) => onPointerMove(e.clientX);
+        const up = (e: MouseEvent) => onPointerUp(e.clientX);
+        window.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", up);
+        return () => {
+            window.removeEventListener("mousemove", move);
+            window.removeEventListener("mouseup", up);
+        };
+    }, [isDragging, onPointerMove, onPointerUp]);
+
+    useEffect(() => {
+        if (!autoplay || !hasMulti || paused || isDragging) return;
+        const id = window.setInterval(() => {
+            setActiveSlide((i) => (i >= pages.length - 1 ? 0 : i + 1));
+        }, autoplaySpeed * 1000);
+        return () => window.clearInterval(id);
+    }, [autoplay, autoplaySpeed, hasMulti, paused, isDragging, pages.length]);
+
     return (
         <div
             ref={containerRef}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
             style={{
                 flex: flexVal,
                 minWidth: 0,
                 overflow: "hidden",
+                position: "relative",
             }}
         >
             <div
@@ -325,17 +386,17 @@ function TileSlider({
                         onPointerDown(e.clientX);
                     }
                 }}
-                onMouseMove={(e) => onPointerMove(e.clientX)}
-                onMouseUp={(e) => onPointerUp(e.clientX)}
-                onMouseLeave={() => {
-                    if (dragRef.current.dragging)
-                        onPointerUp(dragRef.current.startX);
-                }}
                 onTouchStart={(e) => {
                     if (pages.length > 1) onPointerDown(e.touches[0].clientX);
                 }}
                 onTouchMove={(e) => onPointerMove(e.touches[0].clientX)}
                 onTouchEnd={(e) => onPointerUp(e.changedTouches[0].clientX)}
+                onTouchCancel={(e) =>
+                    onPointerUp(
+                        e.changedTouches[0]?.clientX ??
+                            dragRef.current.startX,
+                    )
+                }
             >
                 {pages.map((page, pageIdx) => {
                     const cols = page.length === 1 ? 1 : perPage;
@@ -369,7 +430,41 @@ function TileSlider({
                     );
                 })}
             </div>
-            {hasDots && (
+            {showArrows && (
+                <>
+                    <button
+                        onClick={() =>
+                            setActiveSlide((i) => Math.max(0, i - 1))
+                        }
+                        disabled={activeSlide <= 0}
+                        aria-label="Previous"
+                        style={arrowStyle(
+                            "prev",
+                            activeSlide <= 0,
+                            arrowsVisible,
+                        )}
+                    >
+                        ‹
+                    </button>
+                    <button
+                        onClick={() =>
+                            setActiveSlide((i) =>
+                                Math.min(pages.length - 1, i + 1),
+                            )
+                        }
+                        disabled={activeSlide >= pages.length - 1}
+                        aria-label="Next"
+                        style={arrowStyle(
+                            "next",
+                            activeSlide >= pages.length - 1,
+                            arrowsVisible,
+                        )}
+                    >
+                        ›
+                    </button>
+                </>
+            )}
+            {showDots && (
                 <div
                     style={{
                         display: "flex",
@@ -548,8 +643,10 @@ export function WidgetCompactGrid({
                     labels={labels}
                     pricing={pricing}
                     dotColor={primaryColor}
-                    perPage={1}
-                    flexVal={1}
+                    perPage={activeDevice === "mobile" ? 1 : 2}
+                    flexVal={
+                        activeDevice === "mobile" || singleEach ? 1 : 2
+                    }
                     activeDevice={activeDevice}
                     bundleType={bundleType}
                     discountType={discountType}

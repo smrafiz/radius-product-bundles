@@ -299,6 +299,81 @@
         background: var(--rb-savings-color, #16a34a);
     }
 
+    // ── Arrow nav (hover-revealed) ─────────────────────────────────
+    &__arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--rb-background-color, #fff);
+        border: 1px solid var(--rb-border-color, #e5e7eb);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        z-index: 2;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+            opacity 0.2s,
+            background 0.2s,
+            inset-inline-start 0.2s,
+            inset-inline-end 0.2s;
+
+        svg {
+            width: 14px;
+            height: 14px;
+            color: var(--rb-text-color, #333);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+
+        &--prev {
+            inset-inline-start: -10px;
+        }
+
+        &--next {
+            inset-inline-end: -10px;
+        }
+    }
+
+    &__tile-group:hover &__arrow,
+    .rb-classic__group-products:hover &__arrow {
+        opacity: 0.95;
+        pointer-events: auto;
+
+        &--prev {
+            inset-inline-start: 4px;
+        }
+
+        &--next {
+            inset-inline-end: 4px;
+        }
+
+        &:disabled {
+            opacity: 0.4;
+        }
+    }
+
+    &__tile-group:hover &__arrow:hover:not(:disabled),
+    .rb-classic__group-products:hover &__arrow:hover:not(:disabled) {
+        opacity: 1;
+        background: var(--rb-primary-color, #e0598b);
+        svg {
+            color: #fff;
+        }
+    }
+
+    &__tile-group--reward:hover &__arrow:hover:not(:disabled) {
+        background: var(--rb-savings-color, #16a34a);
+    }
+
     // ── Connector ───────────────────────────────────────────────────
     &__connector {
         width: 32px;
@@ -365,6 +440,33 @@
     }
     .rb-cg__dots {
         inset-inline: 0;
+    }
+    .rb-cg__arrow {
+        opacity: 0.95 !important;
+        pointer-events: auto !important;
+        &--prev {
+            inset-inline-start: 4px !important;
+        }
+        &--next {
+            inset-inline-end: 4px !important;
+        }
+        &:disabled {
+            opacity: 0.4 !important;
+        }
+    }
+}
+
+.radius-bundle.rb--mobile .rb-cg__arrow {
+    opacity: 0.95;
+    pointer-events: auto;
+    &--prev {
+        inset-inline-start: 4px;
+    }
+    &--next {
+        inset-inline-end: 4px;
+    }
+    &:disabled {
+        opacity: 0.4;
     }
 }
 

@@ -9,9 +9,9 @@ import {
 } from "@/features/support/constants/support.constants";
 
 const ICON_STYLES: Record<string, CSSProperties> = {
-    docs: { background: "linear-gradient(135deg,#ede9fe,#ddd6fe)" },
-    videos: { background: "linear-gradient(135deg,#fce7f3,#fbcfe8)" },
-    email: { background: "linear-gradient(135deg,#d1fae5,#a7f3d0)" },
+    docs: { background: "linear-gradient(135deg,#B9FFE1,#B9FFE1)" },
+    videos: { background: "linear-gradient(135deg,#FFDDDE,#FFDDDE)" },
+    email: { background: "linear-gradient(135deg,#E2DBFF,#E2DBFF)" },
 };
 
 export function SupportQuickActions() {
@@ -19,7 +19,7 @@ export function SupportQuickActions() {
 
     const cards = [
         {
-            icon: "📖",
+            icon: "assets/documentation.svg",
             iconStyle: ICON_STYLES.docs,
             title: t("docs"),
             description: t("docsDescription"),
@@ -27,7 +27,7 @@ export function SupportQuickActions() {
             onClick: () => window.open(DOCS_URL, "_blank"),
         },
         {
-            icon: "▶",
+            icon: "assets/video.svg",
             iconStyle: ICON_STYLES.videos,
             title: t("videos"),
             description: t("videosDescription"),
@@ -35,7 +35,7 @@ export function SupportQuickActions() {
             onClick: () => window.open(VIDEOS_URL, "_blank"),
         },
         {
-            icon: "✉",
+            icon: "assets/email.svg",
             iconStyle: ICON_STYLES.email,
             title: t("email"),
             description: t("emailDescription"),
@@ -74,8 +74,8 @@ export function SupportQuickActions() {
                                         <s-box>
                                             <div
                                                 style={{
-                                                    width: 40,
-                                                    height: 40,
+                                                    width: 44,
+                                                    height: 44,
                                                     borderRadius: 8,
                                                     display: "flex",
                                                     alignItems: "center",
@@ -84,7 +84,7 @@ export function SupportQuickActions() {
                                                     ...card.iconStyle,
                                                 }}
                                             >
-                                                {card.icon}
+                                                <img src={`/${card.icon}`} alt="" width={16} height={14} />
                                             </div>
                                         </s-box>
                                         <s-box>

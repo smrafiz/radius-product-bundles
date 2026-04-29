@@ -975,6 +975,9 @@ import type { VolumeContext } from "./lib/types";
                 splitDealStyle: this.splitDealStyle,
                 pricingSummaryBox: this.pricingSummaryBox,
                 quantityLabel: this.getQuantityLabel(),
+                carouselNavigation: this.carouselNavigation as BogoContext["carouselNavigation"],
+                autoplay: this.autoplay,
+                autoplaySpeed: this.autoplaySpeed,
             };
         }
 

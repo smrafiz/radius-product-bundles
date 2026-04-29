@@ -90,12 +90,17 @@ export function formatBundleDiscount(
         case "VOLUME_DISCOUNT": {
             if (bundle.discountType === "NO_DISCOUNT") return baseDiscount;
             const tiers = bundle.volumeTiers?.tiers;
+            // Per-tier discount type lives on volumeTiers.discountType
+            // (PERCENTAGE | FIXED_AMOUNT). The bundle-level discountType is
+            // QUANTITY_BREAKS, which would format every tier as "% Off".
+            const tierDiscountType =
+                bundle.volumeTiers?.discountType ?? bundle.discountType;
             if (tiers?.length) {
                 const maxDiscount = Math.max(
                     ...tiers.map((t) => t.discount || 0),
                 );
                 if (maxDiscount > 0) {
-                    const tierConfig = DISCOUNT_TYPES[bundle.discountType];
+                    const tierConfig = DISCOUNT_TYPES[tierDiscountType];
                     const formatted = tierConfig
                         ? tierConfig.format(maxDiscount, formatter)
                         : `${maxDiscount}% Off`;

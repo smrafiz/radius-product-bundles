@@ -236,6 +236,13 @@ export function TopBundlesTable() {
                                             <s-text
                                                 interestFor={`${bundle.bundleId}-perf-badge-tooltip`}
                                             >
+                                                 <img
+                                                     src={`/${primaryBadge.icon}`}
+                                                     alt=""
+                                                     width={16}
+                                                     height={16}
+                                                     style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }}
+                                                 />
                                                 <span
                                                     style={{
                                                         borderBottom:
@@ -244,8 +251,6 @@ export function TopBundlesTable() {
                                                         display: "inline-block",
                                                     }}
                                                 >
-                                                    {" "}
-                                                    {primaryBadge.icon}{" "}
                                                     {primaryBadge.label}
                                                 </span>
                                             </s-text>

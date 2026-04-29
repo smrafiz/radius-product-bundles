@@ -46,6 +46,8 @@
 
             &.is-dragging {
                 cursor: grabbing;
+                scroll-snap-type: none;
+                scroll-behavior: auto;
             }
         }
     }
@@ -149,6 +151,14 @@
         opacity: 0;
         z-index: 10;
 
+        @media (max-width: 767px) {
+            opacity: 1;
+
+            &:disabled {
+                opacity: 0.4;
+            }
+        }
+
         svg {
             width: 20px;
             height: 20px;
@@ -167,10 +177,34 @@
 
         &--prev {
             inset-inline-start: -18px;
+
+            @media (max-width: 767px) {
+                inset-inline-start: 0;
+            }
         }
 
         &--next {
             inset-inline-end: -18px;
+
+            @media (max-width: 767px) {
+                inset-inline-end: 0;
+            }
+        }
+    }
+
+    &.rb--mobile &__slider-nav {
+        opacity: 1;
+
+        &:disabled {
+            opacity: 0.4;
+        }
+
+        &--prev {
+            inset-inline-start: 0;
+        }
+
+        &--next {
+            inset-inline-end: 0;
         }
     }
 

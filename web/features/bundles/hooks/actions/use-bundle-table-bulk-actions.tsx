@@ -1,6 +1,12 @@
 "use client";
 
-import { useGlobalBanner, useModalStore, withLoader } from "@/shared";
+import {
+    useCrossSellStore,
+    useGlobalBanner,
+    useModalStore,
+    usePlan,
+    withLoader,
+} from "@/shared";
 import {
     BundleStatus,
     invalidateBundleCache,
@@ -23,6 +29,9 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
     const app = useAppBridge();
     const { showError } = useGlobalBanner();
     const { openModal, setLoading } = useModalStore();
+    const { canUse } = usePlan();
+    const { open: openCrossSell } = useCrossSellStore();
+    const canDuplicate = canUse("duplicate_bundle");
     const updateBundleInStore = useBundleListingStore(
         (s) => s.updateBundleInStore,
     );
@@ -270,9 +279,15 @@ export function useBundleTableBulkActions(clearSelection?: () => void) {
         if (selectedResources.length === 1 && selectedBundle) {
             return [
                 {
-                    content: tc("duplicate"),
+                    content: canDuplicate
+                        ? tc("duplicate")
+                        : `${tc("duplicate")} (Pro)`,
                     icon: "duplicate",
                     onAction: () => {
+                        if (!canDuplicate) {
+                            openCrossSell(tc("duplicate"));
+                            return;
+                        }
                         openModal({
                             type: "duplicate",
                             bundle: selectedBundle,
