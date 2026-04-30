@@ -10,7 +10,7 @@ import {
     getSpacing,
     PLACEHOLDER_IMAGES,
 } from "@/features/settings";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import "@/styles/components/volume-preview.css";
 
@@ -38,6 +38,13 @@ export function VolumePricingCards({
     const [selectedIndex, setSelectedIndex] = useState<number>(
         defaultIndex >= 0 ? defaultIndex : 0,
     );
+
+    // Re-sync when the merchant changes which tier is pre-selected
+    useEffect(() => {
+        if (defaultIndex >= 0) {
+            setSelectedIndex(defaultIndex);
+        }
+    }, [defaultIndex]);
 
     const selectTier = useCallback((i: number) => setSelectedIndex(i), []);
 

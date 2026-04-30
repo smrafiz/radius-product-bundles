@@ -33,6 +33,7 @@ import {
 } from "@/features/bundles";
 import {
     CustomizerStyles,
+    getButtonHeight,
     getCardRadius,
     getPadding,
     getShadow,
@@ -149,7 +150,7 @@ function VolumeAddToCart({
     const bgColor = styles.buttonBgColor || styles.primaryColor;
     const isOutline = styles.buttonStyle === "outline";
     const isFullWidth = styles.buttonWidth === "full";
-    const borderRadius = styles.cornerStyle === "modern" ? "8px" : "4px";
+    const btnHeight = getButtonHeight(styles.buttonSize);
 
     return (
         <div
@@ -167,7 +168,7 @@ function VolumeAddToCart({
                     display: "flex",
                     alignItems: "center",
                     border: `1px solid ${styles.borderColor || "#d1d5db"}`,
-                    borderRadius,
+                    borderRadius: styles.cornerStyle,
                     overflow: "hidden",
                     flexShrink: 0,
                 }}
@@ -175,7 +176,7 @@ function VolumeAddToCart({
                 <button
                     style={{
                         width: 36,
-                        height: 42,
+                        height: btnHeight,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -192,7 +193,7 @@ function VolumeAddToCart({
                 <span
                     style={{
                         width: 36,
-                        height: 42,
+                        height: btnHeight,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -208,7 +209,7 @@ function VolumeAddToCart({
                 <button
                     style={{
                         width: 36,
-                        height: 42,
+                        height: btnHeight,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -227,10 +228,11 @@ function VolumeAddToCart({
             <button
                 style={{
                     flex: isFullWidth ? 1 : undefined,
-                    padding: "10px 24px",
+                    padding: "10px 20px",
                     fontSize: 14,
                     fontWeight: 600,
-                    borderRadius,
+                    borderRadius: styles.cornerStyle,
+                    height: btnHeight,
                     cursor: "pointer",
                     transition: "opacity 0.2s ease",
                     backgroundColor: isOutline ? "transparent" : bgColor,

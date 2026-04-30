@@ -10,7 +10,7 @@ import {
     PLACEHOLDER_IMAGES,
     VolumeLayoutProps,
 } from "@/features/settings";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import "@/styles/components/volume-preview.css";
 
@@ -32,6 +32,13 @@ export function VolumeTierList({ tiers, product, styles, displayOptions, labels 
     const [selectedIndex, setSelectedIndex] = useState<number>(
         defaultIndex >= 0 ? defaultIndex : 0,
     );
+
+    // Re-sync when the merchant changes which tier is pre-selected
+    useEffect(() => {
+        if (defaultIndex >= 0) {
+            setSelectedIndex(defaultIndex);
+        }
+    }, [defaultIndex]);
 
     const selectTier = useCallback((i: number) => setSelectedIndex(i), []);
 
