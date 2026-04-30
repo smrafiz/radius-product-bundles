@@ -31,7 +31,24 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
         }
 
         const round = (n: number) => Math.round(n * 100) / 100;
-        const originalPrice = round(calculateBundlePrice(selectedItems));
+
+        // For BXGY, items with multiple selected variants expand into multiple rows in the preview.
+        // The effective unit count must multiply by the number of expanded variant rows.
+        const getExpandedCount = (item: (typeof selectedItems)[0]) => {
+            if (!isBxgy) return 1;
+            const vids = item.variantIds ?? [];
+            return vids.length > 1 ? vids.length : 1;
+        };
+
+        // Compute original price accounting for variant row expansion in BXGY
+        const originalPrice = round(
+            isBxgy
+                ? selectedItems.reduce((sum, item) => {
+                      const price = parseFloat(item.price) || 0;
+                      return sum + price * item.quantity * getExpandedCount(item);
+                  }, 0)
+                : calculateBundlePrice(selectedItems),
+        );
 
         if (!bundleData.discountType) {
             return {
@@ -48,11 +65,17 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
             const rewardItems = selectedItems.filter(
                 (i) => i.role === "REWARD",
             );
-            const rewardPrice = round(calculateBundlePrice(rewardItems));
+            // Reward price accounting for variant row expansion
+            const rewardPrice = round(
+                rewardItems.reduce((sum, item) => {
+                    const price = parseFloat(item.price) || 0;
+                    return sum + price * item.quantity * getExpandedCount(item);
+                }, 0),
+            );
             const discountValue = bundleData.discountValue ?? 0;
-            // Total reward units — discount is applied per unit (matches usePreviewProducts per-item logic)
+            // Total reward units accounting for variant row expansion
             const rewardUnitCount = rewardItems.reduce(
-                (sum, i) => sum + (i.quantity ?? 1),
+                (sum, i) => sum + (i.quantity ?? 1) * getExpandedCount(i),
                 0,
             );
 

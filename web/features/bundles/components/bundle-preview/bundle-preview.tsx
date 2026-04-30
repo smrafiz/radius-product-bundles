@@ -354,7 +354,8 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
                 const idsToRender = shouldExpand ? vids : [item.variantId || item.id];
 
                 idsToRender.forEach((vid, vi) => {
-                    const vData = variantDataMap[vid];
+                    // Fall back to item.variants lookup if variantDataMap doesn't have the data yet
+                    const vData = variantDataMap[vid] ?? item.variants?.find((v) => v.id === vid);
                     const unitPrice = parseFloat(
                         (shouldExpand && vData?.price) || item.price || "0",
                     ) || 0;

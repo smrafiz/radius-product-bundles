@@ -99,7 +99,7 @@ function MinimalistItem({
             style={{
                 display: "flex",
                 gap: 10,
-                padding: "15px 10px",
+                padding: "25px 10px 10px",
                 background: `color-mix(in srgb, ${roleColor} 6%, ${cardBg})`,
                 border: `1px solid color-mix(in srgb, ${roleColor} 12%, transparent)`,
                 borderRadius: cardRadius,
