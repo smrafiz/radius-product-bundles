@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import {
-    calculateBundlePrice,
     calculateDiscountAmount,
     calculateSavingsPercentage,
     DiscountApplication,
@@ -13,8 +12,8 @@ import { useShallow } from "zustand/react/shallow";
  * Hook for calculating bundle preview pricing
  */
 export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
-    const { bundleData, selectedItems } = useBundleStore(
-        useShallow((s) => ({ bundleData: s.bundleData, selectedItems: s.selectedItems })),
+    const { bundleData, selectedItems, variantDataMap } = useBundleStore(
+        useShallow((s) => ({ bundleData: s.bundleData, selectedItems: s.selectedItems, variantDataMap: s.variantDataMap })),
     );
     const isBxgy =
         bundleData.type === "BOGO" || bundleData.type === "BUY_X_GET_Y";
@@ -32,19 +31,23 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
 
         const round = (n: number) => Math.round(n * 100) / 100;
 
-        // Items with multiple selected variants expand into multiple rows in the preview.
-        // The effective unit count must multiply by the number of expanded variant rows.
-        const getExpandedCount = (item: (typeof selectedItems)[0]) => {
+        // For multi-variant items, sum actual per-variant prices from variantDataMap.
+        // Falls back to item.price × count if map data is unavailable.
+        const getItemOriginalPrice = (item: (typeof selectedItems)[0]): number => {
             const vids = item.variantIds ?? [];
-            return vids.length > 1 ? vids.length : 1;
+            if (vids.length <= 1) return (parseFloat(item.price) || 0) * item.quantity;
+            // Sum each selected variant's real price
+            const variantSum = vids.reduce((s, vid) => {
+                const vData = variantDataMap[vid] ?? item.variants?.find((v) => v.id === vid);
+                const vPrice = parseFloat(vData?.price || "") || parseFloat(item.price) || 0;
+                return s + vPrice;
+            }, 0);
+            return round(variantSum) * item.quantity;
         };
 
-        // Compute original price accounting for variant row expansion
+        // Compute original price accounting for per-variant prices
         const originalPrice = round(
-            selectedItems.reduce((sum, item) => {
-                const price = parseFloat(item.price) || 0;
-                return sum + price * item.quantity * getExpandedCount(item);
-            }, 0),
+            selectedItems.reduce((sum, item) => sum + getItemOriginalPrice(item), 0),
         );
 
         if (!bundleData.discountType) {
@@ -62,19 +65,16 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
             const rewardItems = selectedItems.filter(
                 (i) => i.role === "REWARD",
             );
-            // Reward price accounting for variant row expansion
+            // Reward price using per-variant actual prices
             const rewardPrice = round(
-                rewardItems.reduce((sum, item) => {
-                    const price = parseFloat(item.price) || 0;
-                    return sum + price * item.quantity * getExpandedCount(item);
-                }, 0),
+                rewardItems.reduce((sum, item) => sum + getItemOriginalPrice(item), 0),
             );
             const discountValue = bundleData.discountValue ?? 0;
-            // Total reward units accounting for variant row expansion
-            const rewardUnitCount = rewardItems.reduce(
-                (sum, i) => sum + (i.quantity ?? 1) * getExpandedCount(i),
-                0,
-            );
+            // Total reward units = sum of (quantity × variantCount) per reward item
+            const rewardUnitCount = rewardItems.reduce((sum, i) => {
+                const vids = i.variantIds ?? [];
+                return sum + (i.quantity ?? 1) * (vids.length > 1 ? vids.length : 1);
+            }, 0);
 
             let discountAmount = 0;
             if (discountValue > 0) {
@@ -123,10 +123,7 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
             : selectedItems;
 
         const discountablePrice = round(
-            discountableItems.reduce((sum, item) => {
-                const price = parseFloat(item.price) || 0;
-                return sum + price * item.quantity * getExpandedCount(item);
-            }, 0),
+            discountableItems.reduce((sum, item) => sum + getItemOriginalPrice(item), 0),
         );
 
         if (bundleData.discountType === "CUSTOM_PRICE") {
@@ -179,6 +176,7 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
         };
     }, [
         selectedItems,
+        variantDataMap,
         isBxgy,
         bundleData.discountType,
         bundleData.discountValue,

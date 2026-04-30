@@ -210,6 +210,15 @@ export function useEditBundle(bundleId: string) {
                               }
                             : undefined,
                         role,
+                        variants: allVariants.map((v: any) => ({
+                            id: v.id,
+                            title: v.title || "",
+                            price: v.price || "0.00",
+                            compareAtPrice: v.compareAtPrice || null,
+                            image: v.media?.nodes?.[0]?.image?.url || undefined,
+                            availableForSale: v.availableForSale !== false,
+                            inventoryQuantity: v.inventoryQuantity || 0,
+                        })),
                     };
                 },
             );

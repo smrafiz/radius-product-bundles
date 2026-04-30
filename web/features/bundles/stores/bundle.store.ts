@@ -203,7 +203,7 @@ export const useBundleStore = create(
                 for (const item of items) {
                     if (item.variants) {
                         for (const v of item.variants) {
-                            if (v.id && v.title) {
+                            if (v.id) {
                                 state.variantDataMap[v.id] = {
                                     title: v.title,
                                     price: v.price,
@@ -236,7 +236,7 @@ export const useBundleStore = create(
                 for (const item of items) {
                     if (item.variants) {
                         for (const v of item.variants) {
-                            if (v.id && v.title) {
+                            if (v.id) {
                                 state.variantDataMap[v.id] = {
                                     title: v.title,
                                     price: v.price,
@@ -351,6 +351,21 @@ export const useBundleStore = create(
                     state.selectedItems = result;
                 } else {
                     state.selectedItems = [...otherItems, ...variants];
+                }
+
+                // Merge variant data into stable map
+                for (const item of variants) {
+                    if (item.variants) {
+                        for (const v of item.variants) {
+                            if (v.id) {
+                                state.variantDataMap[v.id] = {
+                                    title: v.title,
+                                    price: v.price,
+                                    image: v.image,
+                                };
+                            }
+                        }
+                    }
                 }
 
                 // Update bundle data products
