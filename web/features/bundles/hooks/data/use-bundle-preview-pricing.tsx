@@ -32,22 +32,19 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
 
         const round = (n: number) => Math.round(n * 100) / 100;
 
-        // For BXGY, items with multiple selected variants expand into multiple rows in the preview.
+        // Items with multiple selected variants expand into multiple rows in the preview.
         // The effective unit count must multiply by the number of expanded variant rows.
         const getExpandedCount = (item: (typeof selectedItems)[0]) => {
-            if (!isBxgy) return 1;
             const vids = item.variantIds ?? [];
             return vids.length > 1 ? vids.length : 1;
         };
 
-        // Compute original price accounting for variant row expansion in BXGY
+        // Compute original price accounting for variant row expansion
         const originalPrice = round(
-            isBxgy
-                ? selectedItems.reduce((sum, item) => {
-                      const price = parseFloat(item.price) || 0;
-                      return sum + price * item.quantity * getExpandedCount(item);
-                  }, 0)
-                : calculateBundlePrice(selectedItems),
+            selectedItems.reduce((sum, item) => {
+                const price = parseFloat(item.price) || 0;
+                return sum + price * item.quantity * getExpandedCount(item);
+            }, 0),
         );
 
         if (!bundleData.discountType) {
@@ -125,7 +122,12 @@ export function useBundlePreviewPricing(): useBundlePreviewPricingProps {
             ? selectedItems.filter((item) => discountedIds.has(item.productId))
             : selectedItems;
 
-        const discountablePrice = calculateBundlePrice(discountableItems);
+        const discountablePrice = round(
+            discountableItems.reduce((sum, item) => {
+                const price = parseFloat(item.price) || 0;
+                return sum + price * item.quantity * getExpandedCount(item);
+            }, 0),
+        );
 
         if (bundleData.discountType === "CUSTOM_PRICE") {
             const customPrice = bundleData.discountValue ?? 0;

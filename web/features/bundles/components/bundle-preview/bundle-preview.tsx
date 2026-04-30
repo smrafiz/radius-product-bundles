@@ -402,31 +402,53 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
         const applyToSpecific = bundleData.discountApplication === DiscountApplication.PRODUCTS;
         const discountedIds = new Set(bundleData.discountedProductIds ?? []);
 
-        const totalBundlePrice = selectedItems.reduce(
-            (sum, item) => sum + (parseFloat(item.price) || 0) * item.quantity,
+        // Build expanded list: items with multiple selected variants become N rows
+        type ExpandedRow = {
+            item: (typeof selectedItems)[0];
+            unitPrice: number;
+            vid: string;
+            vi: number;
+            vData: { title: string; price: string; image?: string } | undefined;
+            shouldExpand: boolean;
+        };
+        const expandedRows: ExpandedRow[] = [];
+        for (const item of selectedItems) {
+            const vids = item.variantIds ?? [];
+            const firstVarData =
+                variantDataMap[vids[0]] ?? item.variants?.find((v) => v.id === vids[0]);
+            const isDefault =
+                vids.length === 1 &&
+                (firstVarData?.title === "Default Title" ||
+                    firstVarData?.title === "Default");
+            const shouldExpand = vids.length > 1 && !isDefault;
+            const idsToRender = shouldExpand ? vids : [item.variantId || item.id];
+            idsToRender.forEach((vid, vi) => {
+                const vData =
+                    variantDataMap[vid] ?? item.variants?.find((v) => v.id === vid);
+                const unitPrice =
+                    parseFloat((shouldExpand && vData?.price) || item.price || "0") || 0;
+                expandedRows.push({ item, unitPrice, vid, vi, vData, shouldExpand });
+            });
+        }
+
+        // Total price using expanded units (needed for proportion-based discounts)
+        const totalBundlePrice = expandedRows.reduce(
+            (sum, { unitPrice, item }) => sum + unitPrice * item.quantity,
             0,
         );
 
-        return selectedItems.map((item) => {
-            const unitPrice = parseFloat(item.price) || 0;
+        return expandedRows.map(({ item, unitPrice, vid, vi, vData, shouldExpand }) => {
             let discountedUnitPrice = unitPrice;
-
             const shouldDiscount =
                 !applyToSpecific || discountedIds.has(item.productId);
 
-            if (
-                shouldDiscount &&
-                discountType &&
-                discountValue > 0 &&
-                totalBundlePrice > 0
-            ) {
+            if (shouldDiscount && discountType && discountValue > 0 && totalBundlePrice > 0) {
                 const lineTotal = unitPrice * item.quantity;
                 const proportion = lineTotal / totalBundlePrice;
 
                 switch (discountType) {
                     case "PERCENTAGE":
-                        discountedUnitPrice =
-                            unitPrice * (1 - discountValue / 100);
+                        discountedUnitPrice = unitPrice * (1 - discountValue / 100);
                         break;
                     case "FIXED_AMOUNT": {
                         const lineDiscount = discountValue * proportion;
@@ -446,12 +468,14 @@ function usePreviewProducts(currencyCode?: string): PreviewProduct[] {
 
             discountedUnitPrice = Math.round(discountedUnitPrice * 100) / 100;
             const hasDiscount = discountedUnitPrice < unitPrice;
+            const vTitle = shouldExpand ? vData?.title : item.selectedVariant?.title;
+            const isDef = vTitle === "Default Title" || vTitle === "Default";
             return {
-                id: item.id,
+                id: shouldExpand ? `${item.id}-v${vi}` : item.id,
                 title: item.title,
-                variantId: item.variantId,
-                variantTitle: item.selectedVariant?.title,
-                image: item.image,
+                variantId: vid,
+                variantTitle: vTitle && !isDef ? vTitle : undefined,
+                image: (shouldExpand && vData?.image) || item.image,
                 price: formatPrice(discountedUnitPrice, currencyCode),
                 compareAtPrice: hasDiscount
                     ? formatPrice(unitPrice, currencyCode)
