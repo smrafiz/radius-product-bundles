@@ -24,8 +24,8 @@ rustup target add wasm32-unknown-unknown
 ## 1. Clone & Install Dependencies
 
 ```bash
-https://github.com/smrafiz/radius-product-bundles.git
-cd radius-product-bundles
+git clone https://github.com/radiustheme/radius-bundles.git
+cd radius-bundles
 
 # Root & web app dependencies
 pnpm install
@@ -47,13 +47,13 @@ SHOPIFY_API_KEY=your_api_key
 SHOPIFY_API_SECRET=your_api_secret
 
 # Scopes (pre-configured, modify if needed)
-SCOPES=read_customers,read_orders,read_price_rules,read_products,read_themes,write_files,write_app_proxy,write_price_rules,write_products,write_publications,write_script_tags,write_discounts
+SCOPES=read_locales,read_orders,read_products,read_themes,write_app_proxy,write_discounts,write_files,write_products,write_publications
 
 # App config
 APP_NAME="Product Bundles"
 APP_HANDLE="product-bundles47"
 HOST=                           # Auto-set by Shopify CLI during dev
-SHOPIFY_API_VERSION="2025-10"
+SHOPIFY_API_VERSION="2026-04"
 POS_EMBEDDED=false
 DIRECT_API_MODE="offline"
 EMBEDDED_APP_DIRECT_API_ACCESS=true
@@ -64,6 +64,10 @@ DATABASE_URL="postgresql://user:password@host/dbname?sslmode=require"
 
 # Your dev store
 DEV_STORE_URL="your-store.myshopify.com"
+
+# Token encryption key — generate with:
+#   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+ENCRYPTION_KEY=
 ```
 
 ### Web `.env`
@@ -82,8 +86,13 @@ DIRECT_DATABASE_URL="${DATABASE_URL}"
 # Your dev store domain
 NEXT_PUBLIC_SHOP=your-store.myshopify.com
 
-# Random string for cron route protection
-CRON_SECRET="generate-a-random-uuid-here"
+# Cron route protection — generate with:
+#   node -e "console.log(crypto.randomUUID())"
+CRON_SECRET=
+
+# Token encryption key — generate with:
+#   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+ENCRYPTION_KEY=
 ```
 
 ## 3. Set Up Database
