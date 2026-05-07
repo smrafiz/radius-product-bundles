@@ -1,5 +1,6 @@
 {
   "enabledPlugins": {
-    "shopify-plugin@shopify-ai-toolkit": true
+    "shopify-plugin@shopify-ai-toolkit": true,
+    "understand-anything@understand-anything": true
   }
 }

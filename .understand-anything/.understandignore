@@ -1,0 +1,102 @@
+# .understandignore — patterns for files/dirs to exclude from analysis
+# Syntax: same as .gitignore (globs, # comments, ! negation, trailing / for dirs)
+# Lines below are suggestions — uncomment to activate.
+# Use ! prefix to force-include something excluded by defaults.
+#
+# Built-in defaults (always excluded unless negated):
+#   node_modules/, .git/, dist/, build/, obj/, *.lock, *.min.js, etc.
+#
+# --- From .gitignore (uncomment to exclude) ---
+
+# .env
+# .env.*
+# .env*.local
+# !.env.example
+# .pnp
+# .pnp.js
+# .vitest/
+# vitest.config.ts
+# cypress/videos/
+# cypress/screenshots/
+# .DS_Store
+# Thumbs.db
+# logs/
+# npm-debug.log*
+# yarn-debug.log*
+# yarn-error.log*
+# .pnpm-debug.log*
+# config/tunnel.pid
+# ngrok.yml
+# tunnel.log
+# extensions/*/build/
+# extensions/*/dist/
+# extensions/*/assets/*.js
+# extensions/*/assets/*.css
+# web/database.sqlite
+# web/prisma/dev.db
+# web/prisma/test.db
+# prisma/dev.db
+# prisma/test.db
+# *.sqlite
+# prisma/generated/
+# .next-static/
+# .next/cache/
+# *.tsbuildinfo
+# next-env.d.ts
+# .build/
+# .vercel/
+# .vercel_build_output/
+# tmp/
+# web.bak/
+# shopify.app.toml
+# shopify.app.app-next-vercel.toml
+# .shopify-cli.yml
+# .shopify-cli-*.json
+# .shopify/
+# web/lib/gql/graphql.ts
+# web/lib/graphql/generated/graphql.ts
+# web/lib/shopify/graphql/generated.ts
+# web/lib/__generated__/
+# web/lib/graphql/generated/
+# lib/gql/graphql.ts
+# lib/shopify/graphql/generated.ts
+# lib/__generated__/
+# generated/
+# types/generated.ts
+# *.swp
+# *.swo
+# *.orig
+# *.pem
+# *.key
+# *.crt
+# *.p12
+# extensions/**/node_modules/
+# extensions/**/.env
+# extensions/**/.next
+# extensions/**/.vercel
+# extensions/**/.vite/
+# extensions/**/vite.config.ts.timestamp*
+# extensions/**/vite.config.js.timestamp*
+# extensions/**/coverage/
+# extensions/**/.cache/
+# extension/extensions/**/*.css
+# extension/extensions/**/*.js
+# *.tmp
+# *.bak
+# *.old
+# .claude-backup-*/
+# CLAUDE.md.backup-*
+# .claude/supercharger-memory.md
+# web/.claude/supercharger-memory.md
+# claude-501/
+
+# --- Detected directories (uncomment to exclude) ---
+
+# docs/
+# scripts/
+
+# --- Test file patterns (uncomment to exclude) ---
+
+# *.test.*
+# *.spec.*
+# *.snap
